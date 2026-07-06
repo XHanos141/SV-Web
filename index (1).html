@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SuppVerse BD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Outfit:wght@400;500;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cyan:#009ddc; --orange:#f26430; --green:#009b72; --gold:#f4a922; --purple:#6761a8;
+  --font:'DM Sans',sans-serif; --fd:'Plus Jakarta Sans',sans-serif; --fs:'Outfit',sans-serif;
+  --nav-h:58px; --bot-h:86px;
+  --bg:#ffffff; --bg-rgb:255,255,255; --surface:#ffffff; --surface2:#f5f7fc; --border:rgba(0,0,0,0.07);
+  --text:#0a1628; --t2:#4a5568; --t3:#9aa5b4;
+  --shadow:0 2px 16px rgba(0,0,0,0.07); --shadow-md:0 6px 28px rgba(0,0,0,0.1);
+  --hero-bg:linear-gradient(145deg,#ddeeff 0%,#e8e0ff 28%,#f9f0ff 55%,#fff5e6 80%,#fffbe6 100%);
+}
+
+.hero-badge,.hero-h1,.hero-sub,.hero-pills{pointer-events:none}
+
+
+body.dark-mode {
+  --bg:#060d1a; --bg-rgb:6,13,26; --surface:#0f1a2e; --surface2:#162338; --border:rgba(255,255,255,0.08);
+  --text:#eef4ff; --t2:rgba(238,244,255,0.55); --t3:rgba(238,244,255,0.28);
+  --shadow:0 2px 16px rgba(0,0,0,0.4); --shadow-md:0 6px 28px rgba(0,0,0,0.5);
+  --hero-bg:linear-gradient(145deg,#060d1a 0%,#0d0f2a 30%,#0f0a1a 60%,#150a00 100%);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-top:var(--nav-h);padding-bottom:var(--bot-h);transition:background .35s ease,color .35s ease}
+button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit}
+input{font-family:inherit;outline:none;border:none;background:none}
+
+.header{background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,255,255,0.03) 0%,transparent 65%),radial-gradient(ellipse 60% 80% at -10% 0%,rgba(124,111,247,0.18) 0%,transparent 55%),linear-gradient(180deg,#0f3258 0%,#002248 22%,#001f3c 55%,#001532 82%,#000d20 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),inset 0 -1px 0 rgba(0,0,0,0.65),0 6px 28px rgba(0,0,0,0.55),0 1px 2px rgba(0,0,0,0.7);border-bottom:1px solid rgba(0,0,0,0.5);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:12px;position:fixed;top:0;left:0;right:0;z-index:500}
+.logo{display:flex;flex-direction:column;gap:1px;cursor:pointer;user-select:none}
+.logo-name{font-family:var(--fd);font-size:22px;font-weight:800;color:#fff;line-height:1;letter-spacing:.5px}
+.logo-name .bd{color:var(--cyan)}
+.logo-sub{font-family:var(--font);font-size:9px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:.18em;text-transform:uppercase}
+.header-right{display:flex;align-items:center;gap:8px}
+
+.theme-toggle{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:background .3s ease}
+.theme-toggle:active{transform:scale(.92)}
+.theme-toggle svg{position:absolute;width:21px;height:21px;stroke:rgba(255,255,255,.75);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.theme-toggle .icon-sun{opacity:1;transform:rotate(0) scale(1)}
+.theme-toggle .icon-moon{opacity:0;transform:rotate(90deg) scale(.5)}
+.theme-toggle.dark .icon-sun{opacity:0;transform:rotate(-90deg) scale(.5)}
+.theme-toggle.dark .icon-moon{opacity:1;transform:rotate(0) scale(1)}
+
+.hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,transform .15s}
+.hcart:active{transform:scale(.92)}
+.hcart svg{width:18px;height:18px;stroke:rgba(255,255,255,.75);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cbadge{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;border-radius:99px;background:var(--orange);color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid #001f3c}
+
+.hero{background:linear-gradient(to top,#ffffff 0%,rgba(255,255,255,0) 32px),var(--hero-bg);padding:18px 24px 56px;text-align:center;position:relative;overflow:hidden;transition:background .4s ease}
+#hero-dots{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;touch-action:none}
+.hero>*:not(canvas){position:relative;z-index:1}
+.hero::before{content:'';position:absolute;top:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,157,220,.1) 0%,transparent 65%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-60px;right:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(242,100,48,.08) 0%,transparent 65%);pointer-events:none}
+
+.hero-badge-wrap{display:inline-block;perspective:600px;margin-bottom:12px;position:relative;z-index:1}.hero-badge{display:inline-flex;align-items:center;justify-content:flex-start;gap:6px;background:#ffffff;border:1px solid rgba(0,0,0,.08);border-radius:99px;padding:6px 5px;font-size:12px;font-weight:600;color:var(--t2);box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .18s ease-out,box-shadow .2s,background .2s;transform-style:preserve-3d}.hero-badge:hover{box-shadow:0 6px 20px rgba(0,0,0,.12);background:rgba(255,255,255,1)}
+body.dark-mode .hero-badge{background:rgba(255,255,255,.08);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);border-color:rgba(255,255,255,.18);color:rgba(238,244,255,.82);box-shadow:0 4px 20px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.12)}
+.badge-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 6px rgba(0,155,114,.4);position:relative}.badge-dot::before{content:"";position:absolute;top:50%;left:50%;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--green);opacity:0;transform:translate(-50%,-50%) scale(.6);animation:ringPulse 1.8s ease-out infinite}@keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(.6);opacity:.7}100%{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
+
+.hero-h1{font-family:var(--fd);font-size:clamp(28px,7.6vw,60px);font-weight:800;color:#1a2e4d;line-height:1.08;letter-spacing:-1px;margin-bottom:0px;position:relative;z-index:1}
+body.dark-mode .hero{background:linear-gradient(to top,#060d1a 0%,rgba(6,13,26,0) 32px),var(--hero-bg)}
+body.dark-mode .hero-h1{color:#ffffff}
+
+.grad-text{background:linear-gradient(90deg,#1a6fd4 0%,#009ddc 22%,#00b4a0 42%,#009b72 58%,#c4a010 78%,#f26430 100%);background-size:200%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:gradShift 5s ease-in-out infinite alternate}
+@keyframes gradShift{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+body.dark-mode .grad-text{background:linear-gradient(90deg,#60a5fa 0%,#38bdf8 20%,#34d399 45%,#fbbf24 70%,#fb923c 100%);background-size:200%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:gradShift 5s ease-in-out infinite alternate}
+
+.hero-sub{font-family:var(--fs);font-size:13px;font-weight:500;color:var(--t2);line-height:1.42;max-width:260px;margin:0 auto 18px;position:relative;z-index:1;opacity:.72;word-spacing:1.5px}
+
+.hero-pills{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;position:relative;z-index:1;margin-top:30px}
+.hero-pill{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 14px;border-radius:99px;background:rgba(255,255,255,0.92);border:none;font-size:12px;font-weight:600;color:var(--text);box-shadow:8px 8px 20px rgba(100,116,139,0.35),-6px -6px 16px rgba(255,255,255,0.72),0 0 18px rgba(244,169,34,0.10);transition:all .3s ease}.hero-pill:hover{box-shadow:inset 5px 5px 12px rgba(100,116,139,0.30),inset -4px -4px 10px rgba(255,255,255,0.70),inset 0 0 16px rgba(244,169,34,0.06)}
+
+.hero-pill .pi{width:16px;height:16px;flex-shrink:0;display:block;overflow:visible}
+
+body.dark-mode .hero-pill{background:linear-gradient(165deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.03) 50%,rgba(0,0,0,0.08) 100%);border:1px solid rgba(255,255,255,0.14);border-bottom-color:rgba(255,255,255,0.06);color:rgba(255,255,255,0.82);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 10px 36px rgba(0,0,0,0.50),inset 0 1px 0 rgba(255,255,255,0.20),inset 0 -1px 0 rgba(0,0,0,0.25),0 0 0 1px rgba(255,255,255,0.06);transition:all .35s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+body.dark-mode .hero-pill::before{content:"";position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(180deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0) 100%);border-radius:99px 99px 0 0;pointer-events:none;z-index:1}body.dark-mode .hero-pill:hover{background:linear-gradient(165deg,rgba(255,255,255,0.14) 0%,rgba(255,255,255,0.05) 50%,rgba(0,0,0,0.06) 100%);border-color:rgba(255,255,255,0.22);border-bottom-color:rgba(255,255,255,0.08);color:#ffffff;box-shadow:0 14px 44px rgba(0,0,0,0.60),inset 0 1px 0 rgba(255,255,255,0.28),inset 0 -1px 0 rgba(0,0,0,0.20),0 0 0 1px rgba(255,255,255,0.10);transform:translateY(-3px) scale(1.02)}
+
+.pill-nav{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:390px;height:62px;z-index:500;display:flex;align-items:center;padding:0 4px;gap:0;border-radius:99px;background:rgba(10,20,40,.88);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 32px rgba(0,0,0,.45),0 -1px 0 rgba(255,255,255,.04) inset;transition:background .35s}
+body.dark-mode .pill-nav{background:rgba(6,13,26,.9)}
+.pn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:6px 2px;border-radius:99px;transition:background .18s;position:relative}
+.pn-item:active{background:rgba(255,255,255,.06)}
+.pn-item svg{width:21px;height:21px;stroke:rgba(255,255,255,.3);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+.pn-item span{font-size:9px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.02em;transition:color .2s}
+.pn-item.on::before{content:'';position:absolute;top:4px;left:50%;transform:translateX(-50%);width:18px;height:3px;border-radius:99px;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.pn-item.on svg{stroke:var(--cyan)}
+.pn-item.on span{color:var(--cyan)}
+.pn-proxy{flex-shrink:0;padding:0 6px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.pn-proxy-btn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#c04010);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 14px rgba(242,100,48,.45),0 0 0 3px rgba(242,100,48,.12);transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.pn-proxy:active .pn-proxy-btn{transform:scale(.88)}
+.pn-proxy-btn svg{width:21px;height:21px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.pn-proxy span{font-size:9px;font-weight:700;color:var(--orange)}
+
+#toast{position:fixed;bottom:calc(var(--bot-h) + 8px);left:50%;transform:translateX(-50%) translateY(10px);background:rgba(10,18,36,.92);color:#fff;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);padding:10px 18px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:999;white-space:nowrap;display:flex;align-items:center;gap:8px;box-shadow:0 4px 24px rgba(0,0,0,.4);max-width:calc(100vw - 40px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.rv{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease}
+.rv.in{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.07s} .d2{transition-delay:.14s}
+.d3{transition-delay:.21s} .d4{transition-delay:.28s}
+
+.whiteboard{background:var(--bg);padding:32px 20px 40px;position:relative;z-index:1}
+.wb-inner{max-width:420px;margin:0 auto}
+.wb-header{text-align:center;margin-bottom:24px}
+.wb-title{font-family:var(--fd);font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.2}
+.wb-sub{font-family:var(--font);font-size:12px;font-weight:500;color:var(--t3);margin-top:4px}
+.wb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.wb-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.wb-card:active{transform:scale(.96)}
+.wb-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.wb-icon svg{width:22px;height:22px}
+.wb-label{font-size:11px;font-weight:700;color:var(--text);text-align:center;line-height:1.2}
+body.dark-mode .wb-card{background:var(--surface2);border-color:rgba(255,255,255,.06)}
+body.dark-mode .wb-label{color:var(--t2)}
+
+body.dark-mode .wb-card{background:var(--surface2);border-color:rgba(255,255,255,.06)}
+body.dark-mode .wb-label{color:var(--t2)}
+
+.badges-row{background:var(--bg);padding:16px 0;position:relative;z-index:1;overflow:hidden}
+.br-scroll{display:flex;gap:10px;padding:0 20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.br-scroll::-webkit-scrollbar{display:none}
+.br-badge{flex-shrink:0;scroll-snap-align:start;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:99px;font-size:11px;font-weight:700;white-space:nowrap;transition:transform .15s}
+.br-badge:active{transform:scale(.94)}
+.br-cyan{background:rgba(0,157,220,0.10);color:var(--cyan);border:1px solid rgba(0,157,220,0.20)}
+.br-orange{background:rgba(242,100,48,0.10);color:var(--orange);border:1px solid rgba(242,100,48,0.20)}
+.br-green{background:rgba(0,155,114,0.10);color:var(--green);border:1px solid rgba(0,155,114,0.20)}
+.br-purple{background:rgba(103,97,168,0.10);color:var(--purple);border:1px solid rgba(103,97,168,0.20)}
+.br-gold{background:rgba(244,169,34,0.10);color:var(--gold);border:1px solid rgba(244,169,34,0.20)}
+.br-red{background:rgba(239,68,68,0.10);color:#ef4444;border:1px solid rgba(239,68,68,0.20)}
+.br-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:brPulse 1.6s ease-in-out infinite}
+@keyframes brPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+body.dark-mode .br-cyan{background:rgba(0,157,220,0.15);border-color:rgba(0,157,220,0.30)}
+body.dark-mode .br-orange{background:rgba(242,100,48,0.15);border-color:rgba(242,100,48,0.30)}
+body.dark-mode .br-green{background:rgba(0,155,114,0.15);border-color:rgba(0,155,114,0.30)}
+body.dark-mode .br-purple{background:rgba(103,97,168,0.15);border-color:rgba(103,97,168,0.30)}
+body.dark-mode .br-gold{background:rgba(244,169,34,0.15);border-color:rgba(244,169,34,0.30)}
+body.dark-mode .br-red{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.30)}
+.section-spacer{height:180px;background:var(--bg)}
+.circle-badges{background:var(--bg);padding:24px 0;position:relative;z-index:1;overflow:hidden}
+.cb-scroll{display:flex;gap:22px;padding:0 20px;align-items:flex-start;width:max-content;will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.cb-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;pointer-events:none;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+.cb-ring{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;will-change:transform;position:relative;
+  background:#eef2f7;
+  border:1px solid rgba(255,255,255,.6);
+  backdrop-filter:blur(3px) saturate(160%);
+  -webkit-backdrop-filter:blur(3px) saturate(160%);
+  box-shadow:
+    6px 6px 12px rgba(163,177,198,.6),
+    -6px -6px 12px rgba(255,255,255,.95),
+    inset 0 1.5px 1.5px rgba(255,255,255,.85),
+    inset 0 -3px 6px rgba(140,155,180,.18);
+}
+.cb-ring::before{
+  content:'';
+  position:absolute;
+  top:7px;left:11px;
+  width:16px;height:9px;
+  border-radius:50%;
+  background:rgba(255,255,255,.85);
+  filter:blur(3px);
+  pointer-events:none;
+  z-index:2;
+}
+.cb-ring::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background:linear-gradient(155deg,
+    rgba(255,255,255,.70) 0%,
+    rgba(255,255,255,.22) 28%,
+    rgba(255,255,255,0) 52%,
+    rgba(255,255,255,0) 100%);
+  pointer-events:none;
+  z-index:1;
+}
+.cb-ring svg{width:22px;height:22px;position:relative;z-index:0}
+.cb-brand{background:#eef2f7}
+body.dark-mode .cb-ring{
+  background:#0c1729;
+  border-color:rgba(255,255,255,.16);
+  box-shadow:
+    6px 6px 12px rgba(0,0,0,.7),
+    -6px -6px 12px rgba(255,255,255,.05),
+    inset 0 1.5px 1.5px rgba(255,255,255,.10),
+    inset 0 -3px 6px rgba(0,0,0,.35);
+}
+body.dark-mode .cb-ring::before{
+  background:rgba(255,255,255,.35);
+}
+body.dark-mode .cb-ring::after{
+  background:linear-gradient(155deg,
+    rgba(255,255,255,.20) 0%,
+    rgba(255,255,255,.07) 28%,
+    rgba(255,255,255,0) 52%,
+    rgba(255,255,255,0) 100%);
+}
+body.dark-mode .cb-brand{background:#0c1729}
+body.dark-mode .amz-wordmark{fill:#ffffff}
+
+
+.model-cards-section{padding:24px 20px;background:var(--bg);position:relative;z-index:1}
+.model-row{display:flex;gap:10px;width:100%;max-width:420px}
+.mcard{flex:1;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;position:relative;min-height:158px;-webkit-tap-highlight-color:transparent}
+
+
+
+.mcard-local{background:linear-gradient(150deg,rgba(224,247,255,0.72) 0%,rgba(200,237,251,0.72) 55%,rgba(178,221,245,0.72) 100%);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 6px 24px rgba(0,157,220,.18),inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.4);border:1px solid rgba(255,255,255,0.5)}
+.mcard-proxy{background:linear-gradient(150deg,rgba(255,242,236,0.72) 0%,rgba(255,223,200,0.72) 55%,rgba(255,205,176,0.72) 100%);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 6px 24px rgba(242,100,48,.18),inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.4);border:1px solid rgba(255,255,255,0.5)}
+
+.mcard-icon{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mcard-local .mcard-icon{background:linear-gradient(135deg,#009ddc,#006daa);box-shadow:0 4px 12px rgba(0,157,220,.35)}
+.mcard-proxy .mcard-icon{background:linear-gradient(135deg,#f26430,#b83200);box-shadow:0 4px 12px rgba(242,100,48,.35)}
+.mcard-icon svg{width:20px;height:20px;stroke:#fff;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+.mcard-top{padding:14px 14px 0;display:flex;align-items:center;gap:10px}
+.mcard-body{padding:12px 14px 14px;display:flex;flex-direction:column;flex:1}
+.mcard-eye{font-size:11.8px;font-weight:800;letter-spacing:-0.01em;text-transform:uppercase;margin-top:0}
+.mcard-local .mcard-eye{color:rgba(0,100,175,.75)}
+.mcard-proxy .mcard-eye{color:rgba(180,55,5,.75)}
+.mcard-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:var(--text);line-height:1.15;letter-spacing:-.3px;margin-top:1px}
+.mcard-desc{font-size:10.5px;font-weight:500;color:var(--t2);line-height:1.4;margin-top:4px}
+
+.mcard-cta span{font-size:11.5px;font-weight:700}
+.mcard-local .mcard-cta span{color:#ffffff}
+.mcard-proxy .mcard-cta span{color:#ffffff}
+.mcard-cta svg{width:13px;height:13px;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.mcard-local .mcard-cta svg{stroke:#006daa}
+.mcard-proxy .mcard-cta svg{stroke:#b83200}
+
+body.dark-mode .mcard-local .mcard-cta span{color:#ffffff}
+body.dark-mode .mcard-proxy .mcard-cta span{color:#ffffff}
+body.dark-mode .mcard-local .mcard-cta svg{stroke:#4db8ff}
+body.dark-mode .mcard-proxy .mcard-cta svg{stroke:#ff8c5c}
+
+.mcard-deco{position:absolute;bottom:-20px;right:-20px;width:72px;height:72px;border-radius:50%;pointer-events:none;opacity:.13}
+.mcard-local .mcard-deco{background:var(--cyan)}
+.mcard-proxy .mcard-deco{background:var(--orange)}
+
+/* Model Cards Dark Mode */
+body.dark-mode .mcard-local{background:linear-gradient(150deg,rgba(10,31,46,0.65) 0%,rgba(13,42,61,0.65) 55%,rgba(15,47,69,0.65) 100%);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 6px 24px rgba(0,157,220,.12),inset 0 1px 0 rgba(255,255,255,.06),inset 0 -1px 0 rgba(255,255,255,.03);border:1px solid rgba(255,255,255,0.1)}
+body.dark-mode .mcard-proxy{background:linear-gradient(150deg,rgba(46,26,10,0.65) 0%,rgba(61,34,13,0.65) 55%,rgba(69,40,15,0.65) 100%);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 6px 24px rgba(242,100,48,.12),inset 0 1px 0 rgba(255,255,255,.06),inset 0 -1px 0 rgba(255,255,255,.03);border:1px solid rgba(255,255,255,0.1)}
+body.dark-mode .mcard-local .mcard-eye{color:rgba(100,200,255,.45)}
+body.dark-mode .mcard-proxy .mcard-eye{color:rgba(255,160,100,.45)}
+body.dark-mode .mcard-title{color:var(--text)}
+body.dark-mode .mcard-desc{color:var(--t2)}
+body.dark-mode .mcard-local .mcard-cta span{color:#ffffff}
+body.dark-mode .mcard-proxy .mcard-cta span{color:#ffffff}
+body.dark-mode .mcard-local .mcard-cta svg{stroke:#4db8ff}
+body.dark-mode .mcard-proxy .mcard-cta svg{stroke:#ff8c5c}
+
+/* ===== MCard CTA Button Styles ===== */
+.mcard-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(.34,1.56,.64,1);
+  margin-top: auto;
+}
+.mcard-cta:active { transform: scale(0.94); }
+.mcard-cta svg {
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+/* Local card — cyan pill */
+.mcard-local .mcard-cta {
+  background: linear-gradient(135deg, #009ddc, #0077aa);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0,157,220,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.mcard-local .mcard-cta:hover {
+  box-shadow: 0 6px 20px rgba(0,157,220,0.50), inset 0 1px 0 rgba(255,255,255,0.30);
+  transform: translateY(-1px);
+}
+.mcard-local .mcard-cta svg { stroke: #fff; }
+
+/* Proxy card — orange pill */
+.mcard-proxy .mcard-cta {
+  background: linear-gradient(135deg, #f26430, #c04010);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(242,100,48,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.mcard-proxy .mcard-cta:hover {
+  box-shadow: 0 6px 20px rgba(242,100,48,0.50), inset 0 1px 0 rgba(255,255,255,0.30);
+  transform: translateY(-1px);
+}
+.mcard-proxy .mcard-cta svg { stroke: #fff; }
+
+/* Dark mode */
+body.dark-mode .mcard-local .mcard-cta {
+  background: linear-gradient(135deg, #00a8e8, #0088cc);
+  box-shadow: 0 4px 14px rgba(0,168,232,0.30), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+body.dark-mode .mcard-local .mcard-cta:hover {
+  box-shadow: 0 6px 20px rgba(0,168,232,0.45);
+}
+body.dark-mode .mcard-proxy .mcard-cta {
+  background: linear-gradient(135deg, #ff6b35, #d04010);
+  box-shadow: 0 4px 14px rgba(255,107,53,0.30), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+body.dark-mode .mcard-proxy .mcard-cta:hover {
+  box-shadow: 0 6px 20px rgba(255,107,53,0.45);
+}
+
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-name">SuppVerse <span class="bd">BD</span></div>
+    <div class="logo-sub">Authentic Supplements</div>
+  </div>
+  <div class="header-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+    <button class="hcart" onclick="T('Cart coming soon','🛒')">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+      <span class="cbadge" id="cb" style="display:none">0</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <canvas id="hero-dots"></canvas>
+    <div class="hero-badge-wrap rv">
+      <div class="hero-badge" id="heroBadge">
+        <span class="badge-dot"></span>
+        Local stock + Global sourcing in one platform
+      </div>
+    </div>
+    <h1 class="hero-h1 rv d1">
+      Shop Globally.<br>
+      Delivered <span class="grad-text">Seamlessly.</span>
+    </h1>
+    <p class="hero-sub rv d2">
+      Shop from local inventory or request products from global marketplaces
+    </p>
+    <div class="hero-pills rv d3">
+      <span class="hero-pill"><svg class="pi" viewBox="0 0 24 24" fill="var(--cyan)" style="width:21px;height:21px" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.66333L20.25 7.7398V17.01L12 21.0865L3.75 17.01V7.7398L12 3.66333ZM5.25 9.41292V16.078L11.25 19.0427V12.3776L5.25 9.41292ZM12.75 12.3776V19.0427L18.75 16.078V9.41292L16.5 10.5247V13.4999L15 14.2499V11.2659L12.75 12.3776ZM17.807 8.20577L15.8527 9.17139C15.8099 9.13606 15.7624 9.10498 15.7106 9.07908L10.1015 6.27454L12 5.33645L17.807 8.20577ZM8.41452 7.1081L14.1871 9.9944L12 11.0751L6.19304 8.20577L8.41452 7.1081Z"/></svg>Local Stock</span>
+      <span class="hero-pill"><svg class="pi" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M15 2.4578C14.053 2.16035 13.0452 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 10.2847 21.5681 8.67022 20.8071 7.25945M17 5.75H17.005M10.5001 21.8883L10.5002 19.6849C10.5002 19.5656 10.5429 19.4502 10.6205 19.3596L13.1063 16.4594C13.3106 16.2211 13.2473 15.8556 12.9748 15.6999L10.1185 14.0677C10.0409 14.0234 9.97663 13.9591 9.93234 13.8814L8.07046 10.6186C7.97356 10.4488 7.78657 10.3511 7.59183 10.3684L2.06418 10.8607M21 6C21 8.20914 19 10 17 12C15 10 13 8.20914 13 6C13 3.79086 14.7909 2 17 2C19.2091 2 21 3.79086 21 6ZM17.25 5.75C17.25 5.88807 17.1381 6 17 6C16.8619 6 16.75 5.88807 16.75 5.75C16.75 5.61193 16.8619 5.5 17 5.5C17.1381 5.5 17.25 5.61193 17.25 5.75Z"/></svg>Global Import</span>
+      <span class="hero-pill"><svg class="pi" viewBox="0 0 512 512" fill="var(--cyan)" stroke="var(--cyan)" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><path d="M509.473,300.916l-75.734-86.458c-1.936-2.21-4.732-3.479-7.672-3.479h-0.67h-65.199V149.8c0-5.633-4.566-10.199-10.199-10.199H203.463c-10.428-45.834-51.506-80.148-100.451-80.148C46.212,59.453,0,105.664,0,162.465c0,22.23,7.079,42.839,19.101,59.689V373.84h-8.902C4.566,373.84,0,378.406,0,384.039c0,5.633,4.566,10.199,10.199,10.199h8.902v11.918c0,5.633,4.566,10.199,10.199,10.199h20.099c4.661,20.687,23.172,36.191,45.247,36.191c22.075,0,40.586-15.504,45.248-36.191h239.251v0.001c4.661,20.687,23.172,36.191,45.247,36.191c22.075,0,40.586-15.504,45.248-36.191h32.162c5.633,0,10.199-4.566,10.199-10.199v-97.851v-0.67C512,305.164,511.102,302.775,509.473,300.916z M205.992,159.999h133.805v170.612H39.499v-87.098c17.511,13.753,39.571,21.963,63.513,21.963c56.8,0,103.012-46.212,103.012-103.012C206.024,161.641,206.012,160.818,205.992,159.999z M20.398,162.466c0-45.554,37.06-82.614,82.614-82.614s82.614,37.06,82.614,82.614s-37.06,82.614-82.614,82.614S20.398,208.019,20.398,162.466z M94.646,432.149c-14.332,0-25.992-11.66-25.992-25.992c0-14.332,11.66-25.993,25.992-25.993c14.332,0,25.993,11.661,25.993,25.993C120.638,420.489,108.979,432.149,94.646,432.149z M339.799,395.958H139.893c-4.661-20.688-23.172-36.192-45.248-36.192c-22.075,0-40.586,15.504-45.247,36.192h-9.899V351.01h300.299V395.958z M435.596,247.535l44.299,50.572h-44.299V247.535z M424.391,432.149c-14.332,0-25.992-11.66-25.992-25.992c0-14.332,11.66-25.993,25.992-25.993c14.332,0,25.993,11.661,25.993,25.993C450.384,420.489,438.723,432.149,424.391,432.149z M491.602,395.958h-21.963c-4.661-20.688-23.172-36.192-45.248-36.192c-22.075,0-40.586,15.504-45.247,36.192h-18.947v-164.58h55v76.929c0,5.633,4.566,10.199,10.199,10.199h66.205V395.958z"/><path d="M315.155,299.135h-85.673c-5.633,0-10.199,4.566-10.199,10.199c0,5.633,4.566,10.199,10.199,10.199h85.673c5.633,0,10.199-4.566,10.199-10.199C325.355,303.701,320.788,299.135,315.155,299.135z"/><path d="M197.865,299.135h-6.12c-5.633,0-10.199,4.566-10.199,10.199c0,5.633,4.566,10.199,10.199,10.199h6.12c5.633,0,10.199-4.566,10.199-10.199C208.064,303.701,203.498,299.135,197.865,299.135z"/><path d="M132.662,177.691l-19.451-19.451v-56.97c0-5.633-4.566-10.199-10.199-10.199c-5.633,0-10.199,4.566-10.199,10.199v61.195c0,2.705,1.075,5.299,2.987,7.212l22.438,22.438c1.992,1.992,4.602,2.987,7.212,2.987s5.221-0.995,7.212-2.987C136.645,188.133,136.645,181.675,132.662,177.691z"/></svg>Fast Delivery</span>
+    </div>
+  </section>
+      <!-- Brand Badges -->
+  <section class="circle-badges" id="circleBadges">
+    <div class="cb-scroll" id="cbTrack" aria-hidden="false">
+<div class="cb-item">
+        <div class="cb-ring cb-brand"><svg viewBox="163.5 163.50000000000003 285 285" xmlns="http://www.w3.org/2000/svg" style="width:36px;height:36px;display:block;margin-top:4px;" preserveAspectRatio="xMidYMid meet">
+<g clip-rule="evenodd" fill-rule="evenodd">
+<path d="m340.3 330.2c-16.5 12.2-40.5 18.7-61.2 18.7-29 0-55-10.7-74.8-28.5-1.5-1.4-.2-3.3 1.7-2.2 21.3 12.4 47.6 19.8 74.8 19.8 18.3 0 38.5-3.8 57.1-11.7 2.8-1.1 5.1 1.9 2.4 3.9z" fill="#f90"/>
+<path d="m347.2 322.3c-2.1-2.7-14-1.3-19.3-.6-1.6.2-1.9-1.2-.4-2.2 9.5-6.7 25-4.7 26.8-2.5s-.5 17.8-9.4 25.2c-1.4 1.1-2.7.5-2.1-1 2-5 6.5-16.1 4.4-18.9z" fill="#f90"/>
+<path class="amz-wordmark" d="m328.2 272.5v-6.5c0-1 .7-1.6 1.6-1.6h29c.9 0 1.7.7 1.7 1.6v5.5c0 .9-.8 2.1-2.2 4.1l-15 21.4c5.6-.1 11.5.7 16.5 3.5 1.1.6 1.4 1.6 1.5 2.5v6.9c0 1-1 2.1-2.1 1.5-8.9-4.7-20.8-5.2-30.6.1-1 .5-2.1-.5-2.1-1.5v-6.6c0-1 0-2.8 1.1-4.4l17.4-24.9h-15.1c-.9 0-1.7-.7-1.7-1.6zm-105.7 40.3h-8.8c-.8-.1-1.5-.7-1.6-1.5v-45.2c0-.9.8-1.6 1.7-1.6h8.2c.9 0 1.5.7 1.6 1.5v5.9h.2c2.1-5.7 6.2-8.4 11.6-8.4 5.5 0 9 2.7 11.4 8.4 2.1-5.7 7-8.4 12.2-8.4 3.7 0 7.7 1.5 10.2 5 2.8 3.8 2.2 9.3 2.2 14.2v28.6c0 .9-.8 1.6-1.7 1.6h-8.7c-.9-.1-1.6-.8-1.6-1.6v-24c0-1.9.2-6.7-.2-8.5-.7-3-2.6-3.9-5.2-3.9-2.1 0-4.4 1.4-5.3 3.7s-.8 6.1-.8 8.7v24c0 .9-.8 1.6-1.7 1.6h-8.8c-.9-.1-1.6-.8-1.6-1.6v-24c0-5 .8-12.5-5.4-12.5-6.3 0-6.1 7.2-6.1 12.5v24c-.1.8-.8 1.5-1.8 1.5zm163-49.3c13.1 0 20.2 11.2 20.2 25.5 0 13.8-7.8 24.8-20.2 24.8-12.8 0-19.8-11.2-19.8-25.2-.1-14.1 7-25.1 19.8-25.1zm0 9.3c-6.5 0-6.9 8.9-6.9 14.4s-.1 17.3 6.8 17.3c6.8 0 7.2-9.5 7.2-15.3 0-3.8-.2-8.4-1.3-12-1-3.2-3-4.4-5.8-4.4zm37.1 40h-8.8c-.9-.1-1.6-.8-1.6-1.6v-45.3c.1-.8.8-1.5 1.7-1.5h8.2c.8 0 1.4.6 1.6 1.3v6.9h.2c2.5-6.2 5.9-9.1 12-9.1 3.9 0 7.8 1.4 10.3 5.3 2.3 3.6 2.3 9.7 2.3 14.1v28.5c-.1.8-.8 1.4-1.7 1.4h-8.8c-.8-.1-1.5-.7-1.6-1.4v-24.6c0-5 .6-12.2-5.5-12.2-2.1 0-4.1 1.4-5.1 3.6-1.2 2.8-1.4 5.5-1.4 8.6v24.4c-.1.9-.9 1.6-1.8 1.6zm-117.5-21.6c0 3.4.1 6.3-1.6 9.4-1.4 2.5-3.6 4-6.1 4-3.4 0-5.4-2.6-5.4-6.4 0-7.5 6.7-8.9 13.1-8.9zm8.9 21.5c-.6.5-1.4.6-2.1.2-2.9-2.4-3.5-3.6-5.1-5.9-4.8 4.9-8.3 6.4-14.5 6.4-7.4 0-13.2-4.6-13.2-13.7 0-7.2 3.9-12 9.4-14.4 4.8-2.1 11.5-2.5 16.6-3.1v-1.1c0-2.1.2-4.6-1.1-6.4-1.1-1.6-3.1-2.3-4.9-2.3-3.4 0-6.4 1.7-7.1 5.3-.2.8-.7 1.6-1.5 1.6l-8.5-.9c-.7-.2-1.5-.7-1.3-1.8 2-10.4 11.3-13.5 19.7-13.5 4.3 0 9.9 1.1 13.3 4.4 4.3 4 3.9 9.4 3.9 15.2v13.7c0 4.1 1.7 5.9 3.3 8.2.6.8.7 1.8 0 2.3-1.9 1.5-5.1 4.3-6.9 5.8zm-124.4-21.5c0 3.4.1 6.3-1.6 9.4-1.4 2.5-3.6 4-6.1 4-3.4 0-5.4-2.6-5.4-6.4 0-7.5 6.7-8.9 13.1-8.9zm8.8 21.5c-.6.5-1.4.6-2.1.2-2.9-2.4-3.5-3.6-5.1-5.9-4.8 4.9-8.3 6.4-14.5 6.4-7.4 0-13.2-4.6-13.2-13.7 0-7.2 3.9-12 9.4-14.4 4.8-2.1 11.5-2.5 16.6-3.1v-1.1c0-2.1.2-4.6-1.1-6.4-1.1-1.6-3.1-2.3-4.9-2.3-3.4 0-6.4 1.7-7.1 5.3-.2.8-.7 1.6-1.5 1.6l-8.5-.9c-.7-.2-1.5-.7-1.3-1.8 2-10.4 11.3-13.5 19.7-13.5 4.3 0 9.9 1.1 13.3 4.4 4.3 4 3.9 9.4 3.9 15.2v13.7c0 4.1 1.7 5.9 3.3 8.2.6.8.7 1.8 0 2.3-1.9 1.5-5.1 4.3-6.9 5.8z"/>
+</g>
+</svg></div>
+      </div>
+      <div class="cb-item">
+        <div class="cb-ring cb-brand"><svg viewBox="-384.501 -38.04000000000002 901.319 901.319" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;display:block;" preserveAspectRatio="xMidYMid meet"><path d="M407.22 377.62c5.02 0 9.152-2.61 9.71-5.982l4.956-56.05c0-5.54-6.49-10.088-14.65-10.088-8.152 0-14.636 4.548-14.636 10.089l4.953 56.049c.545 3.371 4.677 5.982 9.684 5.982h-.017M376.927 395.127c2.518-4.342 2.328-9.222-.326-11.39l-46.07-32.317c-4.79-2.774-11.972.565-16.048 7.634-4.09 7.06-3.365 14.945 1.412 17.72l51.013 23.752c3.189 1.182 7.537-1.093 10.035-5.432l-.016.033M437.54 395.097c2.514 4.339 6.84 6.615 10.032 5.432l51.013-23.752c4.807-2.774 5.49-10.66 1.438-17.72-4.096-7.062-11.291-10.408-16.068-7.634l-46.073 32.317c-2.634 2.165-2.83 7.049-.326 11.39l-.016-.033M407.22 447.635c5.02 0 9.152 2.588 9.71 5.963l4.956 56.042c0 5.557-6.49 10.095-14.65 10.095-8.152 0-14.636-4.538-14.636-10.095l4.953-56.042c.545-3.375 4.677-5.963 9.684-5.963h-.017M437.54 430.124c2.514-4.351 6.84-6.607 10.032-5.411l51.013 23.736c4.807 2.777 5.49 10.67 1.438 17.736-4.096 7.039-11.291 10.394-16.068 7.624l-46.073-32.287c-2.634-2.182-2.83-7.069-.326-11.407h-.02M376.927 430.118c2.518 4.335 2.328 9.222-.326 11.408l-46.07 32.286c-4.79 2.77-11.972-.585-16.048-7.624-4.09-7.066-3.365-14.959 1.412-17.736l51.013-23.736c3.189-1.196 7.537 1.06 10.035 5.412h-.016" fill="#fdbb30"/><path d="M116.622 441.42c0 1.72-.153 3.494-.624 5.052-1.954 6.471-8.654 11.943-17.036 11.943-6.989 0-12.54-3.97-12.54-12.355 0-12.833 14.125-16.377 30.204-16.288l-.004 11.647zm25.22-22.364c0-21.161-9.042-39.781-39.594-39.781-15.683 0-28.13 4.405-34.924 8.331l4.976 17.012c6.209-3.92 16.105-7.165 25.47-7.165 15.497-.043 18.035 8.776 18.035 14.42v1.336c-33.781-.05-55.135 11.647-55.135 35.475 0 14.56 10.876 28.197 29.782 28.197 11.617 0 21.347-4.637 27.17-12.072h.575s3.853 16.142 25.124 9.966c-1.11-6.713-1.475-13.879-1.475-22.496l-.003-33.223M-384.5 350.457s22.075 90.454 25.6 105.134c4.112 17.135 11.523 23.443 32.88 19.184l13.783-56.078c3.495-13.936 5.834-23.872 8.086-38.034h.392c1.581 14.312 3.824 24.141 6.7 38.08 0 0 5.608 25.46 8.485 38.828 2.88 13.364 10.896 21.792 31.818 17.204l32.844-124.322h-26.51l-11.218 53.753c-3.016 15.64-5.75 27.875-7.86 42.18h-.375c-1.917-14.179-4.358-25.915-7.421-41.157l-11.67-54.776h-27.626l-12.49 53.395c-3.535 16.23-6.85 29.33-8.95 43.159h-.382c-2.156-13.022-5.026-29.493-8.132-45.196 0 0-7.415-38.193-10.023-51.358l-27.931.004M-173.766 441.42c0 1.72-.153 3.494-.631 5.052-1.95 6.471-8.654 11.943-17.036 11.943-6.99 0-12.533-3.97-12.533-12.355 0-12.833 14.121-16.377 30.203-16.288l-.003 11.647zm25.217-22.364c0-21.161-9.042-39.781-39.588-39.781-15.687 0-28.144 4.405-34.934 8.331l4.97 17.012c6.208-3.92 16.104-7.165 25.472-7.165 15.508-.043 18.046 8.776 18.046 14.42v1.336c-33.795-.05-55.139 11.647-55.139 35.475 0 14.56 10.87 28.197 29.762 28.197 11.633 0 21.357-4.637 27.187-12.072h.568s3.864 16.142 25.13 9.966c-1.112-6.713-1.474-13.879-1.474-22.496v-33.223M-106.463 448.385v-97.928h-25.25v124.322h25.25v-26.394M223.853 350.457v91.71c0 12.65 2.385 21.503 7.47 26.921 4.456 4.737 11.777 7.803 20.557 7.803 7.468 0 14.81-1.425 18.275-2.71l-.326-19.726c-2.578.63-5.538 1.14-9.59 1.14-8.604 0-11.481-5.512-11.481-16.863v-35.09h21.988v-23.79h-21.988v-29.395h-24.905M158.679 381.384v93.395h26.047v-47.82c0-2.585.156-4.837.565-6.897 1.927-10.022 9.587-16.42 20.59-16.42 3.016 0 5.175.328 7.514.66v-24.45c-1.963-.391-3.295-.574-5.737-.574-9.72 0-20.779 6.272-25.42 19.726h-.704v-17.62h-22.855M-88.783 381.384v93.395h25.377v-54.767c0-2.57.302-5.288 1.192-7.644 2.103-5.514 7.235-11.972 15.424-11.972 10.245 0 15.029 8.657 15.029 21.151v53.225h25.357v-55.434c0-2.452.335-5.408 1.06-7.57 2.082-6.276 7.61-11.379 15.224-11.379 10.381 0 15.364 8.505 15.364 23.211v51.169h25.374v-55.01c0-29.007-14.73-40.49-31.36-40.49-7.358 0-13.172 1.843-18.43 5.065-4.415 2.72-8.375 6.574-11.83 11.64h-.375c-4.01-10.065-13.445-16.7-25.74-16.7-15.795 0-22.894 8.007-27.2 14.797h-.378v-12.69h-24.088" fill="#1a75cf"/><path d="M511.38 470.238h.383c.508 0 .834-.21.834-.522 0-.355-.306-.548-.778-.548-.162 0-.328.033-.438.033v1.046-.01zm-.059 2.518h-1.349v-4.395c.306-.06 1.02-.167 1.934-.167.993 0 1.438.14 1.764.36.275.192.475.52.475.963 0 .451-.415.833-1.027 1v.056c.499.133.771.495.914 1.13.136.634.22.893.305 1.056h-1.528c-.133-.163-.212-.552-.302-.94-.086-.445-.296-.668-.747-.668h-.442l.003 1.605zm.558-5.827c-1.937 0-3.398 1.578-3.398 3.59 0 1.96 1.465 3.559 3.451 3.559 1.994.033 3.459-1.598 3.459-3.591 0-1.984-1.465-3.558-3.482-3.558h-.03zm.087-1.193c2.7 0 4.853 2.126 4.853 4.75 0 2.655-2.153 4.784-4.89 4.784s-4.917-2.132-4.917-4.783c0-2.625 2.183-4.75 4.917-4.75h.03" fill="#fdbb30"/></svg></div>
+      </div>
+      <div class="cb-item">
+        <div class="cb-ring cb-brand"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="width:54px;height:54px;display:block;" preserveAspectRatio="xMidYMid meet">
+    <path d="M728.6 604l-28.2 28.2v38l28.2 28.2h119.2V604H728.6zm-11 53.5c-3.5 0-6.3-2.8-6.3-6.3s2.8-6.3 6.3-6.3 6.3 2.8 6.3 6.3-2.8 6.3-6.3 6.3z" fill="#FFE600"/>
+  <circle cx="746" cy="643" r="8" fill="#111111"/>
+  <path d="M360.9 427.2C371.3 423 383 414.3 383 396c0-23.4-23.2-39.3-54.5-39.3H256V506h78.2c30.8 0 59.2-10.8 59.2-42.5 0-21.4-15.5-31.2-32.5-36.3zm-57-35.6h17.6c7.2 0 12.6 5.6 12.6 11.3 0 5.3-5.7 11-12.6 11h-17.6v-22.3zm21.8 80.1h-21.8v-26.9h23.2c8.1 0 14.9 6.2 14.9 13.2.1 7.5-6.3 13.7-16.3 13.7zm74 121.1c10.4-4.2 22.1-12.9 22.1-31.2 0-23.4-23.2-39.3-54.5-39.3h-72.5v149.3H373c30.8 0 59.2-10.8 59.2-42.5-.1-21.4-15.5-31.2-32.5-36.3zm-57.1-35.6h17.6c7.2 0 12.6 5.6 12.6 11.3 0 5.3-5.7 11-12.6 11h-17.6v-22.3zm21.9 80.1h-21.8v-26.9h23.2c8.1 0 14.9 6.2 14.9 13.2 0 7.5-6.4 13.7-16.3 13.7zm32.6-131.2V356.8h120.4v36.1h-72.7v19.6h59v33.8h-59v23.9h72.7v35.9H397.1zm185.7 4.3c33.9 0 61-19.3 61-50.7 0-50.6-65.8-42.8-65.8-58.5 0-6.1 6.4-9.3 13-9.3 11.3 0 19.5 7.4 19.5 7.4l28.3-27c-11.3-10.8-29.2-19.8-53.3-19.8-36.2 0-59.8 21.5-59.8 47.4 0 51.2 64.8 43.8 64.8 59.9 0 5.6-5.4 11.3-15.2 11.3-11.2 0-20-6.7-26.9-12.5l-28.5 27.1c11.5 11.2 29.9 24.7 62.9 24.7zm97.9-4.3V392.7h-39.4v-35.9H768v35.9h-39.4v113.4h-47.9zm-246.9 16.2h47.8v89.4c0 9.1 9 17.5 18.5 17.5 8.9 0 17.9-7.6 17.9-17.9v-89h47.6v88.4c0 35.1-29.1 63-66.7 63-37.9 0-65-30.4-65-64.9l-.1-86.5zm190.5 149.3v-53.4l-56.1-96h48.3l31.8 51.4 31.9-51.4h48.4l-56.3 96.5v52.8h-48z" fill="#0046be"/>
+</svg></div>
+      </div>
+      <div class="cb-item">
+        <div class="cb-ring cb-brand"><svg
+   viewBox="0 0 264.30496 89.613647"
+   version="1.1"
+   id="svg3217"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg" style="width:36px;height:36px;display:block;" preserveAspectRatio="xMidYMid meet">
+  <defs
+     id="defs3214" />
+  <g
+     id="layer1"
+     transform="translate(-117.21044,-156.10418)">
+    <g
+       id="g1"
+       transform="matrix(21.168394,0,0,21.168394,-2363.9457,-3148.3704)">
+      <path
+         fill-rule="evenodd"
+         clip-rule="evenodd"
+         d="m 127.79597,157.65741 c 0.16071,-0.11325 0.36941,-0.17068 0.62106,-0.17068 0.77708,0 1.27921,0.54516 1.27921,1.38884 0,0.90173 -0.55785,1.46193 -1.45585,1.46193 -0.33274,0 -0.67476,-0.0804 -0.89254,-0.20973 -0.24654,-0.14536 -0.24654,-0.32721 -0.24654,-0.50308 v -3.23405 c 0,-0.13065 0.0603,-0.28647 0.34732,-0.28647 0.2871,0 0.34734,0.15582 0.34734,0.28647 z m 0,1.98765 c 0.11975,0.075 0.28493,0.11954 0.44442,0.11954 0.46519,0 0.7429,-0.31644 0.7429,-0.84643 0,-0.52957 -0.27533,-0.85857 -0.7185,-0.85857 -0.18238,0 -0.34004,0.0521 -0.46882,0.15481 z"
+         fill="#458500"
+         id="path1"
+         />
+      <path
+         d="m 118.01389,156.65861 c 0,0.22949 -0.16898,0.39608 -0.40174,0.39608 -0.23279,0 -0.40174,-0.16659 -0.40174,-0.39608 0,-0.22946 0.16895,-0.39608 0.40174,-0.39608 0.23276,0 0.40174,0.16662 0.40174,0.39608 z"
+         fill="#458500"
+         id="path2"
+         />
+      <path
+         d="m 117.26482,157.78539 c 0,-0.13069 0.0602,-0.28647 0.34733,-0.28647 0.28706,0 0.34733,0.15578 0.34733,0.28647 v 2.24742 c 0,0.13062 -0.0603,0.28638 -0.34733,0.28638 -0.28709,0 -0.34733,-0.15576 -0.34733,-0.28638 z"
+         fill="#458500"
+         id="path3"
+         />
+      <path
+         d="m 121.40044,156.26253 c -0.23448,0 -0.35341,0.0964 -0.35341,0.28647 v 1.36409 h -1.76592 V 156.549 c 0,-0.13065 -0.0602,-0.28647 -0.34733,-0.28647 -0.2345,0 -0.35341,0.0964 -0.35341,0.28647 v 3.48381 c 0,0.19 0.11891,0.28641 0.35341,0.28641 0.28709,0 0.34733,-0.15579 0.34733,-0.28641 v -1.49203 h 1.76592 v 1.49203 c 0,0.19 0.11893,0.28641 0.35341,0.28641 0.2871,0 0.34734,-0.15579 0.34734,-0.28641 V 156.549 c 0,-0.13065 -0.0602,-0.28647 -0.34734,-0.28647 z"
+         fill="#458500"
+         id="path4"
+         />
+      <path
+         fill-rule="evenodd"
+         clip-rule="evenodd"
+         d="m 124.08329,159.61482 c 0.0928,-0.0531 0.15925,-0.0877 0.23466,-0.0877 0.20171,0 0.29247,0.18177 0.29247,0.31078 0,0.10451 -0.0646,0.19527 -0.19752,0.27758 -0.2332,0.14732 -0.52339,0.22206 -0.86238,0.22206 -0.85055,0 -1.35837,-0.53062 -1.35837,-1.41933 0,-0.88065 0.50213,-1.44974 1.27921,-1.44974 0.71011,0 1.20607,0.50351 1.20607,1.22442 0,0.41127 -0.18489,0.44479 -0.40822,0.44479 h -1.38528 c 0.0675,0.39992 0.30189,0.60259 0.69704,0.60259 0.18796,0 0.36166,-0.0434 0.50232,-0.12541 z m -0.0824,-0.99527 c -0.006,-0.37011 -0.20794,-0.59037 -0.54174,-0.59037 -0.32218,0 -0.52297,0.20398 -0.58169,0.59037 z"
+         fill="#458500"
+         id="path5"
+         />
+      <path
+         d="m 126.5228,157.48672 c -0.3248,0 -0.58817,0.15444 -0.74896,0.43684 v -0.13749 c 0.003,-0.0853 -0.0188,-0.15321 -0.0657,-0.20192 -0.0544,-0.0565 -0.14095,-0.0852 -0.25726,-0.0852 -0.22243,0 -0.33515,0.0964 -0.33515,0.28647 v 2.24743 c 0,0.1306 0.0602,0.28638 0.34732,0.28638 0.28707,0 0.34735,-0.15578 0.34735,-0.28638 v -1.54856 c 0.12988,-0.24519 0.32004,-0.34557 0.67632,-0.35768 0.23773,-0.006 0.3347,-0.0998 0.3347,-0.32293 0,-0.2221 -0.0893,-0.31692 -0.29863,-0.31692 z"
+         fill="#458500"
+         id="path6"
+         />
+    </g>
+  </g>
+</svg></div>
+      </div>
+      <div class="cb-item">
+        <div class="cb-ring cb-brand"><svg viewBox="0.1 -89.74000000000001 299.8 299.8" xmlns="http://www.w3.org/2000/svg" style="width:36px;height:36px;display:block;" preserveAspectRatio="xMidYMid meet"><path d="M38.867 26.309C17.721 26.309.1 35.279.1 62.345c0 21.442 11.849 34.944 39.312 34.944 32.326 0 34.398-21.294 34.398-21.294H58.147s-3.358 11.466-19.69 11.466c-13.302 0-22.869-8.986-22.869-21.58h59.861v-7.904c0-12.46-7.91-31.668-36.582-31.668zM38.32 36.41c12.662 0 21.294 7.757 21.294 19.383h-43.68c0-12.343 11.268-19.383 22.386-19.383z" fill="#e53238"/><path d="M75.438.1v83.597c0 4.745-.339 11.408-.339 11.408h14.939s.537-4.785.537-9.159c0 0 7.381 11.548 27.451 11.548 21.134 0 35.49-14.674 35.49-35.695 0-19.557-13.186-35.286-35.456-35.286-20.854 0-27.334 11.261-27.334 11.261V.1H75.438zm38.766 36.753c14.352 0 23.479 10.652 23.479 24.946 0 15.328-10.541 25.355-23.376 25.355-15.318 0-23.581-11.961-23.581-25.219 0-12.354 7.414-25.082 23.478-25.082z" fill="#0064d2"/><path d="M190.645 26.309c-31.812 0-33.852 17.418-33.852 20.202h15.834s.83-10.169 16.926-10.169c10.459 0 18.564 4.788 18.564 13.991v3.276h-18.564c-24.645 0-37.674 7.21-37.674 21.841 0 14.398 12.038 22.232 28.307 22.232 22.172 0 29.314-12.251 29.314-12.251 0 4.873.375 9.675.375 9.675h14.076s-.545-5.952-.545-9.76V52.432c0-21.582-17.408-26.123-32.761-26.123zm17.472 37.128v4.368c0 5.697-3.516 19.861-24.212 19.861-11.333 0-16.192-5.656-16.192-12.217 0-11.935 16.363-12.012 40.404-12.012z" fill="#f5af02"/><path d="M214.879 29.041h17.813l25.565 51.218 25.506-51.218H299.9l-46.459 91.184h-16.927l13.406-25.419-35.041-65.765z" fill="#86b817"/></svg></div>
+      </div>
+<div class="cb-item">
+        <div class="cb-ring cb-brand"><svg viewBox="163.5 163.50000000000003 285 285" xmlns="http://www.w3.org/2000/svg" style="width:36px;height:36px;display:block;margin-top:4px;" preserveAspectRatio="xMidYMid meet">
+<g clip-rule="evenodd" fill-rule="evenodd">
+<path d="m340.3 330.2c-16.5 12.2-40.5 18.7-61.2 18.7-29 0-55-10.7-74.8-28.5-1.5-1.4-.2-3.3 1.7-2.2 21.3 12.4 47.6 19.8 74.8 19.8 18.3 0 38.5-3.8 57.1-11.7 2.8-1.1 5.1 1.9 2.4 3.9z" fill="#f90"/>
+<path d="m347.2 322.3c-2.1-2.7-14-1.3-19.3-.6-1.6.2-1.9-1.2-.4-2.2 9.5-6.7 25-4.7 26.8-2.5s-.5 17.8-9.4 25.2c-1.4 1.1-2.7.5-2.1-1 2-5 6.5-16.1 4.4-18.9z" fill="#f90"/>
+<path class="amz-wordmark" d="m328.2 272.5v-6.5c0-1 .7-1.6 1.6-1.6h29c.9 0 1.7.7 1.7 1.6v5.5c0 .9-.8 2.1-2.2 4.1l-15 21.4c5.6-.1 11.5.7 16.5 3.5 1.1.6 1.4 1.6 1.5 2.5v6.9c0 1-1 2.1-2.1 1.5-8.9-4.7-20.8-5.2-30.6.1-1 .5-2.1-.5-2.1-1.5v-6.6c0-1 0-2.8 1.1-4.4l17.4-24.9h-15.1c-.9 0-1.7-.7-1.7-1.6zm-105.7 40.3h-8.8c-.8-.1-1.5-.7-1.6-1.5v-45.2c0-.9.8-1.6 1.7-1.6h8.2c.9 0 1.5.7 1.6 1.5v5.9h.2c2.1-5.7 6.2-8.4 11.6-8.4 5.5 0 9 2.7 11.4 8.4 2.1-5.7 7-8.4 12.2-8.4 3.7 0 7.7 1.5 10.2 5 2.8 3.8 2.2 9.3 2.2 14.2v28.6c0 .9-.8 1.6-1.7 1.6h-8.7c-.9-.1-1.6-.8-1.6-1.6v-24c0-1.9.2-6.7-.2-8.5-.7-3-2.6-3.9-5.2-3.9-2.1 0-4.4 1.4-5.3 3.7s-.8 6.1-.8 8.7v24c0 .9-.8 1.6-1.7 1.6h-8.8c-.9-.1-1.6-.8-1.6-1.6v-24c0-5 .8-12.5-5.4-12.5-6.3 0-6.1 7.2-6.1 12.5v24c-.1.8-.8 1.5-1.8 1.5zm163-49.3c13.1 0 20.2 11.2 20.2 25.5 0 13.8-7.8 24.8-20.2 24.8-12.8 0-19.8-11.2-19.8-25.2-.1-14.1 7-25.1 19.8-25.1zm0 9.3c-6.5 0-6.9 8.9-6.9 14.4s-.1 17.3 6.8 17.3c6.8 0 7.2-9.5 7.2-15.3 0-3.8-.2-8.4-1.3-12-1-3.2-3-4.4-5.8-4.4zm37.1 40h-8.8c-.9-.1-1.6-.8-1.6-1.6v-45.3c.1-.8.8-1.5 1.7-1.5h8.2c.8 0 1.4.6 1.6 1.3v6.9h.2c2.5-6.2 5.9-9.1 12-9.1 3.9 0 7.8 1.4 10.3 5.3 2.3 3.6 2.3 9.7 2.3 14.1v28.5c-.1.8-.8 1.4-1.7 1.4h-8.8c-.8-.1-1.5-.7-1.6-1.4v-24.6c0-5 .6-12.2-5.5-12.2-2.1 0-4.1 1.4-5.1 3.6-1.2 2.8-1.4 5.5-1.4 8.6v24.4c-.1.9-.9 1.6-1.8 1.6zm-117.5-21.6c0 3.4.1 6.3-1.6 9.4-1.4 2.5-3.6 4-6.1 4-3.4 0-5.4-2.6-5.4-6.4 0-7.5 6.7-8.9 13.1-8.9zm8.9 21.5c-.6.5-1.4.6-2.1.2-2.9-2.4-3.5-3.6-5.1-5.9-4.8 4.9-8.3 6.4-14.5 6.4-7.4 0-13.2-4.6-13.2-13.7 0-7.2 3.9-12 9.4-14.4 4.8-2.1 11.5-2.5 16.6-3.1v-1.1c0-2.1.2-4.6-1.1-6.4-1.1-1.6-3.1-2.3-4.9-2.3-3.4 0-6.4 1.7-7.1 5.3-.2.8-.7 1.6-1.5 1.6l-8.5-.9c-.7-.2-1.5-.7-1.3-1.8 2-10.4 11.3-13.5 19.7-13.5 4.3 0 9.9 1.1 13.3 4.4 4.3 4 3.9 9.4 3.9 15.2v13.7c0 4.1 1.7 5.9 3.3 8.2.6.8.7 1.8 0 2.3-1.9 1.5-5.1 4.3-6.9 5.8zm-124.4-21.5c0 3.4.1 6.3-1.6 9.4-1.4 2.5-3.6 4-6.1 4-3.4 0-5.4-2.6-5.4-6.4 0-7.5 6.7-8.9 13.1-8.9zm8.8 21.5c-.6.5-1.4.6-2.1.2-2.9-2.4-3.5-3.6-5.1-5.9-4.8 4.9-8.3 6.4-14.5 6.4-7.4 0-13.2-4.6-13.2-13.7 0-7.2 3.9-12 9.4-14.4 4.8-2.1 11.5-2.5 16.6-3.1v-1.1c0-2.1.2-4.6-1.1-6.4-1.1-1.6-3.1-2.3-4.9-2.3-3.4 0-6.4 1.7-7.1 5.3-.2.8-.7 1.6-1.5 1.6l-8.5-.9c-.7-.2-1.5-.7-1.3-1.8 2-10.4 11.3-13.5 19.7-13.5 4.3 0 9.9 1.1 13.3 4.4 4.3 4 3.9 9.4 3.9 15.2v13.7c0 4.1 1.7 5.9 3.3 8.2.6.8.7 1.8 0 2.3-1.9 1.5-5.1 4.3-6.9 5.8z"/>
+</g>
+</svg></div>
+      </div>
+      <div class="cb-item">
+        <div class="cb-ring cb-brand"><svg viewBox="-384.501 -38.04000000000002 901.319 901.319" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;display:block;" preserveAspectRatio="xMidYMid meet"><path d="M407.22 377.62c5.02 0 9.152-2.61 9.71-5.982l4.956-56.05c0-5.54-6.49-10.088-14.65-10.088-8.152 0-14.636 4.548-14.636 10.089l4.953 56.049c.545 3.371 4.677 5.982 9.684 5.982h-.017M376.927 395.127c2.518-4.342 2.328-9.222-.326-11.39l-46.07-32.317c-4.79-2.774-11.972.565-16.048 7.634-4.09 7.06-3.365 14.945 1.412 17.72l51.013 23.752c3.189 1.182 7.537-1.093 10.035-5.432l-.016.033M437.54 395.097c2.514 4.339 6.84 6.615 10.032 5.432l51.013-23.752c4.807-2.774 5.49-10.66 1.438-17.72-4.096-7.062-11.291-10.408-16.068-7.634l-46.073 32.317c-2.634 2.165-2.83 7.049-.326 11.39l-.016-.033M407.22 447.635c5.02 0 9.152 2.588 9.71 5.963l4.956 56.042c0 5.557-6.49 10.095-14.65 10.095-8.152 0-14.636-4.538-14.636-10.095l4.953-56.042c.545-3.375 4.677-5.963 9.684-5.963h-.017M437.54 430.124c2.514-4.351 6.84-6.607 10.032-5.411l51.013 23.736c4.807 2.777 5.49 10.67 1.438 17.736-4.096 7.039-11.291 10.394-16.068 7.624l-46.073-32.287c-2.634-2.182-2.83-7.069-.326-11.407h-.02M376.927 430.118c2.518 4.335 2.328 9.222-.326 11.408l-46.07 32.286c-4.79 2.77-11.972-.585-16.048-7.624-4.09-7.066-3.365-14.959 1.412-17.736l51.013-23.736c3.189-1.196 7.537 1.06 10.035 5.412h-.016" fill="#fdbb30"/><path d="M116.622 441.42c0 1.72-.153 3.494-.624 5.052-1.954 6.471-8.654 11.943-17.036 11.943-6.989 0-12.54-3.97-12.54-12.355 0-12.833 14.125-16.377 30.204-16.288l-.004 11.647zm25.22-22.364c0-21.161-9.042-39.781-39.594-39.781-15.683 0-28.13 4.405-34.924 8.331l4.976 17.012c6.209-3.92 16.105-7.165 25.47-7.165 15.497-.043 18.035 8.776 18.035 14.42v1.336c-33.781-.05-55.135 11.647-55.135 35.475 0 14.56 10.876 28.197 29.782 28.197 11.617 0 21.347-4.637 27.17-12.072h.575s3.853 16.142 25.124 9.966c-1.11-6.713-1.475-13.879-1.475-22.496l-.003-33.223M-384.5 350.457s22.075 90.454 25.6 105.134c4.112 17.135 11.523 23.443 32.88 19.184l13.783-56.078c3.495-13.936 5.834-23.872 8.086-38.034h.392c1.581 14.312 3.824 24.141 6.7 38.08 0 0 5.608 25.46 8.485 38.828 2.88 13.364 10.896 21.792 31.818 17.204l32.844-124.322h-26.51l-11.218 53.753c-3.016 15.64-5.75 27.875-7.86 42.18h-.375c-1.917-14.179-4.358-25.915-7.421-41.157l-11.67-54.776h-27.626l-12.49 53.395c-3.535 16.23-6.85 29.33-8.95 43.159h-.382c-2.156-13.022-5.026-29.493-8.132-45.196 0 0-7.415-38.193-10.023-51.358l-27.931.004M-173.766 441.42c0 1.72-.153 3.494-.631 5.052-1.95 6.471-8.654 11.943-17.036 11.943-6.99 0-12.533-3.97-12.533-12.355 0-12.833 14.121-16.377 30.203-16.288l-.003 11.647zm25.217-22.364c0-21.161-9.042-39.781-39.588-39.781-15.687 0-28.144 4.405-34.934 8.331l4.97 17.012c6.208-3.92 16.104-7.165 25.472-7.165 15.508-.043 18.046 8.776 18.046 14.42v1.336c-33.795-.05-55.139 11.647-55.139 35.475 0 14.56 10.87 28.197 29.762 28.197 11.633 0 21.357-4.637 27.187-12.072h.568s3.864 16.142 25.13 9.966c-1.112-6.713-1.474-13.879-1.474-22.496v-33.223M-106.463 448.385v-97.928h-25.25v124.322h25.25v-26.394M223.853 350.457v91.71c0 12.65 2.385 21.503 7.47 26.921 4.456 4.737 11.777 7.803 20.557 7.803 7.468 0 14.81-1.425 18.275-2.71l-.326-19.726c-2.578.63-5.538 1.14-9.59 1.14-8.604 0-11.481-5.512-11.481-16.863v-35.09h21.988v-23.79h-21.988v-29.395h-24.905M158.679 381.384v93.395h26.047v-47.82c0-2.585.156-4.837.565-6.897 1.927-10.022 9.587-16.42 20.59-16.42 3.016 0 5.175.328 7.514.66v-24.45c-1.963-.391-3.295-.574-5.737-.574-9.72 0-20.779 6.272-25.42 19.726h-.704v-17.62h-22.855M-88.783 381.384v93.395h25.377v-54.767c0-2.57.302-5.288 1.192-7.644 2.103-5.514 7.235-11.972 15.424-11.972 10.245 0 15.029 8.657 15.029 21.151v53.225h25.357v-55.434c0-2.452.335-5.408 1.06-7.57 2.082-6.276 7.61-11.379 15.224-11.379 10.381 0 15.364 8.505 15.364 23.211v51.169h25.374v-55.01c0-29.007-14.73-40.49-31.36-40.49-7.358 0-13.172 1.843-18.43 5.065-4.415 2.72-8.375 6.574-11.83 11.64h-.375c-4.01-10.065-13.445-16.7-25.74-16.7-15.795 0-22.894 8.007-27.2 14.797h-.378v-12.69h-24.088" fill="#1a75cf"/><path d="M511.38 470.238h.383c.508 0 .834-.21.834-.522 0-.355-.306-.548-.778-.548-.162 0-.328.033-.438.033v1.046-.01zm-.059 2.518h-1.349v-4.395c.306-.06 1.02-.167 1.934-.167.993 0 1.438.14 1.764.36.275.192.475.52.475.963 0 .451-.415.833-1.027 1v.056c.499.133.771.495.914 1.13.136.634.22.893.305 1.056h-1.528c-.133-.163-.212-.552-.302-.94-.086-.445-.296-.668-.747-.668h-.442l.003 1.605zm.558-5.827c-1.937 0-3.398 1.578-3.398 3.59 0 1.96 1.465 3.559 3.451 3.559 1.994.033 3.459-1.598 3.459-3.591 0-1.984-1.465-3.558-3.482-3.558h-.03zm.087-1.193c2.7 0 4.853 2.126 4.853 4.75 0 2.655-2.153 4.784-4.89 4.784s-4.917-2.132-4.917-4.783c0-2.625 2.183-4.75 4.917-4.75h.03" fill="#fdbb30"/></svg></div>
+      </div>
+      <div class="cb-item">
+        <div class="cb-ring cb-brand"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="width:54px;height:54px;display:block;" preserveAspectRatio="xMidYMid meet">
+    <path d="M728.6 604l-28.2 28.2v38l28.2 28.2h119.2V604H728.6zm-11 53.5c-3.5 0-6.3-2.8-6.3-6.3s2.8-6.3 6.3-6.3 6.3 2.8 6.3 6.3-2.8 6.3-6.3 6.3z" fill="#FFE600"/>
+  <circle cx="746" cy="643" r="8" fill="#111111"/>
+  <path d="M360.9 427.2C371.3 423 383 414.3 383 396c0-23.4-23.2-39.3-54.5-39.3H256V506h78.2c30.8 0 59.2-10.8 59.2-42.5 0-21.4-15.5-31.2-32.5-36.3zm-57-35.6h17.6c7.2 0 12.6 5.6 12.6 11.3 0 5.3-5.7 11-12.6 11h-17.6v-22.3zm21.8 80.1h-21.8v-26.9h23.2c8.1 0 14.9 6.2 14.9 13.2.1 7.5-6.3 13.7-16.3 13.7zm74 121.1c10.4-4.2 22.1-12.9 22.1-31.2 0-23.4-23.2-39.3-54.5-39.3h-72.5v149.3H373c30.8 0 59.2-10.8 59.2-42.5-.1-21.4-15.5-31.2-32.5-36.3zm-57.1-35.6h17.6c7.2 0 12.6 5.6 12.6 11.3 0 5.3-5.7 11-12.6 11h-17.6v-22.3zm21.9 80.1h-21.8v-26.9h23.2c8.1 0 14.9 6.2 14.9 13.2 0 7.5-6.4 13.7-16.3 13.7zm32.6-131.2V356.8h120.4v36.1h-72.7v19.6h59v33.8h-59v23.9h72.7v35.9H397.1zm185.7 4.3c33.9 0 61-19.3 61-50.7 0-50.6-65.8-42.8-65.8-58.5 0-6.1 6.4-9.3 13-9.3 11.3 0 19.5 7.4 19.5 7.4l28.3-27c-11.3-10.8-29.2-19.8-53.3-19.8-36.2 0-59.8 21.5-59.8 47.4 0 51.2 64.8 43.8 64.8 59.9 0 5.6-5.4 11.3-15.2 11.3-11.2 0-20-6.7-26.9-12.5l-28.5 27.1c11.5 11.2 29.9 24.7 62.9 24.7zm97.9-4.3V392.7h-39.4v-35.9H768v35.9h-39.4v113.4h-47.9zm-246.9 16.2h47.8v89.4c0 9.1 9 17.5 18.5 17.5 8.9 0 17.9-7.6 17.9-17.9v-89h47.6v88.4c0 35.1-29.1 63-66.7 63-37.9 0-65-30.4-65-64.9l-.1-86.5zm190.5 149.3v-53.4l-56.1-96h48.3l31.8 51.4 31.9-51.4h48.4l-56.3 96.5v52.8h-48z" fill="#0046be"/>
+</svg></div>
+      </div>
+      <div class="cb-item">
+        <div class="cb-ring cb-brand"><svg
+   viewBox="0 0 264.30496 89.613647"
+   version="1.1"
+   id="svg3217"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg" style="width:36px;height:36px;display:block;" preserveAspectRatio="xMidYMid meet">
+  <defs
+     id="defs3214" />
+  <g
+     id="layer1"
+     transform="translate(-117.21044,-156.10418)">
+    <g
+       id="g1"
+       transform="matrix(21.168394,0,0,21.168394,-2363.9457,-3148.3704)">
+      <path
+         fill-rule="evenodd"
+         clip-rule="evenodd"
+         d="m 127.79597,157.65741 c 0.16071,-0.11325 0.36941,-0.17068 0.62106,-0.17068 0.77708,0 1.27921,0.54516 1.27921,1.38884 0,0.90173 -0.55785,1.46193 -1.45585,1.46193 -0.33274,0 -0.67476,-0.0804 -0.89254,-0.20973 -0.24654,-0.14536 -0.24654,-0.32721 -0.24654,-0.50308 v -3.23405 c 0,-0.13065 0.0603,-0.28647 0.34732,-0.28647 0.2871,0 0.34734,0.15582 0.34734,0.28647 z m 0,1.98765 c 0.11975,0.075 0.28493,0.11954 0.44442,0.11954 0.46519,0 0.7429,-0.31644 0.7429,-0.84643 0,-0.52957 -0.27533,-0.85857 -0.7185,-0.85857 -0.18238,0 -0.34004,0.0521 -0.46882,0.15481 z"
+         fill="#458500"
+         id="path1"
+         />
+      <path
+         d="m 118.01389,156.65861 c 0,0.22949 -0.16898,0.39608 -0.40174,0.39608 -0.23279,0 -0.40174,-0.16659 -0.40174,-0.39608 0,-0.22946 0.16895,-0.39608 0.40174,-0.39608 0.23276,0 0.40174,0.16662 0.40174,0.39608 z"
+         fill="#458500"
+         id="path2"
+         />
+      <path
+         d="m 117.26482,157.78539 c 0,-0.13069 0.0602,-0.28647 0.34733,-0.28647 0.28706,0 0.34733,0.15578 0.34733,0.28647 v 2.24742 c 0,0.13062 -0.0603,0.28638 -0.34733,0.28638 -0.28709,0 -0.34733,-0.15576 -0.34733,-0.28638 z"
+         fill="#458500"
+         id="path3"
+         />
+      <path
+         d="m 121.40044,156.26253 c -0.23448,0 -0.35341,0.0964 -0.35341,0.28647 v 1.36409 h -1.76592 V 156.549 c 0,-0.13065 -0.0602,-0.28647 -0.34733,-0.28647 -0.2345,0 -0.35341,0.0964 -0.35341,0.28647 v 3.48381 c 0,0.19 0.11891,0.28641 0.35341,0.28641 0.28709,0 0.34733,-0.15579 0.34733,-0.28641 v -1.49203 h 1.76592 v 1.49203 c 0,0.19 0.11893,0.28641 0.35341,0.28641 0.2871,0 0.34734,-0.15579 0.34734,-0.28641 V 156.549 c 0,-0.13065 -0.0602,-0.28647 -0.34734,-0.28647 z"
+         fill="#458500"
+         id="path4"
+         />
+      <path
+         fill-rule="evenodd"
+         clip-rule="evenodd"
+         d="m 124.08329,159.61482 c 0.0928,-0.0531 0.15925,-0.0877 0.23466,-0.0877 0.20171,0 0.29247,0.18177 0.29247,0.31078 0,0.10451 -0.0646,0.19527 -0.19752,0.27758 -0.2332,0.14732 -0.52339,0.22206 -0.86238,0.22206 -0.85055,0 -1.35837,-0.53062 -1.35837,-1.41933 0,-0.88065 0.50213,-1.44974 1.27921,-1.44974 0.71011,0 1.20607,0.50351 1.20607,1.22442 0,0.41127 -0.18489,0.44479 -0.40822,0.44479 h -1.38528 c 0.0675,0.39992 0.30189,0.60259 0.69704,0.60259 0.18796,0 0.36166,-0.0434 0.50232,-0.12541 z m -0.0824,-0.99527 c -0.006,-0.37011 -0.20794,-0.59037 -0.54174,-0.59037 -0.32218,0 -0.52297,0.20398 -0.58169,0.59037 z"
+         fill="#458500"
+         id="path5"
+         />
+      <path
+         d="m 126.5228,157.48672 c -0.3248,0 -0.58817,0.15444 -0.74896,0.43684 v -0.13749 c 0.003,-0.0853 -0.0188,-0.15321 -0.0657,-0.20192 -0.0544,-0.0565 -0.14095,-0.0852 -0.25726,-0.0852 -0.22243,0 -0.33515,0.0964 -0.33515,0.28647 v 2.24743 c 0,0.1306 0.0602,0.28638 0.34732,0.28638 0.28707,0 0.34735,-0.15578 0.34735,-0.28638 v -1.54856 c 0.12988,-0.24519 0.32004,-0.34557 0.67632,-0.35768 0.23773,-0.006 0.3347,-0.0998 0.3347,-0.32293 0,-0.2221 -0.0893,-0.31692 -0.29863,-0.31692 z"
+         fill="#458500"
+         id="path6"
+         />
+    </g>
+  </g>
+</svg></div>
+      </div>
+      <div class="cb-item">
+        <div class="cb-ring cb-brand"><svg viewBox="0.1 -89.74000000000001 299.8 299.8" xmlns="http://www.w3.org/2000/svg" style="width:36px;height:36px;display:block;" preserveAspectRatio="xMidYMid meet"><path d="M38.867 26.309C17.721 26.309.1 35.279.1 62.345c0 21.442 11.849 34.944 39.312 34.944 32.326 0 34.398-21.294 34.398-21.294H58.147s-3.358 11.466-19.69 11.466c-13.302 0-22.869-8.986-22.869-21.58h59.861v-7.904c0-12.46-7.91-31.668-36.582-31.668zM38.32 36.41c12.662 0 21.294 7.757 21.294 19.383h-43.68c0-12.343 11.268-19.383 22.386-19.383z" fill="#e53238"/><path d="M75.438.1v83.597c0 4.745-.339 11.408-.339 11.408h14.939s.537-4.785.537-9.159c0 0 7.381 11.548 27.451 11.548 21.134 0 35.49-14.674 35.49-35.695 0-19.557-13.186-35.286-35.456-35.286-20.854 0-27.334 11.261-27.334 11.261V.1H75.438zm38.766 36.753c14.352 0 23.479 10.652 23.479 24.946 0 15.328-10.541 25.355-23.376 25.355-15.318 0-23.581-11.961-23.581-25.219 0-12.354 7.414-25.082 23.478-25.082z" fill="#0064d2"/><path d="M190.645 26.309c-31.812 0-33.852 17.418-33.852 20.202h15.834s.83-10.169 16.926-10.169c10.459 0 18.564 4.788 18.564 13.991v3.276h-18.564c-24.645 0-37.674 7.21-37.674 21.841 0 14.398 12.038 22.232 28.307 22.232 22.172 0 29.314-12.251 29.314-12.251 0 4.873.375 9.675.375 9.675h14.076s-.545-5.952-.545-9.76V52.432c0-21.582-17.408-26.123-32.761-26.123zm17.472 37.128v4.368c0 5.697-3.516 19.861-24.212 19.861-11.333 0-16.192-5.656-16.192-12.217 0-11.935 16.363-12.012 40.404-12.012z" fill="#f5af02"/><path d="M214.879 29.041h17.813l25.565 51.218 25.506-51.218H299.9l-46.459 91.184h-16.927l13.406-25.419-35.041-65.765z" fill="#86b817"/></svg></div>
+      </div>
+</div>
+  </section>
+
+
+  
+
+
+  <!-- White Board Section -->
+  <section class="model-cards-section">
+<div class="model-row">
+
+  <div class="mcard mcard-local">
+    <div class="mcard-top">
+      <div class="mcard-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <p class="mcard-eye">Local Stock</p>
+    </div>
+    <div class="mcard-body">
+      <h3 class="mcard-title">Shop from Local</h3>
+      <p class="mcard-desc">Over 200+ products ready to ship across Bangladesh</p>
+      <button class="mcard-cta" onclick="navTo('store')">
+        <span>Browse</span>
+        <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="mcard-deco"></div>
+  </div>
+
+  <div class="mcard mcard-proxy">
+    <div class="mcard-top">
+      <div class="mcard-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      </div>
+      <p class="mcard-eye">Global Import</p>
+    </div>
+    <div class="mcard-body">
+      <h3 class="mcard-title">Buy for Me</h3>
+      <p class="mcard-desc">Share your product link from your favorite store. We'll handle the rest.</p>
+      <button class="mcard-cta" onclick="navTo('proxy')">
+        <span>Request</span>
+        <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="mcard-deco"></div>
+  </div>
+
+</div>
+</section>
+
+<section class="whiteboard" id="whiteboard">
+    <div class="wb-inner">
+      <div class="wb-header">
+        <h2 class="wb-title">Featured Categories</h2>
+        <p class="wb-sub">Browse our top supplement collections</p>
+      </div>
+      <div class="wb-grid">
+        <div class="wb-card" onclick="T('Whey Protein coming soon','💪')">
+          <div class="wb-icon" style="background:linear-gradient(135deg,#ff6b6b,#ee5a24)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <span class="wb-label">Whey Protein</span>
+        </div>
+        <div class="wb-card" onclick="T('Pre-Workout coming soon','⚡')">
+          <div class="wb-icon" style="background:linear-gradient(135deg,#feca57,#ff9f43)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <span class="wb-label">Pre-Workout</span>
+        </div>
+        <div class="wb-card" onclick="T('Vitamins coming soon','🍊')">
+          <div class="wb-icon" style="background:linear-gradient(135deg,#48dbfb,#0abde3)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </div>
+          <span class="wb-label">Vitamins</span>
+        </div>
+        <div class="wb-card" onclick="T('Creatine coming soon','🏋️')">
+          <div class="wb-icon" style="background:linear-gradient(135deg,#1dd1a1,#10ac84)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </div>
+          <span class="wb-label">Creatine</span>
+        </div>
+        <div class="wb-card" onclick="T('Fat Burners coming soon','🔥')">
+          <div class="wb-icon" style="background:linear-gradient(135deg,#ff6348,#ff4757)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+          </div>
+          <span class="wb-label">Fat Burners</span>
+        </div>
+        <div class="wb-card" onclick="T('BCAA coming soon','🧬')">
+          <div class="wb-icon" style="background:linear-gradient(135deg,#a29bfe,#6c5ce7)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="wb-label">BCAA</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="pill-nav">
+  <div class="pn-item on" id="pn-home" onclick="pnSet('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div>
+  <div class="pn-item" id="pn-store" onclick="pnSet('store');navTo('store')"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Store</span></div>
+  <div class="pn-proxy" onclick="pnSet('proxy');navTo('proxy')"><div class="pn-proxy-btn"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div><span>Proxy</span></div>
+  <div class="pn-item" id="pn-cart" onclick="pnSet('cart');T('Cart coming soon','🛒')"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg><span>Cart</span></div>
+  <div class="pn-item" id="pn-me" onclick="pnSet('me');T('Account coming soon','👤')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Account</span></div>
+</nav>
+
+<div id="toast"></div>
+
+<script>
+const toggle=document.getElementById('themeToggle');
+const saved=localStorage.getItem('sv-theme')||'light';
+if(saved==='dark'){document.body.classList.add('dark-mode');toggle.classList.add('dark');}
+toggle.addEventListener('click',()=>{toggle.classList.toggle('dark');const dark=toggle.classList.contains('dark');document.body.classList.toggle('dark-mode',dark);localStorage.setItem('sv-theme',dark?'dark':'light');});
+function navTo(dest){pnSet(dest);const m={store:['Store tab coming next 🏪','💊'],proxy:['Proxy form coming next 🌐','🌐']};if(m[dest])T(m[dest][0],m[dest][1]);}
+function pnSet(id){document.querySelectorAll('.pn-item').forEach(b=>b.classList.remove('on'));const el=document.getElementById('pn-'+id);if(el)el.classList.add('on');}
+const ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');ro.unobserve(x.target);}});},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+let _tt;
+
+// 3D badge tilt
+(function(){
+  const badge=document.getElementById('heroBadge');
+  if(!badge)return;
+  badge.addEventListener('mousemove',e=>{
+    const r=badge.getBoundingClientRect();
+    const cx=r.left+r.width/2,cy=r.top+r.height/2;
+    const dx=(e.clientX-cx)/(r.width/2);
+    const dy=(e.clientY-cy)/(r.height/2);
+    badge.style.transform='rotateY('+dx*12+'deg) rotateX('+(-dy*12)+'deg) translateZ(8px)';
+  });
+  badge.addEventListener('mouseleave',()=>{
+    badge.style.transform='rotateY(0) rotateX(0) translateZ(0)';
+  });
+})();
+function T(msg,icon='✓'){const t=document.getElementById('toast');t.innerHTML=`<span>${icon}</span><span>${msg}</span>`;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2600);}
+</script>
+
+<script>
+// Unified animation coordinator — single RAF, visibility-aware, no visual changes
+(function(){
+  // ===== CRYSTAL CANVAS STATE =====
+  const canvas=document.getElementById('hero-dots');
+  const ctx=canvas?canvas.getContext('2d'):null;
+  let W=0,H=0,lastF=0,crystalT=0,crystalVisible=false;
+  const DPR=Math.min(window.devicePixelRatio||1,2);
+  const SPACING=25,CRYSTAL_SIZE=1.7;
+  const COLOR_L='#003366',SHINE_L='#0099dd',COLOR_D='#009ddc',SHINE_D='#80d4ff';
+  const touchState={x:-999,y:-999,active:false};
+  const dispMap=new Map();
+
+  function getDisp(cx,cy){
+    const k=cx+','+cy;
+    if(!dispMap.has(k))dispMap.set(k,{dx:0,dy:0,vx:0,vy:0,dr:0,vr:0});
+    return dispMap.get(k);
+  }
+  function setPos(e){
+    const r=canvas.getBoundingClientRect();
+    touchState.x=(e.clientX||e.touches[0].clientX)-r.left;
+    touchState.y=(e.clientY||e.touches[0].clientY)-r.top;
+  }
+  if(canvas){
+    canvas.addEventListener('pointerdown',e=>{e.preventDefault();touchState.active=true;setPos(e);canvas.setPointerCapture(e.pointerId);});
+    canvas.addEventListener('pointermove',e=>{if(touchState.active){e.preventDefault();setPos(e);}});
+    canvas.addEventListener('pointerup',e=>{touchState.active=false;canvas.releasePointerCapture(e.pointerId);});
+    canvas.addEventListener('pointerleave',()=>{touchState.active=false;});
+  }
+  function resizeCrystal(){
+    if(!canvas)return;
+    const sect=canvas.parentElement;
+    W=sect.offsetWidth;H=sect.offsetHeight;
+    canvas.width=W*DPR;canvas.height=H*DPR;
+    canvas.style.width=W+'px';canvas.style.height=H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  if(canvas){resizeCrystal();window.addEventListener('resize',resizeCrystal);}
+
+  // IntersectionObserver: pause crystal physics when hero off-screen
+  if(canvas){
+    const heroObs=new IntersectionObserver(entries=>{
+      crystalVisible=entries[0].isIntersecting;
+    },{threshold:0});
+    heroObs.observe(canvas.parentElement);
+  }
+
+  function drawCrystal(x,y,size,alpha,rot,heat,isDark){
+    let COLOR=isDark?COLOR_D:COLOR_L;
+    let SHINE=isDark?SHINE_D:SHINE_L;
+    let drawAlpha=alpha;
+    if(heat>0.01){
+      if(isDark){COLOR='#f4a922';SHINE='#ffe8b0';drawAlpha=alpha*(1+heat*2.2);}
+      else{COLOR='#ff1111';SHINE='#ff9999';drawAlpha=alpha*(1+heat*2.5);}
+    }
+    const s=size;
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(rot);
+    ctx.beginPath();
+    ctx.moveTo(0,-s);
+    ctx.lineTo(s*0.55,-s*0.35);
+    ctx.lineTo(s*0.55,s*0.35);
+    ctx.lineTo(0,s);
+    ctx.lineTo(-s*0.55,s*0.35);
+    ctx.lineTo(-s*0.55,-s*0.35);
+    ctx.closePath();
+    ctx.fillStyle=COLOR;
+    ctx.globalAlpha=Math.min(1,drawAlpha);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(0,-s);
+    ctx.lineTo(s*0.55,-s*0.35);
+    ctx.lineTo(0,0);
+    ctx.lineTo(-s*0.55,-s*0.35);
+    ctx.closePath();
+    ctx.fillStyle=SHINE;
+    ctx.globalAlpha=Math.min(1,drawAlpha*0.95);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.lineTo(s*0.55,s*0.35);
+    ctx.lineTo(0,s);
+    ctx.lineTo(-s*0.55,s*0.35);
+    ctx.closePath();
+    ctx.fillStyle=SHINE;
+    ctx.globalAlpha=Math.min(1,drawAlpha*0.90);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(0,-s);
+    ctx.lineTo(s*0.55,-s*0.35);
+    ctx.lineTo(s*0.55,s*0.35);
+    ctx.lineTo(0,s);
+    ctx.lineTo(-s*0.55,s*0.35);
+    ctx.lineTo(-s*0.55,-s*0.35);
+    ctx.closePath();
+    ctx.strokeStyle=SHINE;
+    ctx.globalAlpha=Math.min(1,drawAlpha*0.90);
+    ctx.lineWidth=0.6;
+    ctx.stroke();
+    ctx.shadowBlur=0;
+    ctx.globalAlpha=1;
+    ctx.restore();
+  }
+
+  function tickCrystal(){
+    if(!canvas||!crystalVisible)return;
+    crystalT+=1;
+    ctx.clearRect(0,0,W,H);
+    const isDark=document.body.classList.contains('dark-mode');
+    const cols=Math.ceil(W/SPACING)+1;
+    const rows=Math.ceil(H/SPACING)+1;
+    for(let y=0;y<rows;y++){
+      for(let x=0;x<cols;x++){
+        const baseX=x*SPACING,baseY=y*SPACING;
+        const phaseX=(x*0.37+y*0.13),phaseY=(x*0.19+y*0.41);
+        const waveZ=Math.sin(phaseY+crystalT*0.055)*7.0;
+        const waveX=Math.sin(phaseX+crystalT*0.042)*4.0;
+        const perspective=1+(waveZ*0.018);
+        const posX=baseX+waveX*perspective;
+        const posY=baseY+waveZ*perspective;
+        const depthSize=CRYSTAL_SIZE*(0.5+perspective*0.5);
+        const alpha=1.0;
+        const rot=Math.sin(phaseX+crystalT*0.035)*0.65;
+        const d=getDisp(x,y);
+        const dist=Math.hypot(posX-touchState.x,posY-touchState.y);
+        const R=90,MX=42;
+        if(touchState.active&&dist<R&&dist>0){
+          const f=(1-dist/R)*MX;
+          const a=Math.atan2(posY-touchState.y,posX-touchState.x);
+          d.vx+=Math.cos(a)*f*0.22;
+          d.vy+=Math.sin(a)*f*0.22;
+          d.vr+=(Math.random()-0.5)*0.25;
+        }
+        d.vx+=-d.dx*0.032;
+        d.vy+=-d.dy*0.032;
+        d.vr+=-d.dr*0.032;
+        d.vx*=0.86;
+        d.vy*=0.86;
+        d.vr*=0.86;
+        d.dx+=d.vx;
+        d.dy+=d.vy;
+        d.dr+=d.vr;
+        const drawX=posX+d.dx;
+        const drawY=posY+d.dy;
+        const drawRot=rot+d.dr;
+        const rndPhase=(x*73+y*37)%97/97;
+        const rndWave=Math.sin(crystalT*0.018+rndPhase*6.283);
+        const fade=0.22+0.78*Math.max(0,Math.min(1,(rndWave+0.5)/1.0));
+        const visAlpha=alpha*fade;
+        const heat=touchState.active?Math.max(0,1-dist/R):0;
+        drawCrystal(drawX,drawY,depthSize,visAlpha,drawRot,heat,isDark);
+      }
+    }
+  }
+
+  // ===== BRAND BADGE WAVE STATE =====
+  const track=document.getElementById('cbTrack');
+  let badgeItems=[],badgeRings=[],badgeHalf=0,badgeHalfW=0,badgeBaseX=[];
+  let badgeScrollX=0,badgeWaveT=0,badgeLast=null;
+  const BADGE_SPEED=34,BADGE_AMP=9,BADGE_WAVE_SPEED=32;
+  let badgeWavelength=300;
+
+  if(track){
+    badgeItems=Array.from(track.querySelectorAll('.cb-item'));
+    badgeRings=badgeItems.map(it=>it.querySelector('.cb-ring'));
+    badgeHalf=badgeItems.length/2;
+    function measureBadge(){
+      badgeHalfW=badgeItems[badgeHalf]?badgeItems[badgeHalf].offsetLeft-badgeItems[0].offsetLeft:0;
+      badgeBaseX=badgeItems.map(it=>it.offsetLeft);
+      badgeWavelength=(badgeHalfW/1.5)||300;
+    }
+    measureBadge();
+    window.addEventListener('resize',measureBadge);
+  }
+
+  function tickBadge(dt){
+    if(!track||badgeHalfW<=0)return;
+    badgeScrollX=(badgeScrollX+BADGE_SPEED*dt)%badgeHalfW;
+    badgeWaveT+=dt;
+    track.style.transform=`translate3d(${-badgeScrollX}px,0,0)`;
+    for(let i=0;i<badgeItems.length;i++){
+      const ring=badgeRings[i];
+      if(!ring)continue;
+      const x=badgeBaseX[i]-badgeScrollX;
+      const y=BADGE_AMP*Math.sin((2*Math.PI*(x-BADGE_WAVE_SPEED*badgeWaveT))/badgeWavelength);
+      ring.style.transform=`translate3d(0,${y}px,0)`;
+    }
+  }
+
+  // ===== SINGLE RAF COORDINATOR =====
+  let lastTs=null;
+  const MAX_DT=0.05;
+  function coordinator(ts){
+    if(lastTs===null)lastTs=ts;
+    let dt=(ts-lastTs)/1000;
+    if(dt>MAX_DT)dt=MAX_DT;
+    lastTs=ts;
+
+    // Crystal: only tick if visible (IO-managed), skip frame budget check
+    if(crystalVisible){
+      if(ts-lastF>=16){
+        lastF=ts;
+        tickCrystal();
+      }
+    }
+
+    // Badge: always runs (decorative, lightweight)
+    tickBadge(dt);
+
+    requestAnimationFrame(coordinator);
+  }
+  requestAnimationFrame(coordinator);
+})();
+
+</script>
+</body>
+</html>
