@@ -6,7 +6,7 @@
 <title>SuppVerse BD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Outfit:wght@400;500;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Outfit:wght@400;500;500;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
 <style>
 :root {
   --cyan:#009ddc; --orange:#f26430; --green:#009b72; --gold:#f4a922; --purple:#6761a8;
@@ -59,7 +59,7 @@ input{font-family:inherit;outline:none;border:none;background:none}
 .hero::before{content:'';position:absolute;top:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,157,220,.1) 0%,transparent 65%);pointer-events:none}
 .hero::after{content:'';position:absolute;bottom:-60px;right:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(242,100,48,.08) 0%,transparent 65%);pointer-events:none}
 
-.hero-badge-wrap{display:inline-block;perspective:600px;margin-bottom:12px;position:relative;z-index:1;top:8px}.hero-badge{display:inline-flex;align-items:center;justify-content:flex-start;gap:6px;background:#ffffff;border:1px solid rgba(0,0,0,.06);border-radius:99px;padding:7px 14px;font-family:var(--fd);font-size:12px;font-weight:700;color:var(--t2);box-shadow:0 3px 10px rgba(0,0,0,.08);transition:transform .18s ease-out,box-shadow .2s,background .2s;transform-style:preserve-3d;white-space:nowrap}.hero-badge:hover{box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.hero-badge-wrap{display:inline-block;perspective:600px;margin-bottom:12px;position:relative;z-index:1;top:8px}.hero-badge{display:inline-flex;align-items:center;justify-content:flex-start;gap:6px;background:#ffffff;border:1px solid rgba(0,0,0,.06);border-radius:99px;padding:7px 14px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:-.01em;color:var(--t2);box-shadow:0 3px 10px rgba(0,0,0,.08);transition:transform .18s ease-out,box-shadow .2s,background .2s;transform-style:preserve-3d;white-space:nowrap}.hero-badge:hover{box-shadow:0 6px 18px rgba(0,0,0,.12)}
 body.dark-mode .hero-badge{background:#1c2938;border-color:rgba(255,255,255,.12);color:rgba(238,244,255,.82);box-shadow:0 3px 12px rgba(0,0,0,.3)}
 .badge-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 6px rgba(0,155,114,.4);position:relative}.badge-dot::before{content:"";position:absolute;top:50%;left:50%;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--green);opacity:0;transform:translate(-50%,-50%) scale(.6);animation:ringPulse 1.8s ease-out infinite}@keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(.6);opacity:.7}100%{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
 
@@ -111,6 +111,25 @@ body.dark-mode .pill-nav{background:rgba(6,13,26,.9)}
 .wb-sub{font-family:var(--font);font-size:12px;font-weight:500;color:var(--t3);margin-top:4px}
 .wb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .wb-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+
+.hotdeals-section{padding:8px 0 32px;background:var(--bg);position:relative;z-index:1}
+.hotdeals-header{padding:0 20px;margin-bottom:14px}
+.hotdeals-row{display:flex;gap:12px;overflow-x:auto;padding:0 20px 4px;scroll-padding:0 20px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.hotdeals-row::-webkit-scrollbar{display:none}
+.hd-card{flex-shrink:0;width:140px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
+.hd-card:active{transform:scale(0.97)}
+.hd-img{position:relative;width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hd-img svg{width:38%;height:38%;opacity:.9}
+.hd-badge{position:absolute;top:8px;left:8px;background:#d95353;color:#fff;font-size:10px;font-weight:800;letter-spacing:.02em;padding:3px 7px;border-radius:99px;z-index:1}
+.hd-add{position:absolute;bottom:8px;right:8px;width:26px;height:26px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.18);z-index:1}
+.hd-add svg{width:14px;height:14px;fill:none;stroke:#1a2e4d;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.hd-info{padding:10px 10px 12px}
+.hd-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd-price-row{display:flex;align-items:baseline;gap:6px;margin-top:5px}
+.hd-price{font-family:'Plus Jakarta Sans',sans-serif;font-size:13.5px;font-weight:800;color:var(--text)}
+.hd-price-old{font-size:11px;font-weight:600;color:var(--t2);text-decoration:line-through;opacity:.6}
+body.dark-mode .hd-add{background:#1d2c3e}
+body.dark-mode .hd-add svg{stroke:#fff}
 .wb-card:active{transform:scale(.96)}
 .wb-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 .wb-icon svg{width:22px;height:22px}
@@ -209,10 +228,35 @@ body.dark-mode .cb-vivid{filter:saturate(1.55) brightness(1.15)}
 .model-row{display:flex;gap:10px;width:100%;max-width:420px}
 .mcard{flex:1;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;position:relative;min-height:158px;-webkit-tap-highlight-color:transparent}
 
+.banner-section{padding:0 20px 24px;background:var(--bg)}
+.banner-viewport{position:relative;overflow:hidden;border-radius:10px;aspect-ratio:2.4/1;border:2px solid rgba(255,255,255,.98);box-shadow:0 4px 20px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.9);transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform;isolation:isolate;contain:paint}
+.banner-clip{position:absolute;inset:0;overflow:hidden;border-radius:10px}
+body.dark-mode .banner-viewport{border-color:rgba(255,255,255,.92);box-shadow:0 4px 20px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.35)}
+.banner-track{display:flex;height:100%;touch-action:pan-y;transition:transform .45s cubic-bezier(.4,0,.2,1)}
+.banner-card{position:relative;width:100%;height:100%;flex-shrink:0;box-sizing:border-box;padding:18px 20px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;-webkit-user-select:none;user-select:none}
+.banner-card.bc-purple{background:linear-gradient(135deg,#6761a8 0%,#4a4480 100%);box-shadow:0 4px 18px rgba(103,97,168,.30)}
+.banner-card.bc-green{background:linear-gradient(135deg,#009b72 0%,#00704f 100%);box-shadow:0 4px 18px rgba(0,155,114,.30)}
+.banner-text{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.banner-tag{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.bc-purple .banner-tag{color:#f4a922}
+.bc-green .banner-tag{color:#c9f4e3}
+.banner-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;color:#fff;line-height:1.15;letter-spacing:-.3px;margin-top:2px}
+.banner-sub{font-size:11.5px;font-weight:500;color:rgba(255,255,255,.75);line-height:1.4;margin-top:2px}
+.banner-deco{position:relative;z-index:1;width:64px;height:64px;flex-shrink:0;opacity:.18}
+.banner-deco svg{width:100%;height:100%;fill:none;stroke:#fff;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+body.dark-mode .banner-card.bc-purple{background:linear-gradient(135deg,#4a4480 0%,#332f5c 100%);box-shadow:0 4px 20px rgba(103,97,168,.22)}
+body.dark-mode .banner-card.bc-green{background:linear-gradient(135deg,#00704f 0%,#004d37 100%);box-shadow:0 4px 20px rgba(0,155,114,.22)}
+.banner-dots{position:absolute;left:39.5vw;bottom:12px;transform:translateX(-50%);z-index:2;display:flex;gap:5px;pointer-events:none}
+.banner-dots .dot{width:6px;height:6px;border-radius:99px;background:rgba(255,255,255,.45);transition:all .3s}
+.banner-dots .dot.active{width:16px;background:#fff}
+.mcard::before{content:'';position:absolute;top:0;left:-30%;width:60%;height:100%;background:linear-gradient(115deg,rgba(255,255,255,.35) 0%,rgba(255,255,255,.08) 40%,rgba(255,255,255,0) 60%);pointer-events:none;z-index:0}
+body.dark-mode .mcard::before{background:linear-gradient(115deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,0) 60%)}
+.mcard-top,.mcard-body{position:relative;z-index:1}
 
 
-.mcard-local{background:linear-gradient(150deg,rgba(224,247,255,0.72) 0%,rgba(200,237,251,0.72) 55%,rgba(178,221,245,0.72) 100%);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 6px 24px rgba(0,157,220,.18),inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.4);border:1px solid rgba(255,255,255,0.5)}
-.mcard-proxy{background:linear-gradient(150deg,rgba(255,242,236,0.72) 0%,rgba(255,223,200,0.72) 55%,rgba(255,205,176,0.72) 100%);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 6px 24px rgba(242,100,48,.18),inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.4);border:1px solid rgba(255,255,255,0.5)}
+
+.mcard-local{background:linear-gradient(150deg,rgba(209,240,255,0.92) 0%,rgba(178,225,248,0.85) 55%,rgba(150,205,240,0.92) 100%);backdrop-filter:blur(28px) saturate(1.2);-webkit-backdrop-filter:blur(28px) saturate(1.2);box-shadow:0 4px 18px rgba(0,157,220,.30),inset 0 1px 0 rgba(255,255,255,.9);border:1px solid rgba(0,157,220,0.30)}
+.mcard-proxy{background:linear-gradient(150deg,rgba(255,232,220,0.92) 0%,rgba(255,210,180,0.85) 55%,rgba(255,190,155,0.92) 100%);backdrop-filter:blur(28px) saturate(1.2);-webkit-backdrop-filter:blur(28px) saturate(1.2);box-shadow:0 4px 18px rgba(242,100,48,.30),inset 0 1px 0 rgba(255,255,255,.9);border:1px solid rgba(242,100,48,0.30)}
 
 .mcard-icon{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .mcard-local .mcard-icon{background:linear-gradient(135deg,#009ddc,#006daa);box-shadow:0 4px 12px rgba(0,157,220,.35)}
@@ -222,8 +266,8 @@ body.dark-mode .cb-vivid{filter:saturate(1.55) brightness(1.15)}
 .mcard-top{padding:14px 14px 0;display:flex;align-items:center;gap:10px}
 .mcard-body{padding:12px 14px 14px;display:flex;flex-direction:column;flex:1}
 .mcard-eye{font-size:11.8px;font-weight:800;letter-spacing:-0.01em;text-transform:uppercase;margin-top:0}
-.mcard-local .mcard-eye{color:rgba(0,100,175,.75)}
-.mcard-proxy .mcard-eye{color:rgba(180,55,5,.75)}
+.mcard-local .mcard-eye{color:rgba(0,90,160,.9)}
+.mcard-proxy .mcard-eye{color:rgba(170,50,5,.9)}
 .mcard-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:var(--text);line-height:1.15;letter-spacing:-.3px;margin-top:1px}
 .mcard-desc{font-size:10.5px;font-weight:500;color:var(--t2);line-height:1.4;margin-top:4px}
 
@@ -244,10 +288,10 @@ body.dark-mode .mcard-proxy .mcard-cta svg{stroke:#ff8c5c}
 .mcard-proxy .mcard-deco{background:var(--orange)}
 
 /* Model Cards Dark Mode */
-body.dark-mode .mcard-local{background:linear-gradient(150deg,rgba(10,31,46,0.65) 0%,rgba(13,42,61,0.65) 55%,rgba(15,47,69,0.65) 100%);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 6px 24px rgba(0,157,220,.12),inset 0 1px 0 rgba(255,255,255,.06),inset 0 -1px 0 rgba(255,255,255,.03);border:1px solid rgba(255,255,255,0.1)}
-body.dark-mode .mcard-proxy{background:linear-gradient(150deg,rgba(46,26,10,0.65) 0%,rgba(61,34,13,0.65) 55%,rgba(69,40,15,0.65) 100%);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 6px 24px rgba(242,100,48,.12),inset 0 1px 0 rgba(255,255,255,.06),inset 0 -1px 0 rgba(255,255,255,.03);border:1px solid rgba(255,255,255,0.1)}
-body.dark-mode .mcard-local .mcard-eye{color:rgba(100,200,255,.45)}
-body.dark-mode .mcard-proxy .mcard-eye{color:rgba(255,160,100,.45)}
+body.dark-mode .mcard-local{background:linear-gradient(150deg,rgba(10,31,46,0.5) 0%,rgba(13,42,61,0.4) 55%,rgba(15,47,69,0.5) 100%);backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px) saturate(1.8);box-shadow:0 4px 20px rgba(0,157,220,.22),inset 0 1px 0 rgba(255,255,255,.08);border:1px solid rgba(255,255,255,0.14)}
+body.dark-mode .mcard-proxy{background:linear-gradient(150deg,rgba(46,26,10,0.5) 0%,rgba(61,34,13,0.4) 55%,rgba(69,40,15,0.5) 100%);backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px) saturate(1.8);box-shadow:0 4px 20px rgba(242,100,48,.22),inset 0 1px 0 rgba(255,255,255,.08);border:1px solid rgba(255,255,255,0.14)}
+body.dark-mode .mcard-local .mcard-eye{color:rgba(120,205,255,.85)}
+body.dark-mode .mcard-proxy .mcard-eye{color:rgba(255,170,110,.85)}
 body.dark-mode .mcard-title{color:var(--text)}
 body.dark-mode .mcard-desc{color:var(--t2)}
 body.dark-mode .mcard-local .mcard-cta span{color:#ffffff}
@@ -259,9 +303,10 @@ body.dark-mode .mcard-proxy .mcard-cta svg{stroke:#ff8c5c}
 .mcard-cta {
   display: inline-flex;
   align-items: center;
+  align-self: flex-start;
   gap: 6px;
-  padding: 8px 8px 8px 16px;
-  border-radius: 99px;
+  padding: 8px 8px 8px 12px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -279,11 +324,12 @@ body.dark-mode .mcard-proxy .mcard-cta svg{stroke:#ff8c5c}
 
 /* Local card — cyan pill */
 .mcard-local .mcard-cta {
-  background: linear-gradient(135deg, #009ddc, #0077aa);
+  background: #009ddc;
   color: #fff;
   box-shadow: 0 4px 14px rgba(0,157,220,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
 }
 .mcard-local .mcard-cta:hover {
+  background: #0088c2;
   box-shadow: 0 6px 20px rgba(0,157,220,0.50), inset 0 1px 0 rgba(255,255,255,0.30);
   transform: translateY(-1px);
 }
@@ -291,11 +337,12 @@ body.dark-mode .mcard-proxy .mcard-cta svg{stroke:#ff8c5c}
 
 /* Proxy card — orange pill */
 .mcard-proxy .mcard-cta {
-  background: linear-gradient(135deg, #f26430, #c04010);
+  background: #f26430;
   color: #fff;
   box-shadow: 0 4px 14px rgba(242,100,48,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
 }
 .mcard-proxy .mcard-cta:hover {
+  background: #d9501f;
   box-shadow: 0 6px 20px rgba(242,100,48,0.50), inset 0 1px 0 rgba(255,255,255,0.30);
   transform: translateY(-1px);
 }
@@ -352,7 +399,7 @@ body.dark-mode .mcard-proxy .mcard-cta:hover {
     <div class="hero-badge-wrap rv">
       <div class="hero-badge" id="heroBadge">
         <span class="badge-dot"></span>
-        We bring the world's best products right to your doorstep
+        Discover Better. Beyond Borders.
       </div>
     </div>
     <h1 class="hero-h1 rv d1">
@@ -580,8 +627,8 @@ body.dark-mode .mcard-proxy .mcard-cta:hover {
       <p class="mcard-eye">Local Stock</p>
     </div>
     <div class="mcard-body">
-      <h3 class="mcard-title">Shop from Local</h3>
-      <p class="mcard-desc">Over 200+ products ready to ship across Bangladesh</p>
+      <h3 class="mcard-title" style="transform:translateY(-4px)">Shop from Local</h3>
+      <p class="mcard-desc" style="transform:translateY(-4px)">Over 200+ products ready to ship across Bangladesh</p>
       <button class="mcard-cta" onclick="navTo('store')">
         <span>Browse</span>
         <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
@@ -598,8 +645,8 @@ body.dark-mode .mcard-proxy .mcard-cta:hover {
       <p class="mcard-eye">Global Import</p>
     </div>
     <div class="mcard-body">
-      <h3 class="mcard-title">Buy for Me</h3>
-      <p class="mcard-desc">Share your product link from your favorite store. We'll handle the rest.</p>
+      <h3 class="mcard-title" style="transform:translateY(-4px)">Buy for Me</h3>
+      <p class="mcard-desc" style="transform:translateY(-4px)">Share your product link from your favorite store. We'll handle the rest.</p>
       <button class="mcard-cta" onclick="navTo('proxy')">
         <span>Request</span>
         <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
@@ -610,6 +657,196 @@ body.dark-mode .mcard-proxy .mcard-cta:hover {
 
 </div>
 </section>
+
+<section class="banner-section">
+  <div class="banner-viewport">
+    <div class="banner-clip">
+    <div class="banner-track" id="bannerTrack">
+      <div class="banner-card bc-green" aria-hidden="true">
+        <div class="banner-text">
+          <span class="banner-tag">Free Shipping</span>
+          <h3 class="banner-title">On Orders Over ৳2000</h3>
+          <p class="banner-sub">Anywhere across Bangladesh</p>
+        </div>
+        <div class="banner-deco"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      </div>
+      <div class="banner-card bc-purple">
+        <div class="banner-text">
+          <span class="banner-tag">Limited Time</span>
+          <h3 class="banner-title">20% Off Whey Protein</h3>
+          <p class="banner-sub">This week only, on all local stock</p>
+        </div>
+        <div class="banner-deco"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+      </div>
+      <div class="banner-card bc-green">
+        <div class="banner-text">
+          <span class="banner-tag">Free Shipping</span>
+          <h3 class="banner-title">On Orders Over ৳2000</h3>
+          <p class="banner-sub">Anywhere across Bangladesh</p>
+        </div>
+        <div class="banner-deco"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      </div>
+      <div class="banner-card bc-purple" aria-hidden="true">
+        <div class="banner-text">
+          <span class="banner-tag">Limited Time</span>
+          <h3 class="banner-title">20% Off Whey Protein</h3>
+          <p class="banner-sub">This week only, on all local stock</p>
+        </div>
+        <div class="banner-deco"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+      </div>
+    </div>
+    </div>
+    <div class="banner-dots" id="bannerDots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  const track=document.getElementById('bannerTrack');
+  const viewport=track.parentElement;
+  const dots=document.querySelectorAll('#bannerDots .dot');
+  if(!track)return;
+  const cards=[...track.children];
+  const realCount=dots.length;
+  const lastIndex=cards.length-1;
+  let index=1, timer, resumeTimer;
+  let dragging=false, isHorizontal=null, startX=0, startY=0, baseTranslate=0, cardW=0;
+
+  function dotFor(i){ return (((i-1)%realCount)+realCount)%realCount; }
+
+  function place(i,instant){
+    cardW=cards[0].getBoundingClientRect().width;
+    if(instant) track.style.transition='none';
+    track.style.transform=`translateX(${-(i*cardW)}px)`;
+    if(instant){ void track.offsetWidth; track.style.transition=''; }
+    dots.forEach((d,idx)=>d.classList.toggle('active',idx===dotFor(i)));
+  }
+
+  function normalize(){
+    if(index===0){ setTimeout(()=>{ index=realCount; place(index,true); },470); }
+    else if(index===lastIndex){ setTimeout(()=>{ index=1; place(index,true); },470); }
+  }
+
+  function next(){ index++; place(index); normalize(); }
+  function start(){ clearInterval(timer); timer=setInterval(next,3400); }
+  function scheduleResume(){ clearTimeout(resumeTimer); resumeTimer=setTimeout(start,1500); }
+
+  track.addEventListener('pointerdown',e=>{
+    dragging=true; isHorizontal=null;
+    startX=e.clientX; startY=e.clientY;
+    cardW=cards[0].getBoundingClientRect().width;
+    baseTranslate=-(index*cardW);
+    track.style.transition='none';
+    clearInterval(timer);
+  });
+  track.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    const dx=e.clientX-startX, dy=e.clientY-startY;
+    if(isHorizontal===null && (Math.abs(dx)>6||Math.abs(dy)>6)){
+      isHorizontal=Math.abs(dx)>Math.abs(dy);
+      if(isHorizontal){
+        try{ track.setPointerCapture(e.pointerId); }catch(err){}
+      }
+    }
+    if(isHorizontal){
+      e.preventDefault();
+      track.style.transform=`translateX(${baseTranslate+dx}px)`;
+    }
+  },{passive:false});
+  function endDrag(e){
+    if(!dragging)return;
+    dragging=false;
+    track.style.transition='';
+    if(isHorizontal){
+      const dx=e.clientX-startX;
+      const threshold=cardW*0.18;
+      if(dx<-threshold) index++;
+      else if(dx>threshold) index--;
+      place(index);
+      normalize();
+    } else {
+      place(index);
+    }
+    isHorizontal=null;
+    scheduleResume();
+  }
+  track.addEventListener('pointerup',endDrag);
+  track.addEventListener('pointercancel',endDrag);
+
+  window.addEventListener('resize',()=>place(index,true));
+
+  place(1,true);
+  start();
+})();
+</script>
+
+<section class="hotdeals-section">
+  <div class="hotdeals-header">
+    <h2 class="wb-title">Hot Deals</h2>
+    <p class="wb-sub">Limited-time price drops on local stock</p>
+  </div>
+  <div class="hotdeals-row">
+    <div class="hd-card" onclick="T('Whey Protein coming soon','💪')">
+      <div class="hd-img" style="background:linear-gradient(135deg,#ff6b6b,#ee5a24)">
+        <span class="hd-badge">-20%</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="hd-add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+      </div>
+      <div class="hd-info">
+        <div class="hd-name">Gold Standard Whey 2lb</div>
+        <div class="hd-price-row">
+          <span class="hd-price">৳4,800</span>
+          <span class="hd-price-old">৳6,000</span>
+        </div>
+      </div>
+    </div>
+    <div class="hd-card" onclick="T('Pre-Workout coming soon','⚡')">
+      <div class="hd-img" style="background:linear-gradient(135deg,#feca57,#ff9f43)">
+        <span class="hd-badge">-15%</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span class="hd-add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+      </div>
+      <div class="hd-info">
+        <div class="hd-name">C4 Pre-Workout 30srv</div>
+        <div class="hd-price-row">
+          <span class="hd-price">৳3,400</span>
+          <span class="hd-price-old">৳4,000</span>
+        </div>
+      </div>
+    </div>
+    <div class="hd-card" onclick="T('Vitamins coming soon','🍊')">
+      <div class="hd-img" style="background:linear-gradient(135deg,#48dbfb,#0abde3)">
+        <span class="hd-badge">-10%</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        <span class="hd-add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+      </div>
+      <div class="hd-info">
+        <div class="hd-name">Multivitamin 90ct</div>
+        <div class="hd-price-row">
+          <span class="hd-price">৳1,350</span>
+          <span class="hd-price-old">৳1,500</span>
+        </div>
+      </div>
+    </div>
+    <div class="hd-card" onclick="T('Creatine coming soon','🏋️')">
+      <div class="hd-img" style="background:linear-gradient(135deg,#1dd1a1,#10ac84)">
+        <span class="hd-badge">-25%</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        <span class="hd-add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+      </div>
+      <div class="hd-info">
+        <div class="hd-name">Creatine Mono 500g</div>
+        <div class="hd-price-row">
+          <span class="hd-price">৳1,650</span>
+          <span class="hd-price-old">৳2,200</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <section class="whiteboard" id="whiteboard">
     <div class="wb-inner">
