@@ -113,6 +113,52 @@ body.dark-mode .pill-nav{background:rgba(6,13,26,.9)}
 .wb-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
 
 .hotdeals-section{padding:8px 0 32px;background:var(--bg);position:relative;z-index:1}
+.services-section{padding:32px 20px 36px;background:#F6F7F9;position:relative;z-index:1;transition:background .3s ease}
+.services-section .wb-title{color:#14181F;font-size:24px;margin-bottom:6px}
+.services-subtitle{color:#6B7280;font-size:13.5px;text-align:center;max-width:320px;margin:0 auto 24px;line-height:1.55;font-family:var(--fd)}
+.services-list{display:flex;flex-direction:column;gap:16px;max-width:520px;margin:0 auto}
+.svc-item{display:flex;align-items:flex-start;gap:16px;background:#ffffff;border-radius:20px;padding:22px 20px;box-shadow:0 2px 8px rgba(15,23,42,.05),0 1px 2px rgba(15,23,42,.04);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease,background .3s ease}
+.svc-item:active{transform:scale(.97)}
+@media (hover:hover){
+.svc-item:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(15,23,42,.09),0 2px 6px rgba(15,23,42,.06)}
+}
+.svc-icon{flex-shrink:0;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#168BFF,#0F2B5B);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.svc-icon svg{width:28px;height:28px}
+.svc-title{font-family:var(--fd);font-weight:700;font-size:16px;color:#14181F;margin-bottom:4px;letter-spacing:-.2px}
+.svc-desc{font-size:13px;color:#6B7280;line-height:1.55}
+
+body.dark-mode .services-section{background:#16181D}
+body.dark-mode .services-section .wb-title{color:#ffffff}
+body.dark-mode .services-subtitle{color:#9AA0AC}
+body.dark-mode .svc-item{background:#23252B;box-shadow:0 8px 24px rgba(0,0,0,.35),0 0 0 1px rgba(22,139,255,.07)}
+body.dark-mode .svc-title{color:#ffffff}
+body.dark-mode .svc-desc{color:#9AA0AC}
+@media (hover:hover){
+body.dark-mode .svc-item:hover{box-shadow:0 14px 32px rgba(0,0,0,.45),0 0 0 1px rgba(22,139,255,.2),0 0 28px rgba(22,139,255,.16)}
+}
+.svc-body{flex:1;min-width:0;padding-top:2px}
+.stats-section{padding:40px 20px 48px;background:#F7F9FC;transition:background .3s ease}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:520px;margin:0 auto}
+.stat-card{position:relative;background:rgba(255,255,255,.7);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid #E9EEF5;border-radius:22px;padding:14px 14px;text-align:center;box-shadow:0 4px 16px rgba(17,24,39,.05);transition:opacity .45s ease,transform .2s ease-out,box-shadow .2s ease-out}
+.stat-card:active{transform:scale(.98)}
+@media (hover:hover){
+.stat-card:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 10px 26px rgba(17,24,39,.08)}
+.stat-card:hover .stat-icon{box-shadow:0 12px 32px rgba(0,155,114,.28)}
+}
+.stat-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;transition:box-shadow .2s ease-out}
+.stat-icon svg{width:34px;height:34px}
+.stat-number{font-family:var(--fd);font-weight:800;font-size:clamp(40px,11vw,48px);letter-spacing:-1.2px;line-height:1;color:#111827}
+.stat-label{font-size:15px;font-weight:600;margin-top:6px;color:#111827}
+.stat-desc{font-size:12.5px;font-weight:500;color:#6B7280;margin-top:4px;line-height:1.4;opacity:.68}
+
+body.dark-mode .stats-section{background:#171A22}
+body.dark-mode .stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);box-shadow:0 4px 16px rgba(0,0,0,.25)}
+body.dark-mode .stat-number{color:#ffffff}
+body.dark-mode .stat-label{color:#ffffff}
+body.dark-mode .stat-desc{color:#9AA0AC}
+@media (hover:hover){
+body.dark-mode .stat-card:hover{box-shadow:0 12px 30px rgba(0,0,0,.35)}
+}
 .hotdeals-header{padding:0 20px;margin-bottom:14px}
 .hotdeals-row{display:flex;gap:12px;overflow-x:auto;padding:0 20px 4px;scroll-padding:0 20px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
 .hotdeals-row::-webkit-scrollbar{display:none}
@@ -847,6 +893,94 @@ body.dark-mode .mcard-proxy .mcard-cta:hover {
   </div>
 </section>
 
+<section class="services-section" id="services">
+  <h2 class="wb-title" style="text-align:center;margin-bottom:20px">Why Choose SuppVerse BD?</h2>
+  <p class="services-subtitle">Trusted sourcing. Global access. Fast delivery. Everything in one place.</p>
+  <div class="services-list">
+    <div class="svc-item rv">
+      <div class="svc-icon">
+        <svg fill="#ffffff" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 33 33"><defs><clipPath id="a-svc0"><path d="M1.648 2.152h30v27.75h-30Zm0 0"/></clipPath></defs><g clip-path="url(#a-svc0)"><path fill-rule="evenodd" d="m24.828 13.914-2.023.375a.37.37 0 0 1-.364-.133.36.36 0 0 1-.066-.379l.203-.547a.38.38 0 0 1 .2-.21l1.96-.918a.38.38 0 0 0 .207-.239l.504-1.707a.37.37 0 0 0-.074-.355.37.37 0 0 0-.332-.137l-4.004.402a.37.37 0 0 1-.352-.16.38.38 0 0 1-.035-.383l.387-.82a.36.36 0 0 1 .227-.2l5.105-1.702a.39.39 0 0 0 .246-.254c.434-1.438 1.016-3.594 2.38-3.266.034.008.058.02.089.035 1.246.649.258 2.653-.363 4.02a.36.36 0 0 0 .02.351l2.714 4.637a.37.37 0 0 1 .04.301l-.25.867a.38.38 0 0 1-.282.266.38.38 0 0 1-.371-.11l-2.746-2.933a.382.382 0 0 0-.63.101l-.75 1.618a.37.37 0 0 0 0 .316l.868 1.98a.35.35 0 0 1 .008.286l-.203.547a.385.385 0 0 1-.664.102l-1.274-1.61a.38.38 0 0 0-.375-.14M11.984 5.57 7.211 8.32v5.5l1.5-.863.023-.012 3.22-1.855Zm-6.84 2v1.434a.383.383 0 0 1-.574.328l-1.71-.984A.39.39 0 0 1 2.632 8V6.125l-.969-.555v5.5l2.582 1.489L6.44 13.82V8.316ZM2.048 4.906l.973.559.992-.574.015-.008 3.77-2.172-.973-.559-2.578 1.489-.023.011Zm6.515-1.754.844.489.133.074L4.9 6.387l-.016.011-.281.16a.39.39 0 0 0-.227.352v1.43l-.973-.563V6.125l.985-.57.027-.012Zm1.747 1.004 1.293.75-4.778 2.75-1.297-.746Zm8.41.73c1.582 0 3.09.301 4.476.848l.075 1.29 2.464-.82A12.9 12.9 0 0 0 18.72 4.14c-2.16 0-4.2.527-5.989 1.464l-.03 5.918-3.864 2.223v.434q0 .259.18.441l1.586 1.582a.61.61 0 0 1 .16.602l-.082.312a.6.6 0 0 0-.024.16v1.836c0 .192.078.36.23.48l2.126 1.747a.61.61 0 0 1 .226.484v1.082c1.754-.539 3.418-1.472 4.832-2.582q.547-.428 1.063-.914v-1.047a.624.624 0 0 0-.625-.62h-.863a.61.61 0 0 1-.563-.36l-.133-.285a.62.62 0 0 0-.566-.356H15.31a.627.627 0 0 1-.625-.625v-.601h-1.602a.61.61 0 0 1-.5-.25l-.754-1.004a.6.6 0 0 0-.332-.227.66.66 0 0 1-.398-.308.66.66 0 0 1 0-.668.67.67 0 0 1 .558-.332l.047-.004 1.219-.13a.6.6 0 0 0 .324-.132l2.711-2.156q.164-.133.215-.336a5 5 0 0 0 .07-.34.6.6 0 0 0-.105-.469.6.6 0 0 0-.414-.254l-.555-.086a.615.615 0 0 1-.531-.613v-.734c0-.22-.114-.383-.282-.52l-.988-.832a12.16 12.16 0 0 1 5.352-1.234M6.746 14.86a12.3 12.3 0 0 0-.191 2.16c0 2.22.593 4.294 1.633 6.083a4.6 4.6 0 0 1-1.126-.532 12.8 12.8 0 0 1-1.257-5.55c0-.875.09-1.73.254-2.555l.402.23Zm9.219 11.215.027.051.082.148a.6.6 0 0 1-.012.618.6.6 0 0 1-.535.304h-.668a.62.62 0 0 1-.586-.41l-.046-.125q.884-.247 1.738-.586m-4.012 1.035q-.576.065-1.164.078a12.86 12.86 0 0 0 7.93 2.715c3.566 0 6.797-1.441 9.133-3.773a12.83 12.83 0 0 0 3.78-9.11c0-.886-.089-1.757-.26-2.593-.071.031-.15.058-.227.078a1.15 1.15 0 0 1-1.114-.332l-2.355-2.516-.434.942.801 1.824c.121.277.129.582.023.867l-.207.543a1.15 1.15 0 0 1-.902.734 1.2 1.2 0 0 1-.512-.035 16 16 0 0 1-1.215 2.114q.951 2.16.711 3.34a1 1 0 0 0-.011.144 3.55 3.55 0 0 0 1.851 2.988q-.222.25-.457.485a12.16 12.16 0 0 1-8.605 3.554c-2.504 0-4.828-.754-6.766-2.047m11.324-15.172.977-.457.297-.996-2.36.239a.7.7 0 0 0 .079.242l.355.648a.62.62 0 0 0 .586.328Zm2.54 4.13-1.075-1.356-1.547.285c-.84 2.074-2.437 4.192-4.648 5.93-4.781 3.758-10.613 4.324-13.027 1.27-1.555-1.97-1.31-4.966.34-7.848l-.258-.149c-2.223 3.598-2.633 7.406-.684 9.871 2.89 3.66 9.871 2.977 15.594-1.52 2.43-1.91 4.242-4.198 5.304-6.484m0 0"/></g></svg>
+      </div>
+      <div class="svc-body">
+        <div class="svc-title">Global Import</div>
+        <div class="svc-desc">We bring the world's best products to your doorstep.</div>
+      </div>
+    </div>
+    <div class="svc-item rv">
+      <div class="svc-icon">
+        <svg fill="#ffffff" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 33 33"><defs><clipPath id="a-svc1"><path d="M3.3.715h26.25v31.5H3.3Zm0 0"/></clipPath></defs><g clip-path="url(#a-svc1)"><path fill-rule="evenodd" d="M16.422 5.953c3.066 0 5.555 2.496 5.555 5.574s-2.489 5.57-5.555 5.57c-3.067 0-5.555-2.492-5.555-5.57s2.488-5.574 5.555-5.574m.504 15.805v10.457l10.277-4.012v-6.539l-8.035 3.137a.5.5 0 0 1-.617-.215Zm-1.008 10.457V21.758l-1.625 2.828a.504.504 0 0 1-.637.207l-8.015-3.129v6.54Zm11.57-16.117-10.34 4.035 2.059 3.574 10.336-4.035Zm-11.793 4.035-10.34-4.035-2.054 3.574 10.336 4.035Zm.727-2.024a6.57 6.57 0 0 1-6.09-4.125L6.52 15.473l9.902 3.863 9.902-3.863-3.812-1.489a6.57 6.57 0 0 1-6.09 4.125m10.137-6.953a.5.5 0 0 1 .503.504.503.503 0 0 1-.503.504h-2.36a.5.5 0 0 1-.5-.504.5.5 0 0 1 .5-.504ZM15.918 1.22a.505.505 0 0 1 1.008 0v2.367a.506.506 0 0 1-.504.508.506.506 0 0 1-.504-.508Zm-5.086 1.566a.505.505 0 0 1 .188-.687.5.5 0 0 1 .683.187l1.18 2.047a.506.506 0 0 1-.184.688.5.5 0 0 1-.687-.184Zm-3.621 3.91a.505.505 0 0 1 .5-.875l2.043 1.184a.505.505 0 0 1-.5.875ZM6.02 11.898a.505.505 0 0 1 0-1.011h2.359a.506.506 0 0 1 0 1.011Zm15.085-9.48a.5.5 0 1 1 .868.5l-1.18 2.05a.495.495 0 0 1-.684.184.503.503 0 0 1-.183-.683ZM25 6.051a.503.503 0 0 1 .684.183.51.51 0 0 1-.18.692L23.46 8.109a.505.505 0 0 1-.504-.875Zm-6.477 2.933-3.289 3.301-1.12-1.418a.8.8 0 0 0-1.13-.129.807.807 0 0 0-.129 1.133l1.653 2.086a.803.803 0 0 0 1.23.11l3.926-3.938a.816.816 0 0 0 0-1.145.81.81 0 0 0-1.14 0m0 0"/></g></svg>
+      </div>
+      <div class="svc-body">
+        <div class="svc-title">Pre-Order</div>
+        <div class="svc-desc">Secure your order before it's in stock.</div>
+      </div>
+    </div>
+    <div class="svc-item rv" style="transition-delay:.08s">
+      <div class="svc-icon">
+        <svg fill="#ffffff" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 33 33"><defs><clipPath id="a-svc2"><path d="M3.86 1.344h25.5v31.5H3.86Zm0 0"/></clipPath></defs><g clip-path="url(#a-svc2)"><path fill-rule="evenodd" d="M13.527 16.023a2.44 2.44 0 0 0-.207 1.98.7.7 0 0 1-.191.716 2.46 2.46 0 0 0 0 3.64c.133.125.21.301.219.48-1.883-1.171-4.38-2.741-5.371-4.433-.325-.55-.47-1.093-.47-1.761V8.609c2.462-.957 4.852-2.086 7.098-3.171 2.25 1.085 4.641 2.214 7.102 3.171v2.934a2.42 2.42 0 0 0-2.23.773.68.68 0 0 1-.707.192 2.437 2.437 0 0 0-3.129 1.82.68.68 0 0 1-.516.524c-.68.152-1.25.562-1.602 1.171Zm1.09 10.032a2.4 2.4 0 0 1-1.09-1 2.4 2.4 0 0 1-.324-1.246c-2.05-1.282-4.832-2.965-5.996-4.942-.406-.687-.594-1.394-.594-2.222V8.3c0-.188.114-.356.29-.422 2.6-.996 5.136-2.2 7.511-3.344a.43.43 0 0 1 .387 0c2.375 1.145 4.91 2.348 7.512 3.344a.455.455 0 0 1 .289.422v3.601c.175.114.34.254.484.414.18.196.46.27.71.192a2.45 2.45 0 0 1 1.544.015V5.996c-3.164-1.039-6.508-2.61-10.735-4.652C10.383 3.387 7.04 4.957 3.871 5.996v10.617c0 1.313.313 2.5.98 3.633 1.715 2.91 5.837 5.242 9.145 7.227Zm4.153 2.515a2.437 2.437 0 0 1-3.129-1.82.66.66 0 0 0-.2-.352l-2.12 4.84 2.917-.597 1.27 2.203 1.836-4.196a.68.68 0 0 0-.574-.078m8.152-1.82a2.44 2.44 0 0 1-1.16 1.61 2.42 2.42 0 0 1-1.965.21.69.69 0 0 0-.578.078l1.836 4.196 1.27-2.203 2.917.597-2.12-4.84a.7.7 0 0 0-.2.352m-1.395-6.21c0 2.358-1.902 4.28-4.246 4.28-2.34 0-4.246-1.922-4.246-4.28 0-2.36 1.906-4.282 4.246-4.282 2.344 0 4.246 1.922 4.246 4.281m-1.636-1.919a.44.44 0 0 0-.63 0l-2.812 2.836-1.105-1.465a.447.447 0 1 0-.711.547l1.414 1.871a.45.45 0 0 0 .324.18.45.45 0 0 0 .348-.133l3.172-3.2a.45.45 0 0 0 0-.636m-1.461 9.531c-.301.328-.7.52-1.149.52-.445 0-.847-.192-1.148-.52a1.57 1.57 0 0 0-1.633-.441 1.54 1.54 0 0 1-1.25-.129 1.56 1.56 0 0 1-.738-1.027 1.59 1.59 0 0 0-1.192-1.207 1.54 1.54 0 0 1-1.023-.743 1.57 1.57 0 0 1-.125-1.261 1.62 1.62 0 0 0-.438-1.649 1.55 1.55 0 0 1 0-2.312 1.61 1.61 0 0 0 .438-1.649 1.57 1.57 0 0 1 .125-1.261 1.54 1.54 0 0 1 1.023-.743 1.59 1.59 0 0 0 1.192-1.207c.097-.437.351-.8.738-1.027a1.53 1.53 0 0 1 1.25-.129 1.58 1.58 0 0 0 1.633-.441 1.53 1.53 0 0 1 2.297 0c.41.449 1.05.625 1.633.441a1.53 1.53 0 0 1 1.25.13c.386.226.64.589.738 1.026.133.598.597 1.07 1.195 1.207.434.098.797.352 1.02.743.222.39.261.832.129 1.261a1.6 1.6 0 0 0 .437 1.649 1.55 1.55 0 0 1 0 2.313 1.61 1.61 0 0 0-.437 1.648c.132.426.093.87-.13 1.261a1.53 1.53 0 0 1-1.019.743 1.59 1.59 0 0 0-1.195 1.207c-.098.437-.352.8-.738 1.027a1.54 1.54 0 0 1-1.25.129 1.57 1.57 0 0 0-1.633.441m3.992-7.613c0-2.855-2.309-5.18-5.14-5.18-2.833 0-5.137 2.325-5.137 5.18 0 2.856 2.304 5.18 5.136 5.18s5.14-2.324 5.14-5.18m0 0"/></g></svg>
+      </div>
+      <div class="svc-body">
+        <div class="svc-title">100% Authentic</div>
+        <div class="svc-desc">We source products from trusted brands and retailers.</div>
+      </div>
+    </div>
+    <div class="svc-item rv" style="transition-delay:.16s">
+      <div class="svc-icon">
+        <svg fill="#ffffff" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 33 33"><defs><clipPath id="a-svc3"><path d="M21.402 22.984h4.438v4.485h-4.438Zm0 0"/></clipPath><clipPath id="b-svc3"><path d="M10.59 22.984h4.406v4.485H10.59Zm0 0"/></clipPath><clipPath id="c-svc3"><path d="M16.188 5.734H31.75v15.04H16.188Zm0 0"/></clipPath></defs><path d="M26.145 20.45h-4.153a.357.357 0 0 1-.351-.395l.273-2.633a.16.16 0 0 1 .156-.145h1.64c.216 0 .415.086.552.243l2.136 2.43c.165.187.004.5-.253.5m1.988.35-3.25-3.695a1.52 1.52 0 0 0-1.153-.507h-2.3a.92.92 0 0 0-.54.18l.118-1.137a.875.875 0 0 0-.86-.973H3.926a.57.57 0 0 0-.563.574.57.57 0 0 0 .563.574h8.129c.312 0 .566.258.566.575 0 .32-.254.578-.566.578H5.07a.57.57 0 0 0-.562.574.57.57 0 0 0 .562.574h6.426a.57.57 0 0 1 .566.574.57.57 0 0 1-.566.575H2.457a.57.57 0 0 0-.566.578c0 .316.254.574.566.574h6.398c.313 0 .567.258.567.574a.57.57 0 0 1-.567.574H4.898a.57.57 0 0 0-.562.575c0 .32.25.578.562.578h1.63l-.16 1.543a.875.875 0 0 0 .859.972h2.918c0-1.484 1.187-2.691 2.644-2.691s2.64 1.207 2.64 2.691h5.555c0-1.484 1.184-2.691 2.641-2.691s2.645 1.207 2.645 2.691h.683c.672 0 1.277-.558 1.348-1.242l.203-1.965a1.6 1.6 0 0 0-.371-1.226"/><g clip-path="url(#a-svc3)"><path d="M23.625 26.195a.957.957 0 0 1-.945-.96c0-.532.425-.965.945-.965.523 0 .945.433.945.964a.954.954 0 0 1-.945.961m0-3.199c-1.21 0-2.195 1.004-2.195 2.238 0 1.23.984 2.235 2.195 2.235s2.195-1.004 2.195-2.235c0-1.234-.984-2.238-2.195-2.238"/></g><g clip-path="url(#b-svc3)"><path d="M12.79 26.195a.954.954 0 0 1-.946-.96c0-.532.422-.965.945-.965.52 0 .945.433.945.964a.956.956 0 0 1-.945.961m0-3.199c-1.212 0-2.2 1.004-2.2 2.238 0 1.23.988 2.235 2.2 2.235 1.21 0 2.194-1.004 2.194-2.235 0-1.234-.984-2.238-2.195-2.238"/></g><path d="M2.785 15.242a.57.57 0 0 0-.562-.574h-.66a.57.57 0 0 0-.563.574c0 .317.25.574.563.574h.66a.57.57 0 0 0 .562-.574m-.597 2.301c0 .316.25.574.562.574h.66a.57.57 0 0 0 .563-.574c0-.32-.25-.574-.563-.574h-.66a.565.565 0 0 0-.562.574"/><g clip-path="url(#c-svc3)"><path d="M23.152 5.734c-2.859 0-5.39 1.418-6.953 3.598a8.5 8.5 0 0 1 6.016-2.496c4.75 0 8.598 3.918 8.598 8.754 0 1.926-.61 3.707-1.649 5.152a8.8 8.8 0 0 0 2.586-6.254c0-4.836-3.852-8.754-8.598-8.754"/></g><path d="M23.191 15.297c0 .316-.25.574-.562.574a.57.57 0 0 1-.567-.574c0-.317.254-.574.567-.574s.562.257.562.574m4.539-2.719a.357.357 0 0 0-.484-.152l-4.207 2.238a.76.76 0 0 1 .336.633v.015l4.203-2.238a.37.37 0 0 0 .152-.496m-5.859-.922a.365.365 0 0 0-.277.434l.547 2.633a.72.72 0 0 1 .488-.184q.11.001.215.031l-.547-2.633a.365.365 0 0 0-.426-.28"/></svg>
+      </div>
+      <div class="svc-body">
+        <div class="svc-title">Fast Delivery</div>
+        <div class="svc-desc">Fast, reliable delivery across Bangladesh.</div>
+      </div>
+    </div>
+    <div class="svc-item rv" style="transition-delay:.24s">
+      <div class="svc-icon">
+        <svg fill="#ffffff" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 33 33"><defs><clipPath id="a-svc4"><path d="M3.879 20h25.5v12.012h-25.5Zm0 0"/></clipPath></defs><path  d="M25.867 9.492a.96.96 0 0 0-.488-.601c.055-.586-.024-1.301-.16-1.891a7.5 7.5 0 0 0-.57-1.594c-.29-.558-.649-1.152-1.153-1.699-.48-.57-1.094-1.086-1.789-1.539-6.066-3.895-14.441.71-13.789 6.723a.97.97 0 0 0-.488.601c-1.434.028-2.59 1.106-2.59 2.442 0 1.332 1.156 2.414 2.59 2.441.113.418.508.738 1 .738.578 0 1.047-.433 1.047-.972V9.727c0-.305-.16-.57-.399-.747.266-1.52 1.043-3.125 2.14-4.125 1.606-1.582 4.391-2.5 7.458-1.808 1.18.355 2.34.953 3.304 1.91 1.079.98 1.95 2.45 2.235 4.023-.617.465-.395.868-.395 5.16 0 .337.196.618.473.794v.375c0 .234-.066.468-.191.668-1.372 2.164-1.461 2.382-3.536 3.054-.648.211-1.386.301-2.128.489-.684-.688-1.895-.239-1.895.68 0 1.16 1.785 1.425 2.133.265.504-.121 1.02-.195 1.504-.348 2.672-.82 3.547-1.308 4.96-4.043a1.8 1.8 0 0 0 .204-.836v-.242a.95.95 0 0 0 .523-.625c1.434-.023 2.586-1.105 2.586-2.437s-1.152-2.414-2.586-2.442"/><g clip-path="url(#a-svc4)"><path  d="M16.652 25.277c.856-1.218 1.602-2.265 2.336-3.324.856-1.238 1.723-1.64 3.078-1.176a63 63 0 0 1 5.09 1.98c1.434.63 2.235 1.759 2.149 3.43-.047.82 0 1.649-.012 2.473-.031 2.27-1.05 3.328-3.273 3.34-2.872.016-5.739.004-8.61.004-3.332 0-6.668.008-10.004-.004-2.383-.012-3.39-1.043-3.402-3.445-.004-.785.039-1.57-.008-2.352-.105-1.742.777-2.86 2.238-3.496a61 61 0 0 1 5.106-1.941c1.469-.496 1.926-.274 2.836 1.015.785 1.114 1.574 2.223 2.476 3.496"/></g><path  d="M22.73 10.781c-.16 2.047-.796 4.668-2.921 6.684-1.797 1.71-4.543 1.75-6.313 0-2.453-2.426-3.226-5.508-2.848-8.84.2-1.738 1.247-3.113 3.012-3.695 2.617-.867 5.156-.953 7.461.902 1.348 1.082 1.656 2.566 1.61 4.95"/></svg>
+      </div>
+      <div class="svc-body">
+        <div class="svc-title">24/7 Support</div>
+        <div class="svc-desc">We're here to help before, during, and after your purchase.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats-section" id="stats">
+  <div class="stats-grid">
+    <div class="stat-card rv">
+      <div class="stat-icon" style="background:linear-gradient(145deg,#34d399,#009b72);box-shadow:0 10px 28px rgba(0,155,114,.22)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"><path d="M15.5777 3.38197L17.5777 4.43152C19.7294 5.56066 20.8052 6.12523 21.4026 7.13974C22 8.15425 22 9.41667 22 11.9415V12.0585C22 14.5833 22 15.8458 21.4026 16.8603C20.8052 17.8748 19.7294 18.4393 17.5777 19.5685L15.5777 20.618C13.8221 21.5393 12.9443 22 12 22C11.0557 22 10.1779 21.5393 8.42229 20.618L6.42229 19.5685C4.27063 18.4393 3.19479 17.8748 2.5974 16.8603C2 15.8458 2 14.5833 2 12.0585V11.9415C2 9.41667 2 8.15425 2.5974 7.13974C3.19479 6.12523 4.27063 5.56066 6.42229 4.43152L8.42229 3.38197C10.1779 2.46066 11.0557 2 12 2C12.9443 2 13.8221 2.46066 15.5777 3.38197Z"/><path d="M21 7.5L17 9.5M12 12L3 7.5M12 12V21.5M12 12C12 12 14.7426 10.6287 16.5 9.75C16.6953 9.65237 17 9.5 17 9.5M17 9.5V13M17 9.5L7.5 4.5"/></svg>
+      </div>
+      <div class="stat-number" data-target="200" data-suffix="+">0+</div>
+      <div class="stat-label">Products</div>
+      <div class="stat-desc">Curated inventory, ready to ship</div>
+    </div>
+    <div class="stat-card rv" style="transition-delay:.08s">
+      <div class="stat-icon" style="background:linear-gradient(145deg,#34d399,#009b72);box-shadow:0 10px 28px rgba(0,155,114,.22)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+      </div>
+      <div class="stat-number" data-target="50" data-suffix="+">0+</div>
+      <div class="stat-label">Brands</div>
+      <div class="stat-desc">Trusted global brand partners</div>
+    </div>
+    <div class="stat-card rv" style="transition-delay:.16s">
+      <div class="stat-icon" style="background:linear-gradient(145deg,#34d399,#009b72);box-shadow:0 10px 28px rgba(0,155,114,.22)">
+        <svg viewBox="0 0 32 32" fill="#ffffff"><path d="M7,5h6a0,0,0,0,1,0,0V8.88A1.12,1.12,0,0,1,11.88,10H8.12A1.12,1.12,0,0,1,7,8.88V5A0,0,0,0,1,7,5Z"/><path d="M31.41,17l-1.54-1.54-1.69-5.09A2,2,0,0,0,26.28,9H20V7a3,3,0,0,0-3-3H3A3,3,0,0,0,0,7V22a3,3,0,0,0,3,3H4.14a4,4,0,1,0,0-2H3a1,1,0,0,1-1-1V7A1,1,0,0,1,3,6H17a1,1,0,0,1,1,1V23H15a1,1,0,0,0,0,2h6.14a4,4,0,0,0,7.72,0H30a2,2,0,0,0,2-2V18.41A2,2,0,0,0,31.41,17ZM8,22a2,2,0,1,1-2,2A2,2,0,0,1,8,22Zm19.61-7H24V11h2.28ZM25,26a2,2,0,1,1,2-2A2,2,0,0,1,25,26Zm5-3H28.86a4,4,0,0,0-7.72,0H20V11h2v5a1,1,0,0,0,1,1h5.59L30,18.41Z"/></svg>
+      </div>
+      <div class="stat-number" data-target="64" data-suffix="">0</div>
+      <div class="stat-label">Districts</div>
+      <div class="stat-desc">Nationwide delivery coverage</div>
+    </div>
+    <div class="stat-card rv" style="transition-delay:.24s">
+      <div class="stat-icon" style="background:linear-gradient(145deg,#34d399,#009b72);box-shadow:0 10px 28px rgba(0,155,114,.22)">
+        <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z"/></svg>
+      </div>
+      <div class="stat-number" data-target="100" data-suffix="%">0%</div>
+      <div class="stat-label">Authentic</div>
+      <div class="stat-desc">Verified & guaranteed sourcing</div>
+    </div>
+  </div>
+</section>
 
 <section class="whiteboard" id="whiteboard">
     <div class="wb-inner">
@@ -916,6 +1050,7 @@ function navTo(dest){pnSet(dest);const m={store:['Store tab coming next ðŸª','ð
 function pnSet(id){document.querySelectorAll('.pn-item').forEach(b=>b.classList.remove('on'));const el=document.getElementById('pn-'+id);if(el)el.classList.add('on');}
 const ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');ro.unobserve(x.target);}});},{threshold:.08});
 document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+(function(){const nums=document.querySelectorAll('.stat-number[data-target]');const so=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){const el=en.target,target=parseFloat(el.dataset.target),suffix=el.dataset.suffix||'',dur=1200,start=performance.now();function tick(now){const p=Math.min((now-start)/dur,1),eased=1-Math.pow(1-p,3),val=Math.round(target*eased);el.textContent=val+suffix;if(p<1)requestAnimationFrame(tick);else el.textContent=target+suffix;}requestAnimationFrame(tick);so.unobserve(el);}});},{threshold:.4});nums.forEach(el=>so.observe(el));})();
 let _tt;
 
 // 3D badge tilt
