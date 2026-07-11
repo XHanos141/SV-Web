@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuppVerse BD — Reviews, FAQ & Footer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cyan:#009ddc; --orange:#f26430; --green:#009b72; --gold:#f4a922; --purple:#6761a8;
+  --font:'DM Sans',sans-serif; --fd:'Plus Jakarta Sans',sans-serif; --fs:'Outfit',sans-serif;
+  --bg:#ffffff; --surface:#ffffff; --surface2:#f5f7fc; --border:rgba(0,0,0,0.07);
+  --text:#0a1628; --t2:#4a5568; --t3:#9aa5b4;
+  --shadow:0 2px 16px rgba(0,0,0,0.07); --shadow-md:0 6px 28px rgba(0,0,0,0.1);
+}
+body.dark-mode {
+  --bg:#060d1a; --surface:#0f1a2e; --surface2:#162338; --border:rgba(255,255,255,0.08);
+  --text:#eef4ff; --t2:rgba(238,244,255,0.55); --t3:rgba(238,244,255,0.28);
+  --shadow:0 2px 16px rgba(0,0,0,0.4); --shadow-md:0 6px 28px rgba(0,0,0,0.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding:24px 0 0;transition:background .35s ease,color .35s ease}
+
+.rv{opacity:1;transform:translateY(0);transition:opacity .45s ease,transform .45s ease}
+.rv.in{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.07s} .d2{transition-delay:.14s}
+.d3{transition-delay:.21s} .d4{transition-delay:.28s}
+
+.wb-title{font-family:var(--fd);font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.2}
+
+/* ===== TESTIMONIALS ===== */
+.testimonials-section { padding: 32px 20px 40px; background: var(--bg); position: relative; z-index: 1; overflow: hidden; }
+.testimonials-header { text-align: center; margin-bottom: 20px; }
+.testimonials-header .wb-title { font-size: 20px; }
+.testi-row { display: flex; gap: 12px; overflow-x: auto; padding: 4px 0 8px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.testi-row::-webkit-scrollbar { display: none; }
+.testi-card { flex-shrink: 0; width: 280px; scroll-snap-align: start; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 18px; box-shadow: var(--shadow); }
+.testi-stars { display: flex; gap: 2px; margin-bottom: 10px; }
+.testi-stars svg { width: 14px; height: 14px; fill: var(--gold); }
+.testi-text { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.55; margin-bottom: 14px; }
+.testi-author { display: flex; align-items: center; gap: 10px; }
+.testi-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--purple)); display: flex; align-items: center; justify-content: center; font-family: var(--fd); font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.testi-name { font-size: 12px; font-weight: 700; color: var(--text); }
+.testi-role { font-size: 10.5px; font-weight: 500; color: var(--t3); margin-top: 1px; }
+
+/* ===== FAQ ===== */
+.faq-section { padding: 32px 20px 40px; background: var(--surface2); position: relative; z-index: 1; }
+.faq-header { text-align: center; margin-bottom: 20px; }
+.faq-header .wb-title { font-size: 20px; }
+.faq-list { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+.faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: box-shadow .2s; }
+.faq-item.open { box-shadow: var(--shadow-md); }
+.faq-q { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; cursor: pointer; user-select: none; }
+.faq-q-text { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.4; flex: 1; }
+.faq-chevron { width: 20px; height: 20px; flex-shrink: 0; transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+.faq-chevron svg { width: 100%; height: 100%; stroke: var(--t3); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.faq-item.open .faq-chevron { transform: rotate(180deg); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height .35s cubic-bezier(.4,0,.2,1), padding .35s; }
+.faq-item.open .faq-a { max-height: 200px; padding: 0 16px 14px; }
+.faq-a-text { font-size: 12.5px; font-weight: 500; color: var(--t2); line-height: 1.55; }
+
+/* ===== NEWSLETTER CTA ===== */
+.newsletter-section { padding: 40px 20px; position: relative; z-index: 1; overflow: hidden; }
+.newsletter-card { max-width: 520px; margin: 0 auto; background: linear-gradient(135deg, #0f3258 0%, #002248 50%, #001532 100%); border-radius: 24px; padding: 32px 24px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,.25); }
+.newsletter-card::before { content: ''; position: absolute; top: -60px; right: -60px; width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(0,157,220,.2) 0%, transparent 65%); }
+.newsletter-card::after { content: ''; position: absolute; bottom: -40px; left: -40px; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, rgba(242,100,48,.15) 0%, transparent 65%); }
+.newsletter-content { position: relative; z-index: 1; }
+.newsletter-icon { width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, var(--cyan), var(--purple)); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; box-shadow: 0 8px 24px rgba(0,157,220,.3); }
+.newsletter-icon svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.newsletter-title { font-family: var(--fd); font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -.3px; }
+.newsletter-desc { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.65); margin-top: 6px; line-height: 1.5; }
+.newsletter-form { display: flex; gap: 8px; margin-top: 18px; max-width: 320px; margin-left: auto; margin-right: auto; }
+.newsletter-input { flex: 1; height: 44px; padding: 0 16px; border-radius: 12px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15); color: #fff; font-size: 13px; font-weight: 500; }
+.newsletter-input::placeholder { color: rgba(255,255,255,.4); }
+.newsletter-btn { height: 44px; padding: 0 20px; border-radius: 12px; background: linear-gradient(135deg, var(--cyan), #006daa); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .03em; border: none; flex-shrink: 0; transition: transform .15s, box-shadow .2s; box-shadow: 0 4px 14px rgba(0,157,220,.35); }
+.newsletter-btn:active { transform: scale(0.95); }
+
+/* ===== FOOTER ===== */
+.footer { background: var(--bg); padding: 32px 20px; position: relative; z-index: 1; border-top: 1px solid var(--border); }
+.footer-inner { max-width: 520px; margin: 0 auto; }
+.footer-brand { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.footer-brand .logo-name { font-size: 20px; color: var(--text); font-family: var(--fd); font-weight: 800; line-height: 1; letter-spacing: .5px; }
+.footer-brand .logo-name .bd { color: var(--cyan); }
+.footer-brand .logo-sub { font-size: 9px; color: var(--t3); font-family: var(--font); font-weight: 600; letter-spacing: .18em; text-transform: uppercase; }
+.footer-tagline { font-size: 12.5px; font-weight: 500; color: var(--t2); line-height: 1.5; max-width: 280px; margin-bottom: 20px; }
+.footer-links { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 24px; margin-top: 8px; }
+.footer-col-title { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--text); margin-bottom: 10px; }
+.footer-col a { display: block; font-size: 12.5px; font-weight: 500; color: var(--t2); padding: 5px 0; transition: color .2s; text-decoration: none; }
+.footer-col a:hover { color: var(--cyan); }
+.footer-col a:active { color: var(--orange); }
+.footer-social { display: flex; gap: 10px; margin-bottom: 24px; }
+.footer-social a { width: 36px; height: 36px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; transition: all .2s; }
+.footer-social a:active { transform: scale(0.92); }
+.footer-social svg { width: 16px; height: 16px; fill: var(--t2); transition: fill .2s; }
+.footer-social a:hover svg { fill: var(--cyan); }
+.footer-social.brand-icons a { width: 36px; height: 36px; background: none; border: none; padding: 0; border-radius: 10px; overflow: hidden; }
+.footer-social.brand-icons svg { width: 100%; height: 100%; }
+
+.footer-bottom { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding-top: 16px; border-top: 1px solid var(--border); }
+.footer-copy { font-size: 11px; font-weight: 500; color: var(--t3); text-align: left; align-self: flex-start; }
+.footer-payment { display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; align-self: flex-start; }
+.footer-payment svg { flex-shrink: 0; }
+.footer-accept-label { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--text); opacity: 1; }
+.footer-payment span { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--t3); padding: 3px 8px; border-radius: 6px; background: var(--surface2); border: 1px solid var(--border); }
+
+/* ===== TRUST BAR ===== */
+.trust-bar { background: var(--surface2); padding: 16px 20px; display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.trust-item { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--t2); }
+.trust-item svg { width: 16px; height: 16px; stroke: var(--green); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ===== TOAST ===== */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(10,18,36,.92);color:#fff;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);padding:10px 18px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:999;white-space:nowrap;display:flex;align-items:center;gap:8px;box-shadow:0 4px 24px rgba(0,0,0,.4);max-width:calc(100vw - 40px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Theme toggle */
+.theme-bar { display: flex; justify-content: flex-end; padding: 0 20px 16px; max-width: 600px; margin: 0 auto; }
+.theme-toggle { width: 40px; height: 40px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; transition: background .3s ease; }
+.theme-toggle:active { transform: scale(.92); }
+.theme-toggle svg { position: absolute; width: 21px; height: 21px; stroke: var(--text); stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: all .4s cubic-bezier(.34,1.56,.64,1); }
+.theme-toggle .icon-sun { opacity: 1; transform: rotate(0) scale(1); }
+.theme-toggle .icon-moon { opacity: 0; transform: rotate(90deg) scale(.5); }
+.theme-toggle.dark .icon-sun { opacity: 0; transform: rotate(-90deg) scale(.5); }
+.theme-toggle.dark .icon-moon { opacity: 1; transform: rotate(0) scale(1); }
+
+.section-spacer{height:40px;background:var(--bg)}
+
+
+/* ===== WHATSAPP SUPPORT WIDGET ===== */
+.wa-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  font-family: var(--font);
+}
+
+/* Chat Bubble */
+.wa-bubble {
+  position: relative;
+  background: #0B2D5B;
+  color: #fff;
+  padding: 16px 40px 16px 20px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.12);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px) scale(0.96);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(.34,1.56,.64,1), visibility 0.4s;
+  max-width: 240px;
+  margin-bottom: 14px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.wa-bubble.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Pointer triangle */
+.wa-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  right: 30px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 12px solid #0B2D5B;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08));
+}
+
+.wa-bubble-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  pointer-events: none;
+}
+
+.wa-bubble-line1 {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #fff;
+}
+
+.wa-bubble-line2 {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: rgba(255,255,255,0.75);
+}
+
+.wa-bubble-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.wa-bubble-close:hover {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+.wa-bubble-close:active {
+  transform: scale(0.9);
+}
+
+/* WhatsApp Button Wrapper */
+.wa-btn-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: waFadeIn 0.6s ease forwards, waPulse 1.5s ease-in-out 15s infinite;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s ease;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4), 0 8px 28px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+
+.wa-btn-wrap:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 22px rgba(37, 211, 102, 0.5), 0 12px 36px rgba(0,0,0,0.2);
+}
+
+.wa-btn-wrap:active {
+  transform: scale(0.95);
+}
+
+.wa-btn {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+}
+
+.wa-btn svg {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+@keyframes waFadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes waPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@media (max-width: 480px) {
+  .wa-widget { bottom: 12px; right: 12px; }
+  .wa-btn-wrap { width: 56px; height: 56px; }
+  .wa-btn svg { width: 24px; height: 24px; }
+  .wa-bubble {
+    padding: 14px 36px 14px 16px;
+    border-radius: 18px;
+    max-width: 200px;
+    margin-bottom: 12px;
+  }
+  .wa-bubble-line1 { font-size: 13px; }
+  .wa-bubble-line2 { font-size: 11px; }
+  .wa-bubble::after { right: 28px; bottom: -9px; border-left: 9px solid transparent; border-right: 9px solid transparent; border-top: 11px solid #0B2D5B; }
+  .wa-bubble-close { top: 8px; right: 8px; width: 22px; height: 22px; font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="theme-bar">
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <svg class="icon-sun" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+</div>
+
+<section class="testimonials-section">
+  <div class="testimonials-header rv">
+    <h2 class="wb-title">What Our Customers Say</h2>
+  </div>
+  <div class="testi-row rv d1">
+    <div class="testi-card">
+      <div class="testi-stars">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <p class="testi-text">"Ordered Optimum Nutrition whey through proxy import. Arrived in 12 days, perfectly sealed, authentic. Saved me ৳2,000 compared to local shops."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">RA</div>
+        <div>
+          <div class="testi-name">Rafiq Ahmed</div>
+          <div class="testi-role">Dhaka · Verified Buyer</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <p class="testi-text">"Local stock delivery was next-day in Chittagong. The packaging was premium and they included a free shaker. Best supplement store in BD hands down."</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,var(--orange),var(--gold))">SN</div>
+        <div>
+          <div class="testi-name">Sarah N.</div>
+          <div class="testi-role">Chittagong · Verified Buyer</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <p class="testi-text">"Had a question about which creatine to choose. Their support team replied on WhatsApp in 5 minutes with a detailed comparison. Incredible service."</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,var(--green),var(--cyan))">MK</div>
+        <div>
+          <div class="testi-name">Mahmud Karim</div>
+          <div class="testi-role">Sylhet · Verified Buyer</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="faq-header rv">
+    <h2 class="wb-title">Frequently Asked Questions</h2>
+  </div>
+  <div class="faq-list rv d1">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span class="faq-q-text">Are your products 100% authentic?</span>
+        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="faq-a"><p class="faq-a-text">Every product at SuppVerse BD is sourced from trusted brands, authorized distributors, or verified global retailers. We carefully inspect every order before shipping and never deal in counterfeit products. Whether you choose local stock or global import, you can shop with confidence knowing every order is backed by our commitment to authenticity and quality.</p></div>
+    </div>
+        <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span class="faq-q-text">What is a pre-order?</span>
+        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="faq-a"><p class="faq-a-text">A pre-order means you choose—we handle the rest. It lets you buy products from trusted international stores without the hassle. Simply send us the product link from your preferred retailer. Once your order is confirmed, we'll purchase the item, handle international shipping, customs clearance, and every step of the import process until it's safely delivered to your doorstep.</p></div>
+    </div>
+<div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span class="faq-q-text">How long does pre-order delivery take?</span>
+        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="faq-a"><p class="faq-a-text">Most pre-order items are delivered within 10–14 business days after your order is confirmed. We handle international sourcing, shipping, customs clearance, and delivery to your doorstep. You'll receive regular order updates throughout the process, so you always know the status of your order.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span class="faq-q-text">What payment methods do you accept?</span>
+        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="faq-a"><p class="faq-a-text">We accept bKash, Nagad, bank transfers, major debit/credit cards, and cash on delivery (COD) for eligible local stock orders. We also support cryptocurrency payments in selected cases. For pre-orders, a partial advance payment may be required before we begin the sourcing process.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span class="faq-q-text">Can I return a product if I'm not satisfied?</span>
+        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="faq-a"><p class="faq-a-text">Yes. Eligible local stock items may be returned according to our return policy. If your order arrives damaged, incorrect, or defective, we'll replace it or provide an appropriate solution. Since pre-order items are sourced specifically for each customer, they are generally non-returnable unless they arrive damaged or have a verified product issue.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span class="faq-q-text">Do you deliver outside Dhaka?</span>
+        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="faq-a"><p class="faq-a-text">Absolutely. We deliver nationwide across all 64 districts of Bangladesh. Local stock orders in Dhaka are typically delivered the same day or the next business day. Outside Dhaka, delivery usually takes 2–3 business days, depending on the courier and location.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Newsletter CTA -->
+<section class="newsletter-section">
+  <div class="newsletter-card rv">
+    <div class="newsletter-content">
+      <div class="newsletter-icon">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <h3 class="newsletter-title">Stay in the Loop</h3>
+      <p class="newsletter-desc" style="margin-top:2px;font-size:12px">Get early access to new arrivals, exclusive offers, and important updates. No spam, ever.</p>
+      <div class="newsletter-form">
+        <input type="email" class="newsletter-input" placeholder="Enter your email" id="nlEmail">
+        <button class="newsletter-btn" onclick="subscribeNewsletter()">Subscribe</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo-name">SuppVerse <span class="bd">BD</span></div>
+      <div class="logo-sub">Discover Better. Beyond Borders.</div>
+      <p class="footer-tagline" style="font-size:11px;font-weight:500;color:var(--t2);line-height:1.5;max-width:320px;margin:6px 0 12px;">Your trusted source for authentic products from around the world. Shop local stock or pre-order from your favorite international stores all in one place.</p>
+      <div style="margin-bottom:0;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text);margin-bottom:4px;">Follow Us</div>
+        <div class="footer-social brand-icons" style="margin-bottom:0;">
+          <a href="#" onclick="T('Facebook page coming soon','📘');return false" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg"
+aria-label="Facebook" role="img"
+viewBox="0 0 512 512"><rect
+width="512" height="512"
+rx="15%"
+fill="#1877f2"/><path d="M355.6 330l11.4-74h-71v-48c0-20.2 9.9-40 41.7-40H370v-63s-29.3-5-57.3-5c-58.5 0-96.7 35.4-96.7 99.6V256h-65v74h65v182h80V330h59.6z" fill="#ffffff"/></svg></a>
+          <a href="#" onclick="T('Instagram coming soon','📷');return false" aria-label="Instagram"><svg   viewBox="0 0 3364.7 3364.7" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="0" cx="217.76" cy="3290.99" r="4271.92" gradientUnits="userSpaceOnUse"><stop offset=".09" stop-color="#fa8f21"/><stop offset=".78" stop-color="#d82d7e"/></radialGradient><radialGradient id="1" cx="2330.61" cy="3182.95" r="3759.33" gradientUnits="userSpaceOnUse"><stop offset=".64" stop-color="#8c3aaa" stop-opacity="0"/><stop offset="1" stop-color="#8c3aaa"/></radialGradient></defs><path d="M853.2,3352.8c-200.1-9.1-308.8-42.4-381.1-70.6-95.8-37.3-164.1-81.7-236-153.5S119.7,2988.6,82.6,2892.8c-28.2-72.3-61.5-181-70.6-381.1C2,2295.4,0,2230.5,0,1682.5s2.2-612.8,11.9-829.3C21,653.1,54.5,544.6,82.5,472.1,119.8,376.3,164.3,308,236,236c71.8-71.8,140.1-116.4,236-153.5C544.3,54.3,653,21,853.1,11.9,1069.5,2,1134.5,0,1682.3,0c548,0,612.8,2.2,829.3,11.9,200.1,9.1,308.6,42.6,381.1,70.6,95.8,37.1,164.1,81.7,236,153.5s116.2,140.2,153.5,236c28.2,72.3,61.5,181,70.6,381.1,9.9,216.5,11.9,281.3,11.9,829.3,0,547.8-2,612.8-11.9,829.3-9.1,200.1-42.6,308.8-70.6,381.1-37.3,95.8-81.7,164.1-153.5,235.9s-140.2,116.2-236,153.5c-72.3,28.2-181,61.5-381.1,70.6-216.3,9.9-281.3,11.9-829.3,11.9-547.8,0-612.8-1.9-829.1-11.9" fill="url(#0)"/><path d="M853.2,3352.8c-200.1-9.1-308.8-42.4-381.1-70.6-95.8-37.3-164.1-81.7-236-153.5S119.7,2988.6,82.6,2892.8c-28.2-72.3-61.5-181-70.6-381.1C2,2295.4,0,2230.5,0,1682.5s2.2-612.8,11.9-829.3C21,653.1,54.5,544.6,82.5,472.1,119.8,376.3,164.3,308,236,236c71.8-71.8,140.1-116.4,236-153.5C544.3,54.3,653,21,853.1,11.9,1069.5,2,1134.5,0,1682.3,0c548,0,612.8,2.2,829.3,11.9,200.1,9.1,308.6,42.6,381.1,70.6,95.8,37.1,164.1,81.7,236,153.5s116.2,140.2,153.5,236c28.2,72.3,61.5,181,70.6,381.1,9.9,216.5,11.9,281.3,11.9,829.3,0,547.8-2,612.8-11.9,829.3-9.1,200.1-42.6,308.8-70.6,381.1-37.3,95.8-81.7,164.1-153.5,235.9s-140.2,116.2-236,153.5c-72.3,28.2-181,61.5-381.1,70.6-216.3,9.9-281.3,11.9-829.3,11.9-547.8,0-612.8-1.9-829.1-11.9" fill="url(#1)"/><path d="M1269.25,1689.52c0-230.11,186.49-416.7,416.6-416.7s416.7,186.59,416.7,416.7-186.59,416.7-416.7,416.7-416.6-186.59-416.6-416.7m-225.26,0c0,354.5,287.36,641.86,641.86,641.86s641.86-287.36,641.86-641.86-287.36-641.86-641.86-641.86S1044,1335,1044,1689.52m1159.13-667.31a150,150,0,1,0,150.06-149.94h-0.06a150.07,150.07,0,0,0-150,149.94M1180.85,2707c-121.87-5.55-188.11-25.85-232.13-43-58.36-22.72-100-49.78-143.78-93.5s-70.88-85.32-93.5-143.68c-17.16-44-37.46-110.26-43-232.13-6.06-131.76-7.27-171.34-7.27-505.15s1.31-373.28,7.27-505.15c5.55-121.87,26-188,43-232.13,22.72-58.36,49.78-100,93.5-143.78s85.32-70.88,143.78-93.5c44-17.16,110.26-37.46,232.13-43,131.76-6.06,171.34-7.27,505-7.27S2059.13,666,2191,672c121.87,5.55,188,26,232.13,43,58.36,22.62,100,49.78,143.78,93.5s70.78,85.42,93.5,143.78c17.16,44,37.46,110.26,43,232.13,6.06,131.87,7.27,171.34,7.27,505.15s-1.21,373.28-7.27,505.15c-5.55,121.87-25.95,188.11-43,232.13-22.72,58.36-49.78,100-93.5,143.68s-85.42,70.78-143.78,93.5c-44,17.16-110.26,37.46-232.13,43-131.76,6.06-171.34,7.27-505.15,7.27s-373.28-1.21-505-7.27M1170.5,447.09c-133.07,6.06-224,27.16-303.41,58.06-82.19,31.91-151.86,74.72-221.43,144.18S533.39,788.47,501.48,870.76c-30.9,79.46-52,170.34-58.06,303.41-6.16,133.28-7.57,175.89-7.57,515.35s1.41,382.07,7.57,515.35c6.06,133.08,27.16,223.95,58.06,303.41,31.91,82.19,74.62,152,144.18,221.43s139.14,112.18,221.43,144.18c79.56,30.9,170.34,52,303.41,58.06,133.35,6.06,175.89,7.57,515.35,7.57s382.07-1.41,515.35-7.57c133.08-6.06,223.95-27.16,303.41-58.06,82.19-32,151.86-74.72,221.43-144.18s112.18-139.24,144.18-221.43c30.9-79.46,52.1-170.34,58.06-303.41,6.06-133.38,7.47-175.89,7.47-515.35s-1.41-382.07-7.47-515.35c-6.06-133.08-27.16-224-58.06-303.41-32-82.19-74.72-151.86-144.18-221.43S2586.8,537.06,2504.71,505.15c-79.56-30.9-170.44-52.1-303.41-58.06C2068,441,2025.41,439.52,1686,439.52s-382.1,1.41-515.45,7.57" fill="#ffffff"/></svg></a>
+          <a href="#" onclick="T('YouTube channel coming soon','▶️');return false" aria-label="YouTube"><svg xmlns="http://www.w3.org/2000/svg"
+aria-label="YouTube" role="img"
+viewBox="0 0 512 512"
+fill="#ed1d24"><rect width="512" height="512" rx="15%" fill="#ed1d24"/><path d="m427 169c-4-15-17-27-32-31-34-9-239-10-278 0-15 4-28 16-32 31-9 38-10 135 0 174 4 15 17 27 32 31 36 10 241 10 278 0 15-4 28-16 32-31 9-36 9-137 0-174" fill="#ffffff"/><path d="m220 203v106l93-53z" fill="#ed1d24"/></svg></a>
+        </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <div class="footer-col-title">Shop</div>
+        <a href="#" onclick="navTo('store','local');return false">Local Stock</a>
+        <a href="#" onclick="navTo('store','preorder');return false">Pre-Order</a>
+        <a href="#" onclick="navTo('store','new');return false">New Arrivals</a>
+        <a href="#" onclick="navTo('store','all');return false">All Products</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <a href="suppverse_about.html">About Us</a>
+        <a href="#" onclick="T('Privacy Policy coming soon','🔒');return false">Privacy Policy</a>
+        <a href="#" onclick="T('Terms & Conditions coming soon','📄');return false">Terms & Conditions</a>
+        <a href="#" onclick="T('Contact form coming soon','📧');return false">Contact Us</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 SuppVerse BD. All rights reserved.</span>
+      <span class="footer-accept-label">We Accept</span>
+      <div class="footer-payment">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="52" height="18" style="display:block">
+<g fill="none">
+<path fill="#D12053" d="M93.2 14.7l-22.1-3.5 2.9 13.2z"/>
+<path fill="#E2136E" d="M93.2 14.7L76.6 1.6l-5.4 19.7z"/>
+<path fill="#D12053" d="M70.6 11.0L53.1 0l22.9 2.7z"/>
+<path fill="#9E1638" d="M62.6 1.7L53.0 0h2.5z"/>
+<path fill="#D12053" d="M98.0 8.0l-4.1 11.1-6.6-9.2z"/>
+<path fill="#E2136E" d="M76.7 28.4l16.1-6.5.7-2.1z"/>
+<path fill="#9E1638" d="M63.9 40.5l6.9-24.2 3.5 15.7z"/>
+<path fill="#E2136E" d="M98.6 8.1l-1.7 4.6 6.1-.1zM0 10.2c.3 0 .6.1 .9.1s.6-.1 .9-.1v9.8c1.0-1.6 2.2-2.7 4.0-2.7 3.2 0 4.6 3.2 4.6 6.1 0 3.5-1.9 6.9-5.2 6.9a3.6 3.6 0 0 1-3.2-1.9c-.5.5-1.0 1.1-1.6 1.6h-.4zm1.8 14.4c0 2.9 1.2 4.8 3.2 4.8 2.6 0 3.4-3.5 3.4-5.9 0-2.9-1.0-5.1-2.9-5.1-2.1 0-3.7 3.1-3.7 6.2z"/>
+<path fill="#231F20" d="M18.8 17.1l-1.9 2.5c1.8 2.7 3.7 5.3 5.5 8.0l1.9 2.9v.1c-.5 0-.9-.1-1.3-.1-.4 0-.9.1-1.3.1-.5-.9-1.0-1.8-1.6-2.6l-5.0-7.4c-.1-.1-.4-.2-.4-.1v10.1c-.4 0-.7-.1-1.0-.1-.3 0-.7.1-1.0.1V10.2c.3 0 .7.1 1.0.1.3 0 .6-.1 1.0-.1v9.0c0 .2.3.1.6-.2a14.5 14.5 0 0 0 1.2-1.4l5.6-7.4c.3 0 .6.1 .9.1.3 0 .6-.1 .9-.1z"/>
+<path fill="#231F20" d="M33.9 28.4c0 1.0-.1 1.6 1.3 1.2v.6a4.0 4.0 0 0 1-.7.3c-1.2.2-2.2 0-2.4-1.5l-.2.2a4.2 4.2 0 0 1-3.4 1.7c-1.6 0-3.0-1.3-3.0-3.2 0-3.0 2.1-3.4 4.2-3.8 1.8-.3 2.4-.5 2.4-1.8 0-2.0-1.0-3.1-2.7-3.1a2.9 2.9 0 0 0-2.7 1.8h-.2v-1.5a5.9 5.9 0 0 1 3.7-1.5c2.4 0 3.7 1.5 3.7 4.5zm-1.8-4.4l-.8.2c-1.6.3-3.9.6-3.9 3.0 0 1.7.8 2.5 2.2 2.5a2.8 2.8 0 0 0 1.9-1.0c.2-.2.6-.6.6-.7z"/>
+<path fill="#231F20" d="M39.5 24.3c.5 1.0 1.6 2.0 2.6 2.0a2.4 2.4 0 0 0 2.2-2.4c0-3.6-5.4-1.3-5.4-5.9 0-2.6 1.7-3.9 3.7-3.9.9 0 1.8.2 2.6.7a13.7 13.7 0 0 0-.5 1.9h-.2c-.3-.9-1.1-1.7-1.9-1.7-1.1 0-2.1.8-2.1 2.2 0 3.4 5.4 1.6 5.4 5.9 0 2.8-2.2 4.2-4.2 4.2a5.3 5.3 0 0 1-2.9-.8 14.5 14.5 0 0 0 .5-2.0z"/>
+<path fill="#231F20" d="M49.0 9.5c.3 0 .6.1 .9.1.3 0 .6-.1 .9-.1v9.6c.8-1.6 2.1-2.6 3.7-2.6 2.7 0 3.7 1.8 3.7 5.2v7.7c-.3 0-.6-.1-.9-.1-.3 0-.6.1-.9.1v-7.7c0-2.9-.6-4.4-2.5-4.4-2.1 0-3.0 1.5-3.0 4.2v7.2c-.3 0-.6-.1-.9-.1-.3 0-.6.1-.9.1z"/>
+</g>
+</svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="2 0 55 55" width="28" height="28" style="display:block">
+<path fill="#ec1c24" d="M50.7 28.2c0 .7 0 1.3-.1 2-.2 2.9-1 5.6-2.1 8.1-.5 1-1 2-1.6 2.9C42.6 48 35 52.6 26.3 52.6c-3.7 0-7.2-.8-10.4-2.3C7.7 46.4 2 38 2 28.2c0-9.5 5.5-17.8 13.5-21.8-.6.8-1.2 1.7-1.7 2.6 0 .1-.1.1-.1.2-.3.3-.6.5-.9.8-.4.3-.7.7-1.1 1.1-.1.1-.2.2-.2.3-.1.1-.2.2-.2.3l-.4.4c-.3.3-.5.6-.7.9-1 1.3-1.8 2.8-2.5 4.3-.1.2-.1.3-.2.5s-.1.4-.2.5c-.3.2-.3.3-.3.4l-.3.9c-.1.2-.1.4-.2.6 0 .1-.1.2-.1.3 0 .2-.1.4-.1.6-.1.5-.3 1.1-.3 1.7 0 .2 0 .3-.1.5v2.5c0 6.6 3 12.5 7.8 16.4 3.7 3 8.4 4.8 13.5 4.8 4.6 0 8.9-1.5 12.4-4 2.6-1.8 4.7-4.2 6.2-7 .2-.4.4-.7.6-1.1 1.2-2.6 1.9-5.4 2-8.4v-.7c0-.7 0-1.4-.1-2.1l.1.1c.3.3.6.6 1 .8.3-.5.6-1 1-1.4.2.9.3 1.9.4 2.8-.2.8-.1 1.5-.1 2.2"/>
+<path fill="#f6921e" d="M48.3 25.8v.7c0 4.3-1.8 7.9-2 8.4-.2.4-.4.7-.6 1.1-1.5 2.8-3.7 5.2-6.2 7-3.5 2.5-7.8 4-12.4 4-5.1 0-9.8-1.8-13.5-4.8-4.8-3.9-7.8-9.8-7.8-16.4v-2.5c0-.2 0-.3.1-.5.1-.6.3-1.2.4-1.8 0-.2.1-.4.1-.6 0-.1.1-.2.1-.3.1-.2.1-.4.2-.6.1-.3.2-.5.3-.8 0-.1.1-.2.1-.3.1-.2.1-.4.2-.5.1-.2.1-.3.2-.5.7-1.6 1.5-3 2.5-4.3.2-.3.5-.6.7-.9.1-.1.2-.3.4-.4.1-.1.1-.2.2-.3.1-.1.2-.2.2-.3.3-.4.7-.7 1.1-1.1.3-.3.6-.6.9-.8 0 .1-.1.2-.1.2 0 .1-.1.2-.1.3-1.2 2.5-2 5.4-2.3 8.6-.1.8-.1 1.7-.1 2.6 0 11.1 6.5 20.1 14.6 20.1h.9c1.2 0 2.3-.2 3.4-.5 5.5-1.5 9.5-6.5 9.5-12.4v-.4c-.1-3.5-1.6-6.7-4-8.9 1.7 0 3.3.3 4.8.7 3 .8 5.7 2.2 8 4l.1.1c0 .7.1 1.4.1 2.1"/>
+<path fill="#f6921e" d="M48.3 25.8v.7c0 4.6-2 8.4-2 8.5-.2.4-.4.7-.6 1.1-1.5 2.8-3.7 5.2-6.2 7.1-3.6 2.6-8 4-12.5 4-4.9 0-9.7-1.7-13.5-4.8-5-4.1-7.8-10.1-7.8-16.5s2.9-12.5 7.9-16.6l.2-.2c0 .1-.1.1-.1.2s-.1.2-.1.2c-4.9 4-7.6 10-7.6 16.3 0 6.4 2.8 12.3 7.8 16.4C17.4 45.3 22.1 47 27 47c4.5 0 8.7-1.4 12.4-4 2.5-1.8 4.7-4.3 6.2-7 .2-.4.4-.7.6-1.1 0 0 2.1-3.9 2-8.4v-.7c0-.7 0-1.4-.1-2v-.1l.1.1.1.1v1.9"/>
+<path fill="#ec1c24" d="M42.5 12.6S25.1 9.3 17 24.4c0 0 1.4-10.4 13.8-15.2l-2.5-4.6S33.3.1 42 1.3z"/>
+<path fill="#f6921e" d="M21 20.6s6.9-9.1 22.8-6.7l-.2-5.3s6.6-.2 12 4.4L49 23s-4.5-5.3-13.9-5.4c-3.9-.1-8.6.4-14.1 3"/>
+<path fill="#ec1c24" d="M24.7 24.1s-1.5.3-1.4-.4c0-.3.2-.4.3-.3 0-.1-.3-.5.4-.7.2-.3.4-.6.5-.8.1-.2.2-.5.8-.3.6.1 1.2.7 1.3.9.3 0 .7.1.6.1l-.2.2s.2.1-.4.1c0 .1.1.2.2.2.1.1 0 .1 0 .2 0 0 .1.3-.2.2-.3-.1-.3-.2-.4-.2-.1 0-.3 0-.3.1s.3.3 0 .3c-.1.1.1.2 0 .2-.1.1-.8.6-1.1.7-.3 0-.4-.1-.4-.2s.2-.2.4-.2c-.1 0 0-.1-.1-.1"/>
+<path fill="#ec1c24" d="M24.6 25.7c-.1 0-.6-.3-.3-.4.2-.2 1.2-.8 1.4-.9.2-.1.5.2.2.4-.3.3-1.3.9-1.3.9"/>
+<path fill="#ec1c24" d="M26.1 25c0-.2.2-.8.2-.9 0-.1.5-.2.4.4-.2.5-.6.7-.6.5"/>
+<path fill="#ec1c24" d="M26.8 23.8s2.8-.1 3 0c.2.1 1.2 1.6.9 2.9-.2 1.3-.6 1.6-2.4 1.8 0-.4-.1-1.5-.3-1.8-.2-.3-.8-1-1-1 0 .3-.1 1.2-.1 1.2s-.9.1-1-.1v-1.4s.8-.7.9-.9c.1.1.2.5 1.1.4 0 .1-1.1.2-1.1-1.1"/>
+<path fill="#ec1c24" d="M25.7 25.1s-.9.7-1.1.9c-.1.2-.2 1 .9 1 .2-.5.2-1.9.2-1.9"/>
+<path fill="#ec1c24" d="M23.6 26.2c-.3 0-.5-.1-.5-.3 0-.2.4-.5.7-.4.2.1.7.2.7 1.1.2.2.7.6 1.4.6s1.1 0 1.1.2v1.3s-.8 0-2.8-1.4c-.2-.2-.3-.4-.3-.7 0-.3-.2-.4-.3-.4"/>
+<path fill="#ec1c24" d="M23 26.3c-.3 0-1.3.8-.6 1.1l.4-.4s-.2.5.2.6c.4.1.2-.2.4-.2.1.2.1.3.3.3.2 0 .2-.6 0-.9-.1-.3-.3-.5-.7-.5"/>
+<path fill="#ec1c24" d="M27.2 26.4V29s.8-.3.9-.5c0-.4-.2-2.1-.9-2.1"/>
+<path fill="#ec1c24" d="M25.1 28.1s1 .7 1.6.9c-.1.1-.5.7-.7.6-.1 0-.8-1-.9-1.5"/>
+<path fill="#ec1c24" d="M20.2 29.1h1.4v.5h-1.3z"/>
+<path fill="#ec1c24" d="M35.1 28.8h-5.7l.9.7h4.8z"/>
+<path fill="#ec1c24" d="M28.3 28.8c.1-.1.8.4.6.5-.2.1-2 .8-2.1.8-.2-.1-.1-.5.1-.6.1-.1 1.1-.4 1.4-.7"/>
+<path fill="#ec1c24" d="M26.3 30c-.2-.1-1.3 1-.8 1.1.5.1 1.7.3 2 .5.3-.1.5-.4.5-.5.2 0 .5.3.8.2.3-.1 1.7-1.1 1.7-1.3-.3-.2-.9-.6-1.2-.6-.2-.1-2 1-3 .6"/>
+<path fill="#ec1c24" d="M25.7 31.4c.1 0 1.6.5 1.9.5.4-.1.4-.4.6-.4.2 0 .3.2.6 0s1-.8 1.1-.9c0 .2 0 .8-1.3 1.4-1.3.6-4.4 1.5-4.5 1.9.1 0 .5-.1.8-.2.2.1.5.5.4 1.2-.1.7-.6 1.8-.6 2.1v1.9c0 .1.3 1-.1.9-.4-.1-.6-.1-.8 0-.2 0-.5.3-.7.2-.3 0-.7-.2-.7-.3 0-.1.3-.1.6-.2s.4-.4.9-.6c0-.3-.2-2.8-.2-3.3s-.2-1.6.1-2c.2-.6 1.4-2.3 1.9-2.2"/>
+<path fill="#ec1c24" d="M27.6 32.8c0 .2.9 2.4 1.3 2.4s4.1-.8 4.8-.5c.2.3.6.8.6 1.1 0 0 .1.7 0 .8.1 0 .4-.1.5-.3.1-.2 0-1.2 0-1.4 0-.2.5-1.1-.1-1-.6 0-2.3 0-2.9-.1-.5-.1-1.8-.4-2.1-.2-.3.2-.7.7-.7.8-.1 0-.2-.1 0-.5.1-.4.6-1.5.5-2.1-.3.1-1.9 1-1.9 1"/>
+<path fill="#ec1c24" d="M25.5 29.3c0 .1.1.3.2.4l-2.9-.2s-.3-.2-.2-.3z"/>
+<path fill="#ec1c24" d="M22.3 29.1h2.9s-.2-.3-.3-.5h-2.7s-.3 0-.3.6c0 .1.2.3.4-.1"/>
+<path fill="#ec1c24" d="M19.5 29.6h.6s.2-.1 0-.3c-.2-.2-.6-.4-.3-.8-.3 0-.7-.1-.6.8h-.3s-.1-.5-.8-.5c-.7 0-2.4.7-2.4.7s1.9.5 2.4.5.8-.5.8-.5h.2s.1.4.2.5v.6s-.3.1-.2.4c0 .3.2.3.3.3.1 0 .1-.1.4-.1.1-.1 0-.5-.2-.6v-.4s.2-.2.2-.3c-.1-.2-.3-.1-.3-.3"/>
+<path fill="#ec1c24" d="M23 32.4c.2-.1.3-.4.3-.4v-1.7c0-.4-.7-.7-.8-.7-.1.1-.3.2-.4.2-.2 0-.3 0-.5-.2-.6 0-.9.7-.9.8 0 .1-.1 1.4 0 1.6 0 .2.2.4.3.5-.1.4-.7 2.7.1 3v.4h2v-.4c.6-.5.1-2.5-.1-3.1m-2.3-2.1c0-.1.3-.6.7-.6.2.2.4.2.6.2.2 0 .4-.2.5-.2.2.1.6.3.6.6V32c0 .1-.1.2-.2.3h-.4v-.8h-1.3v.7h-.3c-.1-.1-.2-.2-.2-.4v-1.5m1.4 4.7h-.4c-.1 0-.2-.1-.2-.2s.1-.2.2-.2h.4c.1 0 .2.1.2.2s-.1.2-.2.2m.8.2l-1-1.1-.9 1.1c-.6-.2-.2-2 0-2.8h1.9c.2.8.5 2.5 0 2.8"/>
+<path fill="#ec1c24" d="M22.6 33.2c.2-.3-.1-.5-.1-.5h-1.2c-.4 0-.3.5-.3.5l.7.6c.2 0 .7-.3.9-.6"/>
+<path fill="#ec1c24" d="M22.1 33.9l.7.8s-.1-1-.1-1.3c-.1.1-.6.5-.6.5"/>
+<path fill="#ec1c24" d="M21.1 33.4c0 .3-.1 1.3-.1 1.3l.7-.8s-.4-.4-.6-.5"/>
+<path fill="#ec1c24" d="M22.5 31.3h.1v-.1c0-.1-.1-.1-.1-.1h-1.1c-.1 0-.1.1-.1.1v.1h.1z"/>
+<path fill="#ec1c24" d="M20.9 35.9h-.1v.1c0 .1.1.1.1.1h2c.1 0 .1-.1.1-.1v-.1h-.1z"/>
+<path fill="#f6921e" d="M14.2 28.8S6.3 11.5 24.7.4l4.4 8.1s-3 1-6.2 3.8c-3.5 3-7.2 8-8.7 16.5"/>
+</svg>
+        <span>COD</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="section-spacer"></div>
+
+<!-- Toast -->
+<div id="toast"><span id="toastIcon">💬</span><span id="toastMsg">Message</span></div>
+
+<script>
+const S = { theme: localStorage.getItem('sv-theme') || 'light' };
+const themeToggle = document.getElementById('themeToggle');
+function applyTheme(){
+  document.body.classList.toggle('dark-mode', S.theme === 'dark');
+  themeToggle.classList.toggle('dark', S.theme === 'dark');
+  localStorage.setItem('sv-theme', S.theme);
+}
+themeToggle.addEventListener('click', () => {
+  S.theme = S.theme === 'light' ? 'dark' : 'light';
+  applyTheme();
+});
+applyTheme();
+
+const toast = document.getElementById('toast');
+const toastIcon = document.getElementById('toastIcon');
+const toastMsg = document.getElementById('toastMsg');
+let toastTimer = null;
+function T(msg, icon='💬'){
+  toastMsg.textContent = msg;
+  toastIcon.textContent = icon;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+function toggleFaq(el){
+  const item = el.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
+
+function subscribeNewsletter(){
+  const email = document.getElementById('nlEmail').value;
+  if(!email || !email.includes('@')){
+    T('Please enter a valid email','⚠️');
+    return;
+  }
+  T('Subscribed! Check your inbox','✅');
+  document.getElementById('nlEmail').value = '';
+}
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.rv').forEach(el => {
+  el.classList.add('in');
+  io.observe(el);
+});
+
+</script>
+
+
+<!-- WhatsApp Support Widget -->
+<div class="wa-widget" id="waWidget">
+  <div class="wa-bubble" id="waBubble">
+    <button class="wa-bubble-close" id="waBubbleClose" aria-label="Close chat bubble">×</button>
+    <div class="wa-bubble-text">
+      <span class="wa-bubble-line1">👋 Need help?</span>
+      <span class="wa-bubble-line2">Chat with us on WhatsApp.</span>
+    </div>
+  </div>
+  <div class="wa-btn-wrap" id="waBtnWrap">
+    <a href="https://wa.me/8801644232935?text=Hello%20SuppVerseBD!%20I%27m%20interested%20in%20your%20products." target="_blank" rel="noopener noreferrer" class="wa-btn" id="waBtn" aria-label="Chat on WhatsApp">
+      <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#fff" d="M11.42 9.49c-.19-.09-1.1-.54-1.27-.61s-.29-.09-.42.1-.48.6-.59.73-.21.14-.4 0a5.13 5.13 0 0 1-1.49-.92 5.25 5.25 0 0 1-1-1.29c-.11-.18 0-.28.08-.38s.18-.21.28-.32a1.39 1.39 0 0 0 .18-.31.38.38 0 0 0 0-.33c0-.09-.42-1-.58-1.37s-.3-.32-.41-.32h-.4a.72.72 0 0 0-.5.23 2.1 2.1 0 0 0-.65 1.55A3.59 3.59 0 0 0 5 8.2 8.32 8.32 0 0 0 8.19 11c.44.19.78.3 1.05.39a2.53 2.53 0 0 0 1.17.07 1.93 1.93 0 0 0 1.26-.88 1.67 1.67 0 0 0 .11-.88c-.05-.07-.17-.12-.36-.21z"/>
+        <path fill="#fff" d="M13.29 2.68A7.36 7.36 0 0 0 8 .5a7.44 7.44 0 0 0-6.41 11.15l-1 3.85 3.94-1a7.4 7.4 0 0 0 3.55.9H8a7.44 7.44 0 0 0 5.29-12.72zM8 14.12a6.12 6.12 0 0 1-3.15-.87l-.22-.13-2.34.61.62-2.28-.14-.23a6.18 6.18 0 0 1 9.6-7.65 6.12 6.12 0 0 1 1.81 4.37A6.19 6.19 0 0 1 8 14.12z"/>
+      </svg>
+    </a>
+  </div>
+</div>
+
+<!-- WhatsApp Support Widget Script -->
+<script>
+(function(){
+  const bubble = document.getElementById('waBubble');
+  const btn = document.getElementById('waBtn');
+  const closeBtn = document.getElementById('waBubbleClose');
+  if (!bubble || !btn || !closeBtn) return;
+
+  let bubbleClosed = false;
+  const WA_URL = 'https://wa.me/8801644232935?text=Hello%20SuppVerseBD!%20I'm%20interested%20in%20your%20products.';
+
+  function showBubble() {
+    if (!bubbleClosed) bubble.classList.add('show');
+  }
+
+  function hideBubble() {
+    bubble.classList.remove('show');
+  }
+
+  function openChat() {
+    window.open(WA_URL, '_blank');
+    hideBubble();
+  }
+
+  // Show bubble after 3 seconds
+  setTimeout(showBubble, 3000);
+
+  // Close button: permanent hide for this session
+  closeBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    bubbleClosed = true;
+    hideBubble();
+  });
+
+  // Bubble click (not close button): open chat
+  bubble.addEventListener('click', function(e) {
+    if (e.target === closeBtn || closeBtn.contains(e.target)) return;
+    openChat();
+  });
+
+  // Button click: open chat
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    openChat();
+  });
+})();
+</script>
+</body>
+</html>
