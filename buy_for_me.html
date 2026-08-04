@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Buy for Me — SuppVerse BD. Paste any product link and we'll source it for you.">
+<meta name="theme-color" content="#3a1a08">
+<title>Buy for Me — SuppVerse BD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cyan:#009ddc; --orange:#f26430; --green:#009b72; --gold:#f4a922; --purple:#6761a8;
+  --font:'DM Sans',sans-serif; --fd:'Plus Jakarta Sans',sans-serif;
+  --nav-h:58px;
+  --bg:#ffffff; --surface:#ffffff; --surface2:#f5f7fc; --border:rgba(0,0,0,0.07);
+  --text:#0a1628; --t2:#4a5568; --t3:#9aa5b4;
+  --shadow:0 2px 16px rgba(0,0,0,0.07); --shadow-md:0 6px 28px rgba(0,0,0,0.1);
+  --err:#e5484d; --err-soft:rgba(229,72,77,0.10);
+  --amz-bg:rgba(242,100,48,.10); --amz-bdr:rgba(242,100,48,.22); --amz-text:#f26430;
+  --ebay-bg:rgba(0,100,210,.10);  --ebay-bdr:rgba(0,100,210,.22);  --ebay-text:#0064d2;
+  --bb-bg:rgba(0,70,190,.10);     --bb-bdr:rgba(0,70,190,.22);     --bb-text:#0046be;
+  --wm-bg:rgba(0,113,206,.10);    --wm-bdr:rgba(0,113,206,.22);    --wm-text:#0071ce;
+  --oth-bg:rgba(154,165,180,.10); --oth-bdr:rgba(154,165,180,.22); --oth-text:#9aa5b4;
+}
+body.dark-mode {
+  --bg:#060d1a; --surface:#0f1a2e; --surface2:#162338; --border:rgba(255,255,255,0.08);
+  --text:#eef4ff; --t2:rgba(238,244,255,0.55); --t3:rgba(238,244,255,0.28);
+  --shadow:0 2px 16px rgba(0,0,0,0.4); --shadow-md:0 6px 28px rgba(0,0,0,0.5);
+  --err:#ff6b6b; --err-soft:rgba(255,107,107,0.10);
+  --amz-bg:rgba(242,100,48,.14); --amz-bdr:rgba(242,100,48,.30); --amz-text:#ff8a5c;
+  --ebay-bg:rgba(0,100,210,.14);  --ebay-bdr:rgba(0,100,210,.30);  --ebay-text:#4aa3ff;
+  --bb-bg:rgba(0,70,190,.14);     --bb-bdr:rgba(0,70,190,.30);     --bb-text:#5a9aff;
+  --wm-bg:rgba(0,113,206,.14);    --wm-bdr:rgba(0,113,206,.30);    --wm-text:#4ab4ff;
+  --oth-bg:rgba(154,165,180,.14); --oth-bdr:rgba(154,165,180,.30); --oth-text:#b8c5d4;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}
+  .rv{opacity:1;transform:none}
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-top:var(--nav-h);padding-bottom:96px;transition:background .35s ease,color .35s ease;touch-action:manipulation}
+button{font-family:inherit;cursor:pointer}
+input,textarea{font-family:inherit}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+/* ===== Header ===== */
+.header{background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,255,255,0.03) 0%,transparent 65%),radial-gradient(ellipse 60% 80% at -10% 0%,rgba(242,100,48,0.16) 0%,transparent 55%),linear-gradient(180deg,#3a1a08 0%,#2b1206 22%,#220d04 55%,#180802 82%,#100501 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),inset 0 -1px 0 rgba(0,0,0,0.65),0 6px 28px rgba(0,0,0,0.55),0 1px 2px rgba(0,0,0,0.7);border-bottom:1px solid rgba(0,0,0,0.5);padding:0 14px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:10px;position:fixed;top:0;left:0;right:0;z-index:500}
+.back-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.back-btn svg{width:18px;height:18px;stroke:rgba(255,255,255,.85);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hdr-title{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+.hdr-title h1{font-family:var(--fd);font-size:16px;font-weight:800;color:#fff;line-height:1.1;letter-spacing:.1px}
+.hdr-title p{font-size:9px;font-weight:600;color:rgba(255,255,255,.35);letter-spacing:.14em;text-transform:uppercase}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.theme-toggle{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:background .3s ease}
+.theme-toggle:active{transform:scale(.92)}
+.theme-toggle svg{position:absolute;width:18px;height:18px;stroke:rgba(255,255,255,.75);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.theme-toggle .icon-sun{opacity:1;transform:rotate(0) scale(1)}
+.theme-toggle .icon-moon{opacity:0;transform:rotate(90deg) scale(.5)}
+.theme-toggle.dark .icon-sun{opacity:0;transform:rotate(-90deg) scale(.5)}
+.theme-toggle.dark .icon-moon{opacity:1;transform:rotate(0) scale(1)}
+
+/* ===== Reveal ===== */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease}
+.rv.in{opacity:1;transform:translateY(0)}
+main{max-width:600px;margin:0 auto;padding:0 16px}
+
+/* ===== How it works ===== */
+.hiw{padding:22px 0 8px}
+.hiw-eyebrow{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;text-align:center;margin-top:-4px}
+.hiw h2{font-family:var(--fd);font-size:22px;font-weight:800;letter-spacing:-.4px;line-height:1.2;margin-bottom:6px;text-align:center;margin-top:-4px}
+.hiw p.sub{font-size:12.5px;color:var(--t2);line-height:1.5;margin-bottom:20px;max-width:48ch;text-align:center;margin-left:auto;margin-right:auto}
+.journey{display:flex;gap:0;position:relative;margin-bottom:7px}
+.journey::before{content:'';position:absolute;top:30px;left:12%;right:12%;height:2px;background:repeating-linear-gradient(90deg,var(--orange) 0px,var(--orange) 4px,transparent 4px,transparent 8px);opacity:0.75;z-index:1;border-radius:1px}
+.journey::before{content:'';position:absolute;top:30px;left:12.5%;right:12.5%;height:2px;background:repeating-linear-gradient(90deg,var(--orange) 0,var(--orange) 6px,transparent 6px,transparent 12px);opacity:0.45;z-index:1;border-radius:1px}
+.jstep{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;padding:0 2px;z-index:2}
+.jstep-badge{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f26430,#b83200);box-shadow:0 4px 14px rgba(242,100,48,.35);margin-top:8px;margin-bottom:8px;position:relative;z-index:2}
+.jstep-badge svg{width:20px;height:20px;stroke:#fff;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.jstep-num{position:absolute;top:-5px;right:-5px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:2px solid var(--orange);color:var(--orange);font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.jstep-label{font-size:10.5px;font-weight:700;color:var(--text);line-height:1.25}
+
+.jstep:last-child 
+
+/* ===== Trust ===== */
+
+
+/* ===== Form card ===== */
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:18px 16px 20px;box-shadow:var(--shadow);margin-bottom:22px}
+.form-card h3{font-family:var(--fd);font-size:15px;font-weight:800;margin-top:7px;margin-bottom:2px}
+.form-card .fc-sub{font-size:11px;color:var(--t2);margin-bottom:16px}
+.field-label{font-size:11px;font-weight:800;color:var(--text);margin-top:7px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.field-label .req,.item-num .req{color:var(--orange)}
+
+/* ===== Item Row (the product card) ===== */
+.store-label-row{display:flex;gap:8px;margin-top:8px;margin-bottom:4px}
+.store-label-row .sl-left{flex:1 1 50%;font-size:11px;font-weight:800;color:var(--text);padding-left:5px}
+.store-label-row .sl-right{flex:1 1 50%;font-size:11px;font-weight:800;color:var(--text);padding-left:5px}
+.store-optional-row{display:flex;gap:10px;margin-top:4px}
+.store-optional-left,.store-optional-right{flex:1 1 50%;font-size:10px;color:var(--t3);padding-left:5px}
+.store-row{display:flex;align-items:center;gap:10px;margin-top:3px;margin-bottom:4px}
+.store-row .store-select-wrap{flex:1 1 50%;min-width:0}
+.store-row .store-select-wrap::after{right:13px}
+.price-input-wrap{flex:1 1 50%;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;min-width:0;height:40px;transition:border-color .2s}
+.price-input-wrap:focus-within{border-color:var(--orange)}
+.price-input-wrap .price-label{padding:0 8px 0 12px;font-size:13px;font-weight:800;color:var(--green);flex-shrink:0}
+.price-input-wrap input{flex:1;border:none;background:transparent;padding:0 10px 0 0;font-size:13px;font-weight:700;color:var(--text);min-width:0;outline:none;height:100%;-webkit-appearance:none;appearance:none}
+.price-input-wrap input::placeholder{color:var(--t3);font-weight:500}
+body.dark-mode .price-input-wrap{background:var(--bg);border-color:var(--border)}
+
+.item-row{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:10px 14px 12px;margin-bottom:12px;position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s ease,height .35s ease .4s,margin .35s ease .4s,padding .35s ease .4s,border-width .35s ease .4s;transform-origin:center;overflow:hidden}body.dark-mode .item-row{background:var(--surface2);border-color:var(--border)}
+body.dark-mode .review-sheet{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);border-radius:16px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 10px rgba(0,0,0,0.2),0 30px 45px rgba(0,0,0,0.35),0 50px 70px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.6),inset 0 -1px 0 rgba(0,0,0,0.1),inset 1px 0 0 rgba(255,255,255,0.3),inset -1px 0 0 rgba(0,0,0,0.05);display:flex;flex-direction:column;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"),linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));background-blend-mode:overlay,normal}
+.item-row.removing{transform:translateX(100%);opacity:0}
+.item-row.removing.collapsed{height:0;padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0;border-width:0}
+
+/* ===== Glassmorphism Product Card ===== */
+.item-row.glass-card{
+  background:#fff3e8;
+  border:2px solid #ffccaa;
+  border-radius:16px;
+  box-shadow:0 4px 6px rgba(0,0,0,0.05),0 10px 20px rgba(0,0,0,0.08),inset 0 1px 1px rgba(255,255,255,0.8);
+}
+body.dark-mode .item-row.glass-card{
+  background:rgba(80,35,10,0.6);
+  border-color:rgba(180,80,25,0.5);
+  box-shadow:0 4px 6px rgba(0,0,0,0.3),0 10px 20px rgba(0,0,0,0.4),inset 0 1px 1px rgba(255,255,255,0.1),0 0 0 1px rgba(255,255,255,0.05);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.item-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.item-num{font-size:11px;font-weight:800;color:var(--text);letter-spacing:.02em;padding-left:5px}
+.item-remove{width:26px;height:26px;border-radius:8px;background:var(--err-soft);border:1.5px solid rgba(229,72,77,.55);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}.item-remove svg{stroke:var(--err)}body.dark-mode .item-remove{background:rgba(255,107,107,.10);border-color:rgba(255,107,107,.55)}body.dark-mode .item-remove svg{stroke:var(--err)}
+.item-remove svg{width:13px;height:13px;stroke-width:2.3;fill:none;stroke-linecap:round}
+.item-remove:active{transform:scale(.92)}
+.item-remove[aria-hidden="true"]{display:none}
+
+.link-input-wrap.shake{animation:shake .6s cubic-bezier(.36,.07,.19,.97) both;border-color:var(--orange)}
+@keyframes shake{10%,90%{transform:translate3d(-1px,0,0)}20%,80%{transform:translate3d(2px,0,0)}30%,50%,70%{transform:translate3d(-3px,0,0)}40%,60%{transform:translate3d(3px,0,0)}}
+.link-input-wrap{width:100%;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;min-width:0;height:48px;transition:border-color .2s;margin-bottom:6px}
+.link-input-wrap:focus-within{border-color:var(--orange)}
+.link-input-wrap .link-icon{padding:0 8px 0 12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.link-input-wrap .link-icon svg{width:18px;height:18px;stroke:var(--t3);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+.link-input-wrap:focus-within .link-icon svg{stroke:var(--orange)}
+.link-input{flex:1;border:none;background:transparent;padding:0 12px 0 0;font-size:13px;font-weight:500;color:var(--text);min-width:0;outline:none;height:100%}
+.link-input::placeholder{color:var(--t3)}
+.link-input:focus{border-color:var(--orange)}
+.link-input.error{border-color:var(--err);background:var(--err-soft)}
+
+
+.store-select-wrap{position:relative;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;height:40px;transition:border-color .2s}
+.store-select-wrap:focus-within{border-color:var(--orange)}
+.store-select{width:100%;appearance:none;-webkit-appearance:none;background:transparent;border:none;padding:0 34px 0 12px;font-size:13px;font-weight:600;color:var(--t2);height:100%;outline:none}
+.store-select:focus{color:var(--text)}
+.store-select.error + .store-select-wrap{border-color:var(--err);background:var(--err-soft)}
+.store-select-wrap::after{content:'';position:absolute;right:13px;top:50%;width:8px;height:8px;border-right:1.6px solid var(--t3);border-bottom:1.6px solid var(--t3);transform:translateY(-65%) rotate(45deg);pointer-events:none}
+
+.link-error-msg{font-size:10px;color:var(--err);font-weight:600;margin:6px 0 0;display:none}
+.link-error-msg.show{display:block}
+.link-ok-msg{font-size:10px;color:var(--green);font-weight:600;margin:6px 0 0;display:none}
+.link-ok-msg.show{display:block}
+.qty-warning-msg{font-size:10px;color:var(--err);font-weight:600;margin:6px 0 0;display:none}
+.qty-warning-msg.show{display:block}
+
+/* ─── Detected info area (integrated into card) ─── */
+.detected-info{margin-top:8px;border-radius:10px;overflow:hidden;transition:all .3s ease;max-height:0;opacity:0}
+.detected-info.show{max-height:200px;opacity:1}
+
+/* Skeleton */
+.di-skeleton{display:none;align-items:center;gap:10px;padding:8px 0}
+.detected-info.show-skeleton .di-skeleton{display:flex}
+.sk-img{width:52px;height:52px;border-radius:8px;background:linear-gradient(90deg,var(--surface2) 25%,var(--border) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;flex-shrink:0}
+.sk-lines{flex:1;display:flex;flex-direction:column;gap:6px}
+.sk-lines div{height:10px;border-radius:4px;background:linear-gradient(90deg,var(--surface2) 25%,var(--border) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.2s infinite}
+.sk-lines div:nth-child(1){width:100%}
+.sk-lines div:nth-child(2){width:65%}
+.sk-lines div:nth-child(3){width:40%}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Success */
+.di-success{display:none;align-items:center;gap:10px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px}
+.detected-info.show-success .di-success{display:flex}
+.di-img{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--surface2);flex-shrink:0}
+.di-info{flex:1;min-width:0}
+.di-name{font-size:11.5px;font-weight:700;color:var(--text);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.di-meta{display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap}
+.di-price{font-size:13px;font-weight:800;color:var(--green)}
+.di-price .currency{font-size:10px;font-weight:600;opacity:.7;margin-left:2px}
+.di-dot{width:3px;height:3px;border-radius:50%;background:var(--t3);flex-shrink:0}
+.di-store{font-size:10px;font-weight:700;color:var(--t2)}
+.di-stock{font-size:10px;font-weight:700;color:var(--green);background:rgba(0,155,114,.08);padding:2px 7px;border-radius:999px}
+
+/* Fail */
+.di-fail{display:none;padding:12px 10px;text-align:center}
+.detected-info.show-fail .di-fail{display:block}
+.di-fail-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:3px}
+.di-fail-row svg{width:14px;height:14px;stroke:var(--gold);stroke-width:2;fill:none}
+.di-fail-row span{font-size:11px;font-weight:700;color:var(--gold)}
+.di-fail p{font-size:10.5px;color:var(--t3);font-weight:500;margin:0}
+
+/* Quantity */
+.qty-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:0.7px solid var(--border)}
+.qty-label{font-size:11px;font-weight:700;color:var(--t2);letter-spacing:.02em}
+.qty-stepper{display:inline-flex;align-items:center;background:var(--bg);border:0.8px solid var(--orange);border-radius:6px;overflow:hidden}
+body.dark-mode .qty-stepper{border-color:var(--border)}
+.qty-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--surface2) 0%,var(--bg) 100%);border:none;color:var(--text);font-size:18px;font-weight:700;line-height:1;cursor:pointer;transition:transform .1s cubic-bezier(.34,1.56,.64,1),background .1s ease;-webkit-tap-highlight-color:transparent;user-select:none;position:relative;border-radius:4px}
+.qty-btn[data-role="qty-minus"]{border-radius:4px 0 0 4px}
+.qty-btn[data-role="qty-plus"]{border-radius:0 4px 4px 0}
+.qty-btn::before{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,0.25);pointer-events:none}
+body.dark-mode body.dark-mode .qty-btn::before{box-shadow:inset 0 1px 0 rgba(255,255,255,0.06)}
+.qty-btn:active{transform:scale(.88) translateY(1px);background:var(--border);box-shadow:inset 0 2px 5px rgba(0,0,0,0.1)}
+body.dark-mode .qty-btn:active{background:rgba(255,255,255,0.06);box-shadow:inset 0 2px 5px rgba(0,0,0,0.4)}
+.qty-btn[data-role="qty-minus"]{background:linear-gradient(180deg,rgba(229,72,77,0.10) 0%,rgba(229,72,77,0.04) 100%);color:var(--err)}
+body.dark-mode .qty-btn[data-role="qty-minus"]{background:linear-gradient(180deg,rgba(255,107,107,0.14) 0%,rgba(255,107,107,0.06) 100%)}
+.qty-btn[data-role="qty-minus"]:active{background:rgba(229,72,77,0.18)}
+.qty-btn[data-role="qty-plus"]{background:linear-gradient(180deg,rgba(0,155,114,0.10) 0%,rgba(0,155,114,0.04) 100%);color:var(--green)}
+body.dark-mode .qty-btn[data-role="qty-plus"]{background:linear-gradient(180deg,rgba(0,155,114,0.14) 0%,rgba(0,155,114,0.06) 100%)}
+.qty-btn[data-role="qty-plus"]:active{background:rgba(0,155,114,0.18)}
+.qty-val{width:38px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--text);background:var(--bg);border-left:0.8px solid rgba(0,0,0,0.15);border-right:0.8px solid rgba(0,0,0,0.15)}
+
+.add-item-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;background:transparent;border:1.5px dashed rgba(242,100,48,.4);border-radius:12px;padding:11px;font-size:12px;font-weight:700;color:var(--orange);margin-bottom:18px;transition:background .2s}
+.add-item-btn:active{background:rgba(242,100,48,.06)}
+.add-item-btn svg{width:14px;height:14px;stroke:var(--orange);stroke-width:2.4;fill:none}
+
+/* WhatsApp + Note */
+.wa-field-wrap{display:flex;gap:8px;margin-bottom:16px}
+.wa-prefix{display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:0 12px;font-size:12.5px;font-weight:700;color:var(--t2);flex-shrink:0}
+.wa-input{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:11px 12px;font-size:12.5px;color:var(--text);min-width:0;outline:none;-webkit-appearance:none;appearance:none}
+.wa-input:focus{border-color:var(--orange)}
+.wa-input.error{border-color:var(--err);background:var(--err-soft)}
+.wa-input.ok{border-color:var(--green);background:rgba(0,155,114,0.06)}
+.wa-error-msg{font-size:10px;color:var(--err);font-weight:600;margin-top:4px;display:none}
+.wa-error-msg.show{display:block}
+.note-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:16px 12px;font-size:13px;color:var(--text);resize:none;min-height:140px;margin-bottom:4px;line-height:1.5;outline:none;-webkit-appearance:none;appearance:none}
+.note-input:focus{border-color:var(--orange)}
+.note-count{text-align:right;font-size:9.5px;color:var(--t3);margin-bottom:8px}
+
+/* ===== Order Summary Card ===== */
+.order-summary{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:16px;margin-top:16px;box-shadow:var(--shadow)}
+.os-header{font-family:var(--fd);font-size:13px;font-weight:900;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px;opacity:1}
+.os-header svg{width:16px;height:16px;stroke:var(--orange);stroke-width:2;fill:none;opacity:1}
+.os-table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
+.os-table th{font-size:11.5px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;padding:0 0 8px;border-bottom:1.6px solid var(--green);text-shadow:0 0 .4px currentColor}
+.os-table th:nth-child(1){width:38%;text-align:left}
+.os-table th:nth-child(2){width:18%}
+.os-table th:nth-child(3){width:22%}
+.os-table th:nth-child(4){width:22%;text-align:right;padding-left:2px}
+.os-table td{font-size:12px;font-weight:600;color:var(--text);padding:10px 0;border-bottom:0.7px solid rgba(0,155,114,0.35);vertical-align:middle}
+.os-table td:last-child{text-align:right;font-weight:800}
+.os-table tbody tr:last-child td{border-bottom:none}
+.os-product-name{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.os-qty{color:var(--t2);font-size:11px;text-align:center}
+.os-each{color:var(--t2);font-size:11px;text-align:center}
+.os-total{color:var(--green);font-size:13px;font-weight:800}
+.os-sep td{padding:0;border:none}
+.os-sep div{border-top:2px dashed var(--green);width:100%;display:block}
+.os-tax-row td{padding:6px 0 4px;font-size:11px;font-weight:600;color:var(--t2);border-bottom:none}
+.os-tax-row td:last-child{text-align:right;font-weight:700;color:var(--text)}
+.os-grand-row td{padding-top:10px;border-bottom:none}
+.os-grand-label{font-size:11px;font-weight:800;color:var(--text);text-align:left;padding-left:0;text-shadow:0 0 .4px currentColor}
+.os-grand-val{font-size:18px;font-weight:800;color:var(--orange)!important;text-align:right;padding-right:0}
+
+
+.purchase-req-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--green);color:#fff;border:3px solid #ffffff;border-radius:50px;padding:12px 24px;font-family:var(--fd);font-size:13px;font-weight:800;box-shadow:0 4px 20px rgba(0,155,114,0.45);margin-top:14px;transition:transform .4s cubic-bezier(.4,0,.2,1),box-shadow .3s ease}
+.purchase-req-btn:hover{box-shadow:0 6px 28px rgba(0,155,114,0.55)}
+.purchase-req-btn:active{transform:scale(.92)}
+.purchase-req-btn svg{width:18px;height:18px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+
+
+/* ===== Submit Review Popup ===== */
+.review-overlay{position:fixed;inset:0;background:rgba(255,255,255,.15);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);z-index:950;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.review-overlay.show{opacity:1;pointer-events:auto}
+.review-sheet{position:relative;width:calc(100% - 48px);max-width:380px;background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.75);border-radius:16px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 10px rgba(15,35,65,0.12),0 30px 45px rgba(15,35,65,0.22),0 50px 70px rgba(15,35,65,0.08),inset 0 1px 0 rgba(255,255,255,0.9),inset 0 -1px 0 rgba(15,35,65,0.05),inset 1px 0 0 rgba(255,255,255,0.5),inset -1px 0 0 rgba(15,35,65,0.03);padding:18px 20px 16px;transform:scale(.92);transition:transform .35s cubic-bezier(.16,1,.3,1);max-height:80vh;display:flex;flex-direction:column;-webkit-transform:translateZ(0);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"),linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05));background-blend-mode:overlay,normal}
+.review-overlay.show .review-sheet{transform:scale(1)}
+.review-sheet h3{font-family:var(--fd);font-size:18px;font-weight:800;margin-bottom:4px}
+.review-items-scrollable{flex:1 1 auto;min-height:0;max-height:calc(3 * 74px + 16px);overflow-y:auto;overflow-x:hidden;padding-right:4px;margin:6px -4px 0 0;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,0.15) transparent}
+.review-items-scrollable::-webkit-scrollbar{width:4px}
+.review-items-scrollable::-webkit-scrollbar-track{background:transparent}
+.review-items-scrollable::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:4px}
+body.dark-mode .review-items-scrollable{scrollbar-color:rgba(255,255,255,0.12) transparent}
+body.dark-mode .review-items-scrollable::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12)}
+.review-items-scrollable::after{content:'';display:block;height:4px;flex-shrink:0}
+.review-sheet .rs-sub{font-size:12px;color:var(--t2);margin-bottom:10px}
+.review-item{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:10px 14px;margin-bottom:8px}
+.review-item-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.review-item-img{width:44px;height:44px;border-radius:10px;object-fit:cover;background:var(--surface);flex-shrink:0}
+.review-item-info{flex:1;min-width:0}
+.review-item-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.review-item-store{font-size:10px;color:var(--t3);margin-top:2px}
+.review-item-row{display:flex;align-items:center;justify-content:space-between;margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+.review-item-label{font-size:11px;color:var(--t2)}
+.review-item-val{font-size:12px;font-weight:700;color:var(--text)}
+.review-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:4px 0}
+.review-wa{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.review-wa-icon{width:32px;height:32px;border-radius:8px;background:rgba(0,155,114,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.review-wa-icon svg{width:16px;height:16px;stroke:var(--green);stroke-width:2;fill:none}
+.review-wa-info{flex:1}
+.review-wa-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.review-wa-num{font-size:13px;font-weight:700;color:var(--text)}
+.review-note{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:16px;max-height:80px;overflow-y:auto}
+.review-note:empty{display:none}
+.review-note-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.review-actions{display:flex;gap:8px}
+.review-actions button{flex:1;border-radius:12px;padding:11px;font-size:13px;font-weight:800;border:none;cursor:pointer}
+.review-actions .ra-submit{background:linear-gradient(135deg,var(--green),#007a5a);color:#fff;box-shadow:0 4px 16px rgba(0,155,114,.35);padding:11px}
+.review-actions .ra-submit:active{transform:scale(.96)}
+.review-actions .ra-back{background:transparent;border:1.5px solid var(--border);color:var(--text);padding:11px}
+.review-actions .ra-back:active{transform:scale(.96)}
+.review-grand{display:flex;align-items:center;justify-content:space-between;padding:4px 0;margin-bottom:2px}
+.review-grand-label{font-size:12px;font-weight:700;color:var(--text)}
+.review-grand-val{font-size:16px;font-weight:800;color:var(--orange)}
+.review-tax-row{display:flex;align-items:center;justify-content:space-between;padding:2px 0}
+.review-tax-label{font-size:11px;color:var(--t2)}
+.review-tax-val{font-size:12px;font-weight:600;color:var(--text)}
+/* ===== Green Glassmorphism Order Summary ===== */
+.order-summary.glass-card-green{
+  background:#e8f5e9;
+  border:2px solid #c8e6c9;
+  box-shadow:0 4px 6px rgba(0,0,0,0.05),0 10px 20px rgba(0,0,0,0.08),inset 0 1px 1px rgba(255,255,255,0.8);
+}
+body.dark-mode .order-summary.glass-card-green{
+  background:rgba(27,67,50,0.6);
+  border-color:rgba(45,106,79,0.5);
+  box-shadow:0 4px 6px rgba(0,0,0,0.3),0 10px 20px rgba(0,0,0,0.4),inset 0 1px 1px rgba(255,255,255,0.1),0 0 0 1px rgba(255,255,255,0.05);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+
+
+/* Trust Badges (Why Choose Us) */
+.trust-badges-section{margin-bottom:22px;margin-top:28px}
+.trust-badges-section h3{font-family:var(--fd);font-size:15px;font-weight:800;margin-top:7px;margin-bottom:14px;text-align:center}
+.trust-badge-card{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
+.trust-badge-card:last-child{margin-bottom:0}
+.trust-badge-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:linear-gradient(135deg,#009ddc,#0066aa);box-shadow:0 4px 14px rgba(0,157,220,.30)}
+.trust-badge-icon svg{width:24px;height:24px;stroke:#fff;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.trust-badge-text{flex:1;min-width:0}
+.trust-badge-text h4{font-family:var(--fd);font-size:14px;font-weight:800;color:var(--text);margin-bottom:3px;line-height:1.2}
+.trust-badge-text p{font-size:12px;color:var(--t2);line-height:1.45;margin:0}
+
+/* FAQ */
+.faq{margin-bottom:20px}
+.faq h3{font-family:var(--fd);font-size:15px;font-weight:800;margin-top:7px;margin-bottom:10px}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:13px 2px;background:none;border:none;width:100%;text-align:left}
+.faq-q span{font-size:12px;font-weight:700;color:var(--text)}
+.faq-q svg{width:16px;height:16px;stroke:var(--t2);stroke-width:2.2;fill:none;transition:transform .3s cubic-bezier(.4,0,.2,1);flex-shrink:0}
+.faq-item.open .faq-q svg{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.faq-item.open .faq-a{max-height:120px}
+.faq-a p{font-size:11.5px;color:var(--t2);line-height:1.55;padding:0 2px 14px}
+
+/* Submit bar */
+.submit-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:400;box-shadow:0 -4px 20px rgba(0,0,0,.06)}
+.submit-bar-inner{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.submit-total{flex:1;min-width:0}
+.submit-total .st-label{font-size:9.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.submit-total .st-val{font-size:13px;font-weight:800;color:var(--text)}
+.submit-btn{background:linear-gradient(135deg,#f26430,#b83200);color:#fff;border:none;border-radius:12px;padding:13px 22px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:7px;box-shadow:0 4px 16px rgba(242,100,48,.35);transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
+.submit-btn:active{transform:scale(.96)}
+.submit-btn svg{width:15px;height:15px;stroke:#fff;stroke-width:2.3;fill:none}
+.submit-btn:disabled{opacity:.5;pointer-events:none}
+.submit-btn .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.submit-btn.loading span{display:none}
+.submit-btn.loading .spinner{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Toast */
+.toast{position:fixed;top:calc(var(--nav-h) + 10px);left:50%;transform:translateX(-50%) translateY(-20px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:12px;font-weight:700;color:var(--text);box-shadow:var(--shadow-md);z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:var(--err);color:var(--err)}
+
+/* Success overlay */
+.success-overlay{position:fixed;inset:0;background:rgba(6,13,26,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:900;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.success-overlay.show{opacity:1;pointer-events:auto}
+.success-sheet{background:var(--surface);width:100%;max-width:600px;border-radius:24px 24px 0 0;padding:28px 22px calc(24px + env(safe-area-inset-bottom));text-align:center;transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.success-overlay.show .success-sheet{transform:translateY(0)}
+.success-check{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#12b17e,#009b72);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 22px rgba(0,155,114,.35)}
+.success-check svg{width:30px;height:30px;stroke:#fff;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.success-sheet h3{font-family:var(--fd);font-size:19px;font-weight:800;margin-bottom:6px}
+.success-sheet p{font-size:12.5px;color:var(--t2);line-height:1.5;margin-bottom:18px}
+.tracking-code{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1.5px dashed var(--border);border-radius:12px;padding:10px 18px;margin-bottom:20px}
+.tracking-code .tc-label{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
+.tracking-code .tc-val{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--orange);letter-spacing:.5px}
+.success-actions{display:flex;flex-direction:column;gap:9px}
+.sa-primary{background:linear-gradient(135deg,#f26430,#b83200);color:#fff;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:800}
+.sa-secondary{background:transparent;border:1.5px solid var(--border);color:var(--text);border-radius:12px;padding:13px;font-size:13px;font-weight:700}
+
+/* Login gate */
+.login-gate{position:fixed;inset:0;background:rgba(6,13,26,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:900;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease;padding:20px}
+.login-gate.show{opacity:1;pointer-events:auto}
+.lg-card{background:var(--surface);border-radius:20px;padding:26px 22px;max-width:340px;width:100%;text-align:center}
+.lg-icon{width:52px;height:52px;border-radius:14px;background:rgba(242,100,48,.12);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.lg-icon svg{width:24px;height:24px;stroke:var(--orange);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lg-card h3{font-family:var(--fd);font-size:16px;font-weight:800;margin-bottom:6px}
+.lg-card p{font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:18px}
+.lg-login{width:100%;background:linear-gradient(135deg,#f26430,#b83200);color:#fff;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:800;margin-bottom:8px}
+.lg-cancel{width:100%;background:transparent;border:none;color:var(--t2);font-size:12px;font-weight:700;padding:8px}
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<header class="header">
+  <button class="back-btn" aria-label="Go back" onclick="history.back()">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="hdr-title">
+    <h1>Buy for Me</h1>
+    <p>Global Import Request</p>
+  </div>
+  <div class="header-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hiw">
+    <p class="hiw-eyebrow rv">Global Import</p>
+    <h2 class="rv">Shop Worldwide<br>From Any International Store</h2>
+    
+
+    <div class="journey rv">
+      <div class="jstep">
+        <div class="jstep-badge"><span class="jstep-num">1</span><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.07 0l1.93-1.93a5 5 0 00-7.07-7.07L10.5 5.5"/><path d="M14 11a5 5 0 00-7.07 0l-1.93 1.93a5 5 0 007.07 7.07L13.5 18.5"/></svg></div><p class="jstep-label">Paste<br>Link</p>
+      </div>
+      <div class="jstep">
+        <div class="jstep-badge"><span class="jstep-num">2</span><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><p class="jstep-label">Get<br>Quote</p>
+      </div>
+      <div class="jstep">
+        <div class="jstep-badge"><span class="jstep-num">3</span><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><p class="jstep-label">Confirm<br>Order</p>
+      </div>
+      <div class="jstep">
+        <div class="jstep-badge"><span class="jstep-num">4</span><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><p class="jstep-label">Delivered</p>
+      </div>
+    </div>
+
+    
+  </section>
+
+  <section class="form-card rv">
+    <h3>What do you want us to get?</h3>
+    <p class="fc-sub">Paste a link. We'll read the product name, price, and store automatically.</p>
+
+    <div id="itemsWrap"></div>
+
+    <button class="add-item-btn" id="addItemBtn" type="button">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Add another product
+    </button>
+
+    <label class="field-label" for="waInput">Your WhatsApp or Mobile Number <span class="req">*</span></label>
+    <div class="wa-field-wrap">
+      <div class="wa-prefix">🇧🇩 +880</div>
+      <input type="tel" class="wa-input" id="waInput" placeholder="1XXX-XXXXXX" inputmode="numeric" autocomplete="tel" maxlength="14">
+    </div>
+    <div class="wa-error-msg" id="waError">Enter a valid Bangladesh WhatsApp number (10–11 digits).</div>
+
+    <label class="field-label" for="noteInput">Anything we should know?</label>
+    <textarea class="note-input" id="noteInput" maxlength="300" placeholder="Color, size preference, delivery notes..."></textarea>
+    <div class="note-count" id="noteCount">0 / 300</div>
+
+    <!-- Order Summary -->
+    <div class="order-summary glass-card-green" id="orderSummary">
+      <div class="os-header">
+        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Order Summary
+      </div>
+      <table class="os-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Each</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="osBody">
+          <tr>
+            <td class="os-product-name">Product 1</td>
+            <td class="os-qty">2 unit</td>
+            <td class="os-each">$80</td>
+            <td class="os-total">$160</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="os-sep">
+            <td colspan="4"><div></div></td>
+          </tr>
+          <tr class="os-tax-row">
+            <td colspan="3">US Sales Tax (8.87%)</td>
+            <td class="os-tax-val" id="osTaxTotal">$0.00</td>
+          </tr>
+          <tr class="os-tax-row">
+            <td colspan="3">Service Charge (2.25%)</td>
+            <td class="os-tax-val" id="osServiceTotal">$0.00</td>
+          </tr>
+          <tr class="os-grand-row">
+            <td class="os-grand-label" colspan="3">Grand Total</td>
+            <td class="os-grand-val" id="osGrandTotal">$160</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div style="text-align:center">
+    <button class="purchase-req-btn" id="purchaseReqBtn" type="button">
+      <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      Send purchase request
+    </button>
+    </div>
+  </section>
+
+    <section class="trust-badges-section rv">
+    <h3 style="text-align:center">How Pre-Order Works?</h3>
+    <div class="trust-badge-card">
+      <div class="trust-badge-icon">
+        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.07 0l1.93-1.93a5 5 0 00-7.07-7.07L10.5 5.5"/><path d="M14 11a5 5 0 00-7.07 0l-1.93 1.93a5 5 0 007.07 7.07L13.5 18.5"/></svg>
+      </div>
+      <div class="trust-badge-text">
+        <h4>Paste a Product Link 🔗</h4>
+        <p>Share a product link from your favorite store like Amazon, iHerb, Walmart, or eBay.</p>
+      </div>
+    </div>
+    <div class="trust-badge-card">
+      <div class="trust-badge-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+      </div>
+      <div class="trust-badge-text">
+        <h4>Get Your Final Price 💬</h4>
+        <p>We'll send your final quote, including the product price, shipping, taxes, and customs fees.</p>
+      </div>
+    </div>
+    <div class="trust-badge-card">
+      <div class="trust-badge-icon">
+        <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <div class="trust-badge-text">
+        <h4>Approve & Pay 💳</h4>
+        <p>Review your quote, then confirm your order and make the payment.</p>
+      </div>
+    </div>
+    <div class="trust-badge-card">
+      <div class="trust-badge-icon">
+        <svg viewBox="0 0 24 24"><path d="M2 12h20"/><path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6"/><path d="M12 2v10"/><path d="M12 2l-4 4"/><path d="M12 2l4 4"/></svg>
+      </div>
+      <div class="trust-badge-text">
+        <h4>We Order It 🛒</h4>
+        <p>We buy the product directly from the original store on your behalf.</p>
+      </div>
+    </div>
+    <div class="trust-badge-card">
+      <div class="trust-badge-icon">
+        <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <div class="trust-badge-text">
+        <h4>Delivered to Your Door 📦</h4>
+        <p>After it arrives in Bangladesh, we deliver it safely to your address.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq rv">
+    <h3>What happens next?</h3>
+    <div class="faq-item">
+      <button class="faq-q" type="button"><span>How long until I get a quote?</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a"><p>Most quotes are sent via WhatsApp within 24 hours. You'll receive one final price including product cost, shipping, taxes, customs fees, and service charge.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" type="button"><span>How do I pay?</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a"><p>bKash, Nagad, bank transfer, or card — you'll get a payment link once you approve the quote.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" type="button"><span>How long does delivery take?</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a"><p>Delivery usually takes 15–20 business days after your order is confirmed. In some cases, delays may occur due to customs clearance, international shipping, or unexpected global events. We'll keep you updated throughout the process.</p></div>
+    </div>
+  </section>
+</main>
+
+<div class="submit-bar">
+  <div class="submit-bar-inner">
+    <div class="submit-total">
+      <div class="st-label" id="itemCountLabel">1 item</div>
+      <div class="st-val">We'll quote you shortly</div>
+    </div>
+    <button class="submit-btn" id="submitBtn">
+      <span>Send Request</span>
+      <div class="spinner"></div>
+      <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<!-- Demo Review Popup -->
+<div class="review-overlay" id="reviewOverlay">
+  <div class="review-sheet">
+    <h3>Review Your Request</h3>
+    <p class="rs-sub">Double-check everything before we send your quote.</p>
+
+    <div class="review-items-scrollable" id="reviewItemsWrap"></div>
+
+    <div class="review-divider"></div>
+
+    <div class="review-tax-row">
+      <span class="review-tax-label">US Sales Tax (8.87%)</span>
+      <span class="review-tax-val" id="reviewTax">$0.00</span>
+    </div>
+    <div class="review-tax-row">
+      <span class="review-tax-label">Service Charge (2.25%)</span>
+      <span class="review-tax-val" id="reviewService">$0.00</span>
+    </div>
+    <div class="review-grand">
+      <span class="review-grand-label">Grand Total</span>
+      <span class="review-grand-val" id="reviewGrand">$0.00</span>
+    </div>
+
+    <div class="review-divider"></div>
+
+    <div class="review-wa">
+      <div class="review-wa-icon">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      </div>
+      <div class="review-wa-info">
+        <div class="review-wa-label">Contact</div>
+        <div class="review-wa-num" id="reviewWa">+880 —</div>
+      </div>
+    </div>
+
+    <div class="review-actions">
+      <button class="ra-back" id="reviewBackBtn" type="button">Go Back</button>
+      <button class="ra-submit" id="reviewSubmitBtn" type="button">
+        <span>Confirm & Send</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-sheet">
+    <div class="success-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <h3>Request sent!</h3>
+    <p>We'll review your request and send a quote to your WhatsApp within 24 hours.</p>
+    <div class="tracking-code"><span class="tc-label">Tracking ID</span><span class="tc-val" id="trackingVal">—</span></div>
+    <div class="success-actions">
+      <button class="sa-primary" id="trackBtn">Track My Request</button>
+      <button class="sa-secondary" id="homeBtn">Back to Home</button>
+    </div>
+  </div>
+</div>
+
+<div class="login-gate" id="loginGate">
+  <div class="lg-card">
+    <div class="lg-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+    <h3>Login to continue</h3>
+    <p>Create a free account to send proxy requests and track your quotes.</p>
+    <button class="lg-login" id="lgLoginBtn">Login / Sign Up</button>
+    <button class="lg-cancel" id="lgCancelBtn">Not now</button>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   SUPPVERSE BD — Buy for Me (Auto-Detect Edition)
+   ================================================================ */
+
+const GAS_PROXY_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+const DEMO_MODE = true;  // ← Set false after deploying GAS proxy
+
+const S = {
+  theme: localStorage.getItem('sv-theme') || 'light',
+  isLoggedIn: false,
+  isSubmitting: false,
+  trackingId: null,
+  items: [],
+  wa: '',
+  notes: ''
+};
+
+const STORES = [
+  { key:'amazon',  match:/(amazon\.(com|co\.uk|de|fr|ca|in|co\.jp|es|it|nl|ae|sg|com\.br|com\.mx|com\.au)|a\.co|amzn\.(to|com|eu|in|asia))/i, label:'Amazon',    color:'amazon' },
+  { key:'ebay',    match:/ebay\.(com|co\.uk|de|fr|ca|it|es|com\.au|nl|at|be|ch|ie|pl)/i,                   label:'eBay',      color:'ebay' },
+  { key:'bestbuy', match:/bestbuy\.com/i,                                                                         label:'Best Buy',  color:'bestbuy' },
+  { key:'walmart', match:/walmart\.com/i,                                                                         label:'Walmart',   color:'walmart' },
+  { key:'other',   match:null,                                                                                      label:'Other',     color:'other' }
+];
+
+const SPRITE_PATH = 'stores.svg'; // ← same folder as this HTML
+
+function isValidUrl(str){
+  try { const u = new URL(str); return u.protocol === 'http:' || u.protocol === 'https:'; }
+  catch(e){ return false; }
+}
+function detectStore(url){
+  if(!isValidUrl(url)) return null;
+  return STORES.find(s => s.match && s.match.test(url)) || null;
+}
+function normalizeWa(raw){ return raw.replace(/[^\d]/g, ''); }
+function isValidWa(raw){
+  const digits = normalizeWa(raw);
+  if(digits.length < 10 || digits.length > 11) return false;
+  const prefix = digits.slice(-11, -9) || digits.slice(0, 2);
+  return /^0?1[3-9]$/.test(prefix);
+}
+
+/* ─── Theme ─── */
+const themeToggle = document.getElementById('themeToggle');
+function applyTheme(){
+  document.body.classList.toggle('dark-mode', S.theme === 'dark');
+  themeToggle.classList.toggle('dark', S.theme === 'dark');
+  localStorage.setItem('sv-theme', S.theme);
+}
+themeToggle.addEventListener('click', () => { S.theme = S.theme === 'light' ? 'dark' : 'light'; applyTheme(); });
+applyTheme();
+
+/* ─── Scroll reveal ─── */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+/* ─── Toast ─── */
+const toastEl = document.getElementById('toast');
+let toastTimer;
+function showToast(msg, isErr){
+  clearTimeout(toastTimer);
+  toastEl.textContent = msg;
+  toastEl.className = 'toast' + (isErr ? ' err' : '') + ' show';
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3200);
+}
+
+/* ─── Overlays ─── */
+function lockBody(lock){ document.body.style.overflow = lock ? 'hidden' : ''; }
+function openOverlay(el){ el.classList.add('show'); lockBody(true); }
+function closeOverlay(el){ el.classList.remove('show'); lockBody(false); }
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){ closeOverlay(document.getElementById('successOverlay')); closeOverlay(document.getElementById('loginGate')); }
+});
+
+/* ─── Debounce ─── */
+function debounce(fn, ms){
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+/* ─── Item Rows ─── */
+let itemCounter = 0;
+const itemsWrap = document.getElementById('itemsWrap');
+const itemCountLabel = document.getElementById('itemCountLabel');
+
+const rowTemplate = document.createElement('template');
+rowTemplate.innerHTML = `
+  <div class="item-row glass-card" data-id="">
+    <div class="item-row-top">
+      <span class="item-num">Product Link <span class="req">*</span></span>
+      <button class="item-remove" type="button" aria-label="Remove item">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="link-input-wrap">
+      <span class="link-icon">
+        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.07 0l1.93-1.93a5 5 0 00-7.07-7.07L10.5 5.5"/><path d="M14 11a5 5 0 00-7.07 0l-1.93 1.93a5 5 0 007.07 7.07L13.5 18.5"/></svg>
+      </span>
+      <input type="url" class="link-input" data-role="link" placeholder="Paste product link (Amazon, eBay, Best Buy, Walmart)">
+    </div>
+    <div class="link-error-msg" data-role="link-error">We don't recognize this store yet — you can still submit, we'll review manually.</div>
+    <div class="link-ok-msg" data-role="link-ok">Link looks good.</div>
+    <div class="qty-warning-msg" data-role="qty-warning">Please paste the product link first</div>
+    <div class="store-label-row">
+      <span class="sl-left">Select Store</span>
+      <span class="sl-right">Price in USD</span>
+    </div>
+    <div class="store-row">
+      <div class="store-select-wrap">
+        <select class="store-select" data-role="store-select" aria-label="Select store">
+          <option value="">Auto-detect</option>
+          <option value="amazon">Amazon</option>
+          <option value="ebay">eBay</option>
+          <option value="bestbuy">Best Buy</option>
+          <option value="walmart">Walmart</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="price-input-wrap">
+        <span class="price-label">$</span>
+        <input type="number" data-role="price-input" placeholder="0.00" step="0.01" min="0">
+      </div>
+    </div>
+    <div class="store-optional-row">
+      <span class="store-optional-left">Optional</span>
+      <span class="store-optional-right">Optional</span>
+    </div>
+
+    <!-- INTEGRATED DETECTED INFO -->
+    <div class="detected-info" data-role="detected-info">
+      <div class="di-skeleton" data-role="di-skeleton">
+        <div class="sk-img"></div>
+        <div class="sk-lines"><div></div><div></div><div></div></div>
+      </div>
+      <div class="di-success" data-role="di-success">
+        <img class="di-img" data-role="di-img" src="" alt="" loading="lazy">
+        <div class="di-info">
+          <div class="di-name" data-role="di-name"></div>
+          <div class="di-meta">
+            <span class="di-price" data-role="di-price"></span>
+            <span class="di-dot"></span>
+            <span class="di-store" data-role="di-store"></span>
+            <span class="di-dot"></span>
+            <span class="di-stock">In Stock</span>
+          </div>
+        </div>
+      </div>
+      <div class="di-fail" data-role="di-fail">
+        <div class="di-fail-row">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Could not read this page</span>
+        </div>
+        <p>We'll review it manually and quote you via WhatsApp.</p>
+      </div>
+    </div>
+
+    <div class="qty-row">
+      <span class="qty-label">Quantity</span>
+      <div class="qty-stepper">
+        <button class="qty-btn" type="button" data-role="qty-minus" aria-label="Decrease quantity">−</button>
+        <span class="qty-val" data-role="qty-val" aria-live="polite">1</span>
+        <button class="qty-btn" type="button" data-role="qty-plus" aria-label="Increase quantity">+</button>
+      </div>
+    </div>
+    </div>
+  </div>
+`;
+
+function addItemRow(){
+  itemCounter++;
+  const frag = rowTemplate.content.cloneNode(true);
+  const row = frag.querySelector('.item-row');
+  row.dataset.id = 'item-' + itemCounter;
+  const item = { id: row.dataset.id, url:'', storeKey:'', qty:1, valid:false, storeMismatch:false, detected:null };
+  S.items.push(item);
+  itemsWrap.appendChild(row);
+  wireItemRow(row, item);
+  wireSummaryTriggers(row);
+  updateOrderSummary();
+  updateRemoveVisibility();
+  updateItemCountLabel();
+}
+
+/* ─── Auto-detect fetch ─── */
+const fetchProductData = debounce(async (url, row, item) => {
+  const di        = row.querySelector('[data-role="detected-info"]');
+  const skeleton  = row.querySelector('[data-role="di-skeleton"]');
+  const success   = row.querySelector('[data-role="di-success"]');
+  const fail      = row.querySelector('[data-role="di-fail"]');
+  const imgEl     = row.querySelector('[data-role="di-img"]');
+  const nameEl    = row.querySelector('[data-role="di-name"]');
+  const priceEl   = row.querySelector('[data-role="di-price"]');
+  const storeEl   = row.querySelector('[data-role="di-store"]');
+
+  di.classList.add('show','show-skeleton');
+  di.classList.remove('show-success','show-fail');
+  item.detected = null;
+
+  let data;
+
+  if(DEMO_MODE){
+    // Simulate network delay + mock response
+    await new Promise(r => setTimeout(r, 1200));
+    const store = item.storeKey || 'other';
+    data = {
+      name: 'Sony WH-1000XM5 Wireless Noise Canceling Headphones — Black',
+      price: '348.00',
+      currency: 'USD',
+      image: 'https://m.media-amazon.com/images/I/61s0IaMcKtL._AC_SL1500_.jpg',
+      store: store,
+      error: null
+    };
+  } else {
+    if(GAS_PROXY_URL.includes('YOUR_DEPLOYMENT_ID')){
+      di.classList.remove('show-skeleton');
+      di.classList.add('show-fail');
+      item.detected = {name:null, price:null, currency:null, image:null, store:'other'};
+      return;
+    }
+    try {
+      const resp = await fetch(GAS_PROXY_URL, {
+        method: 'POST',
+        body: JSON.stringify({url}),
+        headers: {'Content-Type':'application/json'}
+      });
+      data = await resp.json();
+    } catch(e) {
+      di.classList.remove('show-skeleton');
+      di.classList.add('show-fail');
+      item.detected = {name:null, price:null, currency:null, image:null, store:'other'};
+      return;
+    }
+  }
+
+  di.classList.remove('show-skeleton');
+
+  if(data.error || !data.name){
+    di.classList.add('show-fail');
+    item.detected = {name:null, price:null, currency:null, image:null, store:data.store||'other'};
+    return;
+  }
+
+  item.detected = data;
+  if(data.image){ imgEl.src = data.image; imgEl.style.display = 'block'; }
+  else { imgEl.style.display = 'none'; }
+  nameEl.textContent = data.name;
+  const cur = data.currency || 'USD';
+  const price = data.price ? cur + ' ' + data.price : 'Price unavailable';
+  priceEl.innerHTML = price + (data.price ? ' <span class="currency">USD</span>' : '');
+  const storeLabel = STORES.find(s => s.key === (data.store||'other'))?.label || 'Other';
+  storeEl.textContent = storeLabel;
+  di.classList.add('show-success');
+
+  // Auto-fill price input if detected
+  const priceInput = row.querySelector('[data-role="price-input"]');
+  if(priceInput && data.price){ priceInput.value = data.price; }
+}, 900);
+
+function clearDetection(row, item){
+  const di = row.querySelector('[data-role="detected-info"]');
+  di.classList.remove('show','show-skeleton','show-success','show-fail');
+  item.detected = null;
+}
+
+
+
+function wireItemRow(row, item){
+  const idx = Array.from(itemsWrap.children).indexOf(row) + 1;
+  const numEl = row.querySelector('.item-num');
+  if(numEl) numEl.innerHTML = 'Product Link ' + idx + ' <span class="req">*</span>';
+  const linkInput   = row.querySelector('[data-role="link"]');
+  const errMsg      = row.querySelector('[data-role="link-error"]');
+  const okMsg       = row.querySelector('[data-role="link-ok"]');
+  const storeSelect = row.querySelector('[data-role="store-select"]');
+  const qtyVal      = row.querySelector('[data-role="qty-val"]');
+  const qtyMinus    = row.querySelector('[data-role="qty-minus"]');
+  const qtyPlus     = row.querySelector('[data-role="qty-plus"]');
+  const removeBtn   = row.querySelector('.item-remove');
+  let storeManuallySet = false;
+
+  storeSelect.addEventListener('change', () => {
+    storeManuallySet = true;
+    item.storeKey = storeSelect.value;
+    validateRow();
+  });
+
+  function validateRow(){
+    const url = linkInput.value.trim();
+    const selectedStore = storeSelect.value;
+    item.url = url;
+    item.storeKey = selectedStore;
+    linkInput.classList.remove('error','ok');
+    storeSelect.classList.remove('error');
+    errMsg.classList.remove('show');
+    okMsg.classList.remove('show');
+    item.valid = false;
+    item.storeMismatch = false;
+    clearDetection(row, item);
+
+    if(!url) return;
+    if(!isValidUrl(url)){
+      linkInput.classList.add('error');
+      errMsg.textContent = 'Please enter a valid URL (https://...)';
+      errMsg.classList.add('show');
+      return;
+    }
+    const detected = detectStore(url);
+    if(detected){
+      if(!storeManuallySet) storeSelect.value = detected.key;
+
+      // Cross-validation: does selected store match detected?
+      if(selectedStore && selectedStore !== 'other' && selectedStore !== detected.key){
+        linkInput.classList.add('error');
+        storeSelect.classList.add('error');
+        errMsg.textContent = 'This link does not match ' + storeSelect.options[storeSelect.selectedIndex].text + '. Please check or select "Other Store".';
+        errMsg.classList.add('show');
+        item.storeMismatch = true;
+        return;
+      }
+
+      linkInput.classList.add('ok');
+      okMsg.classList.add('show');
+      item.valid = true;
+      item.storeKey = detected.key;
+      fetchProductData(url, row, item);
+    } else {
+      const looksLikeUrl = /^https?:\/\//i.test(url);
+      if(looksLikeUrl){
+        errMsg.textContent = "We don't recognize this store yet — you can still submit, we'll review manually.";
+        errMsg.classList.add('show');
+      }
+      item.valid = true;
+      item.storeKey = selectedStore || 'other';
+    }
+  }
+
+  linkInput.addEventListener('input', validateRow);
+  linkInput.addEventListener('blur', validateRow);
+
+  qtyMinus.addEventListener('click', () => {
+    let v = parseInt(qtyVal.textContent, 10);
+    if(v > 1){ qtyVal.textContent = --v; item.qty = v; }
+  });
+  qtyPlus.addEventListener('click', () => {
+    const url = linkInput.value.trim();
+    const warn = row.querySelector('[data-role="qty-warning"]');
+    const linkWrap = row.querySelector('.link-input-wrap');
+    if(!url){
+      if(warn) warn.classList.add('show');
+      if(linkWrap){ linkWrap.classList.add('shake'); setTimeout(() => linkWrap.classList.remove('shake'), 600); }
+      return;
+    }
+    let v = parseInt(qtyVal.textContent, 10);
+    if(v < 99){ qtyVal.textContent = ++v; item.qty = v; }
+  });
+
+  linkInput.addEventListener('input', () => {
+    const warn = row.querySelector('[data-role="qty-warning"]');
+    if(warn) warn.classList.remove('show');
+  });
+
+  removeBtn.addEventListener('click', () => {
+    if(itemsWrap.children.length <= 1) return;
+    // Measure exact current height
+    const h = row.getBoundingClientRect().height;
+    // Set exact height to freeze layout
+    row.style.height = h + 'px';
+    row.style.transition = 'height .35s cubic-bezier(.4,0,.2,1) .4s, margin .35s cubic-bezier(.4,0,.2,1) .4s, border-width .35s ease .4s, opacity .01s ease .75s';
+    // Force reflow
+    void row.offsetHeight;
+    // Start animation
+    row.classList.add('removing');
+    row.style.height = '0px';
+    setTimeout(() => {
+      row.remove();
+      S.items = S.items.filter(i => i.id !== item.id);
+      updateRemoveVisibility();
+      updateItemCountLabel();
+      updateOrderSummary();
+    }, 800);
+  });
+}
+
+function updateRemoveVisibility(){
+  itemsWrap.querySelectorAll('.item-row').forEach((r, i) => {
+    const n = r.querySelector('.item-num');
+    if(n) n.innerHTML = 'Product Link ' + (i + 1) + ' <span class="req">*</span>';
+  });
+  const rows = itemsWrap.querySelectorAll('.item-row');
+  rows.forEach(r => {
+    const btn = r.querySelector('.item-remove');
+    if(rows.length > 1){ btn.removeAttribute('aria-hidden'); btn.style.display = ''; }
+    else { btn.setAttribute('aria-hidden','true'); btn.style.display = 'none'; }
+  });
+}
+function updateItemCountLabel(){
+  const n = itemsWrap.children.length;
+  itemCountLabel.textContent = n + (n === 1 ? ' item' : ' items');
+}
+
+document.getElementById('addItemBtn').addEventListener('click', () => { addItemRow(); setTimeout(updateOrderSummary, 100); });
+addItemRow();
+
+/* ─── WhatsApp ─── */
+const waInput = document.getElementById('waInput');
+const waError = document.getElementById('waError');
+waInput.addEventListener('input', () => {
+  waInput.value = waInput.value.replace(/[^\d-]/g, '');
+  S.wa = waInput.value;
+  waInput.classList.remove('error','ok');
+  waError.classList.remove('show');
+});
+waInput.addEventListener('blur', () => {
+  const val = waInput.value.trim();
+  if(!val) return;
+  if(!isValidWa(val)){ waInput.classList.add('error'); waError.classList.add('show'); }
+  else { waInput.classList.add('ok'); }
+});
+
+/* ─── Note counter ─── */
+const noteInput = document.getElementById('noteInput');
+const noteCount = document.getElementById('noteCount');
+noteInput.addEventListener('input', () => { S.notes = noteInput.value; noteCount.textContent = noteInput.value.length + ' / 300'; });
+
+/* ─── Order Summary ─── */
+function updateOrderSummary(){
+  const tbody = document.getElementById('osBody');
+  const grandEl = document.getElementById('osGrandTotal');
+  if(!tbody) return;
+  tbody.innerHTML = '';
+  let grand = 0;
+  const rows = itemsWrap.querySelectorAll('.item-row');
+  rows.forEach((row, idx) => {
+    const linkInput = row.querySelector('[data-role="link"]');
+    const qtyEl = row.querySelector('[data-role="qty-val"]');
+    const priceInput = row.querySelector('[data-role="price-input"]');
+    const url = linkInput ? linkInput.value.trim() : '';
+    const qty = qtyEl ? parseInt(qtyEl.textContent, 10) : 1;
+    const price = priceInput ? parseFloat(priceInput.value) || 0 : 0;
+    const total = qty * price;
+    grand += total;
+    const name = itemCounter > 0 ? 'Product ' + (idx + 1) : 'Product';
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td class="os-product-name">' + name + '</td><td class="os-qty">' + qty + ' unit' + (qty > 1 ? 's' : '') + '</td><td class="os-each">$' + price.toFixed(2) + '</td><td class="os-total">$' + total.toFixed(2) + '</td>';
+    tbody.appendChild(tr);
+  });
+  const taxRate = 0.0887;
+  const serviceRate = 0.0225;
+  const tax = grand * taxRate;
+  const service = grand * serviceRate;
+  const grandWithTax = grand + tax + service;
+  const taxEl = document.getElementById('osTaxTotal');
+  const serviceEl = document.getElementById('osServiceTotal');
+  if(taxEl) taxEl.textContent = '$' + tax.toFixed(2);
+  if(serviceEl) serviceEl.textContent = '$' + service.toFixed(2);
+  if(grandEl) grandEl.textContent = '$' + grandWithTax.toFixed(2);
+}
+
+// Wire update triggers
+function wireSummaryTriggers(row){
+  const priceInput = row.querySelector('[data-role="price-input"]');
+  const qtyMinus = row.querySelector('[data-role="qty-minus"]');
+  const qtyPlus = row.querySelector('[data-role="qty-plus"]');
+  if(priceInput) priceInput.addEventListener('input', updateOrderSummary);
+  if(qtyMinus) qtyMinus.addEventListener('click', () => setTimeout(updateOrderSummary, 50));
+  if(qtyPlus) qtyPlus.addEventListener('click', () => setTimeout(updateOrderSummary, 50));
+}
+
+/* ─── FAQ ─── */
+document.querySelectorAll('.faq-item').forEach(item => {
+  item.querySelector('.faq-q').addEventListener('click', () => {
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(o => o.classList.remove('open'));
+    if(!wasOpen) item.classList.add('open');
+  });
+});
+
+/* ─── Submit ─── */
+const submitBtn = document.getElementById('submitBtn');
+const successOverlay = document.getElementById('successOverlay');
+const loginGate = document.getElementById('loginGate');
+const trackingVal = document.getElementById('trackingVal');
+
+function validateForm(){
+  let ok = true;
+  const rows = itemsWrap.querySelectorAll('.item-row');
+  rows.forEach(row => {
+    const linkInput = row.querySelector('[data-role="link"]');
+    const storeSelect = row.querySelector('[data-role="store-select"]');
+    const errMsg = row.querySelector('[data-role="link-error"]');
+    const url = linkInput.value.trim();
+    if(!url){ linkInput.classList.add('error'); ok = false; return; }
+    if(!isValidUrl(url)){ linkInput.classList.add('error'); errMsg.textContent = 'Please enter a valid URL (https://...)'; errMsg.classList.add('show'); ok = false; return; }
+    // Re-run cross-validation on submit
+    const detected = detectStore(url);
+    const selected = storeSelect.value;
+    if(detected && selected && selected !== 'other' && selected !== detected.key){
+      linkInput.classList.add('error');
+      storeSelect.classList.add('error');
+      errMsg.textContent = 'Link does not match selected store. Please check.';
+      errMsg.classList.add('show');
+      ok = false;
+    }
+  });
+  const waRaw = waInput.value.trim();
+  if(!waRaw || !isValidWa(waRaw)){ waInput.classList.add('error'); waError.classList.add('show'); ok = false; }
+  return ok;
+}
+
+function buildPayload(){
+  return {
+    user_id: null,
+    items: S.items.filter(i => i.url).map(i => ({
+      url: i.url,
+      store: i.storeKey || 'other',
+      qty: i.qty,
+      detected_name: i.detected?.name || null,
+      detected_price: i.detected?.price || null,
+      detected_currency: i.detected?.currency || null,
+      detected_image: i.detected?.image || null,
+      detected_store: i.detected?.store || null
+    })),
+    whatsapp: '+880' + normalizeWa(S.wa),
+    notes: S.notes,
+    status: 'pending_quote',
+    created_at: new Date().toISOString(),
+    source: 'buy_for_me_web'
+  };
+}
+
+/* submitRequest replaced by openReview -> doSubmit flow */
+
+submitBtn.addEventListener('click', openReview);
+document.getElementById('purchaseReqBtn').addEventListener('click', openReview);
+document.getElementById('lgCancelBtn').addEventListener('click', () => closeOverlay(loginGate));
+document.getElementById('lgLoginBtn').addEventListener('click', () => closeOverlay(loginGate));
+document.getElementById('homeBtn').addEventListener('click', () => closeOverlay(successOverlay));
+document.getElementById('trackBtn').addEventListener('click', () => closeOverlay(successOverlay));
+
+/* ─── Review Popup ─── */
+const reviewOverlay = document.getElementById('reviewOverlay');
+const reviewItemsWrap = document.getElementById('reviewItemsWrap');
+const reviewTax = document.getElementById('reviewTax');
+const reviewGrand = document.getElementById('reviewGrand');
+const reviewWa = document.getElementById('reviewWa');
+
+function buildReviewPopup(){
+  reviewItemsWrap.innerHTML = '';
+  let grand = 0;
+  const rows = itemsWrap.querySelectorAll('.item-row');
+
+  // DEMO: if no items or all empty, show 4 demo products
+  if(rows.length === 0 || !Array.from(rows).some(r => r.querySelector('[data-role="link"]').value.trim())){
+    const demoProducts = [
+      { name: 'Sony WH-1000XM5 Wireless Headphones', store: 'Amazon', qty: 1, price: 348.00 },
+      { name: 'Apple AirPods Pro 2nd Gen', store: 'Best Buy', qty: 2, price: 249.00 },
+      { name: 'Samsung Galaxy Watch 6', store: 'Walmart', qty: 1, price: 299.99 },
+      { name: 'Logitech MX Master 3S', store: 'eBay', qty: 1, price: 99.99 }
+    ];
+    demoProducts.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'review-item';
+      div.innerHTML = '<div class="review-item-top"><div class="review-item-info"><div class="review-item-name">' + p.name + '</div><div class="review-item-store">' + p.store + '</div></div></div><div class="review-item-row"><span class="review-item-label">Qty: ' + p.qty + '</span><span class="review-item-val">$' + (p.price * p.qty).toFixed(2) + '</span></div>';
+      reviewItemsWrap.appendChild(div);
+      grand += p.price * p.qty;
+    });
+  } else {
+    rows.forEach((row, idx) => {
+      const linkInput = row.querySelector('[data-role="link"]');
+      const qtyEl = row.querySelector('[data-role="qty-val"]');
+      const priceInput = row.querySelector('[data-role="price-input"]');
+      const storeSelect = row.querySelector('[data-role="store-select"]');
+      const url = linkInput ? linkInput.value.trim() : '';
+      const qty = qtyEl ? parseInt(qtyEl.textContent, 10) : 1;
+      const price = priceInput ? parseFloat(priceInput.value) || 0 : 0;
+      const total = qty * price;
+      grand += total;
+      const storeName = storeSelect && storeSelect.value ? storeSelect.options[storeSelect.selectedIndex].text : 'Other';
+      const itemName = url ? ('Product ' + (idx + 1)) : ('Product ' + (idx + 1));
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'review-item';
+      itemDiv.innerHTML = '<div class="review-item-top"><div class="review-item-info"><div class="review-item-name">' + itemName + '</div><div class="review-item-store">' + storeName + '</div></div></div><div class="review-item-row"><span class="review-item-label">Qty: ' + qty + '</span><span class="review-item-val">$' + total.toFixed(2) + '</span></div>';
+      reviewItemsWrap.appendChild(itemDiv);
+    });
+  }
+
+  const taxRate = 0.0887;
+  const serviceRate = 0.0225;
+  const tax = grand * taxRate;
+  const service = grand * serviceRate;
+  const grandWithTax = grand + tax + service;
+  reviewTax.textContent = '$' + tax.toFixed(2);
+  document.getElementById('reviewService').textContent = '$' + service.toFixed(2);
+  reviewGrand.textContent = '$' + grandWithTax.toFixed(2);
+  const waVal = waInput.value.trim();
+  reviewWa.textContent = waVal ? '+880 ' + normalizeWa(waVal) : '+880 1XXX-XXXXXX';
+
+}
+
+document.getElementById('reviewBackBtn').addEventListener('click', () => closeOverlay(reviewOverlay));
+document.getElementById('reviewSubmitBtn').addEventListener('click', () => {
+  closeOverlay(reviewOverlay);
+  doSubmit();
+});
+
+async function doSubmit(){
+  if(S.isSubmitting) return;
+  S.isSubmitting = true;
+  submitBtn.disabled = true;
+  submitBtn.classList.add('loading');
+  const payload = buildPayload();
+  console.log('Payload:', payload);
+  await new Promise(r => setTimeout(r, 900));
+  S.trackingId = 'PX-' + Math.floor(1000 + Math.random() * 9000);
+  trackingVal.textContent = S.trackingId;
+  S.isSubmitting = false;
+  submitBtn.disabled = false;
+  submitBtn.classList.remove('loading');
+  openOverlay(successOverlay);
+}
+
+function openReview(){
+  // DEMO MODE: skip validation, show popup immediately
+  buildReviewPopup();
+  openOverlay(reviewOverlay);
+}
+</script>
+</body>
+</html>
