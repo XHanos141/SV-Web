@@ -41,7 +41,7 @@ html{font-size:16px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
   *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}
   .rv{opacity:1;transform:none}
 }
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-top:var(--nav-h);padding-bottom:96px;transition:background .35s ease,color .35s ease;touch-action:manipulation}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-top:var(--nav-h);padding-bottom:24px;transition:background .35s ease,color .35s ease;touch-action:manipulation}
 button{font-family:inherit;cursor:pointer}
 input,textarea{font-family:inherit}
 :focus-visible{outline:2px solid var(--orange);outline-offset:2px}
@@ -73,8 +73,7 @@ main{max-width:600px;margin:0 auto;padding:0 16px}
 .hiw h2{font-family:var(--fd);font-size:22px;font-weight:800;letter-spacing:-.4px;line-height:1.2;margin-bottom:6px;text-align:center;margin-top:-4px}
 .hiw p.sub{font-size:12.5px;color:var(--t2);line-height:1.5;margin-bottom:20px;max-width:48ch;text-align:center;margin-left:auto;margin-right:auto}
 .journey{display:flex;gap:0;position:relative;margin-bottom:7px}
-.journey::before{content:'';position:absolute;top:30px;left:12%;right:12%;height:2px;background:repeating-linear-gradient(90deg,var(--orange) 0px,var(--orange) 4px,transparent 4px,transparent 8px);opacity:0.75;z-index:1;border-radius:1px}
-.journey::before{content:'';position:absolute;top:30px;left:12.5%;right:12.5%;height:2px;background:repeating-linear-gradient(90deg,var(--orange) 0,var(--orange) 6px,transparent 6px,transparent 12px);opacity:0.45;z-index:1;border-radius:1px}
+.journey::before{content:'';position:absolute;top:16px;left:12%;right:12%;height:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 56' preserveAspectRatio='none'%3E%3Cpath d='M0 28 Q 25 52 50 28 T 100 28 T 150 28 T 200 28 T 250 28 T 300 28 T 350 28 T 400 28' fill='none' stroke='%23f26430' stroke-width='3' stroke-linecap='round' stroke-dasharray='5 8' opacity='0.85'/%3E%3C/svg%3E");background-repeat:no-repeat;background-size:100% 100%;z-index:1}
 .jstep{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;padding:0 2px;z-index:2}
 .jstep-badge{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f26430,#b83200);box-shadow:0 4px 14px rgba(242,100,48,.35);margin-top:8px;margin-bottom:8px;position:relative;z-index:2}
 .jstep-badge svg{width:20px;height:20px;stroke:#fff;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
@@ -110,7 +109,6 @@ main{max-width:600px;margin:0 auto;padding:0 16px}
 body.dark-mode .price-input-wrap{background:var(--bg);border-color:var(--border)}
 
 .item-row{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:10px 14px 12px;margin-bottom:12px;position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s ease,height .35s ease .4s,margin .35s ease .4s,padding .35s ease .4s,border-width .35s ease .4s;transform-origin:center;overflow:hidden}body.dark-mode .item-row{background:var(--surface2);border-color:var(--border)}
-body.dark-mode .review-sheet{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);border-radius:16px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 10px rgba(0,0,0,0.2),0 30px 45px rgba(0,0,0,0.35),0 50px 70px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.6),inset 0 -1px 0 rgba(0,0,0,0.1),inset 1px 0 0 rgba(255,255,255,0.3),inset -1px 0 0 rgba(0,0,0,0.05);display:flex;flex-direction:column;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"),linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));background-blend-mode:overlay,normal}
 .item-row.removing{transform:translateX(100%);opacity:0}
 .item-row.removing.collapsed{height:0;padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0;border-width:0}
 
@@ -200,7 +198,7 @@ body.dark-mode .item-row.glass-card{
 /* Quantity */
 .qty-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:0.7px solid var(--border)}
 .qty-label{font-size:11px;font-weight:700;color:var(--t2);letter-spacing:.02em}
-.qty-stepper{display:inline-flex;align-items:center;background:var(--bg);border:0.8px solid var(--orange);border-radius:6px;overflow:hidden}
+.qty-stepper{display:inline-flex;align-items:center;background:var(--bg);border:0.8px solid rgba(242,100,48,.55);border-radius:6px;overflow:hidden}
 body.dark-mode .qty-stepper{border-color:var(--border)}
 .qty-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--surface2) 0%,var(--bg) 100%);border:none;color:var(--text);font-size:18px;font-weight:700;line-height:1;cursor:pointer;transition:transform .1s cubic-bezier(.34,1.56,.64,1),background .1s ease;-webkit-tap-highlight-color:transparent;user-select:none;position:relative;border-radius:4px}
 .qty-btn[data-role="qty-minus"]{border-radius:4px 0 0 4px}
@@ -223,15 +221,19 @@ body.dark-mode .qty-btn[data-role="qty-plus"]{background:linear-gradient(180deg,
 
 /* WhatsApp + Note */
 .wa-field-wrap{display:flex;gap:8px;margin-bottom:16px}
-.wa-prefix{display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:0 12px;font-size:12.5px;font-weight:700;color:var(--t2);flex-shrink:0}
-.wa-input{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:11px 12px;font-size:12.5px;color:var(--text);min-width:0;outline:none;-webkit-appearance:none;appearance:none}
+.wa-prefix{display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1.5px solid rgba(15,35,65,0.28);border-radius:12px;padding:0 12px;font-size:12.5px;font-weight:700;color:var(--t2);flex-shrink:0}
+body.dark-mode .wa-prefix{border-color:rgba(255,255,255,0.25)}
+.wa-input{flex:1;background:var(--bg);border:1.5px solid rgba(15,35,65,0.28);border-radius:12px;padding:11px 12px;font-size:12.5px;color:var(--text);min-width:0;outline:none;-webkit-appearance:none;appearance:none}
+body.dark-mode .wa-input{border-color:rgba(255,255,255,0.25)}
 .wa-input:focus{border-color:var(--orange)}
 .wa-input.error{border-color:var(--err);background:var(--err-soft)}
 .wa-input.ok{border-color:var(--green);background:rgba(0,155,114,0.06)}
 .wa-error-msg{font-size:10px;color:var(--err);font-weight:600;margin-top:4px;display:none}
 .wa-error-msg.show{display:block}
-.note-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:16px 12px;font-size:13px;color:var(--text);resize:none;min-height:140px;margin-bottom:4px;line-height:1.5;outline:none;-webkit-appearance:none;appearance:none}
+.note-input{width:100%;background:var(--bg);border:1.5px solid rgba(15,35,65,0.28);border-radius:12px;padding:16px 12px;font-size:13px;color:var(--text);resize:none;min-height:140px;margin-bottom:4px;line-height:1.5;outline:none;-webkit-appearance:none;appearance:none}
+body.dark-mode .note-input{border-color:rgba(255,255,255,0.25)}
 .note-input:focus{border-color:var(--orange)}
+.note-input.error{border-color:var(--err);background:var(--err-soft)}
 .note-count{text-align:right;font-size:9.5px;color:var(--t3);margin-bottom:8px}
 
 /* ===== Order Summary Card ===== */
@@ -267,10 +269,13 @@ body.dark-mode .qty-btn[data-role="qty-plus"]{background:linear-gradient(180deg,
 
 
 /* ===== Submit Review Popup ===== */
-.review-overlay{position:fixed;inset:0;background:rgba(255,255,255,.15);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);z-index:950;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.review-overlay{position:fixed;inset:0;background:rgba(6,10,20,.5);z-index:950;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:24px}
 .review-overlay.show{opacity:1;pointer-events:auto}
-.review-sheet{position:relative;width:calc(100% - 48px);max-width:380px;background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.75);border-radius:16px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 10px rgba(15,35,65,0.12),0 30px 45px rgba(15,35,65,0.22),0 50px 70px rgba(15,35,65,0.08),inset 0 1px 0 rgba(255,255,255,0.9),inset 0 -1px 0 rgba(15,35,65,0.05),inset 1px 0 0 rgba(255,255,255,0.5),inset -1px 0 0 rgba(15,35,65,0.03);padding:18px 20px 16px;transform:scale(.92);transition:transform .35s cubic-bezier(.16,1,.3,1);max-height:80vh;display:flex;flex-direction:column;-webkit-transform:translateZ(0);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"),linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05));background-blend-mode:overlay,normal}
+.review-sheet{position:relative;isolation:isolate;contain:layout paint;width:calc(100% - 48px);max-width:380px;background:#fff;border:1px solid rgba(15,35,65,0.08);border-radius:16px;box-shadow:0 8px 10px rgba(15,35,65,0.1),0 30px 45px rgba(15,35,65,0.18),0 50px 70px rgba(15,35,65,0.08);padding:18px 20px 16px;transform:scale(.92);transition:transform .35s cubic-bezier(.16,1,.3,1);max-height:80vh;display:flex;flex-direction:column}
+.review-sheet::before{display:none}
+.review-sheet::after{display:none}
 .review-overlay.show .review-sheet{transform:scale(1)}
+body.dark-mode .review-sheet{background:#0f1a2e;border-color:rgba(255,255,255,0.1);box-shadow:0 8px 10px rgba(0,0,0,0.3),0 30px 45px rgba(0,0,0,0.45),0 50px 70px rgba(0,0,0,0.2)}
 .review-sheet h3{font-family:var(--fd);font-size:18px;font-weight:800;margin-bottom:4px}
 .review-items-scrollable{flex:1 1 auto;min-height:0;max-height:calc(3 * 74px + 16px);overflow-y:auto;overflow-x:hidden;padding-right:4px;margin:6px -4px 0 0;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,0.15) transparent}
 .review-items-scrollable::-webkit-scrollbar{width:4px}
@@ -280,12 +285,14 @@ body.dark-mode .review-items-scrollable{scrollbar-color:rgba(255,255,255,0.12) t
 body.dark-mode .review-items-scrollable::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12)}
 .review-items-scrollable::after{content:'';display:block;height:4px;flex-shrink:0}
 .review-sheet .rs-sub{font-size:12px;color:var(--t2);margin-bottom:10px}
-.review-item{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:10px 14px;margin-bottom:8px}
+.review-sheet{--t2:#3a4658;--t3:#6b7686}
+body.dark-mode .review-sheet{--t2:#aab3c2;--t3:#8b96a8}
+.review-item{background:#f4f6f9;border:1px solid rgba(15,35,65,0.12);border-radius:14px;padding:10px 14px;margin-bottom:8px}
+body.dark-mode .review-item{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.14)}
 .review-item-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
-.review-item-img{width:44px;height:44px;border-radius:10px;object-fit:cover;background:var(--surface);flex-shrink:0}
-.review-item-info{flex:1;min-width:0}
-.review-item-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.review-item-store{font-size:10px;color:var(--t3);margin-top:2px}
+.review-item-info{flex:1;min-width:0;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.review-item-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.review-item-store{font-size:10px;color:var(--t3);flex-shrink:0;white-space:nowrap}
 .review-item-row{display:flex;align-items:center;justify-content:space-between;margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
 .review-item-label{font-size:11px;color:var(--t2)}
 .review-item-val{font-size:12px;font-weight:700;color:var(--text)}
@@ -303,7 +310,7 @@ body.dark-mode .review-items-scrollable::-webkit-scrollbar-thumb{background:rgba
 .review-actions button{flex:1;border-radius:12px;padding:11px;font-size:13px;font-weight:800;border:none;cursor:pointer}
 .review-actions .ra-submit{background:linear-gradient(135deg,var(--green),#007a5a);color:#fff;box-shadow:0 4px 16px rgba(0,155,114,.35);padding:11px}
 .review-actions .ra-submit:active{transform:scale(.96)}
-.review-actions .ra-back{background:transparent;border:1.5px solid var(--border);color:var(--text);padding:11px}
+.review-actions .ra-back{background:rgba(217,83,79,0.06);border:1.5px solid rgba(217,83,79,0.35);color:var(--err);padding:11px}
 .review-actions .ra-back:active{transform:scale(.96)}
 .review-grand{display:flex;align-items:center;justify-content:space-between;padding:4px 0;margin-bottom:2px}
 .review-grand-label{font-size:12px;font-weight:700;color:var(--text)}
@@ -349,41 +356,43 @@ body.dark-mode .order-summary.glass-card-green{
 .faq-item.open .faq-a{max-height:120px}
 .faq-a p{font-size:11.5px;color:var(--t2);line-height:1.55;padding:0 2px 14px}
 
-/* Submit bar */
-.submit-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:400;box-shadow:0 -4px 20px rgba(0,0,0,.06)}
-.submit-bar-inner{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:10px}
-.submit-total{flex:1;min-width:0}
-.submit-total .st-label{font-size:9.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
-.submit-total .st-val{font-size:13px;font-weight:800;color:var(--text)}
-.submit-btn{background:linear-gradient(135deg,#f26430,#b83200);color:#fff;border:none;border-radius:12px;padding:13px 22px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:7px;box-shadow:0 4px 16px rgba(242,100,48,.35);transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
-.submit-btn:active{transform:scale(.96)}
-.submit-btn svg{width:15px;height:15px;stroke:#fff;stroke-width:2.3;fill:none}
-.submit-btn:disabled{opacity:.5;pointer-events:none}
-.submit-btn .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
-.submit-btn.loading span{display:none}
-.submit-btn.loading .spinner{display:block}
-@keyframes spin{to{transform:rotate(360deg)}}
-
 /* Toast */
 .toast{position:fixed;top:calc(var(--nav-h) + 10px);left:50%;transform:translateX(-50%) translateY(-20px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:12px;font-weight:700;color:var(--text);box-shadow:var(--shadow-md);z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.err{border-color:var(--err);color:var(--err)}
 
-/* Success overlay */
-.success-overlay{position:fixed;inset:0;background:rgba(6,13,26,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:900;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease}
-.success-overlay.show{opacity:1;pointer-events:auto}
-.success-sheet{background:var(--surface);width:100%;max-width:600px;border-radius:24px 24px 0 0;padding:28px 22px calc(24px + env(safe-area-inset-bottom));text-align:center;transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1)}
-.success-overlay.show .success-sheet{transform:translateY(0)}
-.success-check{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#12b17e,#009b72);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 22px rgba(0,155,114,.35)}
-.success-check svg{width:30px;height:30px;stroke:#fff;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.success-sheet h3{font-family:var(--fd);font-size:19px;font-weight:800;margin-bottom:6px}
-.success-sheet p{font-size:12.5px;color:var(--t2);line-height:1.5;margin-bottom:18px}
-.tracking-code{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1.5px dashed var(--border);border-radius:12px;padding:10px 18px;margin-bottom:20px}
+/* legacy success-sheet styles removed — merged into processing-sheet */
+
+.tracking-code{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1.5px dashed var(--border);border-radius:11px;padding:7px 14px;margin-bottom:12px}
 .tracking-code .tc-label{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
-.tracking-code .tc-val{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--orange);letter-spacing:.5px}
-.success-actions{display:flex;flex-direction:column;gap:9px}
-.sa-primary{background:linear-gradient(135deg,#f26430,#b83200);color:#fff;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:800}
-.sa-secondary{background:transparent;border:1.5px solid var(--border);color:var(--text);border-radius:12px;padding:13px;font-size:13px;font-weight:700}
+.tracking-code .tc-val{font-family:var(--fd);font-size:15px;font-weight:800;color:var(--orange);letter-spacing:.5px;opacity:.85}
+.success-actions{display:flex;flex-direction:column;gap:7px}
+.sa-primary{background:var(--orange);color:#fff;border:none;border-radius:11px;padding:10px;font-size:12px;font-weight:800}
+.sa-secondary{background:transparent;border:1.5px solid var(--border);color:var(--text);border-radius:11px;padding:10px;font-size:12px;font-weight:700}
+
+/* Processing overlay — appears before success */
+.processing-overlay{position:fixed;inset:0;background:rgba(6,10,20,.5);z-index:960;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:24px}
+.processing-overlay.show{opacity:1;pointer-events:auto}
+.processing-sheet{width:min(280px,72vw);height:calc(min(280px,72vw) + 20px);background:var(--surface);border-radius:22px;box-shadow:0 8px 10px rgba(15,35,65,0.1),0 30px 45px rgba(15,35,65,0.18),0 50px 70px rgba(15,35,65,0.08);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:28px 22px;transform:scale(.85);opacity:0;overflow:hidden;transition:transform .35s cubic-bezier(.16,1,.3,1),opacity .3s ease}
+.processing-overlay.show .processing-sheet{transform:scale(1);opacity:1}
+.processing-sheet.expanded{text-align:center;padding-top:16px;padding-bottom:18px}
+body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0,0,0,0.3),0 30px 45px rgba(0,0,0,0.45),0 50px 70px rgba(0,0,0,0.2)}
+.processing-intro{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:auto;margin-bottom:auto;width:100%}
+.processing-badge{position:relative;width:60px;height:60px;flex-shrink:0}
+.badge-spinner{position:absolute;inset:0;border-radius:50%;border:4px solid rgba(242,100,48,.15);border-top-color:#f26430;animation:pspin .8s linear infinite;transition:opacity .5s ease,transform .5s ease}
+.badge-success{position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,#12b17e,#009b72);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,155,114,.35);opacity:0;transform:scale(.6);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.badge-success svg{width:28px;height:28px;stroke:#fff;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .7s cubic-bezier(.22,1,.36,1) .25s}
+.processing-badge.done .badge-spinner{opacity:0;transform:scale(.7)}
+.processing-badge.done .badge-success{opacity:1;transform:scale(1)}
+.processing-badge.done .badge-success svg{stroke-dashoffset:0}
+@keyframes pspin{to{transform:rotate(360deg)}}
+.processing-text{font-size:13px;font-weight:700;color:var(--text);transition:opacity .2s ease,max-height .3s ease,margin .3s ease;max-height:44px;overflow:hidden}
+.processing-text small{display:block;font-size:11px;font-weight:500;color:var(--t2);margin-top:4px}
+.processing-badge.done + .processing-text{opacity:0;max-height:0;margin:0}
+.success-content{width:100%;max-height:0;overflow:hidden;opacity:0;padding-top:0;transition:opacity .3s ease .2s,padding-top .3s ease}
+.processing-sheet.expanded .success-content{max-height:none;opacity:1;padding-top:10px}
+.success-content h3{font-family:var(--fd);font-size:17px;font-weight:800;margin:0 0 4px}
+.success-content p{font-size:11.5px;color:var(--t2);line-height:1.4;margin-bottom:12px}
 
 /* Login gate */
 .login-gate{position:fixed;inset:0;background:rgba(6,13,26,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:900;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease;padding:20px}
@@ -466,8 +475,9 @@ body.dark-mode .order-summary.glass-card-green{
     </div>
     <div class="wa-error-msg" id="waError">Enter a valid Bangladesh WhatsApp number (10–11 digits).</div>
 
-    <label class="field-label" for="noteInput">Anything we should know?</label>
+    <label class="field-label" for="noteInput">Anything we should know? <span class="req">*</span></label>
     <textarea class="note-input" id="noteInput" maxlength="300" placeholder="Color, size preference, delivery notes..."></textarea>
+    <div class="link-error-msg" id="noteError">Please tell us something about the product(s) — this helps us get you the right item.</div>
     <div class="note-count" id="noteCount">0 / 300</div>
 
     <!-- Order Summary -->
@@ -570,14 +580,14 @@ body.dark-mode .order-summary.glass-card-green{
   </section>
 
   <section class="faq rv">
-    <h3>What happens next?</h3>
+    <h3>FAQ</h3>
     <div class="faq-item">
       <button class="faq-q" type="button"><span>How long until I get a quote?</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
       <div class="faq-a"><p>Most quotes are sent via WhatsApp within 24 hours. You'll receive one final price including product cost, shipping, taxes, customs fees, and service charge.</p></div>
     </div>
     <div class="faq-item">
       <button class="faq-q" type="button"><span>How do I pay?</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
-      <div class="faq-a"><p>bKash, Nagad, bank transfer, or card — you'll get a payment link once you approve the quote.</p></div>
+      <div class="faq-a"><p>bKash, Nagad, bank transfer, or card, you'll get a payment link once you approve the quote. For more info please check our Terms & Conditions.</p></div>
     </div>
     <div class="faq-item">
       <button class="faq-q" type="button"><span>How long does delivery take?</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -585,20 +595,6 @@ body.dark-mode .order-summary.glass-card-green{
     </div>
   </section>
 </main>
-
-<div class="submit-bar">
-  <div class="submit-bar-inner">
-    <div class="submit-total">
-      <div class="st-label" id="itemCountLabel">1 item</div>
-      <div class="st-val">We'll quote you shortly</div>
-    </div>
-    <button class="submit-btn" id="submitBtn">
-      <span>Send Request</span>
-      <div class="spinner"></div>
-      <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-    </button>
-  </div>
-</div>
 
 <div class="toast" id="toast"></div>
 
@@ -647,15 +643,23 @@ body.dark-mode .order-summary.glass-card-green{
   </div>
 </div>
 
-<div class="success-overlay" id="successOverlay">
-  <div class="success-sheet">
-    <div class="success-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-    <h3>Request sent!</h3>
-    <p>We'll review your request and send a quote to your WhatsApp within 24 hours.</p>
-    <div class="tracking-code"><span class="tc-label">Tracking ID</span><span class="tc-val" id="trackingVal">—</span></div>
-    <div class="success-actions">
-      <button class="sa-primary" id="trackBtn">Track My Request</button>
-      <button class="sa-secondary" id="homeBtn">Back to Home</button>
+<div class="processing-overlay" id="processingOverlay">
+  <div class="processing-sheet" id="processingSheet">
+    <div class="processing-intro">
+      <div class="processing-badge" id="processingBadge">
+        <div class="badge-spinner"></div>
+        <div class="badge-success"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <p class="processing-text" id="processingLabel">Processing…<small>Please wait, this won't take long</small></p>
+    </div>
+    <div class="success-content" id="successContent">
+      <h3>Request sent!</h3>
+      <p>We'll review your request and send a quote to your WhatsApp within 24 hours.</p>
+      <div class="tracking-code"><span class="tc-label">Tracking ID</span><span class="tc-val" id="trackingVal">—</span></div>
+      <div class="success-actions">
+        <button class="sa-primary" id="trackBtn">Track My Request</button>
+        <button class="sa-secondary" id="homeBtn">Back to Home</button>
+      </div>
     </div>
   </div>
 </div>
@@ -745,7 +749,7 @@ function lockBody(lock){ document.body.style.overflow = lock ? 'hidden' : ''; }
 function openOverlay(el){ el.classList.add('show'); lockBody(true); }
 function closeOverlay(el){ el.classList.remove('show'); lockBody(false); }
 document.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape'){ closeOverlay(document.getElementById('successOverlay')); closeOverlay(document.getElementById('loginGate')); }
+  if(e.key === 'Escape'){ closeOverlay(document.getElementById('loginGate')); }
 });
 
 /* ─── Debounce ─── */
@@ -757,7 +761,6 @@ function debounce(fn, ms){
 /* ─── Item Rows ─── */
 let itemCounter = 0;
 const itemsWrap = document.getElementById('itemsWrap');
-const itemCountLabel = document.getElementById('itemCountLabel');
 
 const rowTemplate = document.createElement('template');
 rowTemplate.innerHTML = `
@@ -838,7 +841,6 @@ rowTemplate.innerHTML = `
         <button class="qty-btn" type="button" data-role="qty-plus" aria-label="Increase quantity">+</button>
       </div>
     </div>
-    </div>
   </div>
 `;
 
@@ -854,7 +856,6 @@ function addItemRow(){
   wireSummaryTriggers(row);
   updateOrderSummary();
   updateRemoveVisibility();
-  updateItemCountLabel();
 }
 
 /* ─── Auto-detect fetch ─── */
@@ -1041,17 +1042,17 @@ function wireItemRow(row, item){
     const h = row.getBoundingClientRect().height;
     // Set exact height to freeze layout
     row.style.height = h + 'px';
-    row.style.transition = 'height .35s cubic-bezier(.4,0,.2,1) .4s, margin .35s cubic-bezier(.4,0,.2,1) .4s, border-width .35s ease .4s, opacity .01s ease .75s';
+    row.style.transition = 'transform .4s cubic-bezier(.4,0,.2,1), opacity .35s ease, height .35s cubic-bezier(.4,0,.2,1) .4s, margin .35s cubic-bezier(.4,0,.2,1) .4s, padding .35s cubic-bezier(.4,0,.2,1) .4s, border-width .35s ease .4s';
     // Force reflow
     void row.offsetHeight;
     // Start animation
     row.classList.add('removing');
     row.style.height = '0px';
+    requestAnimationFrame(() => row.classList.add('collapsed'));
     setTimeout(() => {
       row.remove();
       S.items = S.items.filter(i => i.id !== item.id);
       updateRemoveVisibility();
-      updateItemCountLabel();
       updateOrderSummary();
     }, 800);
   });
@@ -1068,10 +1069,6 @@ function updateRemoveVisibility(){
     if(rows.length > 1){ btn.removeAttribute('aria-hidden'); btn.style.display = ''; }
     else { btn.setAttribute('aria-hidden','true'); btn.style.display = 'none'; }
   });
-}
-function updateItemCountLabel(){
-  const n = itemsWrap.children.length;
-  itemCountLabel.textContent = n + (n === 1 ? ' item' : ' items');
 }
 
 document.getElementById('addItemBtn').addEventListener('click', () => { addItemRow(); setTimeout(updateOrderSummary, 100); });
@@ -1096,7 +1093,12 @@ waInput.addEventListener('blur', () => {
 /* ─── Note counter ─── */
 const noteInput = document.getElementById('noteInput');
 const noteCount = document.getElementById('noteCount');
-noteInput.addEventListener('input', () => { S.notes = noteInput.value; noteCount.textContent = noteInput.value.length + ' / 300'; });
+const noteError = document.getElementById('noteError');
+noteInput.addEventListener('input', () => {
+  S.notes = noteInput.value;
+  noteCount.textContent = noteInput.value.length + ' / 300';
+  if(noteInput.value.trim()){ noteInput.classList.remove('error'); noteError.classList.remove('show'); }
+});
 
 /* ─── Order Summary ─── */
 function updateOrderSummary(){
@@ -1152,8 +1154,7 @@ document.querySelectorAll('.faq-item').forEach(item => {
 });
 
 /* ─── Submit ─── */
-const submitBtn = document.getElementById('submitBtn');
-const successOverlay = document.getElementById('successOverlay');
+const processingOverlay = document.getElementById('processingOverlay');
 const loginGate = document.getElementById('loginGate');
 const trackingVal = document.getElementById('trackingVal');
 
@@ -1180,6 +1181,8 @@ function validateForm(){
   });
   const waRaw = waInput.value.trim();
   if(!waRaw || !isValidWa(waRaw)){ waInput.classList.add('error'); waError.classList.add('show'); ok = false; }
+  const noteRaw = noteInput.value.trim();
+  if(!noteRaw){ noteInput.classList.add('error'); noteError.classList.add('show'); ok = false; }
   return ok;
 }
 
@@ -1206,12 +1209,11 @@ function buildPayload(){
 
 /* submitRequest replaced by openReview -> doSubmit flow */
 
-submitBtn.addEventListener('click', openReview);
 document.getElementById('purchaseReqBtn').addEventListener('click', openReview);
 document.getElementById('lgCancelBtn').addEventListener('click', () => closeOverlay(loginGate));
 document.getElementById('lgLoginBtn').addEventListener('click', () => closeOverlay(loginGate));
-document.getElementById('homeBtn').addEventListener('click', () => closeOverlay(successOverlay));
-document.getElementById('trackBtn').addEventListener('click', () => closeOverlay(successOverlay));
+document.getElementById('homeBtn').addEventListener('click', resetProcessingSheet);
+document.getElementById('trackBtn').addEventListener('click', resetProcessingSheet);
 
 /* ─── Review Popup ─── */
 const reviewOverlay = document.getElementById('reviewOverlay');
@@ -1282,21 +1284,56 @@ document.getElementById('reviewSubmitBtn').addEventListener('click', () => {
 async function doSubmit(){
   if(S.isSubmitting) return;
   S.isSubmitting = true;
-  submitBtn.disabled = true;
-  submitBtn.classList.add('loading');
   const payload = buildPayload();
   console.log('Payload:', payload);
-  await new Promise(r => setTimeout(r, 900));
+  const sheet = document.getElementById('processingSheet');
+  const badge = document.getElementById('processingBadge');
+  openOverlay(processingOverlay);
+  await new Promise(r => setTimeout(r, 2000 + Math.random()*500));
   S.trackingId = 'PX-' + Math.floor(1000 + Math.random() * 9000);
   trackingVal.textContent = S.trackingId;
+  badge.classList.add('done');
+  document.getElementById('processingLabel').style.display = 'none';
+
+  // FLIP height animation: measure real before/after px, animate exactly between them
+  const startH = sheet.getBoundingClientRect().height;
+  sheet.style.height = startH + 'px';
+  sheet.classList.add('expanded');
+  void sheet.offsetHeight; // force reflow with new content revealed, still locked at startH
+  sheet.style.height = 'auto';
+  const targetH = sheet.getBoundingClientRect().height;
+  sheet.style.height = startH + 'px';
+  void sheet.offsetHeight; // re-lock at startH before animating
+  sheet.style.transition = 'height .5s cubic-bezier(.16,1,.3,1)';
+  requestAnimationFrame(() => { sheet.style.height = targetH + 'px'; });
+  sheet.addEventListener('transitionend', function te(e){
+    if(e.propertyName !== 'height') return;
+    sheet.style.height = 'auto';
+    sheet.style.transition = '';
+    sheet.removeEventListener('transitionend', te);
+  });
+
   S.isSubmitting = false;
-  submitBtn.disabled = false;
-  submitBtn.classList.remove('loading');
-  openOverlay(successOverlay);
+}
+
+function resetProcessingSheet(){
+  closeOverlay(processingOverlay);
+  setTimeout(() => {
+    const sheet = document.getElementById('processingSheet');
+    sheet.classList.remove('expanded');
+    sheet.style.height = '';
+    sheet.style.transition = '';
+    document.getElementById('processingBadge').classList.remove('done');
+    document.getElementById('processingLabel').style.display = '';
+  }, 320);
 }
 
 function openReview(){
-  // DEMO MODE: skip validation, show popup immediately
+  if(!validateForm()){
+    const firstError = document.querySelector('.error, .link-error-msg.show, .wa-error-msg.show');
+    if(firstError) firstError.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
   buildReviewPopup();
   openOverlay(reviewOverlay);
 }
