@@ -2182,6 +2182,11 @@ function T(msg, icon='💬'){
 }
 
 function navTo(tab, filter){
+  const routes = { store: 'store.html', proxy: 'buy_for_me.html' };
+  if(routes[tab]){
+    window.location.href = filter ? `${routes[tab]}?filter=${encodeURIComponent(filter)}` : routes[tab];
+    return;
+  }
   T(filter ? `Opening ${tab} — ${filter}` : `Opening ${tab}`, '📂');
 }
 
