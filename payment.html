@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Payment — SuppVerse BD">
+<meta name="theme-color" content="#3a1a08">
+<title>Payment — SuppVerse BD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
+<style>
+:root {
+  --cyan:#009ddc; --orange:#f26430; --green:#009b72; --gold:#f4a922; --purple:#6761a8;
+  --font:'DM Sans',sans-serif; --fd:'Plus Jakarta Sans',sans-serif;
+  --nav-h:58px;
+  --bg:#ffffff; --surface:#ffffff; --surface2:#f5f7fc; --border:rgba(0,0,0,0.07);
+  --text:#0a1628; --t2:#4a5568; --t3:#9aa5b4;
+  --shadow:0 2px 16px rgba(0,0,0,0.07); --shadow-md:0 6px 28px rgba(0,0,0,0.1);
+  --err:#e5484d; --err-soft:rgba(229,72,77,0.10);
+  --bkash-bg:rgba(226,25,102,.10); --bkash-bdr:rgba(226,25,102,.22); --bkash-text:#e21966;
+  --nagad-bg:rgba(247,147,26,.10); --nagad-bdr:rgba(247,147,26,.22); --nagad-text:#e88316;
+  --card-bg:rgba(103,97,168,.10);  --card-bdr:rgba(103,97,168,.22);  --card-text:#6761a8;
+  --cod-bg:rgba(0,155,114,.10);    --cod-bdr:rgba(0,155,114,.22);    --cod-text:#009b72;
+  --crypto-bg:rgba(247,147,26,.10); --crypto-bdr:rgba(247,147,26,.22); --crypto-text:#c9860c;
+}
+body.dark-mode {
+  --bg:#060d1a; --surface:#0f1a2e; --surface2:#162338; --border:rgba(255,255,255,0.08);
+  --text:#eef4ff; --t2:rgba(238,244,255,0.55); --t3:rgba(238,244,255,0.28);
+  --shadow:0 2px 16px rgba(0,0,0,0.4); --shadow-md:0 6px 28px rgba(0,0,0,0.5);
+  --err:#ff6b6b; --err-soft:rgba(255,107,107,0.10);
+  --bkash-bg:rgba(226,25,102,.16); --bkash-bdr:rgba(226,25,102,.32); --bkash-text:#ff5c96;
+  --nagad-bg:rgba(247,147,26,.16); --nagad-bdr:rgba(247,147,26,.32); --nagad-text:#ffab4a;
+  --card-bg:rgba(103,97,168,.16);  --card-bdr:rgba(103,97,168,.32);  --card-text:#9b93e0;
+  --cod-bg:rgba(0,155,114,.16);    --cod-bdr:rgba(0,155,114,.32);    --cod-text:#3adba0;
+  --crypto-bg:rgba(247,147,26,.16); --crypto-bdr:rgba(247,147,26,.32); --crypto-text:#ffab4a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-top:var(--nav-h);padding-bottom:110px;transition:background .35s ease,color .35s ease;touch-action:manipulation}
+
+/* Nav */
+.topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(135deg,#3a1a08,#1a0f06);color:#fff}
+.nav-back,.nav-theme{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:none;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.nav-back svg,.nav-theme svg{width:19px;height:19px;stroke:#fff;stroke-width:2.3;fill:none}
+.nav-title{flex:1;text-align:center;overflow:hidden}
+.nav-title h1{font-family:var(--fd);font-size:15px;font-weight:800;line-height:1.15}
+.nav-title p{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:1px}
+
+main{max-width:600px;margin:0 auto;padding:16px}
+.rv{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+.rv.in{opacity:1;transform:none}
+
+/* Flow tabs (demo toggle — in production this is set by which flow linked here) */
+.flow-tabs{display:flex;gap:8px;background:var(--surface2);border-radius:12px;padding:4px;margin-bottom:18px}
+.flow-tab{flex:1;padding:9px;border:none;background:transparent;border-radius:9px;font-size:12px;font-weight:700;color:var(--t2);transition:background .2s ease,color .2s ease}
+.flow-tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+
+/* Summary card */
+.pay-summary{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-bottom:18px}
+.pay-summary-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.pay-summary-head svg{width:17px;height:17px;stroke:var(--orange);stroke-width:2.2;fill:none}
+.pay-summary-head h2{font-family:var(--fd);font-size:14px;font-weight:800}
+.pay-summary-head .badge-proxy{margin-left:auto;font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:20px;background:rgba(242,100,48,.10);color:var(--orange)}
+.pay-summary-head .badge-internal{margin-left:auto;font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:20px;background:rgba(0,157,220,.10);color:var(--cyan)}
+.pay-line{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12.5px;color:var(--t2)}
+.pay-line.total{border-top:1.5px dashed var(--border);margin-top:6px;padding-top:12px;font-size:15px;font-weight:800;color:var(--text)}
+.pay-line.total .amt{color:var(--orange)}
+.pay-tracking{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px dashed var(--border);border-radius:9px;padding:5px 10px;font-size:10.5px;color:var(--t3);margin-top:8px}
+.pay-tracking b{color:var(--orange);font-family:var(--fd);letter-spacing:.03em}
+
+/* Order items table */
+.order-items{margin-bottom:8px}
+.order-items-head{display:grid;grid-template-columns:1fr 34px 64px;gap:8px;padding:0 0 6px;font-size:9.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+.order-items-head span:last-child,.order-item-row .oi-price{text-align:right}
+.order-items-head span:nth-child(2),.order-item-row .oi-qty{text-align:center}
+.order-item-row{display:grid;grid-template-columns:1fr 34px 64px;gap:8px;padding:8px 0;font-size:12px;color:var(--text);border-bottom:1px solid var(--border)}
+.order-item-row:last-child{border-bottom:none}
+.order-item-row .oi-name{font-weight:600}
+.order-item-row .oi-qty{color:var(--t2)}
+.order-item-row .oi-price{font-weight:700}
+
+/* Method selector */
+.section-label{font-family:var(--fd);font-size:14px;font-weight:800;margin-bottom:10px}
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.method-card{position:relative;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;transition:border-color .18s ease,background .18s ease,transform .12s ease}
+.method-card:active{transform:scale(.97)}
+.method-card.selected{border-color:var(--sel-bdr);background:var(--sel-bg)}
+.method-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.method-name{font-size:12.5px;font-weight:800;color:var(--text)}
+.method-sub{font-size:9.5px;color:var(--t3);line-height:1.3}
+.method-check{position:absolute;top:10px;right:10px;width:16px;height:16px;border-radius:50%;background:var(--sel-bdr);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.5);transition:opacity .18s ease,transform .18s ease}
+.method-card.selected .method-check{opacity:1;transform:scale(1)}
+.method-check svg{width:10px;height:10px;stroke:#fff;stroke-width:3;fill:none}
+
+.mc-bkash{--sel-bg:var(--bkash-bg);--sel-bdr:var(--bkash-text)}
+.mc-bkash .method-icon{background:var(--bkash-bg);color:var(--bkash-text)}
+.mc-nagad{--sel-bg:var(--nagad-bg);--sel-bdr:var(--nagad-text)}
+.mc-nagad .method-icon{background:var(--nagad-bg);color:var(--nagad-text)}
+.mc-card{--sel-bg:var(--card-bg);--sel-bdr:var(--card-text)}
+.mc-card .method-icon{background:var(--card-bg);color:var(--card-text)}
+.mc-cod{--sel-bg:var(--cod-bg);--sel-bdr:var(--cod-text)}
+.mc-cod .method-icon{background:var(--cod-bg);color:var(--cod-text)}
+.mc-crypto{--sel-bg:var(--crypto-bg);--sel-bdr:var(--crypto-text)}
+.mc-crypto .method-icon{background:var(--crypto-bg);color:var(--crypto-text)}
+
+/* Detail panel */
+.detail-panel{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-bottom:16px;display:none}
+.detail-panel.show{display:block}
+.detail-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.detail-head .dot{width:8px;height:8px;border-radius:50%;background:var(--panel-accent)}
+.detail-head h3{font-size:13px;font-weight:800}
+
+/* Gateway-style (internal bKash/Nagad/Card) */
+.field-label{font-size:11px;font-weight:700;color:var(--t2);margin-bottom:6px;display:block}
+.pay-input{width:100%;background:var(--bg);border:1.5px solid rgba(15,35,65,0.28);border-radius:11px;padding:12px;font-size:13px;color:var(--text);outline:none;margin-bottom:12px}
+body.dark-mode .pay-input{border-color:rgba(255,255,255,0.25)}
+.pay-input:focus{border-color:var(--panel-accent)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* P2P-style (proxy bKash/Nagad/Card) */
+.p2p-number{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1.5px dashed var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.crypto-qr-wrap{display:flex;justify-content:center;padding:0;max-height:0;opacity:0;overflow:hidden;margin-bottom:0;transition:max-height .35s cubic-bezier(.16,1,.3,1),opacity .25s ease,padding .35s ease,margin .35s ease}
+.crypto-qr-wrap.show{max-height:220px;opacity:1;padding:16px;margin-bottom:12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:14px}
+.crypto-qr-wrap #cryptoQr{border-radius:8px;overflow:hidden;background:#fff;padding:8px;line-height:0}
+.p2p-addr-actions{display:flex;gap:6px;flex-shrink:0}
+.p2p-icon-btn{width:32px;height:32px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.p2p-icon-btn svg{width:16px;height:16px;stroke:var(--text);stroke-width:2;fill:none}
+.p2p-icon-btn.active{background:var(--crypto-bg);border-color:var(--crypto-text)}
+.p2p-icon-btn.active svg{stroke:var(--crypto-text)}
+.p2p-number-info{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.p2p-number-val{font-family:var(--fd);font-size:16px;font-weight:800;color:var(--text);margin-top:2px;opacity:.9}
+.p2p-copy-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:7px 12px;font-size:11px;font-weight:700;color:var(--text);flex-shrink:0}
+.p2p-steps{list-style:none;padding:0;margin-bottom:4px}
+.p2p-steps li{display:flex;gap:8px;font-size:11.5px;color:var(--t2);line-height:1.5;padding:5px 0}
+.p2p-steps li b{color:var(--text);flex-shrink:0}
+
+.p2p-txn-row{margin-top:8px}
+.p2p-txn-row input{margin-bottom:0}
+
+/* COD */
+.cod-note{display:flex;gap:10px;background:var(--cod-bg);border:1px solid var(--cod-bdr);border-radius:12px;padding:12px 14px}
+.cod-note svg{width:18px;height:18px;stroke:var(--cod-text);stroke-width:2.2;fill:none;flex-shrink:0;margin-top:1px}
+.cod-note p{font-size:11.5px;color:var(--t2);line-height:1.5}
+.cod-note b{color:var(--text)}
+
+/* Pending / due state */
+.due-banner{display:flex;gap:10px;align-items:flex-start;background:rgba(244,169,34,.10);border:1px solid rgba(244,169,34,.28);border-radius:14px;padding:14px;margin-bottom:16px}
+body.dark-mode .due-banner{background:rgba(244,169,34,.14)}
+.due-banner svg{width:18px;height:18px;stroke:var(--gold);stroke-width:2.2;fill:none;flex-shrink:0;margin-top:1px}
+.due-banner h4{font-size:12.5px;font-weight:800;color:var(--text);margin-bottom:3px}
+.due-banner p{font-size:11px;color:var(--t2);line-height:1.5}
+
+/* Sticky action bar */
+.pay-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:400;box-shadow:0 -4px 20px rgba(0,0,0,.06)}
+.pay-bar-inner{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.pay-bar-total{flex:1;min-width:0}
+.pay-bar-total .pb-label{font-size:9.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.pay-bar-total .pb-val{font-size:16px;font-weight:800;color:var(--text)}
+.pay-btn{background:var(--orange);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:7px;transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
+.pay-btn:active{transform:scale(.96)}
+.pay-btn:disabled{opacity:.5;pointer-events:none}
+.pay-btn svg{width:15px;height:15px;stroke:#fff;stroke-width:2.3;fill:none}
+
+/* Toast */
+.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:11px 20px;border-radius:30px;font-size:12.5px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;z-index:1000;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Success overlay reused pattern */
+.pay-success-overlay{position:fixed;inset:0;background:rgba(6,10,20,.5);z-index:960;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:24px}
+.pay-success-overlay.show{opacity:1;pointer-events:auto}
+.pay-success-sheet{width:min(300px,80vw);background:var(--surface);border-radius:22px;box-shadow:0 8px 10px rgba(15,35,65,0.1),0 30px 45px rgba(15,35,65,0.18),0 50px 70px rgba(15,35,65,0.08);padding:28px 22px;text-align:center;transform:scale(.85);opacity:0;transition:transform .35s cubic-bezier(.16,1,.3,1),opacity .3s ease}
+body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0,0,0,0.3),0 30px 45px rgba(0,0,0,0.45),0 50px 70px rgba(0,0,0,0.2)}
+.pay-success-overlay.show .pay-success-sheet{transform:scale(1);opacity:1}
+.ps-icon{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#12b17e,#009b72);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 22px rgba(0,155,114,.35)}
+.ps-icon.pending{background:linear-gradient(135deg,#f4a922,#c9860c);box-shadow:0 8px 22px rgba(244,169,34,.35)}
+.ps-icon svg{width:28px;height:28px;stroke:#fff;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.pay-success-sheet h3{font-family:var(--fd);font-size:17px;font-weight:800;margin-bottom:6px}
+.pay-success-sheet p{font-size:11.5px;color:var(--t2);line-height:1.5;margin-bottom:16px}
+.ps-btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:11px;padding:12px;font-size:12.5px;font-weight:800}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <button class="nav-back" type="button" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <div class="nav-title">
+    <h1>Payment</h1>
+    <p>Secure checkout</p>
+  </div>
+  <button class="nav-theme" type="button" id="themeToggle" aria-label="Toggle theme">
+    <svg id="themeIcon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+  </button>
+</nav>
+
+<main>
+  <!-- Demo-only flow switch — in production this is set by the referring page, not a visible tab -->
+  <div class="flow-tabs">
+    <button class="flow-tab active" id="tabInternal" type="button">Cart Checkout</button>
+    <button class="flow-tab" id="tabProxy" type="button">Proxy Quote</button>
+  </div>
+
+  <!-- Internal flow summary -->
+  <section class="pay-summary rv" id="summaryInternal">
+    <div class="pay-summary-head">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <h2>Order Summary</h2>
+      <span class="badge-internal">Internal</span>
+    </div>
+    <div class="order-items">
+      <div class="order-items-head">
+        <span>Product</span><span>Qty</span><span>Price</span>
+      </div>
+      <div class="order-item-row">
+        <span class="oi-name">Magnesium Glycinate</span><span class="oi-qty">1</span><span class="oi-price">৳2,450</span>
+      </div>
+      <div class="order-item-row">
+        <span class="oi-name">Omega-3</span><span class="oi-qty">2</span><span class="oi-price">৳3,800</span>
+      </div>
+    </div>
+    <div class="pay-line"><span>Subtotal</span><span>৳6,250</span></div>
+    <div class="pay-line"><span>Shipping</span><span>৳120</span></div>
+    <div class="pay-line total"><span>Total</span><span class="amt">৳6,370</span></div>
+  </section>
+
+  <!-- Proxy flow summary -->
+  <section class="pay-summary rv" id="summaryProxy" style="display:none">
+    <div class="pay-summary-head">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <h2>Approved Quote</h2>
+      <span class="badge-proxy">Proxy</span>
+    </div>
+    <div class="pay-line"><span>Product cost</span><span>$348.00</span></div>
+    <div class="pay-line"><span>Shipping + duty</span><span>$62.40</span></div>
+    <div class="pay-line"><span>Service charge</span><span>$24.60</span></div>
+    <div class="pay-line total"><span>Total Due</span><span class="amt">৳48,260</span></div>
+    <div class="pay-tracking">Tracking ID <b>PX-4892</b></div>
+  </section>
+
+  <div class="due-banner" id="dueBanner" style="display:none">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+    <div>
+      <h4>Payment due after order approval</h4>
+      <p>Your quote has been approved. Complete payment below — our team will confirm receipt and begin sourcing your item.</p>
+    </div>
+  </div>
+
+  <h2 class="section-label rv">Select Payment Method</h2>
+  <div class="method-grid rv">
+    <button class="method-card mc-bkash" data-method="bkash" type="button">
+      <div class="method-icon">📱</div>
+      <div><div class="method-name">bKash</div><div class="method-sub">Mobile banking</div></div>
+      <div class="method-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    </button>
+    <button class="method-card mc-nagad" data-method="nagad" type="button">
+      <div class="method-icon">💳</div>
+      <div><div class="method-name">Nagad</div><div class="method-sub">Mobile banking</div></div>
+      <div class="method-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    </button>
+    <button class="method-card mc-card" data-method="card" type="button">
+      <div class="method-icon">💠</div>
+      <div><div class="method-name">Card</div><div class="method-sub">Visa / Mastercard</div></div>
+      <div class="method-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    </button>
+    <button class="method-card mc-cod" data-method="cod" type="button">
+      <div class="method-icon">🚚</div>
+      <div><div class="method-name">Cash on Delivery</div><div class="method-sub">Pay at doorstep</div></div>
+      <div class="method-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    </button>
+    <button class="method-card mc-crypto" data-method="crypto" type="button">
+      <div class="method-icon">₮</div>
+      <div><div class="method-name">USDT / USDC</div><div class="method-sub">BEP20 network</div></div>
+      <div class="method-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    </button>
+  </div>
+
+  <!-- Internal: bKash/Nagad gateway-style -->
+  <div class="detail-panel rv" id="panel-bkash-internal" style="--panel-accent:var(--bkash-text)">
+    <div class="detail-head"><div class="dot"></div><h3>Pay with bKash</h3></div>
+    <label class="field-label" for="bkNumber">bKash Account Number</label>
+    <input class="pay-input" id="bkNumber" type="tel" inputmode="numeric" placeholder="01XXX-XXXXXX" maxlength="11">
+    <label class="field-label" for="bkPin">PIN</label>
+    <input class="pay-input" id="bkPin" type="password" inputmode="numeric" placeholder="••••" maxlength="5" style="margin-bottom:0">
+  </div>
+  <div class="detail-panel rv" id="panel-nagad-internal" style="--panel-accent:var(--nagad-text)">
+    <div class="detail-head"><div class="dot"></div><h3>Pay with Nagad</h3></div>
+    <label class="field-label" for="ngNumber">Nagad Account Number</label>
+    <input class="pay-input" id="ngNumber" type="tel" inputmode="numeric" placeholder="01XXX-XXXXXX" maxlength="11">
+    <label class="field-label" for="ngPin">PIN</label>
+    <input class="pay-input" id="ngPin" type="password" inputmode="numeric" placeholder="••••" maxlength="5" style="margin-bottom:0">
+  </div>
+  <div class="detail-panel rv" id="panel-card-internal" style="--panel-accent:var(--card-text)">
+    <div class="detail-head"><div class="dot"></div><h3>Pay with Card</h3></div>
+    <label class="field-label" for="cardNum">Card Number</label>
+    <input class="pay-input" id="cardNum" type="tel" inputmode="numeric" placeholder="1234 5678 9012 3456" maxlength="19">
+    <div class="field-row">
+      <div><label class="field-label" for="cardExp">Expiry</label><input class="pay-input" id="cardExp" type="text" placeholder="MM/YY" maxlength="5"></div>
+      <div><label class="field-label" for="cardCvc">CVC</label><input class="pay-input" id="cardCvc" type="password" inputmode="numeric" placeholder="123" maxlength="3" style="margin-bottom:0"></div>
+    </div>
+  </div>
+
+  <!-- Proxy: P2P style for bKash/Nagad/Card -->
+  <div class="detail-panel rv" id="panel-bkash-proxy" style="--panel-accent:var(--bkash-text)">
+    <div class="detail-head"><div class="dot"></div><h3>Send via bKash (Send Money)</h3></div>
+    <div class="p2p-number">
+      <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXX</div></div>
+      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX">Copy</button>
+    </div>
+    <ul class="p2p-steps">
+      <li><b>1.</b> Open bKash, select "Send Money."</li>
+      <li><b>2.</b> Enter the number above and the exact due amount.</li>
+      <li><b>3.</b> Enter the last 4 digits of your transaction ID below.</li>
+    </ul>
+    <div class="p2p-txn-row"><input class="pay-input" id="bkTxn" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
+  </div>
+  <div class="detail-panel rv" id="panel-nagad-proxy" style="--panel-accent:var(--nagad-text)">
+    <div class="detail-head"><div class="dot"></div><h3>Send via Nagad (Send Money)</h3></div>
+    <div class="p2p-number">
+      <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXX</div></div>
+      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX">Copy</button>
+    </div>
+    <ul class="p2p-steps">
+      <li><b>1.</b> Open Nagad, select "Send Money."</li>
+      <li><b>2.</b> Enter the number above and the exact due amount.</li>
+      <li><b>3.</b> Enter the last 4 digits of your transaction ID below.</li>
+    </ul>
+    <div class="p2p-txn-row"><input class="pay-input" id="ngTxn" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
+  </div>
+  <div class="detail-panel rv" id="panel-card-proxy" style="--panel-accent:var(--card-text)">
+    <div class="detail-head"><div class="dot"></div><h3>Card Payment (Manual)</h3></div>
+    <p style="font-size:11.5px;color:var(--t2);line-height:1.6;margin-bottom:10px">Since this is a proxy order, card payments are processed manually. Our team will share a secure payment link on WhatsApp after you submit below.</p>
+  </div>
+
+  <!-- COD (shared) -->
+  <div class="detail-panel rv" id="panel-cod" style="--panel-accent:var(--cod-text)">
+    <div class="detail-head"><div class="dot"></div><h3>Cash on Delivery</h3></div>
+    <div class="cod-note">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <p>Pay in cash when your order arrives. <b>A small COD verification may apply for proxy orders above ৳20,000.</b></p>
+    </div>
+  </div>
+
+  <!-- Crypto (shared, always P2P) -->
+  <div class="detail-panel rv" id="panel-crypto" style="--panel-accent:var(--crypto-text)">
+    <div class="detail-head"><div class="dot"></div><h3>Pay with USDT / USDC</h3></div>
+    <div class="p2p-number" id="cryptoConvertCard" style="background:var(--crypto-bg);border:1.5px solid var(--crypto-bdr);flex-direction:column;align-items:stretch;gap:2px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="p2p-number-info">Amount to send</div>
+        <div class="p2p-number-info" id="cryptoRateLabel">1 USDT = ৳130</div>
+      </div>
+      <div class="p2p-number-val" id="cryptoConvertVal" style="color:var(--crypto-text);font-size:20px">0.00 USDT</div>
+      <div style="font-size:10.5px;color:var(--t3)">for <span id="cryptoConvertBdt">৳0</span> due</div>
+    </div>
+    <div class="p2p-number">
+      <div><div class="p2p-number-info">BEP20 Wallet Address</div><div class="p2p-number-val" style="font-size:11px;word-break:break-all;line-height:1.4">0x48698E8fc2bcf3324a9A6869d549e2e75AEEC586</div></div>
+      <div class="p2p-addr-actions">
+        <button class="p2p-icon-btn" type="button" id="cryptoQrBtn" aria-label="Show QR code"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M14 20h3M20 14v3M20 20v.01"/></svg></button>
+        <button class="p2p-copy-btn" type="button" data-copy="0x48698E8fc2bcf3324a9A6869d549e2e75AEEC586">Copy</button>
+      </div>
+    </div>
+    <div class="crypto-qr-wrap" id="cryptoQrWrap"><div id="cryptoQr"></div></div>
+    <div class="cod-note" style="margin-bottom:12px;flex-direction:column;align-items:flex-start;gap:6px;background:var(--err-soft);border-color:rgba(229,72,77,.28)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <svg viewBox="0 0 24 24" style="flex-shrink:0;margin-top:0;stroke:var(--err)"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <b style="font-size:12.5px;color:var(--text)">BEP20 (BNB Smart Chain)</b>
+      </div>
+      <p>Send <b>USDT</b> or <b>USDC</b> on the <b>BEP20 (BNB Smart Chain)</b> network only. Sending through another network may result in permanent loss of funds.</p>
+    </div>
+    <h3 style="font-size:13px;font-weight:800;margin-bottom:8px">How to Pay</h3>
+    <ul class="p2p-steps">
+      <li><b>1.</b> <div><b style="display:block;color:var(--text)">Open your wallet</b>Open Trust Wallet, Binance, or another crypto wallet.</div></li>
+      <li><b>2.</b> <div><b style="display:block;color:var(--text)">Send the payment</b>Send the exact amount in USDT or USDC using BEP20 (BNB Smart Chain).</div></li>
+      <li><b>3.</b> <div><b style="display:block;color:var(--text)">Copy your TXID</b>After sending, open the transaction details and copy the Transaction Hash (TXID).</div></li>
+      <li>
+        <b>4.</b>
+        <div style="flex:1">
+          <b style="display:block;color:var(--text)">Upload a screenshot (Optional)</b>
+          Upload a screenshot of your completed payment to help us verify it faster.
+          <div id="screenshotDrop" style="margin-top:8px;border:1.5px dashed var(--border);border-radius:11px;padding:12px;text-align:center;cursor:pointer;background:var(--surface2)">
+            <input id="cryptoScreenshot" type="file" accept="image/*" style="display:none">
+            <div id="screenshotEmpty" style="font-size:11.5px;color:var(--t2)">Tap to choose an image</div>
+            <div id="screenshotPreviewWrap" style="display:none;position:relative">
+              <img id="screenshotPreview" style="max-width:100%;max-height:160px;border-radius:8px;display:block;margin:0 auto">
+              <button type="button" id="screenshotRemove" style="margin-top:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:6px 12px;font-size:11px;font-weight:700;color:var(--text)">Remove</button>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li><b>5.</b> <div><b style="display:block;color:var(--text)">Submit your payment</b>Paste your TXID and tap "I've Sent the Payment."</div></li>
+    </ul>
+    <div class="p2p-txn-row"><input class="pay-input" id="cryptoTxn" type="text" placeholder="Transaction hash / TXID (0x...)" style="margin-bottom:0"></div>
+  </div>
+</main>
+
+<div class="pay-bar">
+  <div class="pay-bar-inner">
+    <div class="pay-bar-total">
+      <div class="pb-label" id="payBarLabel">Total</div>
+      <div class="pb-val" id="payBarVal">৳6,370</div>
+    </div>
+    <button class="pay-btn" id="payBtn" type="button" disabled>
+      <span id="payBtnText">Select a method</span>
+      <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="pay-success-overlay" id="successOverlay">
+  <div class="pay-success-sheet" id="successSheet">
+    <div class="ps-icon" id="psIcon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <h3 id="psTitle">Payment successful!</h3>
+    <p id="psText">Your order is confirmed. We'll send updates via WhatsApp.</p>
+    <button class="ps-btn" id="psCloseBtn" type="button">Done</button>
+  </div>
+</div>
+
+<script>
+/* Theme */
+const body = document.body;
+const themeToggle = document.getElementById('themeToggle');
+function applyTheme(dark){
+  body.classList.toggle('dark-mode', dark);
+  localStorage.setItem('sv-theme', dark ? 'dark' : 'light');
+}
+applyTheme(localStorage.getItem('sv-theme') === 'dark');
+themeToggle.addEventListener('click', () => applyTheme(!body.classList.contains('dark-mode')));
+
+/* Reveal on scroll */
+const rvObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); rvObserver.unobserve(e.target); } });
+}, {threshold:.1});
+document.querySelectorAll('.rv').forEach(el => rvObserver.observe(el));
+
+/* Toast */
+const toastEl = document.getElementById('toast');
+let toastTimer;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+}
+
+/* Flow state — in production this is set by the referring page (cart vs proxy quote), not a visible toggle */
+const S = { flow: 'internal', method: null };
+
+/* BDT totals per flow — mirror the values shown in pay-bar/summary cards */
+const TOTALS_BDT = { internal: 6370, proxy: 48260 };
+
+/* Admin-controlled BDT-per-USDT rate. Placeholder until wired to Supabase admin settings. */
+const EXCHANGE_RATE_BDT_PER_USDT = 130;
+
+const cryptoConvertVal = document.getElementById('cryptoConvertVal');
+const cryptoConvertBdt = document.getElementById('cryptoConvertBdt');
+const cryptoRateLabel = document.getElementById('cryptoRateLabel');
+
+function updateCryptoConversion(){
+  const bdt = TOTALS_BDT[S.flow] || 0;
+  const usdt = bdt / EXCHANGE_RATE_BDT_PER_USDT;
+  cryptoConvertVal.textContent = usdt.toFixed(2) + ' USDT';
+  cryptoConvertBdt.textContent = '৳' + bdt.toLocaleString('en-US');
+  cryptoRateLabel.textContent = '1 USDT = ৳' + EXCHANGE_RATE_BDT_PER_USDT;
+}
+updateCryptoConversion();
+
+const tabInternal = document.getElementById('tabInternal');
+const tabProxy = document.getElementById('tabProxy');
+const summaryInternal = document.getElementById('summaryInternal');
+const summaryProxy = document.getElementById('summaryProxy');
+const dueBanner = document.getElementById('dueBanner');
+const payBarLabel = document.getElementById('payBarLabel');
+const payBarVal = document.getElementById('payBarVal');
+
+function setFlow(flow){
+  S.flow = flow;
+  tabInternal.classList.toggle('active', flow === 'internal');
+  tabProxy.classList.toggle('active', flow === 'proxy');
+  summaryInternal.style.display = flow === 'internal' ? '' : 'none';
+  summaryProxy.style.display = flow === 'proxy' ? '' : 'none';
+  dueBanner.style.display = flow === 'proxy' ? 'flex' : 'none';
+  payBarLabel.textContent = flow === 'proxy' ? 'Total Due' : 'Total';
+  payBarVal.textContent = flow === 'proxy' ? '৳48,260' : '৳6,370';
+  updateCryptoConversion();
+  // Re-render method selection for new flow context
+  if(S.method) selectMethod(S.method);
+}
+tabInternal.addEventListener('click', () => setFlow('internal'));
+tabProxy.addEventListener('click', () => setFlow('proxy'));
+
+/* Method selection */
+const methodCards = document.querySelectorAll('.method-card');
+const allPanels = document.querySelectorAll('.detail-panel');
+const payBtn = document.getElementById('payBtn');
+const payBtnText = document.getElementById('payBtnText');
+
+const methodLabels = { bkash:'Pay with bKash', nagad:'Pay with Nagad', card:'Pay with Card', cod:'Place Order (COD)', crypto:'I\'ve Sent the Payment' };
+
+function selectMethod(method){
+  S.method = method;
+  methodCards.forEach(c => c.classList.toggle('selected', c.dataset.method === method));
+  allPanels.forEach(p => p.classList.remove('show'));
+
+  let panelId;
+  if(method === 'cod' || method === 'crypto'){
+    panelId = `panel-${method}`;
+  } else {
+    panelId = `panel-${method}-${S.flow}`;
+  }
+  const panel = document.getElementById(panelId);
+  if(panel) panel.classList.add('show');
+
+  payBtn.disabled = false;
+  payBtnText.textContent = methodLabels[method] || 'Continue';
+}
+
+const CRYPTO_WALLET = '0x48698E8fc2bcf3324a9A6869d549e2e75AEEC586';
+let qrRendered = false;
+function renderCryptoQr(){
+  if(qrRendered) return;
+  const el = document.getElementById('cryptoQr');
+  if(!el) return;
+  if(window.QRCodeStyling){
+    const qr = new QRCodeStyling({
+      width: 168,
+      height: 168,
+      type: 'svg',
+      data: CRYPTO_WALLET,
+      margin: 0,
+      qrOptions: { errorCorrectionLevel: 'H' },
+      dotsOptions: { type: 'rounded', color: '#0a1628' },
+      cornersSquareOptions: { type: 'extra-rounded', color: '#f26430' },
+      cornersDotOptions: { type: 'dot', color: '#f26430' },
+      backgroundOptions: { color: '#ffffff' }
+    });
+    qr.append(el);
+    qrRendered = true;
+  } else {
+    // Fallback if the styling library fails to load
+    el.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=168x168&data=${encodeURIComponent(CRYPTO_WALLET)}" width="168" height="168" alt="Wallet QR code" style="display:block">`;
+    qrRendered = true;
+  }
+}
+const cryptoQrBtn = document.getElementById('cryptoQrBtn');
+const cryptoQrWrap = document.getElementById('cryptoQrWrap');
+cryptoQrBtn.addEventListener('click', () => {
+  renderCryptoQr();
+  const showing = cryptoQrWrap.classList.toggle('show');
+  cryptoQrBtn.classList.toggle('active', showing);
+});
+
+methodCards.forEach(card => {
+  card.addEventListener('click', () => selectMethod(card.dataset.method));
+});
+
+/* Screenshot upload */
+const screenshotDrop = document.getElementById('screenshotDrop');
+const screenshotInput = document.getElementById('cryptoScreenshot');
+const screenshotEmpty = document.getElementById('screenshotEmpty');
+const screenshotPreviewWrap = document.getElementById('screenshotPreviewWrap');
+const screenshotPreview = document.getElementById('screenshotPreview');
+const screenshotRemove = document.getElementById('screenshotRemove');
+
+screenshotDrop.addEventListener('click', (e) => {
+  if(e.target === screenshotRemove) return;
+  screenshotInput.click();
+});
+screenshotInput.addEventListener('change', () => {
+  const file = screenshotInput.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    screenshotPreview.src = reader.result;
+    screenshotEmpty.style.display = 'none';
+    screenshotPreviewWrap.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+});
+screenshotRemove.addEventListener('click', (e) => {
+  e.stopPropagation();
+  screenshotInput.value = '';
+  screenshotPreview.src = '';
+  screenshotPreviewWrap.style.display = 'none';
+  screenshotEmpty.style.display = 'block';
+});
+
+/* Copy P2P number */
+document.querySelectorAll('.p2p-copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const val = btn.dataset.copy;
+    if(navigator.clipboard) navigator.clipboard.writeText(val).catch(()=>{});
+    showToast('Number copied');
+  });
+});
+
+/* Submit */
+const successOverlay = document.getElementById('successOverlay');
+const successSheet = document.getElementById('successSheet');
+const psIcon = document.getElementById('psIcon');
+const psTitle = document.getElementById('psTitle');
+const psText = document.getElementById('psText');
+
+function openOverlay(el){ el.classList.add('show'); }
+function closeOverlay(el){ el.classList.remove('show'); }
+
+payBtn.addEventListener('click', () => {
+  if(!S.method) return;
+  const isP2P = (S.flow === 'proxy' && (S.method === 'bkash' || S.method === 'nagad' || S.method === 'card')) || S.method === 'crypto';
+
+  if(isP2P){
+    psIcon.classList.add('pending');
+    psIcon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+    psTitle.textContent = 'Payment marked as sent';
+    psText.textContent = "We'll verify your transaction and confirm within a few hours. You'll get a WhatsApp update once it's approved.";
+  } else if(S.method === 'cod'){
+    psIcon.classList.remove('pending');
+    psIcon.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+    psTitle.textContent = 'Order confirmed!';
+    psText.textContent = "Pay in cash when it arrives. We'll send delivery updates via WhatsApp.";
+  } else {
+    psIcon.classList.remove('pending');
+    psIcon.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+    psTitle.textContent = 'Payment successful!';
+    psText.textContent = "Your order is confirmed. We'll send updates via WhatsApp.";
+  }
+  openOverlay(successOverlay);
+});
+
+document.getElementById('psCloseBtn').addEventListener('click', () => closeOverlay(successOverlay));
+document.getElementById('successOverlay').addEventListener('click', (e) => { if(e.target === successOverlay) closeOverlay(successOverlay); });
+document.querySelector('.nav-back').addEventListener('click', () => history.back());
+</script>
+</body>
+</html>
