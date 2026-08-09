@@ -2489,6 +2489,16 @@ document.querySelectorAll('.rv').forEach(el => {
     scrollVel += d * 1.5;
     startLoop();
   }, {passive:true});
+
+  /* Category badge click -> store.html filtered to that category */
+  var CATEGORY_BY_IDX = ['Supplement','Electronics','Cosmetic','Clothing','General'];
+  cards.forEach(function(card){
+    card.addEventListener('click', function(){
+      var idx = parseInt(card.dataset.idx, 10);
+      var cat = CATEGORY_BY_IDX[idx];
+      if(cat) window.location.href = 'store.html?cat=' + encodeURIComponent(cat);
+    });
+  });
 })();
 </script>
 

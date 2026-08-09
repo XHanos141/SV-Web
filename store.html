@@ -1636,6 +1636,15 @@ function showToast(msg){
   });
 
   render(false);
+
+  /* Auto-select category from URL param, e.g. store.html?cat=Cosmetic — used by landing page category badges */
+  (function(){
+    var params = new URLSearchParams(window.location.search);
+    var wantedCat = params.get('cat');
+    if(!wantedCat) return;
+    var targetRow = typeDropdown.querySelector('.s-type-row[data-cat="' + wantedCat + '"]');
+    if(targetRow) targetRow.click();
+  })();
 })();
 
 /* ─── Premium Peek Animation: tease scroll right then back ─── */
