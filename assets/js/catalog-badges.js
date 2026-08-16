@@ -2,7 +2,7 @@
   SuppVerse BD — Shared Category Badge Component
   Source of truth: store.html (.cat-badge system)
   Usage:
-    1. Add <script src="assets/js/catalog-badges.js"></script> to <head> or before </body>
+    1. Add <script src="assets/js/catalog-badges.js" defer><\/script> to <head> or before  </body>
     2. Call SVBadges.init() once after DOM is ready (injects sprite + CSS)
     3. Get badge markup with SVBadges.html('Supplement')  -> returns the <span class="cat-badge ..."> string
     4. Categories: Supplement, Electronics, Cosmetic, Clothing, General
@@ -17,7 +17,7 @@
   };
 
   const SPRITE_HTML = `
-<svg style="display:none">
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
   <symbol id="cat-icon-supplement" viewBox="0 0 512 512">
     <g transform="translate(-1,-1)">
       <path fill="currentColor" stroke="currentColor" stroke-width="11" stroke-linejoin="round" d="M357.4,136.09v-17.623H383c13.653,0,25.6-11.093,25.6-25.6V24.6C408.6,10.947,397.507-1,383-1H127
@@ -163,7 +163,7 @@
     if (!document.getElementById('sv-cat-badge-sprite')) {
       const wrap = document.createElement('div');
       wrap.id = 'sv-cat-badge-sprite';
-      wrap.style.display = 'none';
+      wrap.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;';
       wrap.innerHTML = SPRITE_HTML;
       document.body.insertBefore(wrap, document.body.firstChild);
     }
