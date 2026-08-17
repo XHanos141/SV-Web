@@ -215,16 +215,11 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <div class="order-items-head">
         <span>Product</span><span>Qty</span><span>Price</span>
       </div>
-      <div class="order-item-row">
-        <span class="oi-name">Magnesium Glycinate</span><span class="oi-qty">1</span><span class="oi-price">৳2,450</span>
-      </div>
-      <div class="order-item-row">
-        <span class="oi-name">Omega-3</span><span class="oi-qty">2</span><span class="oi-price">৳3,800</span>
-      </div>
+      <div id="orderItemsInternal"></div>
     </div>
-    <div class="pay-line"><span>Subtotal</span><span>৳6,250</span></div>
-    <div class="pay-line"><span>Shipping</span><span>৳120</span></div>
-    <div class="pay-line total"><span>Total</span><span class="amt">৳6,370</span></div>
+    <div class="pay-line"><span>Subtotal</span><span id="paySubtotal">৳0</span></div>
+    <div class="pay-line"><span>Shipping</span><span id="payShipping">৳0</span></div>
+    <div class="pay-line total"><span>Total</span><span class="amt" id="payTotal">৳0</span></div>
   </section>
 
   <!-- Proxy flow summary -->
@@ -449,11 +444,54 @@ function showToast(msg){
   toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
 }
 
-/* Flow state — in production this is set by the referring page (cart vs proxy quote), not a visible toggle */
-const S = { flow: 'internal', method: null };
+/* Flow state — set from the referring page's ?flow= param (internal vs proxy) */
+const S = { flow: (new URLSearchParams(location.search).get('flow') === 'proxy') ? 'proxy' : 'internal', method: null };
 
-/* BDT totals per flow — mirror the values shown in pay-bar/summary cards */
-const TOTALS_BDT = { internal: 6370, proxy: 48260 };
+/* ─── Internal cart: read real items from localStorage (written by store.html) ─── */
+const CART_KEY = 'sv-cart-internal';
+const SHIPPING_FLAT = 120;
+const SHIPPING_FREE_THRESHOLD = 6800;
+function fmt(n){ return '৳' + Math.round(n).toLocaleString('en-US'); }
+function readInternalCart(){
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+  catch(e){ return []; }
+}
+function renderInternalSummary(){
+  const items = readInternalCart();
+  const rowsEl = document.getElementById('orderItemsInternal');
+  rowsEl.innerHTML = '';
+  let subtotal = 0;
+  if(items.length === 0){
+    rowsEl.innerHTML = '<div class="order-item-row"><span class="oi-name" style="color:var(--t3);font-weight:500">Your cart is empty</span><span class="oi-qty"></span><span class="oi-price"></span></div>';
+  } else {
+    items.forEach(item => {
+      const qty = Number.isFinite(item.qty) && item.qty > 0 ? item.qty : 1;
+      const price = Number.isFinite(item.price) ? item.price : 0;
+      const lineTotal = qty * price;
+      subtotal += lineTotal;
+      const row = document.createElement('div');
+      row.className = 'order-item-row';
+      row.innerHTML = '<span class="oi-name">' + escHtml(item.name || 'Item') + '</span><span class="oi-qty">' + qty + '</span><span class="oi-price">' + fmt(lineTotal) + '</span>';
+      rowsEl.appendChild(row);
+    });
+  }
+  const shipping = (items.length === 0 || subtotal >= SHIPPING_FREE_THRESHOLD) ? 0 : SHIPPING_FLAT;
+  const total = subtotal + shipping;
+  document.getElementById('paySubtotal').textContent = fmt(subtotal);
+  document.getElementById('payShipping').textContent = shipping === 0 ? 'Free' : fmt(shipping);
+  document.getElementById('payTotal').textContent = fmt(total);
+  TOTALS_BDT.internal = total;
+  if(S.flow === 'internal'){
+    payBarVal.textContent = fmt(total);
+    updateCryptoConversion();
+  }
+}
+function escHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* BDT totals per flow — internal is computed live from cart; proxy stays admin-quoted (static demo for now) */
+const TOTALS_BDT = { internal: 0, proxy: 48260 };
 
 /* Admin-controlled BDT-per-USDT rate. Placeholder until wired to Supabase admin settings. */
 const EXCHANGE_RATE_BDT_PER_USDT = 130;
@@ -487,13 +525,17 @@ function setFlow(flow){
   summaryProxy.style.display = flow === 'proxy' ? '' : 'none';
   dueBanner.style.display = flow === 'proxy' ? 'flex' : 'none';
   payBarLabel.textContent = flow === 'proxy' ? 'Total Due' : 'Total';
-  payBarVal.textContent = flow === 'proxy' ? '৳48,260' : '৳6,370';
+  payBarVal.textContent = flow === 'proxy' ? fmt(TOTALS_BDT.proxy) : fmt(TOTALS_BDT.internal);
   updateCryptoConversion();
   // Re-render method selection for new flow context
   if(S.method) selectMethod(S.method);
 }
 tabInternal.addEventListener('click', () => setFlow('internal'));
 tabProxy.addEventListener('click', () => setFlow('proxy'));
+
+/* Init: load real cart data, then apply the flow from ?flow= URL param */
+renderInternalSummary();
+setFlow(S.flow);
 
 /* Method selection */
 const methodCards = document.querySelectorAll('.method-card');
