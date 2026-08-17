@@ -1305,6 +1305,45 @@ renderTrending();
 
 const grid = document.getElementById('grid');
 
+function slugify(str){
+  return str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,40);
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+const CART_KEY = 'sv-cart-internal';
+function readCart(){
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+  catch(e){ return []; }
+}
+function writeCart(cart){
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+}
+function addToCart(product){
+  const cart = readCart();
+  const id = slugify(product.name);
+  const existing = cart.find(c => c.id === id);
+  if(existing){ existing.qty += 1; }
+  else {
+    cart.push({
+      id: id,
+      name: product.name,
+      variant: product.cat || '',
+      price: product.price,
+      oldPrice: product.old || null,
+      qty: 1,
+      img: null,
+      locked: false,
+      type: product.type || 'General',
+      category: product.cat || ''
+    });
+  }
+  writeCart(cart);
+}
+function removeFromCart(product){
+  const id = slugify(product.name);
+  writeCart(readCart().filter(c => c.id !== id));
+}
+
 function renderCard(p,i){
   var isOut = p.stock === 'out';
   var gridImg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 2h8"/><path d="M9 2v6.5L4.5 15A3 3 0 0 0 7 20h10a3 3 0 0 0 2.5-5L15 8.5V2"/></svg>';
@@ -1314,7 +1353,7 @@ function renderCard(p,i){
   var outBar = isOut ? '<div class="p-out-bar">OUT OF STOCK</div>' : '';
   var actions = isOut 
     ? '<div class="p-actions"><button class="p-wish" onclick="toggleWish(this)" aria-label="Add to wishlist"><svg class="heart-icon" width="16" height="16" style="margin-top:-1px" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wishlist</button></div>'
-    : '<div class="p-actions"><button class="p-add" onclick="toggleCart(this)" aria-label="Add to cart">' + cartSVG + '</button><button class="p-buy" onclick="buyNow(this)" aria-label="Buy now">Buy</button></div>';
+    : '<div class="p-actions"><button class="p-add" data-name="' + esc(p.name) + '" onclick="toggleCart(this)" aria-label="Add to cart">' + cartSVG + '</button><button class="p-buy" onclick="buyNow(this)" aria-label="Buy now">Buy</button></div>';
   var stockBadge = isOut ? '' : '<span class="p-badge-stock ' + stockClass + '">' + stockText + '</span>';
   return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (i*0.06) + 's;">' +
     '<div class="p-img-wrap">' + gridImg + stockBadge + saleBadge + outBar + '</div>' +
@@ -1334,6 +1373,12 @@ function renderCard(p,i){
 function toggleCart(btn){
   const isAdded = btn.classList.contains('added');
   const checkIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  const name = btn.getAttribute('data-name');
+  const product = products.find(p => p.name === name);
+  if(product){
+    if(isAdded) removeFromCart(product);
+    else addToCart(product);
+  }
   btn.classList.toggle('added');
   btn.innerHTML = isAdded ? cartSVG : checkIcon;
 }
@@ -1447,8 +1492,6 @@ function showToast(msg){
     totalCount += n;
   });
   document.getElementById('typeHeaderCount').textContent = totalCount;
-
-  function esc(s){ return s.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
   function emptyHTML(){
     return '<div class="s-empty">' +

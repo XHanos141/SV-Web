@@ -590,6 +590,31 @@ const DATA = {
   }
 };
 if (window.SVBadges) SVBadges.init();
+
+/* ─── Merge items added from store.html (localStorage) into internal cart ─── */
+const CART_KEY = 'sv-cart-internal';
+function readStoredCart(){
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+  catch(e){ return []; }
+}
+function writeStoredCart(items){
+  localStorage.setItem(CART_KEY, JSON.stringify(items));
+}
+function syncStoredCartOut(){
+  // Persist only items that came from the store (not the 2 hardcoded demo seed items)
+  const storeIds = new Set(readStoredCart().map(i => i.id));
+  const toSave = DATA.internal.items.filter(i => storeIds.has(i.id));
+  writeStoredCart(toSave);
+}
+(function mergeStoredCart(){
+  const stored = readStoredCart();
+  stored.forEach(item => {
+    const existing = DATA.internal.items.find(i => i.id === item.id);
+    if(existing) existing.qty = item.qty;
+    else DATA.internal.items.push(item);
+  });
+})();
+
 const S = { theme: localStorage.getItem('sv-theme') || 'light' };
 const themeToggle = document.getElementById('themeToggle');
 function applyTheme(){
@@ -782,6 +807,7 @@ function updateItemQty(flow, id, newQty){
     }
   }
   if(flow === currentFlow) updateBar();
+  if(flow === 'internal') syncStoredCartOut();
 }
 function wireCardEvents(flow, e){
   const d = DATA[flow];
@@ -817,10 +843,12 @@ function removeItem(flow, id){
       DATA[flow].items = DATA[flow].items.filter(i => i.id !== id);
       renderFlow(flow);
       showToast('Item removed');
+      if(flow === 'internal') syncStoredCartOut();
     }, 360);
   } else {
     DATA[flow].items = DATA[flow].items.filter(i => i.id !== id);
     renderFlow(flow);
+    if(flow === 'internal') syncStoredCartOut();
   }
 }
 const toastEl = document.getElementById('toast');
