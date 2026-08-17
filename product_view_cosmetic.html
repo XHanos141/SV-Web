@@ -584,10 +584,10 @@ body.dark-mode .pv-dot.active{
 <!-- INFO -->
 <div class="pv-info">
   <div class="pv-cat-row">
-    <span class="pv-cat">Protein</span>
-    <span class="pv-stock in">In Stock</span>
+    <span class="pv-cat" id="pvCat">Protein</span>
+    <span class="pv-stock in" id="pvStockBadge">In Stock</span>
   </div>
-  <h1 class="pv-name">Optimum Nutrition Gold Standard 100% Whey Protein Isolate 2kg</h1>
+  <h1 class="pv-name" id="pvNameEl">Optimum Nutrition Gold Standard 100% Whey Protein Isolate 2kg</h1>
 
   <div class="pv-rating-row" onclick="scrollToReviews()" style="cursor:pointer">
     <div class="pv-stars">
@@ -597,14 +597,14 @@ body.dark-mode .pv-dot.active{
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       <svg viewBox="0 0 24 24" fill="var(--text3)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
     </div>
-    <span class="pv-rating-text">4.0</span>
+    <span class="pv-rating-text" id="pvRatingText">4.0</span>
     <span class="pv-rating-count">(128 reviews)</span>
   </div>
 
   <div class="pv-price-block">
-    <span class="pv-price">৳4,200</span>
-    <span class="pv-old">৳5,600</span>
-    <span class="pv-discount">20% OFF</span>
+    <span class="pv-price" id="pvPriceEl">৳4,200</span>
+    <span class="pv-old" id="pvOldEl">৳5,600</span>
+    <span class="pv-discount" id="pvDiscountEl">20% OFF</span>
   </div>
 
   <div class="pv-divider"></div>
@@ -783,6 +783,46 @@ body.dark-mode .pv-dot.active{
 <script>
 let qty = 1;
 
+// ─── Populate from URL params (passed from store.html card click) ───
+(function applyProductFromUrl(){
+  const params = new URLSearchParams(window.location.search);
+  if(!params.has('name')) return; // no params — keep static demo product as-is
+  const name = params.get('name');
+  const price = parseFloat(params.get('price'));
+  const old = parseFloat(params.get('old'));
+  const discount = params.get('discount');
+  const cat = params.get('cat');
+  const rating = params.get('rating');
+  const stock = params.get('stock');
+
+  const nameEl = document.getElementById('pvNameEl');
+  const catEl = document.getElementById('pvCat');
+  const priceEl = document.getElementById('pvPriceEl');
+  const oldEl = document.getElementById('pvOldEl');
+  const discountEl = document.getElementById('pvDiscountEl');
+  const ratingEl = document.getElementById('pvRatingText');
+  const stockBadge = document.getElementById('pvStockBadge');
+
+  if(nameEl && name) nameEl.textContent = name;
+  if(catEl && cat) catEl.textContent = cat;
+  if(priceEl && Number.isFinite(price)) priceEl.textContent = '৳' + price.toLocaleString('en-US');
+  if(oldEl){
+    if(Number.isFinite(old) && old > 0){ oldEl.textContent = '৳' + old.toLocaleString('en-US'); oldEl.style.display = ''; }
+    else { oldEl.style.display = 'none'; }
+  }
+  if(discountEl){
+    if(discount){ discountEl.textContent = discount; discountEl.style.display = ''; }
+    else { discountEl.style.display = 'none'; }
+  }
+  if(ratingEl && rating) ratingEl.textContent = rating;
+  if(stockBadge && stock){
+    stockBadge.classList.remove('in','low','out');
+    stockBadge.classList.add(stock);
+    stockBadge.textContent = stock === 'in' ? 'In Stock' : stock === 'low' ? 'Low Stock' : 'Out of Stock';
+  }
+  document.title = name + ' — SuppVerse BD';
+})();
+
 // ─── Image Gallery Carousel ───
 (function(){
   var gallery = document.getElementById('pvGallery');
@@ -885,8 +925,67 @@ function changeQty(delta){
   qty = Math.max(1, Math.min(10, qty + delta));
   document.getElementById('qtyVal').textContent = qty;
 }
+
+/* ─── Cart: shared localStorage cart with store.html ─── */
+const CART_KEY = 'sv-cart-internal';
+function slugify(str){
+  return str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+}
+function readCart(){
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+  catch(e){ return []; }
+}
+function writeCart(cart){
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+}
+function parsePrice(text){
+  const n = parseFloat(String(text).replace(/[^\d.]/g, ''));
+  return Number.isFinite(n) ? n : 0;
+}
+function getSelectedVariants(){
+  return Array.from(document.querySelectorAll('.pv-variant-pill.selected'))
+    .map(function(el){ return el.dataset.val; })
+    .filter(Boolean)
+    .join(' / ');
+}
+function getProductInfo(){
+  const nameEl = document.querySelector('.pv-name');
+  const priceEl = document.querySelector('.pv-price');
+  const oldPriceEl = document.querySelector('.pv-old');
+  const catEl = document.querySelector('.pv-cat');
+  const baseName = nameEl ? nameEl.textContent.trim() : 'Product';
+  const variants = getSelectedVariants();
+  return {
+    baseName: baseName,
+    variant: variants,
+    price: priceEl ? parsePrice(priceEl.textContent) : 0,
+    oldPrice: oldPriceEl ? parsePrice(oldPriceEl.textContent) : null,
+    category: catEl ? catEl.textContent.trim() : ''
+  };
+}
 function addToCart(){
-  alert('Added ' + qty + ' to cart');
+  const info = getProductInfo();
+  const id = slugify(info.baseName + (info.variant ? '-' + info.variant : ''));
+  const cart = readCart();
+  const existing = cart.find(function(c){ return c.id === id; });
+  if(existing){
+    existing.qty += qty;
+  } else {
+    cart.push({
+      id: id,
+      name: info.baseName,
+      variant: info.variant,
+      price: info.price,
+      oldPrice: info.oldPrice,
+      qty: qty,
+      img: null,
+      locked: false,
+      type: 'Cosmetic',
+      category: info.category
+    });
+  }
+  writeCart(cart);
+  showPvToast('Added ' + qty + ' to cart');
 }
 function buyNow(){
   var buyBtn = document.querySelector('.pv-btn-buy');
@@ -902,7 +1001,8 @@ function buyNow(){
     showPvToast(isFilled ? 'Added to wishlist' : 'Removed from wishlist');
     return;
   }
-  alert('Proceeding to checkout (' + qty + ' items)');
+  addToCart();
+  window.location.href = 'cart.html';
 }
 
 // ─── Star Rating ───

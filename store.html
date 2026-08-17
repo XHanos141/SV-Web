@@ -1353,9 +1353,10 @@ function renderCard(p,i){
   var outBar = isOut ? '<div class="p-out-bar">OUT OF STOCK</div>' : '';
   var actions = isOut 
     ? '<div class="p-actions"><button class="p-wish" onclick="toggleWish(this)" aria-label="Add to wishlist"><svg class="heart-icon" width="16" height="16" style="margin-top:-1px" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wishlist</button></div>'
-    : '<div class="p-actions"><button class="p-add" data-name="' + esc(p.name) + '" onclick="toggleCart(this)" aria-label="Add to cart">' + cartSVG + '</button><button class="p-buy" onclick="buyNow(this)" aria-label="Buy now">Buy</button></div>';
+    : '<div class="p-actions"><button class="p-add" data-name="' + esc(p.name) + '" onclick="event.stopPropagation();toggleCart(this)" aria-label="Add to cart">' + cartSVG + '</button><button class="p-buy" onclick="event.stopPropagation();buyNow(this)" aria-label="Buy now">Buy</button></div>';
   var stockBadge = isOut ? '' : '<span class="p-badge-stock ' + stockClass + '">' + stockText + '</span>';
-  return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (i*0.06) + 's;">' +
+  var pvUrl = (PRODUCT_VIEW_PAGES[p.type] || 'product_view_general.html') + '?' + productViewParams(p);
+  return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (i*0.06) + 's;cursor:pointer" onclick="window.location.href=\'' + pvUrl + '\'">' +
     '<div class="p-img-wrap">' + gridImg + stockBadge + saleBadge + outBar + '</div>' +
     '<div class="p-body">' +
       '<div class="p-meta"><span class="p-cat">' + p.cat + '</span><span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span></div>' +
@@ -1368,6 +1369,23 @@ function renderCard(p,i){
       '</div>' +
     '</div>' +
   '</div>';
+}
+const PRODUCT_VIEW_PAGES = {
+  'Supplement': 'product_view_supplement.html',
+  'Electronics': 'product_view_electronics.html',
+  'Cosmetic': 'product_view_cosmetic.html',
+  'Clothing': 'product_view_clothing.html',
+  'General': 'product_view_general.html'
+};
+function productViewParams(p){
+  return 'name=' + encodeURIComponent(p.name) +
+    '&price=' + encodeURIComponent(p.price) +
+    '&old=' + encodeURIComponent(p.old) +
+    '&discount=' + encodeURIComponent(p.discount) +
+    '&cat=' + encodeURIComponent(p.cat) +
+    '&type=' + encodeURIComponent(p.type) +
+    '&rating=' + encodeURIComponent(p.rating) +
+    '&stock=' + encodeURIComponent(p.stock);
 }
 
 function toggleCart(btn){

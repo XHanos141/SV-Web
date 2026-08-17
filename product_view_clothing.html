@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SuppVerse BD — Product View</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F7FB; --surface:#ffffff; --surface2:#F8FAFD;
+  --border:rgba(10,22,40,0.07); --border-strong:rgba(10,22,40,0.10);
+  --text:#0B1220; --text2:#5E6B7D; --text3:#9AA3B2;
+  --accent:#0A9BDC; --accent-soft:rgba(10,155,220,0.08); --accent-glow:rgba(10,155,220,0.18);
+  --orange:#F26430; --orange-soft:rgba(242,100,48,0.10);
+  --green:#0A9B72; --green-soft:rgba(10,155,114,0.10);
+  --red:#E14343; --red-soft:rgba(225,67,67,0.10);
+  --yellow:#E5A020; --yellow-soft:rgba(229,160,32,0.10);
+  --purple:#7C6FF7; --purple-soft:rgba(124,111,247,0.10);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.04),0 1px 2px rgba(0,0,0,0.02);
+  --shadow-md:0 4px 14px rgba(0,0,0,0.06),0 2px 4px rgba(0,0,0,0.03);
+  --shadow-lg:0 12px 32px rgba(0,0,0,0.08),0 4px 8px rgba(0,0,0,0.04);
+  --radius:18px; --radius-sm:12px; --radius-xs:8px;
+  --font-body:'DM Sans',sans-serif; --font-display:'Plus Jakarta Sans',sans-serif;
+  --ease:cubic-bezier(0.4,0,0.2,1);
+  --header-h:56px; --bottom-nav-h:64px;
+}
+body.dark-mode{
+  --bg:#0B0F18; --surface:#141B2A; --surface2:#1A2235;
+  --border:rgba(255,255,255,0.06); --border-strong:rgba(255,255,255,0.10);
+  --text:#F0F4FA; --text2:#A0AAB8; --text3:#6B7585;
+  --accent:#2DBEF5; --accent-soft:rgba(45,190,245,0.08); --accent-glow:rgba(45,190,245,0.22);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.20),0 1px 2px rgba(0,0,0,0.12);
+  --shadow-md:0 4px 14px rgba(0,0,0,0.25),0 2px 4px rgba(0,0,0,0.15);
+  --shadow-lg:0 12px 32px rgba(0,0,0,0.35),0 4px 8px rgba(0,0,0,0.20);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:var(--font-body);background:var(--bg);color:var(--text);
+  min-height:100dvh;padding-bottom:calc(var(--bottom-nav-h) + 80px);
+  transition:background 0.3s,color 0.3s;
+}
+
+/* ─── HEADER ─── */
+.pv-header{
+  position:sticky;top:0;z-index:50;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px) saturate(1.2);
+  height:var(--header-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;
+}
+.pv-header-btn{
+  width:36px;height:36px;border-radius:10px;
+  background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text);cursor:pointer;
+}
+.pv-header-title{
+  font-family:var(--font-display);font-size:14px;font-weight:800;
+  color:var(--text);letter-spacing:-0.2px;
+}
+
+/* ─── IMAGE GALLERY ─── */
+.pv-gallery{
+  position:sticky;
+  top:var(--header-h);
+  z-index:1;
+  background:linear-gradient(135deg,var(--accent-soft),var(--bg));
+  aspect-ratio:1/1;
+  overflow:hidden;
+}
+.pv-gallery::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 35% 25%,rgba(255,255,255,0.35) 0%,transparent 55%);
+  opacity:0.6;
+  z-index:1;
+  pointer-events:none;
+}
+.pv-gallery-track{
+  display:flex;
+  width:100%;height:100%;
+  touch-action:pan-y;
+  cursor:grab;
+  transition:transform 0.35s var(--ease);
+}
+.pv-gallery-track.dragging{
+  transition:none;
+  cursor:grabbing;
+}
+.pv-gallery-slide{
+  flex:0 0 100%;
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+}
+.pv-gallery-slide svg{
+  width:80px;height:80px;
+  color:var(--text3);opacity:0.18;
+  position:relative;z-index:1;
+  pointer-events:none;
+  -webkit-user-select:none;user-select:none;
+}
+.pv-dots{
+  position:absolute;bottom:22px;left:0;right:0;
+  display:flex;justify-content:center;gap:6px;z-index:2;
+  pointer-events:none;
+}
+.pv-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(11,18,32,0.28);
+  box-shadow:0 0 0 1px rgba(255,255,255,0.5);
+  transition:all 0.2s;
+}
+.pv-dot.active{
+  width:18px;border-radius:4px;
+  background:var(--text);
+  box-shadow:0 0 0 1px rgba(255,255,255,0.6);
+}
+body.dark-mode .pv-dot{
+  background:rgba(255,255,255,0.35);
+  box-shadow:0 0 0 1px rgba(0,0,0,0.3);
+}
+body.dark-mode .pv-dot.active{
+  background:#fff;
+  box-shadow:0 0 0 1px rgba(0,0,0,0.35);
+}
+
+/* ─── INFO CARD ─── */
+.pv-info{
+  background:var(--surface);
+  border-radius:var(--radius) var(--radius) 0 0;
+  margin-top:-20px;
+  position:relative;z-index:2;
+  padding:20px 16px 16px;
+}
+.pv-cat-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:6px;
+}
+.pv-cat{
+  font-size:10px;font-weight:800;color:var(--text3);
+  text-transform:uppercase;letter-spacing:0.06em;
+}
+.pv-stock{
+  font-family:var(--font-display);font-size:9px;font-weight:800;
+  padding:3px 8px;border-radius:6px;
+}
+.pv-stock.in{background:var(--green-soft);color:var(--green)}
+.pv-stock.low{background:var(--yellow-soft);color:var(--yellow)}
+.pv-stock.out{background:var(--red-soft);color:var(--red)}
+.pv-name{
+  font-family:var(--font-display);font-size:18px;font-weight:800;
+  color:var(--text);line-height:1.3;margin-bottom:10px;
+}
+.pv-rating-row{
+  display:flex;align-items:center;gap:6px;margin-bottom:14px;
+}
+.pv-stars{
+  display:flex;align-items:center;gap:2px;
+}
+.pv-stars svg{width:14px;height:14px;color:var(--yellow)}
+.pv-rating-text{
+  font-size:13px;font-weight:800;color:var(--accent);
+}
+.pv-rating-count{
+  font-size:12px;font-weight:700;color:var(--accent);
+}
+.pv-rating-row:hover .pv-rating-text,
+.pv-rating-row:hover .pv-rating-count{
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+
+/* ─── PRICE BLOCK ─── */
+.pv-price-block{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:10px;
+  flex-wrap:nowrap;
+}
+.pv-price{
+  font-family:var(--font-display);font-size:26px;font-weight:800;
+  color:var(--text);line-height:1;
+}
+.pv-old{
+  font-size:13px;font-weight:600;color:var(--red);
+  text-decoration:line-through;
+  flex-shrink:0;
+}
+.pv-discount{
+  display:inline-flex;align-items:center;
+  background:var(--green-soft);color:var(--green);
+  font-family:var(--font-display);font-size:9px;font-weight:800;
+  padding:2px 6px;border-radius:5px;
+  border:1px solid var(--green);
+  text-transform:uppercase;letter-spacing:0.3px;
+  box-shadow:0 0 6px rgba(10,155,114,0.25),0 0 12px rgba(10,155,114,0.12);
+  flex-shrink:0;
+}
+
+/* ─── DIVIDER ─── */
+.pv-divider{
+  height:1px;background:var(--border);margin:0 0 10px;
+}
+
+/* ─── DESCRIPTION ─── */
+.pv-section-title{
+  font-family:var(--font-display);font-size:13px;font-weight:800;
+  color:var(--text);margin-bottom:8px;
+}
+.pv-desc{
+  font-size:13px;font-weight:500;color:var(--text2);
+  line-height:1.65;margin-bottom:16px;
+}
+
+/* ─── TRUST BADGE ROWS ─── */
+.pv-specs{
+  display:flex;flex-direction:column;gap:0;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);overflow:hidden;
+  margin-bottom:16px;
+}
+.pv-spec{
+  display:flex;align-items:center;gap: 14px;
+  padding:5.5px 16px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background 0.15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.pv-spec:last-child{border-bottom:none}
+.pv-spec:active{background:rgba(10,155,220,0.05)}
+.pv-spec-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--green-soft);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.pv-spec-icon svg{
+  width:23px;height:23px;
+  color:var(--green);
+}
+.pv-spec-body{
+  flex:1;display:flex;align-items:center;justify-content:space-between;
+  gap:8px;
+}
+.pv-spec-text{
+  font-size:13px;font-weight:500;color:var(--text2);
+  line-height:1.4;
+}
+.pv-spec-text b{
+  font-family:var(--font-display);font-weight:800;color:var(--text);
+}
+.pv-spec-chevron{
+  width:16px;height:16px;
+  color:var(--text3);flex-shrink:0;
+}
+
+/* ─── REVIEWS ─── */
+.pv-review{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius-xs);padding:12px;margin-bottom:8px;
+}
+.pv-review-head{
+  display:flex;align-items:center;gap:6px;margin-bottom:6px;
+}
+.pv-review-avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--accent-soft);display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:11px;font-weight:800;color:var(--accent);
+}
+.pv-review-name{
+  font-size:12px;font-weight:700;color:var(--text);
+}
+.pv-verified-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  background:var(--green-soft);color:var(--green);
+  font-family:var(--font-display);font-size:11px;font-weight:800;
+  padding:2px 6px 2px 5px;border-radius:20px;
+  margin-left:6px;vertical-align:middle;
+  white-space:nowrap;
+}
+.pv-verified-badge svg{width:13px;height:13px;flex-shrink:0}
+.pv-review-stars svg{width:10px;height:10px;color:var(--yellow)}
+.pv-review-text{
+  font-size:12px;font-weight:500;color:var(--text2);line-height:1.5;
+}
+
+/* ─── BOTTOM ACTIONS ─── */
+.pv-actions{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(20px) saturate(1.2);
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+  display:flex;align-items:center;gap:10px;
+}
+.pv-qty{
+  display:flex;align-items:center;gap:0;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;
+  flex-shrink:0;
+}
+.pv-qty button{
+  width:36px;height:40px;background:none;border:none;
+  font-family:var(--font-display);font-size:16px;font-weight:800;
+  color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.pv-qty span{
+  width:32px;text-align:center;font-family:var(--font-display);
+  font-size:14px;font-weight:800;color:var(--text);
+}
+.pv-btn-cart{
+  flex:1;height:48px;border-radius:12px;
+  background:linear-gradient(145deg,var(--accent),#0077B3);
+  border:none;
+  color:#fff;font-family:var(--font-display);
+  font-size:12px;font-weight:800;letter-spacing:0.2px;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 3px 10px var(--accent-glow);
+  position:relative;overflow:hidden;
+  white-space:nowrap;
+  padding:0 10px;
+}
+.pv-btn-cart svg{flex-shrink:0}
+.pv-btn-cart::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,0.18),transparent);
+  opacity:0;transition:opacity 0.2s;
+}
+.pv-btn-cart:active{transform:scale(0.96)}
+.pv-btn-cart:active::after{opacity:1}
+.pv-btn-buy{
+  flex:1.3;height:48px;border-radius:12px;
+  background:linear-gradient(145deg,var(--green),#088a5e);
+  color:#fff;font-family:var(--font-display);
+  font-size:13px;font-weight:800;letter-spacing:0.3px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  border:none;cursor:pointer;transition:all 0.2s;
+  box-shadow:0 3px 10px rgba(10,155,114,0.22);
+}
+.pv-btn-buy:active{transform:scale(0.96)}
+.pv-btn-buy.wishlist-mode{
+  background:transparent;
+  border:1.5px solid var(--red);
+  color:var(--red);
+  box-shadow:none;
+}
+.pv-btn-buy.wishlist-mode:active{
+  transform:scale(0.94);
+  background:var(--red-soft);
+}
+.pv-btn-buy.wishlist-mode svg{width:16px;height:16px;flex-shrink:0;transition:transform 0.3s var(--ease)}
+.pv-btn-buy.wishlist-mode svg.bounce{
+  animation:heartBounce 0.4s var(--ease) forwards;
+  transform-origin:center;
+}
+@keyframes heartBounce{
+  0%   {transform:scale(1)}
+  25%  {transform:scale(1.35)}
+  50%  {transform:scale(0.85)}
+  75%  {transform:scale(1.12)}
+  100% {transform:scale(1)}
+}
+
+/* ─── VARIANT SELECTORS (SEPARATE) ─── */
+.pv-variants{
+  margin-bottom:16px;
+  display:flex;flex-direction:column;gap:14px;
+}
+.pv-variant-label{
+  font-size:13px;font-weight:800;color:var(--text);
+  text-transform:uppercase;letter-spacing:0.04em;
+  margin-bottom:2px;
+}
+.pv-variant-row{
+  display:flex;flex-wrap:wrap;gap:6px;
+}
+.pv-variant-pill{
+  position:relative;
+  background:var(--surface);border:1.5px solid rgba(10,22,40,0.4);
+  border-radius:10px;padding:8px 16px;
+  cursor:pointer;transition:all 0.2s var(--ease);
+  font-family:var(--font-display);font-size:13px;font-weight:700;
+  color:var(--text);
+  -webkit-tap-highlight-color:transparent;
+  min-width:72px;text-align:center;
+  box-shadow:var(--shadow-sm);
+}
+.pv-variant-pill:active{transform:scale(0.96)}
+.pv-variant-pill.selected{
+  border-color:var(--green);
+  background:var(--green-soft);
+  color:var(--green);
+  box-shadow:0 0 0 3px rgba(10,155,114,0.15),0 2px 8px rgba(10,155,114,0.12);
+}
+.pv-variant-pill.out{
+  opacity:0.55;
+  border-style:dashed;
+  background:var(--surface2);
+  color:var(--text3);
+  overflow:hidden;
+}
+.pv-variant-pill.out::before{
+  content:'';
+  position:absolute;
+  left:0;right:0;top:0;bottom:0;
+  background-image:repeating-linear-gradient(
+    135deg,
+    var(--text3) 0px,
+    var(--text3) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+  opacity:0.6;
+  pointer-events:none;
+}
+.pv-variant-pill.out.selected{
+  opacity:0.85;
+  border-color:var(--text3);
+  border-style:dashed;
+  background:rgba(158,163,178,0.14);
+  color:var(--text3);
+  box-shadow:0 0 0 3px rgba(158,163,178,0.18),0 0 8px rgba(158,163,178,0.25);
+}
+.pv-variant-pill.out.selected::before{
+  background-image:repeating-linear-gradient(
+    135deg,
+    var(--text3) 0px,
+    var(--text3) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+  opacity:0.85;
+}
+
+/* ─── SUPPLEMENT INFO ROWS (ACTIVE SELECTION) ─── */
+.pv-supplement-info{
+  display:flex;gap:10px;margin-bottom:16px;
+}
+.pv-supplement-row{
+  flex:1;
+  background:var(--green-soft);
+  border:1px solid rgba(10,155,114,0.18);
+  border-left:3px solid var(--green);
+  border-radius:var(--radius-xs);
+  padding:12px 12px 12px 14px;
+  display:flex;flex-direction:column;gap:2px;
+  position:relative;
+  box-shadow:0 2px 8px rgba(10,155,114,0.08);
+}
+.pv-supplement-row::after{
+  content:'';position:absolute;top:10px;right:10px;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 0 2px var(--green-soft),0 0 6px rgba(10,155,114,0.4);
+}
+.pv-supplement-label{
+  font-size:10px;font-weight:700;color:var(--green);
+  text-transform:uppercase;letter-spacing:0.04em;
+}
+.pv-supplement-value{
+  font-family:var(--font-display);font-size:15px;font-weight:800;
+  color:var(--text);
+}
+
+/* ─── WRITE REVIEW FORM ─── */
+.pv-write-review{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius-xs);padding:14px;margin-top:12px;
+}
+.pv-write-review-title{
+  font-family:var(--font-display);font-size:13px;font-weight:800;
+  color:var(--text);margin-bottom:10px;
+}
+.pv-star-input{
+  display:flex;align-items:center;gap:4px;margin-bottom:10px;
+}
+.pv-star-input svg{
+  width:22px;height:22px;cursor:pointer;
+  color:var(--text3);transition:color 0.15s,transform 0.15s;
+}
+.pv-star-input svg:hover{transform:scale(1.15)}
+.pv-star-input svg.active{color:var(--yellow)}
+.pv-star-input svg.filled{color:var(--yellow)}
+.pv-star-label{
+  font-size:11px;font-weight:600;color:var(--text3);
+  margin-left:6px;
+}
+.pv-review-textarea{
+  width:100%;min-height:72px;resize:vertical;
+  background:var(--surface);border:1px solid var(--border-strong);
+  border-radius:10px;padding:10px 12px;
+  font-family:var(--font-body);font-size:13px;font-weight:500;
+  color:var(--text);outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.pv-review-textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-glow);
+}
+.pv-review-textarea::placeholder{color:var(--text3)}
+.pv-review-submit{
+  width:100%;height:44px;margin-top:10px;border-radius:10px;
+  background:linear-gradient(145deg,var(--green),#088a5e);
+  color:#fff;font-family:var(--font-display);
+  font-size:13px;font-weight:800;letter-spacing:0.2px;
+  border:none;cursor:pointer;transition:all 0.2s;
+  box-shadow:0 3px 10px rgba(10,155,114,0.22);
+  position:relative;overflow:hidden;
+}
+.pv-review-submit:active{transform:scale(0.97)}
+.pv-review-submit::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,0.18),transparent);
+  opacity:0;transition:opacity 0.2s;
+}
+.pv-review-submit:active::after{opacity:1}
+
+/* ─── Animation ─── */
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.pv-info{animation:slideUp 0.4s var(--ease) both}
+
+/* ─── TOAST ─── */
+.pv-toast{
+  position:fixed;left:50%;bottom:calc(var(--bottom-nav-h) + 80px + 14px);
+  transform:translateX(-50%) translateY(12px);
+  background:var(--text);color:var(--surface);
+  font-family:var(--font-display);font-size:12px;font-weight:700;
+  padding:10px 18px;border-radius:10px;
+  box-shadow:var(--shadow-lg);
+  z-index:100;opacity:0;pointer-events:none;
+  transition:opacity 0.25s var(--ease),transform 0.25s var(--ease);
+  white-space:nowrap;
+}
+.pv-toast.show{
+  opacity:1;transform:translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="pv-header">
+  <button class="pv-header-btn" onclick="history.back()" aria-label="Back">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+  </button>
+  <div class="pv-header-title">Product Details</div>
+  <div style="display:flex;gap:8px">
+    <button class="pv-header-btn" aria-label="Toggle theme" onclick="document.body.classList.toggle('dark-mode')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+    <button class="pv-header-btn" aria-label="Share" onclick="shareProduct()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
+    <button class="pv-header-btn" aria-label="Cart">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.29977 5H21L19 12H7.37671M20 16H8L6 3H3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- IMAGE GALLERY -->
+<div class="pv-gallery" id="pvGallery">
+  <div class="pv-gallery-track" id="pvGalleryTrack">
+    <div class="pv-gallery-slide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M8 2h8"/><path d="M9 2v6.5L4.5 15A3 3 0 0 0 7 20h10a3 3 0 0 0 2.5-5L15 8.5V2"/></svg>
+    </div>
+    <div class="pv-gallery-slide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M8 2h8"/><path d="M9 2v6.5L4.5 15A3 3 0 0 0 7 20h10a3 3 0 0 0 2.5-5L15 8.5V2"/></svg>
+    </div>
+    <div class="pv-gallery-slide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M8 2h8"/><path d="M9 2v6.5L4.5 15A3 3 0 0 0 7 20h10a3 3 0 0 0 2.5-5L15 8.5V2"/></svg>
+    </div>
+  </div>
+  <div class="pv-dots" id="pvDots">
+    <div class="pv-dot active"></div>
+    <div class="pv-dot"></div>
+    <div class="pv-dot"></div>
+  </div>
+</div>
+
+<!-- INFO -->
+<div class="pv-info">
+  <div class="pv-cat-row">
+    <span class="pv-cat" id="pvCat">Protein</span>
+    <span class="pv-stock in" id="pvStockBadge">In Stock</span>
+  </div>
+  <h1 class="pv-name" id="pvNameEl">Optimum Nutrition Gold Standard 100% Whey Protein Isolate 2kg</h1>
+
+  <div class="pv-rating-row" onclick="scrollToReviews()" style="cursor:pointer">
+    <div class="pv-stars">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" fill="var(--text3)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    </div>
+    <span class="pv-rating-text" id="pvRatingText">4.0</span>
+    <span class="pv-rating-count">(128 reviews)</span>
+  </div>
+
+  <div class="pv-price-block">
+    <span class="pv-price" id="pvPriceEl">৳4,200</span>
+    <span class="pv-old" id="pvOldEl">৳5,600</span>
+    <span class="pv-discount" id="pvDiscountEl">20% OFF</span>
+  </div>
+
+  <div class="pv-divider"></div>
+
+  <!-- POTENCY SELECTOR -->
+  <div class="pv-variants" id="potencyBox">
+    <div class="pv-variant-label">Potency</div>
+    <div class="pv-variant-row" id="potencyRow">
+      <div class="pv-variant-pill selected" data-type="potency" data-val="500 mg" onclick="selectOption(this)">500 mg</div>
+      <div class="pv-variant-pill" data-type="potency" data-val="1000 mg" onclick="selectOption(this)">1000 mg</div>
+      <div class="pv-variant-pill" data-type="potency" data-val="1500 mg" onclick="selectOption(this)">1500 mg</div>
+      <div class="pv-variant-pill out" data-type="potency" data-val="2000 mg" onclick="selectOption(this)">2000 mg</div>
+    </div>
+  </div>
+
+  <!-- CAPSULE COUNT SELECTOR -->
+  <div class="pv-variants" id="countBox">
+    <div class="pv-variant-label">Capsule Count</div>
+    <div class="pv-variant-row" id="countRow">
+      <div class="pv-variant-pill selected" data-type="count" data-val="60 Caps" onclick="selectOption(this)">60 Caps</div>
+      <div class="pv-variant-pill" data-type="count" data-val="120 Caps" onclick="selectOption(this)">120 Caps</div>
+      <div class="pv-variant-pill" data-type="count" data-val="180 Caps" onclick="selectOption(this)">180 Caps</div>
+      <div class="pv-variant-pill out" data-type="count" data-val="240 Caps" onclick="selectOption(this)">240 Caps</div>
+    </div>
+  </div>
+
+  <!-- DYNAMIC SUPPLEMENT INFO -->
+  <div class="pv-supplement-info" id="suppInfo">
+    <div class="pv-supplement-row">
+      <div class="pv-supplement-label">Potency</div>
+      <div class="pv-supplement-value" id="suppPotency">500 mg</div>
+    </div>
+    <div class="pv-supplement-row">
+      <div class="pv-supplement-label">Capsule Count</div>
+      <div class="pv-supplement-value" id="suppCount">60 Caps</div>
+    </div>
+  </div>
+
+  <div class="pv-section-title">Product Info</div>
+  <div class="pv-specs">
+    <div class="pv-spec">
+      <div class="pv-spec-icon">
+        <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" style="width:23px;height:23px" viewBox="0 0 24 24"><path fill="currentColor" d="M7.75 2.5c0-.41421-.33579-.75-.75-.75s-.75.33579-.75.75v1.57926c-1.43933.11525-2.38423.39811-3.07843 1.09231S2.19451 6.81067 2.07926 8.25H21.9207c-.1152-1.43933-.3981-2.38423-1.0923-3.07843s-1.6391-.97706-3.0784-1.09231V2.5c0-.41421-.3358-.75-.75-.75s-.75.33579-.75.75v1.5129C15.5847 4 14.839 4 14 4h-4c-.83903 0-1.58473 0-2.25.0129z"/><path fill="currentColor" fill-rule="evenodd" d="M22 12c0-.839 0-1.5847-.0129-2.25H2.0129C2 10.4153 2 11.161 2 12v2c0 3.7712 0 5.6569 1.17157 6.8284C4.34315 22 6.22876 22 10 22h4c3.7712 0 5.6569 0 6.8284-1.1716C22 19.6569 22 17.7712 22 14zm-8 .25c-.9665 0-1.75.7835-1.75 1.75v2c0 .9665.7835 1.75 1.75 1.75s1.75-.7835 1.75-1.75v-2c0-.9665-.7835-1.75-1.75-1.75m0 1.5c-.1381 0-.25.1119-.25.25v2c0 .1381.1119.25.25.25s.25-.1119.25-.25v-2c0-.1381-.1119-.25-.25-.25m-3.213-1.4429c.2803.1161.463.3896.463.6929v4c0 .4142-.3358.75-.75.75s-.75-.3358-.75-.75v-2.1893l-.21967.2196c-.29289.2929-.76777.2929-1.06066 0s-.29289-.7677 0-1.0606l1.5-1.5c.21453-.2145.53713-.2787.81733-.1626" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="pv-spec-body">
+        <div class="pv-spec-text">Expiry date: <b>09/2028</b></div>
+        <svg class="pv-spec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <!-- BRAND -->
+    <div class="pv-spec">
+      <div class="pv-spec-icon">
+        <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" style="transform:scaleX(-1);width:23px;height:23px" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M2.678 11.422a2.5 2.5 0 0 0 0 3.536l6.364 6.364a2.5 2.5 0 0 0 3.536 0l7.69-7.69A2.5 2.5 0 0 0 21 11.864V4.5A1.5 1.5 0 0 0 19.5 3h-7.365a2.5 2.5 0 0 0-1.768.732l-7.69 7.69zM14.988 7C13.878 7 13 7.832 13 8.988c0 1.157.878 2.012 1.988 2.012C16.121 11 17 10.145 17 8.988 17 7.832 16.12 7 14.988 7" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="pv-spec-body">
+        <div class="pv-spec-text">Brand: <b>Optimum Nutrition</b></div>
+        <svg class="pv-spec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <!-- COUNTRY OF ORIGIN -->
+    <div class="pv-spec">
+      <div class="pv-spec-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" style="width:21px;height:21px" viewBox="0 0 471.461 471.461"><path d="M235.735 471.456c129.984 0 235.726-105.752 235.726-235.726C471.461 105.757 365.709.005 235.735.005S0 105.747 0 235.73c0 129.984 105.751 235.726 235.735 235.726m185.417-277.514c-19.662-11.465-14.746 1.635-14.746 1.635l13.109 11.465c13.111 11.466 22.941 16.39 18.025 32.445-4.914 16.057-13.109 1.961-29.49 15.072-16.391 13.109 19.66 16.389 21.295 36.049 1.637 19.662-19.66 9.832-29.49 29.492s-1.635 40.965-6.551 58.99c-4.914 18.025-45.881 42.602-60.76 50.797s-4.781-18.025 0-36.051-11.34-37.686-11.34-70.457-9.83-22.939-39.322-22.939c-29.49 0-42.6-16.391-45.88-47.518-3.28-31.135 24.576-62.261 37.685-72.091C286.798 171 304.824 161.17 322.839 171c18.025 9.831 24.576 19.661 44.236 19.661s19.66-6.55 31.135-14.746c11.465-8.195-16.391-18.025-32.77-16.313-16.381 1.712-13.111-9.897-34.406-18.092-21.297-8.195-29.492 8.195-36.051 11.465-6.551 3.28-29.49 13.11-31.787 0-2.285-13.11 12.117-14.745 26.871-14.745 14.746 0 1.635-11.465-3.279-19.661-4.916-8.195-14.746-8.195-21.85-14.592-7.096-6.397 8.74-18.178 25.119-14.267 16.381 3.911 9.83 15.75 27.855 14.114s0-18.025 0-33.899 19.662-15.262 32.771-21.592c13.109-6.331 29.49 27.635 40.965 41.377 3.797 4.552 9.219 2.534 14.766-2.113 28.984 33.354 48.367 75.228 53.836 121.338-23.426 8.76-21.904-4.962-39.098-14.993M235.735 9.567c9.046 0 17.949.593 26.718 1.635-3.213 8.941-8.436 15.616-8.436 15.616s-6.549 21.295-21.304 22.94-32.771 0-40.966 13.11-6.55 36.051-19.66 22.94c-13.11-13.11-1.635-14.114-14.746-27.54-13.11-13.425-16.39-13.425-22.94-13.425-1.932 0-4.122-3.337-5.862-8.214 31.929-17.251 68.429-27.062 107.196-27.062M98.991 55.735c-.364 2.362 1.711 5.795 11.781 9.993 19.661 8.195 24.193 24.423 15.138 23.782-9.056-.641-45.853 4.379-12.011 14.209 33.851 9.831 31.059 21.353 16.008 26.268-15.052 4.916-11.829-16.361-15.109 4.944s-6.579 19.67-17.231 22.95c-10.653 3.28-30.323 19.67-30.323 31.136 0 11.465-6.56 17.882 6.55 27.712s-4.103 27.809-10.299 14.708c-7.44-15.721-12.642-24.395-20.837-26.039-8.195-1.635-18.752 11.465 0 24.575s19.661 21.305 19.661 31.135 13.569 9.83 23.992 8.195c10.414-1.635 31.805 26.221 39.14 37.686 7.325 11.467 20.435 22.941 38.46 27.855 18.025 4.916 24.576 16.391 14.746 24.576-9.83 8.195-11.465 27.855-22.94 32.771-11.475 4.914-13.11 19.66-19.661 26.221-3.844 3.844-7.573 8.834-10.691 14.602-9.782-5.498-19.115-11.705-27.941-18.543-.268-1.453-.564-2.926-.698-4.254-1.635-16.391-3.28-36.051-13.11-44.236-9.831-8.195-16.39-19.66-19.661-32.771-3.271-13.109 4.915-32.77-1.635-45.881-6.55-13.109-6.55-.822-19.661-19.248-13.11-18.428-13.11-18.438-21.305-33.183-4.379-7.889-7.334-20.463-9.151-33.708 9.093-59.106 41.184-110.724 86.788-145.455"/></svg>
+      </div>
+      <div class="pv-spec-body">
+        <div class="pv-spec-text">Country of Origin: 🇺🇸 <b>USA</b></div>
+        <svg class="pv-spec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <div class="pv-spec">
+      <div class="pv-spec-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" style="width:25px;height:25px" viewBox="0 0 24 24"><path fill="currentColor" d="m21.5609 10.7386-1.36-1.58001c-.26-.3-.47-.86-.47-1.26v-1.7c0-1.06-.87-1.93-1.93-1.93h-1.7c-.39 0-.96-.21-1.26-.47l-1.58-1.36c-.69-.59-1.82-.59-2.52 0l-1.57004 1.37c-.3.25-.87.46-1.26.46h-1.73c-1.06 0-1.93.87-1.93 1.93v1.71c0 .39-.21.95-.46 1.25l-1.35 1.59001c-.58.69-.58 1.81 0 2.5l1.35 1.59c.25.3.46.86.46 1.25v1.71c0 1.06.87 1.93 1.93 1.93h1.73c.39 0 .96.21 1.26.47l1.58004 1.36c.69.59 1.82.59 2.52 0l1.58-1.36c.3-.26.86-.47 1.26-.47h1.7c1.06 0 1.93-.87 1.93-1.93v-1.7c0-.39.21-.96.47-1.26l1.36-1.58c.58-.69.58-1.83-.01-2.52m-5.4-.63-4.83 4.83c-.14.14-.33.22-.53.22s-.39-.08-.53-.22l-2.42004-2.42c-.29-.29-.29-.77 0-1.06s.77-.29 1.06 0l1.89004 1.89 4.3-4.30001c.29-.29.77-.29 1.06 0s.29.77 0 1.06001"/></svg>
+      </div>
+      <div class="pv-spec-body">
+        <div class="pv-spec-text"><b>100% authentic</b></div>
+        <svg class="pv-spec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+
+
+    
+    <div class="pv-spec">
+      <div class="pv-spec-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" style="width:19px;height:19px" viewBox="0 0 406.215 406.215"><path d="M226.793 243.186v163.029h134.115c17.431 0 31.568-14.129 31.568-31.57V243.186zm-47.419 0H13.749v131.459c0 17.441 14.141 31.57 31.57 31.57h134.055zm-122.586 129.9c-6.545 0-11.855-5.311-11.855-11.854v-65.778c0-6.544 5.311-11.854 11.855-11.854s11.855 5.312 11.855 11.854v65.778c0 6.543-5.31 11.854-11.855 11.854m314.388-253.522h-59.293c8.184-3.928 15.049-7.986 19.2-12.133 24.423-24.419 24.423-64.03 0-88.453C318.857 6.768 302.85.664 286.844.664c-16.009 0-32.019 6.104-44.229 18.314-10.141 10.144-19.897 35.182-27.862 60.983-3.72-1.021-7.549-1.736-11.577-1.736-4.014 0-7.844.716-11.547 1.729-7.996-26.034-17.844-51.412-28.08-61.641C151.338 6.103 135.346 0 119.322 0c-16.008 0-32.016 6.104-44.227 18.313-24.422 24.432-24.422 64.035 0 88.453 4.369 4.388 11.73 8.679 20.562 12.798H35.038c-17.43 0-31.553 14.128-31.553 31.556v26.852c0 17.43 14.123 31.551 31.553 31.551h144.336v-88.707h47.419v88.707h144.384c17.428 0 31.553-14.123 31.553-31.552v-26.852c-.001-17.427-14.126-31.555-31.554-31.555M264.971 41.332c5.834-5.838 13.612-9.057 21.873-9.057 8.272 0 16.039 3.219 21.891 9.057 5.834 5.841 9.045 13.607 9.045 21.873s-3.211 16.031-9.016 21.835c-6.531 6.161-32.107 15.76-63.725 24.701-.894-3.066-2.101-5.967-3.627-8.716 8.614-29.753 17.661-53.458 23.559-59.693m-167.523-.664c5.836-5.834 13.615-9.053 21.875-9.053 8.273 0 16.039 3.211 21.857 9.037 5.945 6.291 15.098 30.303 23.773 60.365-1.436 2.577-2.576 5.296-3.473 8.158-31.768-8.952-57.502-18.6-64.033-24.758-12.056-12.064-12.056-31.685.001-43.749"/></svg>
+      </div>
+      <div class="pv-spec-body">
+        <div class="pv-spec-text">Free shipping over <b>৳10,000</b></div>
+        <svg class="pv-spec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <div class="pv-spec">
+      <div class="pv-spec-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" style="width:25px;height:25px" viewBox="0 0 612.001 612"><path d="M604.131 440.17h-19.12V333.237c0-12.512-3.776-24.787-10.78-35.173l-47.92-70.975c-11.725-17.311-31.238-27.698-52.169-27.698h-74.28c-8.734 0-15.737 7.082-15.737 15.738v225.043h-121.65c11.567 9.992 19.514 23.92 21.796 39.658H412.53c4.563-31.238 31.475-55.396 63.972-55.396 32.498 0 59.33 24.158 63.895 55.396h63.735c4.328 0 7.869-3.541 7.869-7.869V448.04c-.001-4.327-3.541-7.87-7.87-7.87M525.76 312.227h-98.044c-4.327 0-7.868-3.463-7.868-7.869v-54.372c0-4.328 3.541-7.869 7.868-7.869h59.724c2.597 0 4.957 1.259 6.452 3.305l38.32 54.451c3.619 5.194-.079 12.354-6.452 12.354M476.502 440.17c-27.068 0-48.943 21.953-48.943 49.021 0 26.99 21.875 48.943 48.943 48.943 26.989 0 48.943-21.953 48.943-48.943 0-27.066-21.954-49.021-48.943-49.021m0 73.495c-13.535 0-24.472-11.016-24.472-24.471 0-13.535 10.937-24.473 24.472-24.473 13.533 0 24.472 10.938 24.472 24.473 0 13.455-10.938 24.471-24.472 24.471M68.434 440.17c-4.328 0-7.869 3.543-7.869 7.869v23.922c0 4.328 3.541 7.869 7.869 7.869h87.971c2.282-15.738 10.229-29.666 21.718-39.658H68.434zm151.864 0c-26.989 0-48.943 21.953-48.943 49.021 0 26.99 21.954 48.943 48.943 48.943 27.068 0 48.943-21.953 48.943-48.943.001-27.066-21.874-49.021-48.943-49.021m0 73.495c-13.534 0-24.471-11.016-24.471-24.471 0-13.535 10.937-24.473 24.471-24.473s24.472 10.938 24.472 24.473c0 13.455-10.938 24.471-24.472 24.471m117.716-363.06h-91.198c4.485 13.298 6.846 27.54 6.846 42.255 0 74.28-60.431 134.711-134.711 134.711-13.535 0-26.675-2.045-39.029-5.744v86.949c0 4.328 3.541 7.869 7.869 7.869h265.96c4.329 0 7.869-3.541 7.869-7.869V174.211c-.001-13.062-10.545-23.606-23.606-23.606M118.969 73.866C53.264 73.866 0 127.129 0 192.834s53.264 118.969 118.969 118.969 118.97-53.264 118.97-118.969-53.265-118.968-118.97-118.968m0 210.864c-50.752 0-91.896-41.143-91.896-91.896s41.144-91.896 91.896-91.896c50.753 0 91.896 41.144 91.896 91.896 0 50.753-41.143 91.896-91.896 91.896m35.097-72.488c-1.014 0-2.052-.131-3.082-.407L112.641 201.5c-5.148-1.391-8.729-6.062-8.729-11.396v-59.015c0-6.516 5.287-11.803 11.803-11.803s11.803 5.287 11.803 11.803v49.971l29.614 7.983c6.294 1.698 10.02 8.177 8.322 14.469-1.421 5.264-6.185 8.73-11.388 8.73"/></svg>
+      </div>
+      <div class="pv-spec-body">
+        <div class="pv-spec-text">Est. delivery: <b>JUL 24</b></div>
+        <svg class="pv-spec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="pv-section-title">Description</div>
+  <p class="pv-desc">
+    Gold Standard 100% Whey delivers 24g of protein per serving to support muscle recovery and growth. 
+    Made with premium whey protein isolates as the primary source. Instantized for easy mixing with just a spoon.
+  </p>
+
+  <div class="pv-section-title" id="reviewsSection">Reviews</div>
+  <div class="pv-review">
+    <div class="pv-review-head">
+      <div class="pv-review-avatar">RH</div>
+      <div>
+        <div class="pv-review-name">Rafi H.<span class="pv-verified-badge"><svg viewBox="0 0 24 24" fill="none"><path fill="currentColor" d="m21.5609 10.7386-1.36-1.58001c-.26-.3-.47-.86-.47-1.26v-1.7c0-1.06-.87-1.93-1.93-1.93h-1.7c-.39 0-.96-.21-1.26-.47l-1.58-1.36c-.69-.59-1.82-.59-2.52 0l-1.57004 1.37c-.3.25-.87.46-1.26.46h-1.73c-1.06 0-1.93.87-1.93 1.93v1.71c0 .39-.21.95-.46 1.25l-1.35 1.59001c-.58.69-.58 1.81 0 2.5l1.35 1.59c.25.3.46.86.46 1.25v1.71c0 1.06.87 1.93 1.93 1.93h1.73c.39 0 .96.21 1.26.47l1.58004 1.36c.69.59 1.82.59 2.52 0l1.58-1.36c.3-.26.86-.47 1.26-.47h1.7c1.06 0 1.93-.87 1.93-1.93v-1.7c0-.39.21-.96.47-1.26l1.36-1.58c.58-.69.58-1.83-.01-2.52m-5.4-.63-4.83 4.83c-.14.14-.33.22-.53.22s-.39-.08-.53-.22l-2.42004-2.42c-.29-.29-.29-.77 0-1.06s.77-.29 1.06 0l1.89004 1.89 4.3-4.30001c.29-.29.77-.29 1.06 0s.29.77 0 1.06001"/></svg>Verified Purchase</span></div>
+        <div class="pv-review-stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="pv-review-text">Authentic product, fast delivery. Mixes very well and the chocolate flavor is great. Will order again.</div>
+  </div>
+  <div class="pv-review">
+    <div class="pv-review-head">
+      <div class="pv-review-avatar">SK</div>
+      <div>
+        <div class="pv-review-name">Sajid K.</div>
+        <div class="pv-review-stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="var(--text3)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="pv-review-text">Good quality protein. Verified genuine. Delivery was within 2 days in Dhaka.</div>
+  </div>
+
+  <!-- WRITE A REVIEW -->
+  <div class="pv-write-review">
+    <div class="pv-write-review-title">Write a Review</div>
+    <div class="pv-star-input" id="starInput">
+      <svg viewBox="0 0 24 24" fill="currentColor" data-val="1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor" data-val="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor" data-val="3"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor" data-val="4"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor" data-val="5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span class="pv-star-label" id="starLabel">Tap to rate</span>
+    </div>
+    <textarea class="pv-review-textarea" id="reviewText" placeholder="Share your experience with this product..."></textarea>
+    <button class="pv-review-submit" onclick="submitReview()">Submit Review</button>
+  </div>
+</div>
+
+<!-- BOTTOM ACTIONS -->
+<div class="pv-toast" id="pvToast"></div>
+
+<div class="pv-actions">
+  <div class="pv-qty">
+    <button onclick="changeQty(-1)">−</button>
+    <span id="qtyVal">1</span>
+    <button onclick="changeQty(1)">+</button>
+  </div>
+  <button class="pv-btn-cart" onclick="addToCart()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.29977 5H21L19 12H7.37671M20 16H8L6 3H3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z"/></svg>
+    Add to Cart
+  </button>
+  <button class="pv-btn-buy" onclick="buyNow()">Buy Now</button>
+</div>
+
+<script>
+let qty = 1;
+
+// ─── Populate from URL params (passed from store.html card click) ───
+(function applyProductFromUrl(){
+  const params = new URLSearchParams(window.location.search);
+  if(!params.has('name')) return; // no params — keep static demo product as-is
+  const name = params.get('name');
+  const price = parseFloat(params.get('price'));
+  const old = parseFloat(params.get('old'));
+  const discount = params.get('discount');
+  const cat = params.get('cat');
+  const rating = params.get('rating');
+  const stock = params.get('stock');
+
+  const nameEl = document.getElementById('pvNameEl');
+  const catEl = document.getElementById('pvCat');
+  const priceEl = document.getElementById('pvPriceEl');
+  const oldEl = document.getElementById('pvOldEl');
+  const discountEl = document.getElementById('pvDiscountEl');
+  const ratingEl = document.getElementById('pvRatingText');
+  const stockBadge = document.getElementById('pvStockBadge');
+
+  if(nameEl && name) nameEl.textContent = name;
+  if(catEl && cat) catEl.textContent = cat;
+  if(priceEl && Number.isFinite(price)) priceEl.textContent = '৳' + price.toLocaleString('en-US');
+  if(oldEl){
+    if(Number.isFinite(old) && old > 0){ oldEl.textContent = '৳' + old.toLocaleString('en-US'); oldEl.style.display = ''; }
+    else { oldEl.style.display = 'none'; }
+  }
+  if(discountEl){
+    if(discount){ discountEl.textContent = discount; discountEl.style.display = ''; }
+    else { discountEl.style.display = 'none'; }
+  }
+  if(ratingEl && rating) ratingEl.textContent = rating;
+  if(stockBadge && stock){
+    stockBadge.classList.remove('in','low','out');
+    stockBadge.classList.add(stock);
+    stockBadge.textContent = stock === 'in' ? 'In Stock' : stock === 'low' ? 'Low Stock' : 'Out of Stock';
+  }
+  document.title = name + ' — SuppVerse BD';
+})();
+
+// ─── Image Gallery Carousel ───
+(function(){
+  var gallery = document.getElementById('pvGallery');
+  var track = document.getElementById('pvGalleryTrack');
+  var dotsWrap = document.getElementById('pvDots');
+  if(!gallery || !track || !dotsWrap) return;
+
+  var slides = track.querySelectorAll('.pv-gallery-slide');
+  var dots = dotsWrap.querySelectorAll('.pv-dot');
+  var count = slides.length;
+  var current = 0;
+  var startX = 0;
+  var currentX = 0;
+  var dragging = false;
+  var width = gallery.offsetWidth;
+
+  function update(index, animate){
+    current = Math.max(0, Math.min(count - 1, index));
+    track.style.transition = animate === false ? 'none' : '';
+    track.style.transform = 'translateX(' + (-current * width) + 'px)';
+    dots.forEach(function(d, i){
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function onStart(x){
+    dragging = true;
+    startX = x;
+    currentX = x;
+    width = gallery.offsetWidth;
+    track.classList.add('dragging');
+  }
+
+  function onMove(x){
+    if(!dragging) return;
+    currentX = x;
+    var delta = currentX - startX;
+    track.style.transform = 'translateX(' + (-current * width + delta) + 'px)';
+  }
+
+  function onEnd(){
+    if(!dragging) return;
+    dragging = false;
+    track.classList.remove('dragging');
+    var delta = currentX - startX;
+    var threshold = width * 0.18;
+    if(delta > threshold && current > 0){
+      update(current - 1);
+    } else if(delta < -threshold && current < count - 1){
+      update(current + 1);
+    } else {
+      update(current);
+    }
+  }
+
+  // Touch events
+  track.addEventListener('touchstart', function(e){ onStart(e.touches[0].clientX); }, {passive:true});
+  track.addEventListener('touchmove', function(e){ onMove(e.touches[0].clientX); }, {passive:true});
+  track.addEventListener('touchend', onEnd);
+
+  // Mouse events (desktop preview support)
+  track.addEventListener('mousedown', function(e){ onStart(e.clientX); e.preventDefault(); });
+  window.addEventListener('mousemove', function(e){ if(dragging) onMove(e.clientX); });
+  window.addEventListener('mouseup', onEnd);
+
+  window.addEventListener('resize', function(){ update(current, false); });
+
+  update(0, false);
+})();
+
+// ─── Toast ───
+let toastTimer;
+function showPvToast(msg){
+  var el = document.getElementById('pvToast');
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2200);
+}
+
+// ─── Share ───
+function shareProduct(){
+  var title = document.querySelector('.pv-name') ? document.querySelector('.pv-name').textContent : 'SuppVerse BD Product';
+  var url = window.location.href;
+  if(navigator.share){
+    navigator.share({ title: title, text: title, url: url }).catch(function(){});
+  } else if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(function(){
+      showPvToast('Link copied to clipboard');
+    }).catch(function(){
+      showPvToast('Could not copy link');
+    });
+  } else {
+    showPvToast('Could not copy link');
+  }
+}
+
+function changeQty(delta){
+  qty = Math.max(1, Math.min(10, qty + delta));
+  document.getElementById('qtyVal').textContent = qty;
+}
+
+/* ─── Cart: shared localStorage cart with store.html ─── */
+const CART_KEY = 'sv-cart-internal';
+function slugify(str){
+  return str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+}
+function readCart(){
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+  catch(e){ return []; }
+}
+function writeCart(cart){
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+}
+function parsePrice(text){
+  const n = parseFloat(String(text).replace(/[^\d.]/g, ''));
+  return Number.isFinite(n) ? n : 0;
+}
+function getSelectedVariants(){
+  return Array.from(document.querySelectorAll('.pv-variant-pill.selected'))
+    .map(function(el){ return el.dataset.val; })
+    .filter(Boolean)
+    .join(' / ');
+}
+function getProductInfo(){
+  const nameEl = document.querySelector('.pv-name');
+  const priceEl = document.querySelector('.pv-price');
+  const oldPriceEl = document.querySelector('.pv-old');
+  const catEl = document.querySelector('.pv-cat');
+  const baseName = nameEl ? nameEl.textContent.trim() : 'Product';
+  const variants = getSelectedVariants();
+  return {
+    baseName: baseName,
+    variant: variants,
+    price: priceEl ? parsePrice(priceEl.textContent) : 0,
+    oldPrice: oldPriceEl ? parsePrice(oldPriceEl.textContent) : null,
+    category: catEl ? catEl.textContent.trim() : ''
+  };
+}
+function addToCart(){
+  const info = getProductInfo();
+  const id = slugify(info.baseName + (info.variant ? '-' + info.variant : ''));
+  const cart = readCart();
+  const existing = cart.find(function(c){ return c.id === id; });
+  if(existing){
+    existing.qty += qty;
+  } else {
+    cart.push({
+      id: id,
+      name: info.baseName,
+      variant: info.variant,
+      price: info.price,
+      oldPrice: info.oldPrice,
+      qty: qty,
+      img: null,
+      locked: false,
+      type: 'Clothing',
+      category: info.category
+    });
+  }
+  writeCart(cart);
+  showPvToast('Added ' + qty + ' to cart');
+}
+function buyNow(){
+  var buyBtn = document.querySelector('.pv-btn-buy');
+  if(buyBtn && buyBtn.classList.contains('wishlist-mode')){
+    var heart = buyBtn.querySelector('svg');
+    var isFilled = buyBtn.classList.toggle('filled');
+    if(heart){
+      heart.classList.remove('bounce');
+      void heart.offsetWidth; // restart animation
+      heart.classList.add('bounce');
+      heart.setAttribute('fill', isFilled ? 'currentColor' : 'none');
+    }
+    showPvToast(isFilled ? 'Added to wishlist' : 'Removed from wishlist');
+    return;
+  }
+  addToCart();
+  window.location.href = 'cart.html';
+}
+
+// ─── Star Rating ───
+(function(){
+  var container = document.getElementById('starInput');
+  if(!container) return;
+  var stars = container.querySelectorAll('svg');
+  var label = document.getElementById('starLabel');
+  var selected = 0;
+  var labels = ['Tap to rate','Poor','Fair','Good','Very Good','Excellent'];
+
+  function fill(n){
+    stars.forEach(function(s,i){
+      s.classList.toggle('filled', i < n);
+    });
+    if(label) label.textContent = labels[n] || labels[0];
+  }
+
+  stars.forEach(function(s){
+    s.addEventListener('click', function(){
+      selected = +this.dataset.val;
+      fill(selected);
+    });
+    s.addEventListener('mouseenter', function(){
+      fill(+this.dataset.val);
+    });
+  });
+
+  container.addEventListener('mouseleave', function(){
+    fill(selected);
+  });
+})();
+
+function selectOption(el){
+  var type = el.dataset.type;
+  document.querySelectorAll('.pv-variant-pill[data-type="' + type + '"]').forEach(function(v){
+    v.classList.remove('selected');
+  });
+  el.classList.add('selected');
+
+  // Update supplement info rows
+  var potEl = document.getElementById('suppPotency');
+  var cntEl = document.getElementById('suppCount');
+  var selectedPot = document.querySelector('.pv-variant-pill[data-type="potency"].selected');
+  var selectedCnt = document.querySelector('.pv-variant-pill[data-type="count"].selected');
+  if(potEl && selectedPot) potEl.textContent = selectedPot.dataset.val;
+  if(cntEl && selectedCnt) cntEl.textContent = selectedCnt.dataset.val;
+
+  // Simulate price update based on combination
+  var priceEl = document.querySelector('.pv-price');
+  var oldEl = document.querySelector('.pv-old');
+  var potVal = selectedPot ? selectedPot.dataset.val : '500 mg';
+  var cntVal = selectedCnt ? selectedCnt.dataset.val : '60 Caps';
+  var comboPrice = { '500 mg': { '60 Caps': 4200, '120 Caps': 7200, '180 Caps': 9800, '240 Caps': 12500 }, '1000 mg': { '60 Caps': 5500, '120 Caps': 8500, '180 Caps': 11500, '240 Caps': 14500 }, '1500 mg': { '60 Caps': 6800, '120 Caps': 9800, '180 Caps': 12800, '240 Caps': 15800 }, '2000 mg': { '60 Caps': 8200, '120 Caps': 11200, '180 Caps': 14200, '240 Caps': 17200 } };
+  var comboOld = { '500 mg': { '60 Caps': 5600, '120 Caps': 9500, '180 Caps': 12000, '240 Caps': 15000 }, '1000 mg': { '60 Caps': 7200, '120 Caps': 11000, '180 Caps': 14500, '240 Caps': 18000 }, '1500 mg': { '60 Caps': 8800, '120 Caps': 12500, '180 Caps': 16000, '240 Caps': 19500 }, '2000 mg': { '60 Caps': 10500, '120 Caps': 14500, '180 Caps': 18000, '240 Caps': 21500 } };
+  var p = comboPrice[potVal] && comboPrice[potVal][cntVal] ? comboPrice[potVal][cntVal] : 4200;
+  var o = comboOld[potVal] && comboOld[potVal][cntVal] ? comboOld[potVal][cntVal] : 5600;
+  if(priceEl) priceEl.textContent = '৳' + p.toLocaleString();
+  if(oldEl) oldEl.textContent = '৳' + o.toLocaleString();
+
+  // Update stock badge
+  var stockEl = document.querySelector('.pv-stock');
+  if(stockEl){
+    var isOut = selectedPot.classList.contains('out') || selectedCnt.classList.contains('out');
+    stockEl.className = 'pv-stock ' + (isOut ? 'out' : 'in');
+    stockEl.textContent = isOut ? 'Out of Stock' : 'In Stock';
+  }
+
+  // Gray-out supplement info when out-of-stock selected
+  var suppRows = document.querySelectorAll('.pv-supplement-row');
+  var isAnyOut = (selectedPot && selectedPot.classList.contains('out')) ||
+                 (selectedCnt && selectedCnt.classList.contains('out'));
+  suppRows.forEach(function(row){
+    if(isAnyOut){
+      row.style.opacity = '0.45';
+      row.style.filter = 'grayscale(1)';
+    } else {
+      row.style.opacity = '1';
+      row.style.filter = 'none';
+    }
+  });
+
+  // Toggle Buy Now → Wishlist (matches store card outlined pill style)
+  var buyBtn = document.querySelector('.pv-btn-buy');
+  if(buyBtn){
+    if(isAnyOut){
+      buyBtn.classList.add('wishlist-mode');
+      buyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wishlist';
+    } else {
+      buyBtn.classList.remove('wishlist-mode');
+      buyBtn.textContent = 'Buy Now';
+    }
+  }
+}
+
+function scrollToReviews(){
+  var el = document.getElementById('reviewsSection');
+  if(el){
+    var offset = el.getBoundingClientRect().top + window.scrollY - 72;
+    window.scrollTo({top: offset, behavior: 'smooth'});
+  }
+}
+
+function submitReview(){
+  var text = document.getElementById('reviewText').value.trim();
+  var filled = document.querySelectorAll('#starInput svg.filled').length;
+  if(!filled){
+    alert('Please select a star rating');
+    return;
+  }
+  if(!text){
+    alert('Please write a comment');
+    return;
+  }
+  alert('Thank you! Your ' + filled + '-star review has been submitted.');
+  document.getElementById('reviewText').value = '';
+}
+</script>
+
+</body>
+</html>
