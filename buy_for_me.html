@@ -145,12 +145,21 @@ body.dark-mode .item-row.glass-card{
 .link-input.error{border-color:var(--err);background:var(--err-soft)}
 
 
-.store-select-wrap{position:relative;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;height:40px;transition:border-color .2s}
+.store-select-wrap{position:relative;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:visible;height:40px;transition:border-color .2s}
 .store-select-wrap:focus-within{border-color:var(--orange)}
-.store-select{width:100%;appearance:none;-webkit-appearance:none;background:transparent;border:none;padding:0 34px 0 12px;font-size:13px;font-weight:600;color:var(--t2);height:100%;outline:none}
-.store-select:focus{color:var(--text)}
-.store-select.error + .store-select-wrap{border-color:var(--err);background:var(--err-soft)}
-.store-select-wrap::after{content:'';position:absolute;right:13px;top:50%;width:8px;height:8px;border-right:1.6px solid var(--t3);border-bottom:1.6px solid var(--t3);transform:translateY(-65%) rotate(45deg);pointer-events:none}
+.store-select{all:unset;box-sizing:border-box;display:flex;align-items:center;width:100%;height:100%;padding:0 34px 0 12px;font-family:inherit;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer}
+.store-select:focus-visible{color:var(--text)}
+.store-select.error{color:var(--err)}
+.store-select-wrap.error{border-color:var(--err);background:var(--err-soft)}
+.store-select-wrap::after{content:'';position:absolute;right:13px;top:50%;width:8px;height:8px;border-right:1.6px solid var(--t3);border-bottom:1.6px solid var(--t3);transform:translateY(-65%) rotate(45deg);pointer-events:none;transition:transform .18s ease}
+.store-select-wrap.open::after{transform:translateY(-35%) rotate(225deg)}
+.store-select-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.store-select-menu{position:fixed;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;box-shadow:var(--shadow-md);padding:5px;z-index:400;display:none;max-height:min(400px,70vh);overflow-y:auto}
+.store-select-menu.open{display:block}
+.store-opt{display:flex;align-items:center;padding:11px 14px;border-radius:8px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:background .12s}
+.store-opt:hover,.store-opt.is-active{background:var(--surface2)}
+.store-opt.is-selected{color:var(--orange)}
 
 .link-error-msg{font-size:10px;color:var(--err);font-weight:600;margin:6px 0 0;display:none}
 .link-error-msg.show{display:block}
@@ -700,8 +709,6 @@ const STORES = [
   { key:'other',   match:null,                                                                                      label:'Other',     color:'other' }
 ];
 
-const SPRITE_PATH = 'stores.svg'; // ← same folder as this HTML
-
 function isValidUrl(str){
   try { const u = new URL(str); return u.protocol === 'http:' || u.protocol === 'https:'; }
   catch(e){ return false; }
@@ -785,15 +792,11 @@ rowTemplate.innerHTML = `
       <span class="sl-right">Price in USD</span>
     </div>
     <div class="store-row">
-      <div class="store-select-wrap">
-        <select class="store-select" data-role="store-select" aria-label="Select store">
-          <option value="">Auto-detect</option>
-          <option value="amazon">Amazon</option>
-          <option value="ebay">eBay</option>
-          <option value="bestbuy">Best Buy</option>
-          <option value="walmart">Walmart</option>
-          <option value="other">Other</option>
-        </select>
+      <div class="store-select-wrap" data-role="store-select-wrap">
+        <button type="button" class="store-select" data-role="store-select" aria-label="Select store" aria-haspopup="listbox" aria-expanded="false">
+          <span class="store-select-text" data-role="store-select-text">Auto-detect</span>
+        </button>
+        <div class="store-select-menu" data-role="store-select-menu" role="listbox"></div>
       </div>
       <div class="price-input-wrap">
         <span class="price-label">$</span>
@@ -941,6 +944,90 @@ function clearDetection(row, item){
 
 
 
+// Turns the store-select-wrap button+menu into something that behaves like a native <select>:
+// exposes .value, .options[selectedIndex].text, .classList, and fires a real 'change' event.
+function initStoreDropdown(wrap){
+  const btn   = wrap.querySelector('[data-role="store-select"]');
+  const menu  = wrap.querySelector('[data-role="store-select-menu"]');
+  const textEl= wrap.querySelector('[data-role="store-select-text"]');
+
+  const opts = [{key:'', label:'Auto-detect'}, ...STORES.filter(s => s.key !== 'other'), {key:'other', label:'Other'}];
+  menu.innerHTML = opts.map(o => {
+    const k = o.key === '' ? '' : o.key;
+    const label = o.label || (o.key === '' ? 'Auto-detect' : o.key);
+    return `<div class="store-opt${k===''?' is-selected':''}" data-value="${k}" role="option" aria-selected="${k===''}"><span>${label}</span></div>`;
+  }).join('');
+
+  const optEls = () => Array.from(menu.querySelectorAll('.store-opt'));
+
+  let _value = '';
+  Object.defineProperty(btn, 'value', {
+    get(){ return _value; },
+    set(v){ setSelected(v, false); }
+  });
+
+  function setSelected(value, fire){
+    const match = optEls().find(o => o.dataset.value === value) || optEls()[0];
+    _value = match.dataset.value;
+    const label = match.querySelector('span').textContent;
+    btn.selectedIndex = optEls().indexOf(match);
+    btn.options = optEls().map(o => ({ value:o.dataset.value, text:o.querySelector('span').textContent }));
+    textEl.textContent = label;
+    optEls().forEach(o => { o.classList.toggle('is-selected', o === match); o.setAttribute('aria-selected', o === match); });
+    if(fire) btn.dispatchEvent(new Event('change', { bubbles:true }));
+  }
+
+  document.body.appendChild(menu); // escape overflow:hidden ancestors (.item-row clips its own content)
+
+  function positionMenu(){
+    const r = btn.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - r.bottom - 12;
+    menu.style.left = r.left + 'px';
+    menu.style.top = (r.bottom + 6) + 'px';
+    menu.style.width = r.width + 'px';
+    menu.style.maxHeight = Math.max(160, spaceBelow) + 'px';
+  }
+
+  function open(){ positionMenu(); wrap.classList.add('open'); menu.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
+  function close(){ wrap.classList.remove('open'); menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    wrap.classList.contains('open') ? close() : (closeAllStoreDropdowns(), open());
+  });
+  menu.addEventListener('click', (e) => {
+    const opt = e.target.closest('.store-opt');
+    if(!opt) return;
+    setSelected(opt.dataset.value, true);
+    close();
+  });
+  document.addEventListener('click', (e) => { if(!wrap.contains(e.target) && !menu.contains(e.target)) close(); });
+  window.addEventListener('scroll', () => { if(wrap.classList.contains('open')) positionMenu(); }, true);
+  window.addEventListener('resize', () => { if(wrap.classList.contains('open')) positionMenu(); });
+  btn.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); wrap.classList.contains('open') ? close() : open(); }
+    if(e.key === 'Escape') close();
+  });
+
+  // minimal classList shim already exists on the button (it's a real element);
+  // 'error' class toggling from existing logic keeps working via wrap for the red border
+  const origAdd = btn.classList.add.bind(btn.classList);
+  const origRemove = btn.classList.remove.bind(btn.classList);
+  btn.classList.add = (...c) => { origAdd(...c); if(c.includes('error')) wrap.classList.add('error'); };
+  btn.classList.remove = (...c) => { origRemove(...c); if(c.includes('error')) wrap.classList.remove('error'); };
+
+  setSelected('', false);
+  return btn;
+}
+
+function closeAllStoreDropdowns(){
+  document.querySelectorAll('.store-select-wrap.open').forEach(w => w.classList.remove('open'));
+  document.querySelectorAll('.store-select-menu.open').forEach(m => {
+    m.classList.remove('open');
+    m.previousElementSibling?.setAttribute?.('aria-expanded','false');
+  });
+}
+
 function wireItemRow(row, item){
   const idx = Array.from(itemsWrap.children).indexOf(row) + 1;
   const numEl = row.querySelector('.item-num');
@@ -948,7 +1035,8 @@ function wireItemRow(row, item){
   const linkInput   = row.querySelector('[data-role="link"]');
   const errMsg      = row.querySelector('[data-role="link-error"]');
   const okMsg       = row.querySelector('[data-role="link-ok"]');
-  const storeSelect = row.querySelector('[data-role="store-select"]');
+  const storeSelectWrap = row.querySelector('[data-role="store-select-wrap"]');
+  const storeSelect = initStoreDropdown(storeSelectWrap);
   const qtyVal      = row.querySelector('[data-role="qty-val"]');
   const qtyMinus    = row.querySelector('[data-role="qty-minus"]');
   const qtyPlus     = row.querySelector('[data-role="qty-plus"]');
