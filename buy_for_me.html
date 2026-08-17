@@ -98,7 +98,7 @@ main{max-width:600px;margin:0 auto;padding:0 16px}
 .store-label-row .sl-right{flex:1 1 50%;font-size:11px;font-weight:800;color:var(--text);padding-left:5px}
 .store-optional-row{display:flex;gap:10px;margin-top:4px}
 .store-optional-left,.store-optional-right{flex:1 1 50%;font-size:10px;color:var(--t3);padding-left:5px}
-.store-row{display:flex;align-items:center;gap:10px;margin-top:3px;margin-bottom:4px}
+.store-row{display:flex;align-items:center;gap:6px;margin-top:3px;margin-bottom:4px}
 .store-row .store-select-wrap{flex:1 1 50%;min-width:0}
 .store-row .store-select-wrap::after{right:13px}
 .price-input-wrap{flex:1 1 50%;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;min-width:0;height:40px;transition:border-color .2s}
@@ -149,15 +149,16 @@ body.dark-mode .item-row.glass-card{
 .store-select-wrap:focus-within{border-color:var(--orange)}
 .store-select{all:unset;box-sizing:border-box;display:flex;align-items:center;width:100%;height:100%;padding:0 34px 0 12px;font-family:inherit;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer}
 .store-select:focus-visible{color:var(--text)}
+.store-select.filled{color:var(--text)}
 .store-select.error{color:var(--err)}
 .store-select-wrap.error{border-color:var(--err);background:var(--err-soft)}
 .store-select-wrap::after{content:'';position:absolute;right:13px;top:50%;width:8px;height:8px;border-right:1.6px solid var(--t3);border-bottom:1.6px solid var(--t3);transform:translateY(-65%) rotate(45deg);pointer-events:none;transition:transform .18s ease}
 .store-select-wrap.open::after{transform:translateY(-35%) rotate(225deg)}
 .store-select-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-.store-select-menu{position:fixed;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;box-shadow:var(--shadow-md);padding:5px;z-index:400;display:none;max-height:min(400px,70vh);overflow-y:auto}
+.store-select-menu{position:fixed;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;box-shadow:var(--shadow-md);padding:3px;z-index:400;display:none;max-height:min(400px,70vh);overflow-y:auto}
 .store-select-menu.open{display:block}
-.store-opt{display:flex;align-items:center;padding:11px 14px;border-radius:8px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:background .12s}
+.store-opt{display:flex;align-items:center;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:background .12s}
 .store-opt:hover,.store-opt.is-active{background:var(--surface2)}
 .store-opt.is-selected{color:var(--orange)}
 
@@ -364,6 +365,7 @@ body.dark-mode .order-summary.glass-card-green{
 .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
 .faq-item.open .faq-a{max-height:120px}
 .faq-a p{font-size:11.5px;color:var(--t2);line-height:1.55;padding:0 2px 14px}
+.faq-link{color:var(--orange);font-weight:700}
 
 /* Toast */
 .toast{position:fixed;top:calc(var(--nav-h) + 10px);left:50%;transform:translateX(-50%) translateY(-20px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:12px;font-weight:700;color:var(--text);box-shadow:var(--shadow-md);z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;max-width:90vw;text-align:center}
@@ -596,7 +598,7 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
     </div>
     <div class="faq-item">
       <button class="faq-q" type="button"><span>How do I pay?</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
-      <div class="faq-a"><p>bKash, Nagad, bank transfer, or card, you'll get a payment link once you approve the quote. For more info please check our Terms & Conditions.</p></div>
+      <div class="faq-a"><p>bKash, Nagad, bank transfer, or card, you'll get a payment link once you approve the quote. For more info please check our <a href="terms.html" class="faq-link">Terms &amp; Conditions</a>.</p></div>
     </div>
     <div class="faq-item">
       <button class="faq-q" type="button"><span>How long does delivery take?</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -703,10 +705,15 @@ const S = {
 
 const STORES = [
   { key:'amazon',  match:/(amazon\.(com|co\.uk|de|fr|ca|in|co\.jp|es|it|nl|ae|sg|com\.br|com\.mx|com\.au)|a\.co|amzn\.(to|com|eu|in|asia))/i, label:'Amazon',    color:'amazon' },
-  { key:'ebay',    match:/ebay\.(com|co\.uk|de|fr|ca|it|es|com\.au|nl|at|be|ch|ie|pl)/i,                   label:'eBay',      color:'ebay' },
-  { key:'bestbuy', match:/bestbuy\.com/i,                                                                         label:'Best Buy',  color:'bestbuy' },
-  { key:'walmart', match:/walmart\.com/i,                                                                         label:'Walmart',   color:'walmart' },
-  { key:'other',   match:null,                                                                                      label:'Other',     color:'other' }
+  { key:'iherb',   match:/iherb\.com/i,                                                                          label:'iHerb',     color:'iherb' },
+  { key:'walmart', match:/walmart\.com/i,                                                                        label:'Walmart',   color:'walmart' },
+  { key:'ebay',    match:/ebay\.(com|co\.uk|de|fr|ca|it|es|com\.au|nl|at|be|ch|ie|pl)/i,                         label:'eBay',      color:'ebay' },
+  { key:'bestbuy', match:/bestbuy\.com/i,                                                                        label:'Best Buy',  color:'bestbuy' },
+  { key:'razer',   match:/razer\.com/i,                                                                          label:'Razer',     color:'razer' },
+  { key:'apple',   match:/apple\.com/i,                                                                          label:'Apple',     color:'apple' },
+  { key:'adidas',  match:/adidas\.com/i,                                                                         label:'Adidas',    color:'adidas' },
+  { key:'nike',    match:/nike\.com/i,                                                                           label:'Nike',      color:'nike' },
+  { key:'other',   match:null,                                                                                   label:'Other',     color:'other' }
 ];
 
 function isValidUrl(str){
@@ -719,10 +726,12 @@ function detectStore(url){
 }
 function normalizeWa(raw){ return raw.replace(/[^\d]/g, ''); }
 function isValidWa(raw){
-  const digits = normalizeWa(raw);
-  if(digits.length < 10 || digits.length > 11) return false;
-  const prefix = digits.slice(-11, -9) || digits.slice(0, 2);
-  return /^0?1[3-9]$/.test(prefix);
+  let digits = normalizeWa(raw);
+  // Strip country code (880) if present, e.g. 8801712345678 -> 01712345678
+  if(digits.length > 11 && digits.startsWith('880')) digits = digits.slice(3);
+  if(digits.length === 10 && !digits.startsWith('0')) digits = '0' + digits;
+  if(digits.length !== 11) return false;
+  return /^01[3-9]\d{8}$/.test(digits);
 }
 
 /* ─── Theme ─── */
@@ -973,6 +982,7 @@ function initStoreDropdown(wrap){
     btn.selectedIndex = optEls().indexOf(match);
     btn.options = optEls().map(o => ({ value:o.dataset.value, text:o.querySelector('span').textContent }));
     textEl.textContent = label;
+    btn.classList.toggle('filled', _value !== '');
     optEls().forEach(o => { o.classList.toggle('is-selected', o === match); o.setAttribute('aria-selected', o === match); });
     if(fire) btn.dispatchEvent(new Event('change', { bubbles:true }));
   }
@@ -1195,19 +1205,35 @@ function updateOrderSummary(){
   if(!tbody) return;
   tbody.innerHTML = '';
   let grand = 0;
-  const rows = itemsWrap.querySelectorAll('.item-row');
+  const rows = itemsWrap ? itemsWrap.querySelectorAll('.item-row') : [];
   rows.forEach((row, idx) => {
-    const linkInput = row.querySelector('[data-role="link"]');
-    const qtyEl = row.querySelector('[data-role="qty-val"]');
-    const priceInput = row.querySelector('[data-role="price-input"]');
-    const url = linkInput ? linkInput.value.trim() : '';
-    const qty = qtyEl ? parseInt(qtyEl.textContent, 10) : 1;
-    const price = priceInput ? parseFloat(priceInput.value) || 0 : 0;
+    if(!row) return;
+    const linkInput   = row.querySelector('[data-role="link"]');
+    const qtyEl       = row.querySelector('[data-role="qty-val"]');
+    const priceInput  = row.querySelector('[data-role="price-input"]');
+    const nameEl      = row.querySelector('[data-role="di-name"]');
+    const storeSelect = row.querySelector('[data-role="store-select"]');
+
+    const url = linkInput ? (linkInput.value || '').trim() : '';
+
+    let qty = qtyEl ? parseInt(qtyEl.textContent, 10) : 1;
+    if(!Number.isFinite(qty) || qty < 1) qty = 1;
+
+    let price = priceInput ? parseFloat(priceInput.value) : 0;
+    if(!Number.isFinite(price) || price < 0) price = 0;
+
     const total = qty * price;
     grand += total;
-    const name = itemCounter > 0 ? 'Product ' + (idx + 1) : 'Product';
+
+    const detectedName = nameEl ? (nameEl.textContent || '').trim() : '';
+    const storeLabel = storeSelect && storeSelect.options && storeSelect.selectedIndex > -1 && storeSelect.options[storeSelect.selectedIndex]
+      ? (storeSelect.options[storeSelect.selectedIndex].text || '').trim()
+      : '';
+    let name = detectedName || ('Product ' + (idx + 1));
+    if(storeLabel && storeLabel !== 'Auto-detect') name += ' · ' + storeLabel;
+
     const tr = document.createElement('tr');
-    tr.innerHTML = '<td class="os-product-name">' + name + '</td><td class="os-qty">' + qty + ' unit' + (qty > 1 ? 's' : '') + '</td><td class="os-each">$' + price.toFixed(2) + '</td><td class="os-total">$' + total.toFixed(2) + '</td>';
+    tr.innerHTML = '<td class="os-product-name">' + escapeHtml(name) + '</td><td class="os-qty">' + qty + ' unit' + (qty > 1 ? 's' : '') + '</td><td class="os-each">$' + price.toFixed(2) + '</td><td class="os-total">$' + total.toFixed(2) + '</td>';
     tbody.appendChild(tr);
   });
   const taxRate = 0.0887;
@@ -1222,14 +1248,21 @@ function updateOrderSummary(){
   if(grandEl) grandEl.textContent = '$' + grandWithTax.toFixed(2);
 }
 
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 // Wire update triggers
 function wireSummaryTriggers(row){
+  if(!row) return;
   const priceInput = row.querySelector('[data-role="price-input"]');
   const qtyMinus = row.querySelector('[data-role="qty-minus"]');
   const qtyPlus = row.querySelector('[data-role="qty-plus"]');
+  const storeSelect = row.querySelector('[data-role="store-select"]');
   if(priceInput) priceInput.addEventListener('input', updateOrderSummary);
   if(qtyMinus) qtyMinus.addEventListener('click', () => setTimeout(updateOrderSummary, 50));
   if(qtyPlus) qtyPlus.addEventListener('click', () => setTimeout(updateOrderSummary, 50));
+  if(storeSelect) storeSelect.addEventListener('change', updateOrderSummary);
 }
 
 /* ─── FAQ ─── */
