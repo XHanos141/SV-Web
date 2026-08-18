@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sign In — SuppVerse BD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F7FB; --surface:#ffffff; --surface2:#F8FAFD;
+  --border:rgba(10,22,40,0.07); --border-strong:rgba(10,22,40,0.10);
+  --text:#0B1220; --text2:#5E6B7D; --text3:#9AA3B2;
+  --accent:#0A9BDC; --accent-soft:rgba(10,155,220,0.08); --accent-glow:rgba(10,155,220,0.18);
+  --orange:#F26430; --orange-soft:rgba(242,100,48,0.10);
+  --green:#0A9B72; --green-soft:rgba(10,155,114,0.10);
+  --red:#E14343; --red-soft:rgba(225,67,67,0.10);
+  --yellow:#E5A020; --yellow-soft:rgba(229,160,32,0.10);
+  --purple:#7C6FF7; --purple-soft:rgba(124,111,247,0.10);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.04),0 1px 2px rgba(0,0,0,0.02);
+  --shadow-md:0 4px 14px rgba(0,0,0,0.06),0 2px 4px rgba(0,0,0,0.03);
+  --shadow-lg:0 12px 32px rgba(0,0,0,0.08),0 4px 8px rgba(0,0,0,0.04);
+  --radius:18px; --radius-sm:12px; --radius-xs:8px;
+  --font-body:'DM Sans',sans-serif; --font-display:'Plus Jakarta Sans',sans-serif;
+  --ease:cubic-bezier(0.4,0,0.2,1);
+  --header-h:56px; --nav-h:58px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  padding-top:var(--nav-h);
+  overflow-x:hidden;
+}
+
+/* ===== HEADER (exact copy from store.html) ===== */
+.header{
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,255,255,0.03) 0%,transparent 65%),radial-gradient(ellipse 60% 80% at -10% 0%,rgba(124,111,247,0.18) 0%,transparent 55%),linear-gradient(180deg,#0f3258 0%,#002248 22%,#001f3c 55%,#001532 82%,#000d20 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),inset 0 -1px 0 rgba(0,0,0,0.65),0 6px 28px rgba(0,0,0,0.55),0 1px 2px rgba(0,0,0,0.7);
+  border-bottom:1px solid rgba(0,0,0,0.5);
+  padding:0 20px;height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  position:fixed;top:0;left:0;right:0;z-index:500;
+}
+.logo{display:flex;flex-direction:column;line-height:1.1}
+.logo-name{font-family:var(--font-display);font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.2px}
+.logo-name .bd{color:#4fb7ea}
+.logo-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.5);margin-top:1px}
+.header-back{
+  width:34px;height:34px;border-radius:10px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .2s var(--ease);
+}
+.header-back:active{background:rgba(255,255,255,0.12)}
+.header-back svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ===== PAGE LAYOUT ===== */
+.auth-wrap{
+  min-height:calc(100vh - var(--nav-h));
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:32px 20px 40px;
+}
+.auth-card{
+  width:100%;max-width:400px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-lg);
+  padding:20px 24px 18px;
+  animation:cardIn .5s var(--ease) both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+.auth-head{text-align:center;margin-bottom:16px}
+.auth-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.3px}
+.auth-sub{font-size:13px;color:var(--text2);margin-top:5px;line-height:1.4}
+
+/* ===== TABS ===== */
+.tabs{
+  display:flex;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:3px;margin-bottom:16px;position:relative;
+}
+.tab-thumb{
+  position:absolute;top:3px;bottom:3px;left:3px;
+  width:calc(50% - 3px);
+  background:var(--surface);border-radius:9px;
+  box-shadow:var(--shadow-sm),0 4px 14px var(--accent-glow),0 2px 6px rgba(10,155,220,0.16);
+  transition:transform .5s var(--ease);
+  z-index:0;
+}
+.tab-thumb.right{transform:translateX(100%)}
+.tab-btn{
+  flex:1;position:relative;z-index:1;
+  border:none;background:transparent;
+  font-family:var(--font-body);font-size:13.5px;font-weight:700;
+  padding:9px 0;border-radius:9px;cursor:pointer;
+  color:var(--text3);transition:color .25s var(--ease);
+}
+.tab-btn.active{color:var(--accent)}
+
+/* ===== FORM ===== */
+.panels{position:relative}
+.panel{display:none;animation:panelIn .35s var(--ease) both}
+.panel.active{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.field{margin-bottom:11px}
+.field label{
+  display:block;font-size:12px;font-weight:700;color:var(--text2);
+  margin-bottom:6px;letter-spacing:0.1px;
+}
+.input-shell{
+  position:relative;display:flex;align-items:center;
+  background:var(--surface2);border:1.5px solid var(--border-strong);
+  border-radius:var(--radius-sm);
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease);
+}
+.input-shell:focus-within{
+  border-color:var(--accent);
+  box-shadow:0 0 0 4px var(--accent-soft);
+  background:var(--surface);
+}
+.input-shell svg{
+  width:17px;height:17px;flex-shrink:0;margin-left:13px;
+  stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  transition:stroke .2s var(--ease);
+}
+.input-shell:focus-within > svg{stroke:var(--accent)}
+.input-shell input{
+  flex:1;border:none;background:transparent;outline:none;
+  font-family:var(--font-body);font-size:14.5px;color:var(--text);
+  padding:12px 12px;min-width:0;
+}
+.input-shell input::placeholder{color:var(--text3)}
+.eye-toggle{
+  background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;color:var(--text3);
+  position:relative;width:38px;height:38px;flex-shrink:0;margin-right:6px;
+}
+.eye-toggle svg{
+  width:17px;height:17px;stroke:var(--text3);fill:none;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;
+  position:absolute;left:50%;top:50%;margin-left:0!important;
+  transition:opacity .25s var(--ease),transform .25s var(--ease),stroke .2s var(--ease);
+}
+.eye-toggle .eye-open{
+  opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0deg);
+  stroke:var(--accent);
+}
+.eye-toggle .eye-closed{
+  opacity:0;transform:translate(-50%,-50%) scale(0.6) rotate(-15deg);
+  stroke:var(--text3);
+}
+.eye-toggle.revealed .eye-open{
+  opacity:0;transform:translate(-50%,-50%) scale(0.6) rotate(15deg);
+}
+.eye-toggle.revealed .eye-closed{
+  opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0deg);
+}
+.eye-toggle:active .eye-closed{stroke:var(--text2)}
+
+.field-err{
+  font-size:11.5px;color:var(--red);margin-top:5px;
+  display:none;align-items:center;gap:4px;font-weight:600;
+}
+.field-err.show{display:flex}
+.field.error .input-shell{border-color:var(--red);box-shadow:0 0 0 4px var(--red-soft)}
+
+.row-between{display:flex;align-items:center;justify-content:space-between;margin:2px 0 14px}
+.checkbox-row{display:flex;align-items:center;gap:7px;cursor:pointer}
+.checkbox-row input{width:15px;height:15px;accent-color:var(--accent);cursor:pointer}
+.checkbox-row span{font-size:12.5px;color:var(--text2);font-weight:500}
+.link-btn{
+  background:none;border:none;font-family:var(--font-body);
+  font-size:12.5px;font-weight:700;color:var(--accent);cursor:pointer;padding:0;
+}
+
+.btn-primary{
+  width:100%;border:none;border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--accent) 0%,#0788c0 100%);
+  color:#fff;font-family:var(--font-body);font-size:14.5px;font-weight:700;
+  padding:13px 0;cursor:pointer;
+  box-shadow:0 4px 14px var(--accent-glow);
+  transition:transform .15s var(--ease),box-shadow .15s var(--ease);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-primary:active{transform:scale(0.98);box-shadow:0 2px 8px var(--accent-glow)}
+.btn-primary.loading .btn-label{opacity:0}
+.btn-primary .spinner{
+  display:none;position:absolute;width:17px;height:17px;
+  border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite;
+}
+.btn-primary.loading .spinner{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-primary{position:relative}
+
+.divider{
+  display:flex;align-items:center;gap:12px;margin:14px 0;
+  font-size:11.5px;color:var(--text3);font-weight:600;
+}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border-strong)}
+
+.btn-google{
+  width:100%;border:1.5px solid var(--border-strong);border-radius:var(--radius-sm);
+  background:var(--surface);color:var(--text);
+  font-family:var(--font-body);font-size:14px;font-weight:700;
+  padding:11.5px 0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:background .2s var(--ease),border-color .2s var(--ease);
+}
+.btn-google:active{background:var(--surface2)}
+.btn-google svg{width:18px;height:18px;flex-shrink:0}
+
+.switch-line{
+  text-align:center;margin-top:14px;font-size:13px;color:var(--text2);
+}
+.switch-line button{
+  background:none;border:none;font-family:var(--font-body);
+  font-size:13px;font-weight:700;color:var(--accent);cursor:pointer;padding:0;
+}
+
+/* Password strength meter */
+.pw-meter{display:flex;gap:4px;margin-top:7px;height:3px}
+.pw-meter span{flex:1;border-radius:2px;background:var(--border-strong);transition:background .25s var(--ease)}
+.pw-hint{font-size:11px;color:var(--text3);margin-top:5px;font-weight:500}
+
+/* ===== FORGOT PASSWORD PANEL ===== */
+#panel-forgot .back-row{
+  display:flex;align-items:center;gap:6px;margin-bottom:16px;
+  cursor:pointer;color:var(--text2);font-size:13px;font-weight:700;
+}
+#panel-forgot .back-row svg{width:16px;height:16px;stroke:var(--text2);fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+
+.success-box{
+  text-align:center;padding:8px 0 4px;
+}
+.success-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--green-soft);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+}
+.success-icon svg{width:26px;height:26px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.success-box h3{font-family:var(--font-display);font-size:16.5px;font-weight:800;color:var(--text);margin-bottom:7px}
+.success-box p{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:20px}
+
+.terms-note{font-size:11px;color:var(--text3);text-align:center;margin-top:12px;line-height:1.5}
+.terms-note a{color:var(--text2);font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-back" onclick="window.location.href='store.html'" aria-label="Back">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  </div>
+  <div class="logo" style="align-items:center;text-align:center">
+    <div class="logo-name">SuppVerse <span class="bd">BD</span></div>
+    <div class="logo-sub">Account</div>
+  </div>
+  <div style="width:34px"></div>
+</header>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+
+    <!-- LOGIN / SIGNUP TABS -->
+    <div id="mainAuth">
+      <div class="auth-head">
+        <div class="auth-title" id="headTitle">Welcome back</div>
+        <div class="auth-sub" id="headSub">Sign in to continue shopping</div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab-thumb" id="tabThumb"></div>
+        <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Log In</button>
+        <button class="tab-btn" id="tabSignup" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+
+      <div class="panels">
+
+        <!-- LOGIN PANEL -->
+        <div class="panel active" id="panel-login">
+          <form onsubmit="return handleSubmit(event,'login')" novalidate>
+            <div class="field" id="loginEmailField">
+              <label>Email</label>
+              <div class="input-shell">
+                <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>
+                <input type="email" placeholder="you@example.com" required autocomplete="email">
+              </div>
+              <div class="field-err">Enter a valid email address</div>
+            </div>
+
+            <div class="field" id="loginPwField">
+              <label>Password</label>
+              <div class="input-shell">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                <input type="password" placeholder="Enter password" required autocomplete="current-password" id="loginPwInput">
+                <button type="button" class="eye-toggle" onclick="togglePw('loginPwInput',this)" aria-label="Show password">
+                  <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="eye-closed" viewBox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.6 18.6 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+              <div class="field-err">Password required</div>
+            </div>
+
+            <div class="row-between">
+              <label class="checkbox-row">
+                <input type="checkbox">
+                <span>Remember me</span>
+              </label>
+              <button type="button" class="link-btn" onclick="switchTab('forgot')">Forgot password?</button>
+            </div>
+
+            <button type="submit" class="btn-primary">
+              <span class="spinner"></span>
+              <span class="btn-label">Log In</span>
+            </button>
+          </form>
+
+          <div class="divider">OR</div>
+
+          <button class="btn-google" onclick="handleGoogle()">
+            <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.47a5.53 5.53 0 01-2.4 3.63v3h3.88c2.27-2.09 3.57-5.17 3.57-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.95-2.91l-3.88-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.27v3.11A12 12 0 0012 24z"/><path fill="#FBBC05" d="M5.27 14.28A7.2 7.2 0 014.9 12c0-.79.14-1.56.37-2.28V6.61H1.27A12 12 0 000 12c0 1.94.46 3.77 1.27 5.39l4-3.11z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0A12 12 0 001.27 6.61l4 3.11C6.22 6.86 8.87 4.75 12 4.75z"/></svg>
+            Continue with Google
+          </button>
+
+          <div class="terms-note">By continuing you agree to our <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a></div>
+        </div>
+
+        <!-- SIGNUP PANEL -->
+        <div class="panel" id="panel-signup">
+          <form onsubmit="return handleSubmit(event,'signup')" novalidate>
+            <div class="field">
+              <label>Full Name</label>
+              <div class="input-shell">
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input type="text" placeholder="Your full name" required autocomplete="name">
+              </div>
+              <div class="field-err">Name required</div>
+            </div>
+
+            <div class="field">
+              <label>Email</label>
+              <div class="input-shell">
+                <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>
+                <input type="email" placeholder="you@example.com" required autocomplete="email">
+              </div>
+              <div class="field-err">Enter a valid email address</div>
+            </div>
+
+            <div class="field">
+              <label>Password</label>
+              <div class="input-shell">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                <input type="password" placeholder="Create password" required autocomplete="new-password" id="signupPwInput" oninput="checkStrength(this.value)">
+                <button type="button" class="eye-toggle" onclick="togglePw('signupPwInput',this)" aria-label="Show password">
+                  <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="eye-closed" viewBox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.6 18.6 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+              <div class="pw-meter"><span></span><span></span><span></span><span></span></div>
+              <div class="pw-hint">Min 8 characters, 1 number</div>
+            </div>
+
+            <div class="field" style="margin-bottom:18px">
+              <label class="checkbox-row" style="margin-top:2px">
+                <input type="checkbox" required>
+                <span>I agree to the Terms &amp; Privacy Policy</span>
+              </label>
+            </div>
+
+            <button type="submit" class="btn-primary">
+              <span class="spinner"></span>
+              <span class="btn-label">Create Account</span>
+            </button>
+          </form>
+
+          <div class="divider">OR</div>
+
+          <button class="btn-google" onclick="handleGoogle()">
+            <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.47a5.53 5.53 0 01-2.4 3.63v3h3.88c2.27-2.09 3.57-5.17 3.57-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.95-2.91l-3.88-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.27v3.11A12 12 0 0012 24z"/><path fill="#FBBC05" d="M5.27 14.28A7.2 7.2 0 014.9 12c0-.79.14-1.56.37-2.28V6.61H1.27A12 12 0 000 12c0 1.94.46 3.77 1.27 5.39l4-3.11z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0A12 12 0 001.27 6.61l4 3.11C6.22 6.86 8.87 4.75 12 4.75z"/></svg>
+            Continue with Google
+          </button>
+        </div>
+
+      </div>
+
+      <div class="switch-line" id="switchLine">
+        Don't have an account? <button onclick="switchTab('signup')">Sign up</button>
+      </div>
+    </div>
+
+    <!-- FORGOT PASSWORD -->
+    <div id="panel-forgot" style="display:none">
+      <div class="back-row" onclick="switchTab('login')">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        Back to login
+      </div>
+
+      <div id="forgotForm">
+        <div class="auth-head" style="text-align:left;margin-bottom:20px">
+          <div class="auth-title" style="font-size:19px">Reset password</div>
+          <div class="auth-sub" style="margin-top:6px">Enter your email and we'll send a reset link</div>
+        </div>
+        <form onsubmit="return handleForgot(event)" novalidate>
+          <div class="field">
+            <label>Email</label>
+            <div class="input-shell">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>
+              <input type="email" placeholder="you@example.com" required id="forgotEmailInput">
+            </div>
+            <div class="field-err">Enter a valid email address</div>
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top:6px">
+            <span class="spinner"></span>
+            <span class="btn-label">Send Reset Link</span>
+          </button>
+        </form>
+      </div>
+
+      <div id="forgotSuccess" style="display:none">
+        <div class="success-box">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <h3>Check your email</h3>
+          <p>We sent a password reset link to<br><strong id="sentEmailDisplay" style="color:var(--text)"></strong></p>
+          <button class="btn-primary" style="position:static" onclick="switchTab('login')">
+            <span class="btn-label">Back to Log In</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function switchTab(which){
+  const thumb = document.getElementById('tabThumb');
+  const tabLogin = document.getElementById('tabLogin');
+  const tabSignup = document.getElementById('tabSignup');
+  const panelLogin = document.getElementById('panel-login');
+  const panelSignup = document.getElementById('panel-signup');
+  const mainAuth = document.getElementById('mainAuth');
+  const panelForgot = document.getElementById('panel-forgot');
+  const headTitle = document.getElementById('headTitle');
+  const headSub = document.getElementById('headSub');
+  const switchLine = document.getElementById('switchLine');
+
+  if(which === 'forgot'){
+    mainAuth.style.display = 'none';
+    panelForgot.style.display = 'block';
+    document.getElementById('forgotForm').style.display = 'block';
+    document.getElementById('forgotSuccess').style.display = 'none';
+    return;
+  }
+
+  mainAuth.style.display = 'block';
+  panelForgot.style.display = 'none';
+
+  if(which === 'login'){
+    thumb.classList.remove('right');
+    tabLogin.classList.add('active'); tabSignup.classList.remove('active');
+    panelLogin.classList.add('active'); panelSignup.classList.remove('active');
+    headTitle.textContent = 'Welcome back';
+    headSub.textContent = 'Sign in to continue shopping';
+    switchLine.innerHTML = "Don't have an account? <button onclick=\"switchTab('signup')\">Sign up</button>";
+  } else {
+    thumb.classList.add('right');
+    tabSignup.classList.add('active'); tabLogin.classList.remove('active');
+    panelSignup.classList.add('active'); panelLogin.classList.remove('active');
+    headTitle.textContent = 'Create account';
+    headSub.textContent = 'Join the SuppVerse BD Family';
+    switchLine.innerHTML = "Already have an account? <button onclick=\"switchTab('login')\">Log in</button>";
+  }
+}
+
+function togglePw(id, btn){
+  const input = document.getElementById(id);
+  const isPw = input.type === 'password';
+  input.type = isPw ? 'text' : 'password';
+  btn.classList.toggle('revealed', isPw);
+  btn.setAttribute('aria-label', isPw ? 'Hide password' : 'Show password');
+}
+
+function checkStrength(val){
+  const bars = document.querySelectorAll('#panel-signup .pw-meter span');
+  let score = 0;
+  if(val.length >= 8) score++;
+  if(/[0-9]/.test(val)) score++;
+  if(/[A-Z]/.test(val)) score++;
+  if(/[^A-Za-z0-9]/.test(val)) score++;
+  const colors = ['var(--red)','var(--red)','var(--yellow)','var(--green)','var(--green)'];
+  bars.forEach((b,i) => {
+    b.style.background = i < score ? colors[score] : 'var(--border-strong)';
+  });
+}
+
+function validateEmail(v){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
+
+function handleSubmit(e, type){
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('.btn-primary');
+  const inputs = form.querySelectorAll('input');
+  let valid = true;
+
+  inputs.forEach(inp => {
+    const field = inp.closest('.field');
+    if(!field) return;
+    let ok = true;
+    if(inp.type === 'email') ok = validateEmail(inp.value);
+    else if(inp.type === 'checkbox') ok = inp.checked;
+    else ok = inp.value.trim().length > 0;
+
+    field.classList.toggle('error', !ok);
+    const err = field.querySelector('.field-err');
+    if(err) err.classList.toggle('show', !ok);
+    if(!ok) valid = false;
+  });
+
+  if(!valid) return false;
+
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  // TODO: replace with real Supabase auth call
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    console.log(type + ' submitted — wire to Supabase auth');
+    // window.location.href = 'store.html';
+  }, 1200);
+
+  return false;
+}
+
+function handleForgot(e){
+  e.preventDefault();
+  const input = document.getElementById('forgotEmailInput');
+  const field = input.closest('.field');
+  const err = field.querySelector('.field-err');
+  const btn = e.target.querySelector('.btn-primary');
+
+  const ok = validateEmail(input.value);
+  field.classList.toggle('error', !ok);
+  err.classList.toggle('show', !ok);
+  if(!ok) return false;
+
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    document.getElementById('sentEmailDisplay').textContent = input.value;
+    document.getElementById('forgotForm').style.display = 'none';
+    document.getElementById('forgotSuccess').style.display = 'block';
+  }, 1000);
+
+  return false;
+}
+
+function handleGoogle(){
+  // TODO: wire to Supabase OAuth (supabase.auth.signInWithOAuth({provider:'google'}))
+  console.log('Google OAuth — wire to Supabase');
+}
+</script>
+</body>
+</html>
