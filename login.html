@@ -70,19 +70,19 @@ body{
   border:1px solid var(--border);
   border-radius:var(--radius);
   box-shadow:var(--shadow-lg);
-  padding:20px 24px 18px;
+  padding:16px 24px 14px;
   animation:cardIn .5s var(--ease) both;
 }
 @keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
-.auth-head{text-align:center;margin-bottom:16px}
+.auth-head{text-align:center;margin-bottom:12px}
 .auth-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.3px}
 .auth-sub{font-size:13px;color:var(--text2);margin-top:5px;line-height:1.4}
 
 /* ===== TABS ===== */
 .tabs{
   display:flex;background:var(--surface2);border:1px solid var(--border);
-  border-radius:var(--radius-sm);padding:3px;margin-bottom:16px;position:relative;
+  border-radius:var(--radius-sm);padding:3px;margin-bottom:12px;position:relative;
 }
 .tab-thumb{
   position:absolute;top:3px;bottom:3px;left:3px;
@@ -108,7 +108,7 @@ body{
 .panel.active{display:block}
 @keyframes panelIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-.field{margin-bottom:11px}
+.field{margin-bottom:8px}
 .field label{
   display:block;font-size:12px;font-weight:700;color:var(--text2);
   margin-bottom:6px;letter-spacing:0.1px;
@@ -170,7 +170,7 @@ body{
 .field-err.show{display:flex}
 .field.error .input-shell{border-color:var(--red);box-shadow:0 0 0 4px var(--red-soft)}
 
-.row-between{display:flex;align-items:center;justify-content:space-between;margin:2px 0 14px}
+.row-between{display:flex;align-items:center;justify-content:space-between;margin:2px 0 10px}
 .checkbox-row{display:flex;align-items:center;gap:7px;cursor:pointer}
 .checkbox-row input{width:15px;height:15px;accent-color:var(--accent);cursor:pointer}
 .checkbox-row span{font-size:12.5px;color:var(--text2);font-weight:500}
@@ -200,7 +200,7 @@ body{
 .btn-primary{position:relative}
 
 .divider{
-  display:flex;align-items:center;gap:12px;margin:14px 0;
+  display:flex;align-items:center;gap:12px;margin:10px 0;
   font-size:11.5px;color:var(--text3);font-weight:600;
 }
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border-strong)}
@@ -217,7 +217,7 @@ body{
 .btn-google svg{width:18px;height:18px;flex-shrink:0}
 
 .switch-line{
-  text-align:center;margin-top:14px;font-size:13px;color:var(--text2);
+  text-align:center;margin-top:10px;font-size:13px;color:var(--text2);
 }
 .switch-line button{
   background:none;border:none;font-family:var(--font-body);
@@ -249,7 +249,7 @@ body{
 .success-box h3{font-family:var(--font-display);font-size:16.5px;font-weight:800;color:var(--text);margin-bottom:7px}
 .success-box p{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:20px}
 
-.terms-note{font-size:11px;color:var(--text3);text-align:center;margin-top:12px;line-height:1.5}
+.terms-note{font-size:11px;color:var(--text3);text-align:center;margin-top:8px;line-height:1.5}
 .terms-note a{color:var(--text2);font-weight:600;text-decoration:none}
 </style>
 </head>
@@ -574,6 +574,7 @@ function handleGoogle(){
   // TODO: wire to Supabase OAuth (supabase.auth.signInWithOAuth({provider:'google'}))
   console.log('Google OAuth — wire to Supabase');
 }
+
 </script>
 </body>
 </html>
