@@ -10,7 +10,7 @@
   --bg:#F4F7FB; --surface:#ffffff; --surface2:#F8FAFD;
   --border:rgba(10,22,40,0.07); --border-strong:rgba(10,22,40,0.10);
   --text:#0B1220; --text2:#5E6B7D; --text3:#9AA3B2;
-  --accent:#0A9BDC; --accent-soft:rgba(10,155,220,0.08); --accent-glow:rgba(10,155,220,0.18);
+  --accent:#0EA5E9; --accent-soft:rgba(14,165,233,0.08); --accent-glow:rgba(14,165,233,0.18);
   --orange:#F26430; --orange-soft:rgba(242,100,48,0.10);
   --green:#0A9B72; --green-soft:rgba(10,155,114,0.10);
   --red:#E14343; --red-soft:rgba(225,67,67,0.10);
@@ -28,7 +28,7 @@ body.dark-mode{
   --bg:#0B0F18; --surface:#141B2A; --surface2:#1A2235;
   --border:rgba(255,255,255,0.06); --border-strong:rgba(255,255,255,0.10);
   --text:#F0F4FA; --text2:#A0AAB8; --text3:#6B7585;
-  --accent:#2DBEF5; --accent-soft:rgba(45,190,245,0.08); --accent-glow:rgba(45,190,245,0.22);
+  --accent:#38BDF8; --accent-soft:rgba(56,189,248,0.08); --accent-glow:rgba(56,189,248,0.22);
   --shadow-sm:0 1px 3px rgba(0,0,0,0.20),0 1px 2px rgba(0,0,0,0.12);
   --shadow-md:0 4px 14px rgba(0,0,0,0.25),0 2px 4px rgba(0,0,0,0.15);
   --shadow-lg:0 12px 32px rgba(0,0,0,0.35),0 4px 8px rgba(0,0,0,0.20);
@@ -230,13 +230,13 @@ body.dark-mode .pv-dot.active{
 .pv-spec:active{background:rgba(10,155,220,0.05)}
 .pv-spec-icon{
   width:44px;height:44px;border-radius:12px;
-  background:var(--green-soft);
+  background:var(--accent-soft);
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
 }
 .pv-spec-icon svg{
   width:23px;height:23px;
-  color:var(--green);
+  color:var(--accent);
 }
 .pv-spec-body{
   flex:1;display:flex;align-items:center;justify-content:space-between;
@@ -310,7 +310,7 @@ body.dark-mode .pv-dot.active{
 }
 .pv-btn-cart{
   flex:1;height:48px;border-radius:12px;
-  background:linear-gradient(145deg,var(--accent),#0077B3);
+  background:linear-gradient(145deg,var(--accent),#0284C7);
   border:none;
   color:#fff;font-family:var(--font-display);
   font-size:12px;font-weight:800;letter-spacing:0.2px;
@@ -388,10 +388,10 @@ body.dark-mode .pv-dot.active{
 }
 .pv-variant-pill:active{transform:scale(0.96)}
 .pv-variant-pill.selected{
-  border-color:var(--green);
-  background:var(--green-soft);
-  color:var(--green);
-  box-shadow:0 0 0 3px rgba(10,155,114,0.15),0 2px 8px rgba(10,155,114,0.12);
+  border-color:var(--accent);
+  background:var(--accent-soft);
+  color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-glow),0 2px 8px var(--accent-glow);
 }
 .pv-variant-pill.out{
   opacity:0.55;
@@ -439,23 +439,23 @@ body.dark-mode .pv-dot.active{
 }
 .pv-supplement-row{
   flex:1;
-  background:var(--green-soft);
-  border:1px solid rgba(10,155,114,0.18);
-  border-left:3px solid var(--green);
+  background:var(--accent-soft);
+  border:1px solid var(--accent-glow);
+  border-left:3px solid var(--accent);
   border-radius:var(--radius-xs);
   padding:12px 12px 12px 14px;
   display:flex;flex-direction:column;gap:2px;
   position:relative;
-  box-shadow:0 2px 8px rgba(10,155,114,0.08);
+  box-shadow:0 2px 8px var(--accent-glow);
 }
 .pv-supplement-row::after{
   content:'';position:absolute;top:10px;right:10px;
   width:6px;height:6px;border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 0 2px var(--green-soft),0 0 6px rgba(10,155,114,0.4);
+  background:var(--accent);
+  box-shadow:0 0 0 2px var(--accent-soft),0 0 6px var(--accent-glow);
 }
 .pv-supplement-label{
-  font-size:10px;font-weight:700;color:var(--green);
+  font-size:10px;font-weight:700;color:var(--accent);
   text-transform:uppercase;letter-spacing:0.04em;
 }
 .pv-supplement-value{
@@ -549,7 +549,7 @@ body.dark-mode .pv-dot.active{
   </button>
   <div class="pv-header-title">Product Details</div>
   <div style="display:flex;gap:8px">
-    <button class="pv-header-btn" aria-label="Toggle theme" onclick="document.body.classList.toggle('dark-mode')">
+    <button class="pv-header-btn" aria-label="Toggle theme" onclick="toggleTheme()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
     </button>
     <button class="pv-header-btn" aria-label="Share" onclick="shareProduct()">
@@ -781,6 +781,20 @@ body.dark-mode .pv-dot.active{
 </div>
 
 <script>
+// ─── Shared theme (sv-theme localStorage, synced site-wide) ───
+(function initTheme(){
+  const saved = localStorage.getItem('sv-theme');
+  if(saved === 'dark'){ document.body.classList.add('dark-mode'); }
+  else if(saved === 'light'){ document.body.classList.remove('dark-mode'); }
+  else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+    document.body.classList.add('dark-mode');
+  }
+})();
+function toggleTheme(){
+  document.body.classList.toggle('dark-mode');
+  localStorage.setItem('sv-theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+}
+
 let qty = 1;
 
 // ─── Populate from URL params (passed from store.html card click) ───
