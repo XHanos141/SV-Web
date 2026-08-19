@@ -5,12 +5,12 @@
     1. Add <script src="assets/js/catalog-badges.js" defer><\/script> to <head> or before  </body>
     2. Call SVBadges.init() once after DOM is ready (injects sprite + CSS)
     3. Get badge markup with SVBadges.html('Supplement')  -> returns the <span class="cat-badge ..."> string
-    4. Categories: Supplement, Electronics, Cosmetic, Clothing, General
+    4. Categories: Supplement, Gadget, Cosmetic, Clothing, General
 */
 (function (global) {
   const CATEGORIES = {
     Supplement:  { cls: 'cat-supplement',  icon: '#cat-icon-supplement',  vb: '0 0 512 512' },
-    Electronics: { cls: 'cat-electronics', icon: '#cat-icon-electronics', vb: '0 0 64 64' },
+    Gadget: { cls: 'cat-gadget', icon: '#cat-icon-gadget', vb: '0 0 64 64' },
     Cosmetic:    { cls: 'cat-cosmetic',    icon: '#cat-icon-cosmetic',    vb: '0 0 512 512' },
     Clothing:    { cls: 'cat-clothing',    icon: '#cat-icon-clothing',    vb: '0 0 512 512' },
     General:     { cls: 'cat-general',     icon: '#cat-icon-general',     vb: '0 0 24 24' }
@@ -37,7 +37,7 @@
         S217.453,332.653,220.867,332.653z"/>
     </g>
   </symbol>
-  <symbol id="cat-icon-electronics" viewBox="0 0 64 64">
+  <symbol id="cat-icon-gadget" viewBox="0 0 64 64">
     <path fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M60.9,49.3l-4.9-26.2c-0.4-2.1-2-3.6-4.1-4V18c0-1.7-1.3-3-3-3h-2c-1.7,0-3,1.3-3,3v1H33v-4.1c1.7-0.4,3-2,3-3.9
       c0-2.2-1.8-4-4-4s-4,1.8-4,4c0,1.9,1.3,3.4,3,3.9V19H20v-1c0-1.7-1.3-3-3-3h-2c-1.7,0-3,1.3-3,3v1.1c-2,0.4-3.7,1.9-4.1,4
       L3.1,49.3c-0.5,2.4,1,4.8,3.4,5.6l5.9,1.9c0.5,0.2,1.1,0.3,1.6,0.3c1.7,0,3.3-0.8,4.3-2.3l5.3-7.8h17.2l5.1,7.8
@@ -141,7 +141,7 @@
 .cat-badge svg{width:18px;height:18px;color:#fff}
 .cat-badge svg use{color:#fff;fill:currentColor}
 .cat-badge.cat-supplement  {background:linear-gradient(135deg,#009b72,#00704f)}
-.cat-badge.cat-electronics {background:linear-gradient(135deg,#0EA5E9,#0284C7)}
+.cat-badge.cat-gadget {background:linear-gradient(135deg,#0EA5E9,#0284C7)}
 .cat-badge.cat-cosmetic    {background:linear-gradient(135deg,#EC4899,#DB2777)}
 .cat-badge.cat-clothing    {background:linear-gradient(135deg,#6761a8,#4a4480)}
 .cat-badge.cat-general     {background:linear-gradient(135deg,#64748B,#475569)}
