@@ -279,7 +279,11 @@ body.dark-mode .cb-vivid{filter:saturate(1.55) brightness(1.15)}
 
 .model-cards-section{padding:24px 20px;background:var(--bg);position:relative;z-index:1}
 .model-row{display:flex;gap:10px;width:100%;max-width:420px}
-.mcard{flex:1;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;position:relative;min-height:158px;-webkit-tap-highlight-color:transparent}
+.mcard{flex:1;border-radius:26px;overflow:hidden;display:flex;flex-direction:column;position:relative;min-height:158px;-webkit-tap-highlight-color:transparent;transition:transform .22s cubic-bezier(.4,0,.2,1),box-shadow .22s cubic-bezier(.4,0,.2,1)}
+.mcard:hover{transform:translateY(-3px)}
+.mcard:active{transform:translateY(-1px) scale(.98)}
+.mcard-local:hover{box-shadow:0 8px 24px rgba(0,157,220,.38),inset 0 1px 0 rgba(255,255,255,.9)}
+.mcard-proxy:hover{box-shadow:0 8px 24px rgba(242,100,48,.38),inset 0 1px 0 rgba(255,255,255,.9)}
 
 .banner-section{padding:0 20px 24px;background:var(--bg)}
 .banner-viewport{position:relative;overflow:hidden;border-radius:10px;aspect-ratio:2.4/1;border:2px solid rgba(255,255,255,.98);box-shadow:0 4px 20px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.9);transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform;isolation:isolate;contain:paint}
@@ -302,14 +306,14 @@ body.dark-mode .banner-card.bc-green{background:linear-gradient(135deg,#00704f 0
 .banner-dots{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:2;display:flex;gap:5px;pointer-events:none}
 .banner-dots .dot{width:6px;height:6px;border-radius:99px;background:rgba(255,255,255,.45);transition:all .3s}
 .banner-dots .dot.active{width:16px;background:#fff}
-.mcard::before{content:'';position:absolute;top:0;left:-30%;width:60%;height:100%;background:linear-gradient(115deg,rgba(255,255,255,.35) 0%,rgba(255,255,255,.08) 40%,rgba(255,255,255,0) 60%);pointer-events:none;z-index:0}
-body.dark-mode .mcard::before{background:linear-gradient(115deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,0) 60%)}
+.mcard::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,0) 100%);pointer-events:none;z-index:0}
+body.dark-mode .mcard::before{background:linear-gradient(180deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 100%)}
 .mcard-top,.mcard-body{position:relative;z-index:1}
 
 
 
-.mcard-local{background:linear-gradient(150deg,rgba(209,240,255,0.92) 0%,rgba(178,225,248,0.85) 55%,rgba(150,205,240,0.92) 100%);backdrop-filter:blur(28px) saturate(1.2);-webkit-backdrop-filter:blur(28px) saturate(1.2);box-shadow:0 4px 18px rgba(0,157,220,.30),inset 0 1px 0 rgba(255,255,255,.9);border:1px solid rgba(0,157,220,0.30)}
-.mcard-proxy{background:linear-gradient(150deg,rgba(255,232,220,0.92) 0%,rgba(255,210,180,0.85) 55%,rgba(255,190,155,0.92) 100%);backdrop-filter:blur(28px) saturate(1.2);-webkit-backdrop-filter:blur(28px) saturate(1.2);box-shadow:0 4px 18px rgba(242,100,48,.30),inset 0 1px 0 rgba(255,255,255,.9);border:1px solid rgba(242,100,48,0.30)}
+.mcard-local{background:linear-gradient(150deg,rgba(209,240,255,0.92) 0%,rgba(178,225,248,0.85) 55%,rgba(150,205,240,0.92) 100%);backdrop-filter:blur(28px) saturate(1.2);-webkit-backdrop-filter:blur(28px) saturate(1.2);box-shadow:0 4px 18px rgba(0,157,220,.30),inset 0 1px 0 rgba(255,255,255,.9);border:1px solid rgba(0,157,220,0.55)}
+.mcard-proxy{background:linear-gradient(150deg,rgba(255,232,220,0.92) 0%,rgba(255,210,180,0.85) 55%,rgba(255,190,155,0.92) 100%);backdrop-filter:blur(28px) saturate(1.2);-webkit-backdrop-filter:blur(28px) saturate(1.2);box-shadow:0 4px 18px rgba(242,100,48,.30),inset 0 1px 0 rgba(255,255,255,.9);border:1px solid rgba(242,100,48,0.55)}
 /* ── Corner Triangle Badge ── */
 .corner-badge{position:absolute;top:0;left:0;width:64px;height:64px;overflow:hidden;z-index:4;pointer-events:none}
 .corner-badge::before{content:"";position:absolute;top:0;left:0;width:0;height:0;border-style:solid;border-width:64px 64px 0 0;border-color:#e53935 transparent transparent transparent;filter:drop-shadow(2px 2px 4px rgba(229,57,53,.35))}
@@ -357,8 +361,8 @@ body.dark-mode .mcard-proxy .mcard-cta svg{stroke:#ff8c5c}
 .mcard-proxy .mcard-deco{background:var(--orange)}
 
 /* Model Cards Dark Mode */
-body.dark-mode .mcard-local{background:linear-gradient(150deg,rgba(10,31,46,0.5) 0%,rgba(13,42,61,0.4) 55%,rgba(15,47,69,0.5) 100%);backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px) saturate(1.8);box-shadow:0 4px 20px rgba(0,157,220,.22),inset 0 1px 0 rgba(255,255,255,.08);border:1px solid rgba(255,255,255,0.14)}
-body.dark-mode .mcard-proxy{background:linear-gradient(150deg,rgba(46,26,10,0.5) 0%,rgba(61,34,13,0.4) 55%,rgba(69,40,15,0.5) 100%);backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px) saturate(1.8);box-shadow:0 4px 20px rgba(242,100,48,.22),inset 0 1px 0 rgba(255,255,255,.08);border:1px solid rgba(255,255,255,0.14)}
+body.dark-mode .mcard-local{background:linear-gradient(150deg,rgba(10,31,46,0.5) 0%,rgba(13,42,61,0.4) 55%,rgba(15,47,69,0.5) 100%);backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px) saturate(1.8);box-shadow:0 4px 20px rgba(0,157,220,.22),inset 0 1px 0 rgba(255,255,255,.08);border:1px solid rgba(255,255,255,0.28)}
+body.dark-mode .mcard-proxy{background:linear-gradient(150deg,rgba(46,26,10,0.5) 0%,rgba(61,34,13,0.4) 55%,rgba(69,40,15,0.5) 100%);backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px) saturate(1.8);box-shadow:0 4px 20px rgba(242,100,48,.22),inset 0 1px 0 rgba(255,255,255,.08);border:1px solid rgba(255,255,255,0.28)}
 body.dark-mode .mcard-local .mcard-eye{color:rgba(120,205,255,.85)}
 body.dark-mode .mcard-proxy .mcard-eye{color:rgba(255,170,110,.85)}
 body.dark-mode .mcard-title{color:var(--text)}
@@ -395,6 +399,7 @@ body.dark-mode .mcard-proxy .mcard-cta svg{stroke:#ff8c5c}
 .mcard-local .mcard-cta {
   background: #009ddc;
   color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.7);
   box-shadow: 0 4px 14px rgba(0,157,220,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
 }
 .mcard-local .mcard-cta:hover {
@@ -404,10 +409,13 @@ body.dark-mode .mcard-proxy .mcard-cta svg{stroke:#ff8c5c}
 }
 .mcard-local .mcard-cta svg { stroke: #fff; }
 
+.mcard-local .mcard-cta:hover svg { transform: translateX(3px); }
+
 /* Proxy card — orange pill */
 .mcard-proxy .mcard-cta {
   background: #f26430;
   color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.7);
   box-shadow: 0 4px 14px rgba(242,100,48,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
 }
 .mcard-proxy .mcard-cta:hover {
@@ -416,6 +424,7 @@ body.dark-mode .mcard-proxy .mcard-cta svg{stroke:#ff8c5c}
   transform: translateY(-1px);
 }
 .mcard-proxy .mcard-cta svg { stroke: #fff; }
+.mcard-proxy .mcard-cta:hover svg { transform: translateX(3px); }
 
 /* Dark mode */
 body.dark-mode .mcard-local .mcard-cta {
@@ -1624,26 +1633,26 @@ createMarquee('hdTrack', '.hotdeals-section', 28);
         </div>
         <div class="wb-card" data-idx="2">
           <div class="wb-float"><div class="wb-swing">
-          <div class="wb-icon" style="background:linear-gradient(135deg,#EC4899,#DB2777)">
-            <svg viewBox="0 0 512 512" style="color:#fff"><use href="#cat-icon-cosmetic"/></svg>
-          </div>
-          <span class="wb-label">Cosmetic</span>
-          </div></div>
-        </div>
-        <div class="wb-card" data-idx="3">
-          <div class="wb-float"><div class="wb-swing">
           <div class="wb-icon" style="background:linear-gradient(135deg,#6761a8,#4a4480)">
             <svg viewBox="0 0 512 512" style="color:#fff"><use href="#cat-icon-clothing"/></svg>
           </div>
           <span class="wb-label">Clothing</span>
           </div></div>
         </div>
-        <div class="wb-card" data-idx="4">
+        <div class="wb-card" data-idx="3">
           <div class="wb-float"><div class="wb-swing">
           <div class="wb-icon" style="background:linear-gradient(135deg,#64748B,#475569)">
             <svg viewBox="0 0 24 24" fill="none" style="color:#fff" stroke-width="1.8" stroke-linecap="round"><use href="#cat-icon-general"/></svg>
           </div>
           <span class="wb-label">General</span>
+          </div></div>
+        </div>
+        <div class="wb-card" data-idx="4">
+          <div class="wb-float"><div class="wb-swing">
+          <div class="wb-icon" style="background:linear-gradient(135deg,#EC4899,#DB2777)">
+            <svg viewBox="0 0 512 512" style="color:#fff"><use href="#cat-icon-cosmetic"/></svg>
+          </div>
+          <span class="wb-label">Cosmetic</span>
           </div></div>
         </div>
         <svg class="wb-connectors" id="wbConnectors" viewBox="0 0 100 100" preserveAspectRatio="none">
