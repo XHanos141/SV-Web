@@ -43,22 +43,33 @@ body{
 /* ─── HEADER ─── */
 .pv-header{
   position:sticky;top:0;z-index:50;
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(20px) saturate(1.2);
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,255,255,0.03) 0%,transparent 65%),radial-gradient(ellipse 60% 80% at -10% 0%,rgba(124,111,247,0.18) 0%,transparent 55%),linear-gradient(180deg,#0f3258 0%,#002248 22%,#001f3c 55%,#001532 82%,#000d20 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),inset 0 -1px 0 rgba(0,0,0,0.65),0 6px 28px rgba(0,0,0,0.55),0 1px 2px rgba(0,0,0,0.7);
+  border-bottom:1px solid rgba(0,0,0,0.5);
   height:var(--header-h);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 12px;
 }
 .pv-header-btn{
   width:36px;height:36px;border-radius:10px;
-  background:var(--surface2);border:1px solid var(--border);
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);
   display:flex;align-items:center;justify-content:center;
-  color:var(--text);cursor:pointer;
+  color:#ffffff;cursor:pointer;
 }
+.theme-toggle{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:background .3s ease}
+.theme-toggle:active{transform:scale(.92)}
+.theme-toggle svg{position:absolute;width:21px;height:21px;stroke:rgba(255,255,255,.75);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.theme-toggle .icon-sun{opacity:1;transform:rotate(0) scale(1)}
+.theme-toggle .icon-moon{opacity:0;transform:rotate(90deg) scale(.5)}
+.theme-toggle.dark .icon-sun{opacity:0;transform:rotate(-90deg) scale(.5)}
+.theme-toggle.dark .icon-moon{opacity:1;transform:rotate(0) scale(1)}
+.hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,transform .15s;cursor:pointer}
+.hcart:active{transform:scale(.92)}
+.hcart svg{width:19px;height:19px;stroke:rgba(255,255,255,.85);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cbadge{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;border-radius:99px;background:var(--orange);color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid #001f3c}
 .pv-header-title{
   font-family:var(--font-display);font-size:14px;font-weight:800;
-  color:var(--text);letter-spacing:-0.2px;
+  color:#ffffff;letter-spacing:-0.2px;
 }
 
 /* ─── IMAGE GALLERY ─── */
@@ -160,10 +171,10 @@ body.dark-mode .pv-dot.active{
 }
 .pv-stars svg{width:14px;height:14px;color:var(--yellow)}
 .pv-rating-text{
-  font-size:13px;font-weight:800;color:var(--accent);
+  font-size:13px;font-weight:800;color:#E5A020;
 }
 .pv-rating-count{
-  font-size:12px;font-weight:700;color:var(--accent);
+  font-size:12px;font-weight:700;color:#E5A020;
 }
 .pv-rating-row:hover .pv-rating-text,
 .pv-rating-row:hover .pv-rating-count{
@@ -195,6 +206,18 @@ body.dark-mode .pv-dot.active{
   text-transform:uppercase;letter-spacing:0.3px;
   box-shadow:0 0 6px rgba(10,155,114,0.25),0 0 12px rgba(10,155,114,0.12);
   flex-shrink:0;
+}
+.pv-price-share{
+  margin-left:auto;
+  margin-right:-3px;
+  width:34px;height:34px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:10px;border:none;
+  background:transparent;color:var(--text);
+  cursor:pointer;
+}
+.pv-price-share:active{
+  transform:scale(0.94);
 }
 
 /* ─── DIVIDER ─── */
@@ -483,7 +506,7 @@ body.dark-mode .pv-dot.active{
 .pv-star-input svg.active{color:var(--yellow)}
 .pv-star-input svg.filled{color:var(--yellow)}
 .pv-star-label{
-  font-size:11px;font-weight:600;color:var(--text3);
+  font-size:11px;font-weight:600;color:#E5A020;
   margin-left:6px;
 }
 .pv-review-textarea{
@@ -548,15 +571,22 @@ body.dark-mode .pv-dot.active{
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
   </button>
   <div class="pv-header-title">Product Details</div>
-  <div style="display:flex;gap:8px">
-    <button class="pv-header-btn" aria-label="Toggle theme" onclick="toggleTheme()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
     </button>
-    <button class="pv-header-btn" aria-label="Share" onclick="shareProduct()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-    </button>
-    <button class="pv-header-btn" aria-label="Cart">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.29977 5H21L19 12H7.37671M20 16H8L6 3H3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z"/></svg>
+    <button class="hcart" onclick="window.location.href='cart.html'">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+      <span class="cbadge" id="cb" style="display:none">0</span>
     </button>
   </div>
 </header>
@@ -605,6 +635,9 @@ body.dark-mode .pv-dot.active{
     <span class="pv-price" id="pvPriceEl">৳4,200</span>
     <span class="pv-old" id="pvOldEl">৳5,600</span>
     <span class="pv-discount" id="pvDiscountEl">20% OFF</span>
+    <button class="pv-price-share" aria-label="Share" onclick="shareProduct()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
   </div>
 
   <div class="pv-divider"></div>
@@ -648,10 +681,21 @@ body.dark-mode .pv-dot.active{
     <div class="pv-spec">
       <div class="pv-spec-icon">
         <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" style="width:23px;height:23px" viewBox="0 0 24 24"><path fill="currentColor" d="M7.75 2.5c0-.41421-.33579-.75-.75-.75s-.75.33579-.75.75v1.57926c-1.43933.11525-2.38423.39811-3.07843 1.09231S2.19451 6.81067 2.07926 8.25H21.9207c-.1152-1.43933-.3981-2.38423-1.0923-3.07843s-1.6391-.97706-3.0784-1.09231V2.5c0-.41421-.3358-.75-.75-.75s-.75.33579-.75.75v1.5129C15.5847 4 14.839 4 14 4h-4c-.83903 0-1.58473 0-2.25.0129z"/><path fill="currentColor" fill-rule="evenodd" d="M22 12c0-.839 0-1.5847-.0129-2.25H2.0129C2 10.4153 2 11.161 2 12v2c0 3.7712 0 5.6569 1.17157 6.8284C4.34315 22 6.22876 22 10 22h4c3.7712 0 5.6569 0 6.8284-1.1716C22 19.6569 22 17.7712 22 14zm-8 .25c-.9665 0-1.75.7835-1.75 1.75v2c0 .9665.7835 1.75 1.75 1.75s1.75-.7835 1.75-1.75v-2c0-.9665-.7835-1.75-1.75-1.75m0 1.5c-.1381 0-.25.1119-.25.25v2c0 .1381.1119.25.25.25s.25-.1119.25-.25v-2c0-.1381-.1119-.25-.25-.25m-3.213-1.4429c.2803.1161.463.3896.463.6929v4c0 .4142-.3358.75-.75.75s-.75-.3358-.75-.75v-2.1893l-.21967.2196c-.29289.2929-.76777.2929-1.06066 0s-.29289-.7677 0-1.0606l1.5-1.5c.21453-.2145.53713-.2787.81733-.1626" clip-rule="evenodd"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px" viewBox="0 0 24 24" fill="none"><path d="M15.9062 2C15.9062 2.41421 16.242 2.75 16.6562 2.75H20.1893L12.75 10.1893V8C12.75 7.58579 12.4142 7.25 12 7.25C11.5858 7.25 11.25 7.58579 11.25 8V12C11.25 12.4142 11.5858 12.75 12 12.75H16C16.4142 12.75 16.75 12.4142 16.75 12C16.75 11.5858 16.4142 11.25 16 11.25H13.8107L21.25 3.81066V7.34375C21.25 7.75796 21.5858 8.09375 22 8.09375C22.4142 8.09375 22.75 7.75796 22.75 7.34375V2C22.75 1.58579 22.4142 1.25 22 1.25H16.6562C16.242 1.25 15.9062 1.58579 15.9062 2Z" fill="currentColor"/><path d="M19.7516 7.43034C19.797 8.62969 20.7812 9.5887 21.9904 9.59373C22 10.3198 22 11.1187 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C12.8813 2 13.6802 2 14.4063 2.00957C14.4113 3.21884 15.3703 4.20298 16.5697 4.24836L13.9468 6.87122C13.5572 6.20078 12.8313 5.75 12 5.75C10.7574 5.75 9.75 6.75736 9.75 8V12C9.75 13.2426 10.7574 14.25 12 14.25H16C17.2426 14.25 18.25 13.2426 18.25 12C18.25 11.1687 17.7992 10.4428 17.1288 10.0532L19.7516 7.43034Z" fill="currentColor"/></svg>
       </div>
       <div class="pv-spec-body">
-        <div class="pv-spec-text">Expiry date: <b>09/2028</b></div>
+        <div class="pv-spec-text">Size: <b>XL</b></div>
+        <svg class="pv-spec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <!-- COLOUR -->
+    <div class="pv-spec">
+      <div class="pv-spec-icon">
+        <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" style="width:22px;height:22px" viewBox="0 0 512 512"><path d="M491.124,328.439c-10.233-17.742-28.904-27.917-51.222-27.917c-23.642,0-44.048-15.853-47.467-36.875 c-2.178-13.394,1.372-26.356,9.997-36.497c8.471-9.96,20.826-15.672,33.898-15.672c24.545,0,44.564-10.327,54.924-28.333 c9.795-17.025,9.639-38.337-0.407-55.617C445.136,48.867,360.274,0,269.38,0c-61.683,0-118.886,20.734-165.427,59.962 c-44.305,37.343-74.709,88.804-85.609,144.903c-14.896,76.663,4.627,154.677,53.563,214.037 C120.683,478.067,192.656,512,269.374,512c91.108,0,176.073-49.044,221.739-127.993 C501.016,366.89,501.02,345.598,491.124,328.439z M85.722,256c0-27.618,22.469-50.087,50.087-50.087 c27.618,0,50.087,22.469,50.087,50.087c0,27.618-22.469,50.087-50.087,50.087C108.191,306.087,85.722,283.618,85.722,256z M245.968,396.714c-9.266,16.049-26.139,25.033-43.461,25.033c-8.493,0-17.091-2.158-24.96-6.702 c-11.587-6.689-19.873-17.49-23.337-30.413c-3.463-12.922-1.685-26.42,5.004-38.007c6.689-11.586,17.489-19.873,30.413-23.336 c12.922-3.462,26.42-1.685,38.006,5.004C251.552,342.103,259.776,372.796,245.968,396.714z M227.635,183.706 c-7.717,4.456-16.283,6.732-24.962,6.733c-4.351,0-8.73-0.572-13.045-1.729c-12.922-3.463-23.723-11.75-30.413-23.337 s-8.467-25.085-5.004-38.007c3.463-12.922,11.75-23.723,23.337-30.413c11.587-6.69,25.086-8.467,38.007-5.004 c12.922,3.463,23.723,11.75,30.414,23.337C259.776,139.204,251.552,169.897,227.635,183.706z M292.78,115.286 c6.689-11.586,17.489-19.873,30.413-23.336c12.924-3.462,26.42-1.685,38.006,5.004c23.918,13.808,32.141,44.502,18.334,68.42 c-6.689,11.587-17.49,19.873-30.413,23.337c-4.314,1.156-8.695,1.729-13.045,1.729c-8.68,0-17.244-2.276-24.962-6.733 c-11.586-6.689-19.873-17.49-23.336-30.413C284.313,140.369,286.091,126.871,292.78,115.286z M361.2,415.047 c-7.867,4.542-16.469,6.701-24.959,6.701c-17.325,0-34.194-8.982-43.46-25.033c-6.689-11.587-8.467-25.085-5.004-38.007 c3.463-12.922,11.75-23.723,23.337-30.413c11.587-6.69,25.086-8.468,38.007-5.004c12.922,3.463,23.723,11.75,30.414,23.337 C393.342,370.546,385.117,401.239,361.2,415.047z"/></svg>
+      </div>
+      <div class="pv-spec-body">
+        <div class="pv-spec-text">Colour: <b>Natural</b></div>
         <svg class="pv-spec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
     </div>
@@ -673,15 +717,6 @@ body.dark-mode .pv-dot.active{
       </div>
       <div class="pv-spec-body">
         <div class="pv-spec-text">Country of Origin: 🇺🇸 <b>USA</b></div>
-        <svg class="pv-spec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-    </div>
-    <div class="pv-spec">
-      <div class="pv-spec-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" style="width:25px;height:25px" viewBox="0 0 24 24"><path fill="currentColor" d="m21.5609 10.7386-1.36-1.58001c-.26-.3-.47-.86-.47-1.26v-1.7c0-1.06-.87-1.93-1.93-1.93h-1.7c-.39 0-.96-.21-1.26-.47l-1.58-1.36c-.69-.59-1.82-.59-2.52 0l-1.57004 1.37c-.3.25-.87.46-1.26.46h-1.73c-1.06 0-1.93.87-1.93 1.93v1.71c0 .39-.21.95-.46 1.25l-1.35 1.59001c-.58.69-.58 1.81 0 2.5l1.35 1.59c.25.3.46.86.46 1.25v1.71c0 1.06.87 1.93 1.93 1.93h1.73c.39 0 .96.21 1.26.47l1.58004 1.36c.69.59 1.82.59 2.52 0l1.58-1.36c.3-.26.86-.47 1.26-.47h1.7c1.06 0 1.93-.87 1.93-1.93v-1.7c0-.39.21-.96.47-1.26l1.36-1.58c.58-.69.58-1.83-.01-2.52m-5.4-.63-4.83 4.83c-.14.14-.33.22-.53.22s-.39-.08-.53-.22l-2.42004-2.42c-.29-.29-.29-.77 0-1.06s.77-.29 1.06 0l1.89004 1.89 4.3-4.30001c.29-.29.77-.29 1.06 0s.29.77 0 1.06001"/></svg>
-      </div>
-      <div class="pv-spec-body">
-        <div class="pv-spec-text"><b>100% authentic</b></div>
         <svg class="pv-spec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
     </div>
@@ -789,11 +824,15 @@ body.dark-mode .pv-dot.active{
   else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
     document.body.classList.add('dark-mode');
   }
+  document.getElementById('themeToggle').classList.toggle('dark', document.body.classList.contains('dark-mode'));
 })();
+const themeToggle = document.getElementById('themeToggle');
 function toggleTheme(){
   document.body.classList.toggle('dark-mode');
   localStorage.setItem('sv-theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+  themeToggle.classList.toggle('dark', document.body.classList.contains('dark-mode'));
 }
+themeToggle.addEventListener('click', toggleTheme);
 
 let qty = 1;
 

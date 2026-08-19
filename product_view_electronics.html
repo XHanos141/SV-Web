@@ -43,22 +43,33 @@ body{
 /* ─── HEADER ─── */
 .pv-header{
   position:sticky;top:0;z-index:50;
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(20px) saturate(1.2);
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,255,255,0.03) 0%,transparent 65%),radial-gradient(ellipse 60% 80% at -10% 0%,rgba(124,111,247,0.18) 0%,transparent 55%),linear-gradient(180deg,#0f3258 0%,#002248 22%,#001f3c 55%,#001532 82%,#000d20 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),inset 0 -1px 0 rgba(0,0,0,0.65),0 6px 28px rgba(0,0,0,0.55),0 1px 2px rgba(0,0,0,0.7);
+  border-bottom:1px solid rgba(0,0,0,0.5);
   height:var(--header-h);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 12px;
 }
 .pv-header-btn{
   width:36px;height:36px;border-radius:10px;
-  background:var(--surface2);border:1px solid var(--border);
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);
   display:flex;align-items:center;justify-content:center;
-  color:var(--text);cursor:pointer;
+  color:#ffffff;cursor:pointer;
 }
+.theme-toggle{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:background .3s ease}
+.theme-toggle:active{transform:scale(.92)}
+.theme-toggle svg{position:absolute;width:21px;height:21px;stroke:rgba(255,255,255,.75);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.theme-toggle .icon-sun{opacity:1;transform:rotate(0) scale(1)}
+.theme-toggle .icon-moon{opacity:0;transform:rotate(90deg) scale(.5)}
+.theme-toggle.dark .icon-sun{opacity:0;transform:rotate(-90deg) scale(.5)}
+.theme-toggle.dark .icon-moon{opacity:1;transform:rotate(0) scale(1)}
+.hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,transform .15s;cursor:pointer}
+.hcart:active{transform:scale(.92)}
+.hcart svg{width:19px;height:19px;stroke:rgba(255,255,255,.85);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cbadge{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;border-radius:99px;background:var(--orange);color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid #001f3c}
 .pv-header-title{
   font-family:var(--font-display);font-size:14px;font-weight:800;
-  color:var(--text);letter-spacing:-0.2px;
+  color:#ffffff;letter-spacing:-0.2px;
 }
 
 /* ─── IMAGE GALLERY ─── */
@@ -160,10 +171,10 @@ body.dark-mode .pv-dot.active{
 }
 .pv-stars svg{width:14px;height:14px;color:var(--yellow)}
 .pv-rating-text{
-  font-size:13px;font-weight:800;color:var(--accent);
+  font-size:13px;font-weight:800;color:#E5A020;
 }
 .pv-rating-count{
-  font-size:12px;font-weight:700;color:var(--accent);
+  font-size:12px;font-weight:700;color:#E5A020;
 }
 .pv-rating-row:hover .pv-rating-text,
 .pv-rating-row:hover .pv-rating-count{
@@ -195,6 +206,18 @@ body.dark-mode .pv-dot.active{
   text-transform:uppercase;letter-spacing:0.3px;
   box-shadow:0 0 6px rgba(10,155,114,0.25),0 0 12px rgba(10,155,114,0.12);
   flex-shrink:0;
+}
+.pv-price-share{
+  margin-left:auto;
+  margin-right:-3px;
+  width:34px;height:34px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:10px;border:none;
+  background:transparent;color:var(--text);
+  cursor:pointer;
+}
+.pv-price-share:active{
+  transform:scale(0.94);
 }
 
 /* ─── DIVIDER ─── */
@@ -483,7 +506,7 @@ body.dark-mode .pv-dot.active{
 .pv-star-input svg.active{color:var(--yellow)}
 .pv-star-input svg.filled{color:var(--yellow)}
 .pv-star-label{
-  font-size:11px;font-weight:600;color:var(--text3);
+  font-size:11px;font-weight:600;color:#E5A020;
   margin-left:6px;
 }
 .pv-review-textarea{
@@ -548,15 +571,22 @@ body.dark-mode .pv-dot.active{
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
   </button>
   <div class="pv-header-title">Product Details</div>
-  <div style="display:flex;gap:8px">
-    <button class="pv-header-btn" aria-label="Toggle theme" onclick="toggleTheme()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
     </button>
-    <button class="pv-header-btn" aria-label="Share" onclick="shareProduct()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-    </button>
-    <button class="pv-header-btn" aria-label="Cart">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.29977 5H21L19 12H7.37671M20 16H8L6 3H3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z"/></svg>
+    <button class="hcart" onclick="window.location.href='cart.html'">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+      <span class="cbadge" id="cb" style="display:none">0</span>
     </button>
   </div>
 </header>
@@ -605,6 +635,9 @@ body.dark-mode .pv-dot.active{
     <span class="pv-price" id="pvPriceEl">৳4,200</span>
     <span class="pv-old" id="pvOldEl">৳5,600</span>
     <span class="pv-discount" id="pvDiscountEl">20% OFF</span>
+    <button class="pv-price-share" aria-label="Share" onclick="shareProduct()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
   </div>
 
   <div class="pv-divider"></div>
@@ -790,11 +823,15 @@ body.dark-mode .pv-dot.active{
   else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
     document.body.classList.add('dark-mode');
   }
+  document.getElementById('themeToggle').classList.toggle('dark', document.body.classList.contains('dark-mode'));
 })();
+const themeToggle = document.getElementById('themeToggle');
 function toggleTheme(){
   document.body.classList.toggle('dark-mode');
   localStorage.setItem('sv-theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+  themeToggle.classList.toggle('dark', document.body.classList.contains('dark-mode'));
 }
+themeToggle.addEventListener('click', toggleTheme);
 
 let qty = 1;
 
