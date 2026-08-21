@@ -43,13 +43,21 @@ html{font-size:16px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 }
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-top:var(--nav-h);padding-bottom:110px;transition:background .35s ease,color .35s ease;touch-action:manipulation}
 
-/* Nav */
-.topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(135deg,#3a1a08,#1a0f06);color:#fff}
-.nav-back,.nav-theme{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:none;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
-.nav-back svg,.nav-theme svg{width:19px;height:19px;stroke:#fff;stroke-width:2.3;fill:none}
-.nav-title{flex:1;text-align:center;overflow:hidden}
-.nav-title h1{font-family:var(--fd);font-size:15px;font-weight:800;line-height:1.15}
-.nav-title p{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:1px}
+/* Header (shared pattern) */
+.header{background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,255,255,0.03) 0%,transparent 65%),radial-gradient(ellipse 60% 80% at -10% 0%,rgba(124,111,247,0.18) 0%,transparent 55%),linear-gradient(180deg,#0f3258 0%,#002248 22%,#001f3c 55%,#001532 82%,#000d20 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),inset 0 -1px 0 rgba(0,0,0,0.65),0 6px 28px rgba(0,0,0,0.55),0 1px 2px rgba(0,0,0,0.7);border-bottom:1px solid rgba(0,0,0,0.5);padding:0 14px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:10px;position:fixed;top:0;left:0;right:0;z-index:500}
+.back-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.back-btn svg{width:18px;height:18px;stroke:rgba(255,255,255,.85);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hdr-title{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:1px;flex:1;min-width:0}
+.hdr-title h1{font-family:var(--fd);font-size:16px;font-weight:800;color:#fff;line-height:1.1;letter-spacing:.1px}
+.hdr-title p{font-size:9px;font-weight:600;color:rgba(255,255,255,.35);letter-spacing:.14em;text-transform:uppercase}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.theme-toggle{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:background .3s ease}
+.theme-toggle:active{transform:scale(.92)}
+.theme-toggle svg{position:absolute;width:18px;height:18px;stroke:rgba(255,255,255,.75);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.theme-toggle .icon-sun{opacity:1;transform:rotate(0) scale(1)}
+.theme-toggle .icon-moon{opacity:0;transform:rotate(90deg) scale(.5)}
+.theme-toggle.dark .icon-sun{opacity:0;transform:rotate(-90deg) scale(.5)}
+.theme-toggle.dark .icon-moon{opacity:1;transform:rotate(0) scale(1)}
 
 main{max-width:600px;margin:0 auto;padding:16px}
 .rv{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
@@ -197,12 +205,15 @@ body.dark-mode .pay-input{border-color:rgba(255,255,255,0.25)}
 .city-suggest-item:active,.city-suggest-item.hl{background:var(--surface2)}
 .city-suggest-item b{color:var(--cyan)}
 .delivery-card{display:flex;align-items:center;gap:12px;background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:18px}
-.delivery-card .d-icon{width:38px;height:38px;flex-shrink:0;border-radius:11px;background:rgba(0,157,220,.10);display:flex;align-items:center;justify-content:center}
-.delivery-card .d-icon svg{width:19px;height:19px;stroke:var(--cyan);stroke-width:2.2;fill:none}
 .delivery-card .d-body{flex:1;min-width:0}
 .delivery-card .d-partner{font-size:12.5px;font-weight:800;color:var(--text)}
 .delivery-card .d-eta{font-size:11px;color:var(--t2);margin-top:2px}
 .delivery-card .d-badge{font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:20px;background:rgba(0,155,114,.10);color:var(--green);flex-shrink:0}
+.partner-showcase{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.partner-box{width:96px;height:48px;flex-shrink:0;border-radius:12px;background:#fff;border:1.5px solid var(--border);border-color:rgba(0,0,0,0.12);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;padding:8px}
+.partner-box svg{width:100%;height:100%;object-fit:contain}
+.partner-info .d-partner{font-size:12.5px;font-weight:800;color:var(--text)}
+.partner-info .d-eta{font-size:11px;color:var(--t2);margin-top:2px}
 .due-banner{display:flex;gap:10px;align-items:flex-start;background:rgba(244,169,34,.10);border:1px solid rgba(244,169,34,.28);border-radius:14px;padding:14px;margin-bottom:16px}
 body.dark-mode .due-banner{background:rgba(244,169,34,.14)}
 .due-banner svg{width:18px;height:18px;stroke:var(--gold);stroke-width:2.2;fill:none;flex-shrink:0;margin-top:1px}
@@ -240,16 +251,29 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
 </head>
 <body>
 
-<nav class="topnav">
-  <button class="nav-back" type="button" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-  <div class="nav-title">
-    <h1>Payment</h1>
-    <p>Secure checkout</p>
-  </div>
-  <button class="nav-theme" type="button" id="themeToggle" aria-label="Toggle theme">
-    <svg id="themeIcon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+<header class="header">
+  <button class="back-btn" aria-label="Go back" onclick="history.back()">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
   </button>
-</nav>
+  <div class="hdr-title">
+    <h1>Payment</h1>
+    <p>Secure Checkout</p>
+  </div>
+  <div class="header-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</header>
 
 <main>
   <!-- Demo-only flow switch — in production this is set by the referring page, not a visible tab -->
@@ -352,15 +376,6 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     <div class="pay-tracking">Tracking ID <b>PX-4892</b></div>
   </section>
 
-  <div class="delivery-card rv">
-    <div class="d-icon"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></div>
-    <div class="d-body">
-      <div class="d-partner">Pathao Courier</div>
-      <div class="d-eta">Estimated delivery Aug 23–24</div>
-    </div>
-    <span class="d-badge">On Track</span>
-  </div>
-
   <div class="due-banner" id="dueBanner" style="display:none">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
     <div>
@@ -396,6 +411,15 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     </button>
   </div>
 
+  <h2 class="section-label rv">Our Delivery Partner</h2>
+  <div class="partner-showcase rv">
+    <div class="partner-box">
+      <svg xmlns="http://www.w3.org/2000/svg" width="186.143" height="38.565" viewBox="0 0 186.143 38.565"><defs><linearGradient id="b" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#349574"/><stop offset="1" stop-color="#fff"/></linearGradient><clipPath id="a"><path d="M0 0h186.143v38.565H0z"/></clipPath></defs><g clip-path="url(#a)"><path fill="#3d3d3d" d="m13.625 11.716-3.905 2.43S3.645 6.248 0 4.165L42.575 0S10.5 4.513 7.984 6.075Z"/><path fill="#349574" d="M45.17 0S30.764 3.84 20.133 24.516L16.011 15.4 12.54 18s6.509 11.846 6.917 18.036c0 0 8.9-25.759 25.713-36.043"/><path fill="#3d3d3d" d="M2.517 23.756s11-13.59 36.42-22.236a120.936 120.936 0 0 0-36.42 22.236m128.476 8.885a2.466 2.466 0 0 0-2.46-1.241 4.319 4.319 0 0 0-2.685.846 3.86 3.86 0 0 0-1.467 2.381 3.72 3.72 0 0 0-.1.835 2.145 2.145 0 0 0 .8 1.805 3.088 3.088 0 0 0 1.952.564 4.115 4.115 0 0 0 3.035-1.264l.541.395a5.031 5.031 0 0 1-3.7 1.557 3.443 3.443 0 0 1-2.775-1.049 2.689 2.689 0 0 1-.621-1.817 4.63 4.63 0 0 1 .113-.981 4.78 4.78 0 0 1 1.783-2.911 5.18 5.18 0 0 1 3.272-1.049 3.089 3.089 0 0 1 3.035 1.534Zm9.026 5.123a3.485 3.485 0 0 1-1.207.7 4.74 4.74 0 0 1-1.162.1 2.7 2.7 0 0 1-1.749-.53 1.953 1.953 0 0 1-.71-1.625 3.574 3.574 0 0 1 .079-.722 3.525 3.525 0 0 1 1.275-2.1 3.673 3.673 0 0 1 2.347-.784 2.744 2.744 0 0 1 1.76.53 1.985 1.985 0 0 1 .71 1.636 3.615 3.615 0 0 1-.079.722 3.529 3.529 0 0 1-1.264 2.076m.265-3.683a1.441 1.441 0 0 0-.683-.525 3.108 3.108 0 0 0-.857-.079 2.676 2.676 0 0 0-2.731 2.211 2.61 2.61 0 0 0-.068.564 1.49 1.49 0 0 0 .53 1.23 2.021 2.021 0 0 0 1.32.406 2.76 2.76 0 0 0 1.783-.6 2.708 2.708 0 0 0 .959-1.6 2.806 2.806 0 0 0 .068-.587 1.609 1.609 0 0 0-.321-1.021m9.223 4.369.124-.6a3.162 3.162 0 0 1-2.087.711 2.569 2.569 0 0 1-1.4-.339 1.352 1.352 0 0 1-.632-1.218 2.647 2.647 0 0 1 .057-.519l.756-3.554h.745l-.756 3.543a1.926 1.926 0 0 0-.045.395q0 1.015 1.41 1.015a2.3 2.3 0 0 0 1.557-.525 2.575 2.575 0 0 0 .812-1.45l.632-2.979h.745l-1.173 5.517Zm6.781-2.246-.474 2.234h-.745l1.173-5.517h.745l-.158.756a3.7 3.7 0 0 1 2.583-.88l-.135.677q-2.4 0-2.99 2.73m6.364 2.235 1.2-5.641h.745l-1.2 5.641Zm1.7-6.374q-.237 0-.293-.282l.181-.812a.522.522 0 0 1 .406-.282q.181 0 .339.248l-.18.88a.721.721 0 0 1-.451.248m4.729 3.903a2.585 2.585 0 0 0-.034.406q0 1.513 1.794 1.512a2.594 2.594 0 0 0 2.369-1.3h.767a3.484 3.484 0 0 1-3.294 1.974 2.716 2.716 0 0 1-1.7-.474 1.839 1.839 0 0 1-.677-1.557 3.812 3.812 0 0 1 .1-.835 3.568 3.568 0 0 1 3.554-2.9 2.857 2.857 0 0 1 1.715.474 1.806 1.806 0 0 1 .734 1.546 3.187 3.187 0 0 1-.079.677l-.09.462Zm2.742-2.493a2.705 2.705 0 0 0-1.6.48 2.677 2.677 0 0 0-.987 1.337h4.321a1.92 1.92 0 0 0 .023-.293 1.389 1.389 0 0 0-.508-1.151 1.969 1.969 0 0 0-1.252-.372m7.493 2.728-.474 2.234h-.745l1.173-5.517h.745l-.158.756a3.7 3.7 0 0 1 2.583-.88l-.135.677q-2.4 0-2.99 2.73"/><path fill="#3d3d3d" d="M45.985 11.2a.564.564 0 0 0-.377.133.724.724 0 0 0-.22.306.124.124 0 0 1-.016.047.47.47 0 0 0-.032.11q-.016.079-.047.228t-.086.369-.134.549-.188.769a.642.642 0 0 0 .126.518.55.55 0 0 0 .455.22h7.642a4.051 4.051 0 0 1 3.381 1.639 4.319 4.319 0 0 1 .777 3.774.22.22 0 0 1-.008.047c-.005.021-.013.055-.024.1s-.026.115-.047.2-.05.2-.087.337-.078.306-.125.51-.1.442-.173.714l-.236.941q-.133.533-.29 1.208a4.645 4.645 0 0 1-1.632 2.51 4.432 4.432 0 0 1-2.84.973H36.445a.32.32 0 0 1 .008-.055c.005-.026.016-.068.031-.125s.037-.139.063-.243l.1-.408q.063-.251.141-.612t.2-.855q.118-.494.274-1.137t.345-1.443h13.51a.62.62 0 0 0 .612-.455.206.206 0 0 1 .008-.047c.005-.021.013-.057.024-.11s.029-.128.055-.228.057-.222.094-.369.081-.33.133-.549.11-.476.173-.769a.508.508 0 0 0-.055-.51.525.525 0 0 0-.447-.228h-7.7a4.1 4.1 0 0 1-3.389-1.608 4.3 4.3 0 0 1-.785-3.789.22.22 0 0 1 .008-.047c.005-.021.016-.058.032-.11s.034-.123.055-.212.047-.2.078-.337.073-.3.126-.5.11-.437.172-.714.139-.593.228-.949.191-.758.306-1.208q1.333-3.4 4.456-3.4h15.44a.34.34 0 0 1-.008.055c-.005.026-.016.068-.032.126s-.037.139-.063.243-.063.238-.11.4-.1.361-.157.6-.128.515-.212.839l-.29 1.122q-.165.636-.369 1.436H-45.867Zm16.24-4.817h5.158a.068.068 0 0 1-.008.032c-.005.011-.013.029-.023.055a.77.77 0 0 0-.032.1l-.039.157c-.016.062-.037.139-.063.227s-.052.191-.078.306-.058.243-.094.384-.078.3-.125.486-.1.384-.157.6-.118.46-.18.722-.133.547-.212.855-.165.641-.259 1h3.7l-1.02 4.66h-3.75a.066.066 0 0 1-.008.031.265.265 0 0 0-.016.063q-.008.047-.023.118t-.039.181c-.016.073-.034.159-.055.259s-.05.217-.086.353-.076.29-.118.463-.089.369-.141.588-.11.463-.173.73-.133.56-.212.887-.165.675-.259 1.051-.2.79-.314 1.24a.975.975 0 0 0 .188.722.792.792 0 0 0 .675.314h2.683l-1.035 4.441h-3.527a3.96 3.96 0 0 1-3.35-1.648 4.554 4.554 0 0 1-.777-3.828Zm10.56 8.12a10.866 10.866 0 0 1 7.391-3.177h3.829a3.943 3.943 0 0 1 3.225 1.475 3.709 3.709 0 0 1 .745 3.374q-.126.47-.22.816t-.157.581-.11.392a2.33 2.33 0 0 0-.063.243.494.494 0 0 1-.032.117.122.122 0 0 0-.016.047 4.189 4.189 0 0 1-1.577 2.408 4.484 4.484 0 0 1-2.769.9h-4.739a1.478 1.478 0 0 1-1.287-1.091 2.273 2.273 0 0 1 .306-1.867 2.917 2.917 0 0 1 2.11-1.232h3q.094-.376.165-.651c.047-.183.089-.337.126-.463s.065-.23.086-.314.036-.149.047-.2.018-.078.024-.094a.124.124 0 0 0 .008-.039h-3.236a4.817 4.817 0 0 0-2.9.886 4.907 4.907 0 0 0-1.742 2.848 3.651 3.651 0 0 0 .439 2.573 2.881 2.881 0 0 0 2.714 1.177h8.018q-.173.706-.322 1.255t-.267.965-.2.73-.141.526q-.063.212-.094.345c-.021.089-.039.159-.055.212s-.026.089-.031.11a.207.207 0 0 0-.008.047h-9.163q-3.264 0-4.692-1.562a5.454 5.454 0 0 1-1.459-3.726 10.22 10.22 0 0 1 3.044-7.618m21.452 12.85q-3.954-.423-5.225-3.428t.659-7.445q3.3-5.492 10.23-5.115h7.327l-.236.832h.016l-1.287 5.084-2.573 10.136h-5.131Zm6.37-10.073h-.016l.424-1.695h-2.459a4.942 4.942 0 0 0-3.2 1.059 5.137 5.137 0 0 0-1.663 2.456q-.832 3.781 2.62 3.734h2.856Zm22.297 4.442h-5.052l1.428-6.01h-3.17q-3.373-.032-4.456 3.719a3.509 3.509 0 0 0 .416 2.589 2.9 2.9 0 0 0 2.613 1.193h7.877l-1.1 4.205h-8.96a6.018 6.018 0 0 1-4.543-1.6 5.8 5.8 0 0 1-1.53-3.734 11.013 11.013 0 0 1 3.052-7.649 10.37 10.37 0 0 1 7.194-3.193h3.75l1.287-4.849h5.052Z"/><path fill="#349574" d="M127.467 9.866q1.208-3.483 4.456-3.483h14.452l-1.1 4.8h-8.411v.016H132.8a.576.576 0 0 0-.353.141.774.774 0 0 0-.259.376l-.628 2.777h8.473l-1.035 4.8h-8.52l-1.82 8.112h-5.147Z"/><path fill="#349574" d="M146.477 27.346q-3.954-.423-5.225-3.428t.659-7.445q3.3-5.492 10.23-5.115h7.328l-.235.832h.016l-1.287 5.084-2.57 10.135h-5.131Zm6.371-10.073h-.016l.424-1.695h-2.463a4.942 4.942 0 0 0-3.2 1.059 5.142 5.142 0 0 0-1.663 2.456q-.832 3.781 2.62 3.734h2.856Zm24.499-5.932 1.2-4.958h5.162a.066.066 0 0 1-.008.032c-.005.011-.013.029-.023.055a.77.77 0 0 0-.032.1l-.039.157c-.016.062-.037.139-.063.227s-.053.191-.079.306-.057.243-.094.384-.079.3-.126.487-.1.384-.157.6-.118.46-.18.722-.133.547-.212.855-.164.641-.259 1h3.7l-1.02 4.66h-3.75a.076.076 0 0 1-.008.032.245.245 0 0 0-.016.063q-.0075.0465-.024.117l-.039.181-.055.259q-.032.15-.086.353t-.118.463q-.062.259-.141.588t-.172.73q-.094.4-.212.887t-.259 1.051q-.142.565-.314 1.24a.973.973 0 0 0 .188.722.792.792 0 0 0 .675.314h2.683l-1.036 4.441h-3.531a3.96 3.96 0 0 1-3.35-1.647 4.553 4.553 0 0 1-.777-3.829l1.55-6.4h-10.047q-.973-.047-1.114.706a.657.657 0 0 0 .416.769 3.177 3.177 0 0 0 1.31.141l2.087-.063q2.934.095 3.883 1.656a5.983 5.983 0 0 1 .51 4.166q-.973 4.676-6.449 4.5h-9.32l.894-4.362h8.269q1.318.11 1.585-.816.031-1.02-1.522-.926h-2.322a4.7 4.7 0 0 1-3.7-1.553 4.8 4.8 0 0 1-.792-4.158q1.4-4.582 7.045-4.252h10.285Z"/></g><path fill="url(#b)" d="M36.444 34.91H121.4v1.133H36.444z"/></svg>
+    </div>
+    <div class="partner-box">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100" height="29" viewBox="0 0 100 29"><path fill="#fff" d="M28.26 14.13a14.13 14.13 0 1 1-28.26 0 14.13 14.13 0 0 1 28.26 0"/><path fill="#e83330" d="M14.13 0C9.76 0 5.86 1.98 3.26 5.1c.47 2.34 1.15 4.43 2.01 6.22-.29.75-.51 1.52-.62 2.24l-.67 3.68c-1.3-1.58-2.57-3.66-3.59-6.41-.25 1.06-.39 2.16-.39 3.3 0 3.56 1.32 6.81 3.49 9.29l1.8-9.75c.09-.57.24-1.17.45-1.77l.09-.24c.03-.1.07-.21.12-.31.02-.07.05-.14.08-.21.05-.1.09-.21.14-.31.03-.07.07-.15.11-.22.04-.1.09-.19.14-.29s.11-.2.17-.3c.03-.07.07-.14.11-.21 1.35-2.27 3.7-4.36 7.48-4.36h.01c3.54.01 6.65 2.14 7.91 5.43 1.29 3.36.38 6.99-2.37 9.49-2.58 2.32-6.64 2.76-10.36 1.11-.15-.06-.31-.14-.47-.22l.82-4.46c.45.3.91.55 1.39.77 2.17.96 4.42.81 5.74-.38 1.44-1.3 1.9-3.08 1.25-4.77-.49-1.3-1.78-2.68-3.91-2.68h-.01c-3.81 0-4.59 4.14-4.66 4.62l-.01.06-2.23 12.07c2.03 1.13 4.37 1.77 6.85 1.77 7.81 0 14.13-6.33 14.13-14.13S21.93 0 14.13 0"/><path fill="#182229" d="M53.05 8.29c-1.59-.06-3.08.48-4.42 1.63-1.33 1.14-2.15 2.53-2.43 4.13-.28 1.56.03 2.93.91 4.08.89 1.15 2.12 1.76 3.66 1.81h.19c1.3 0 2.57-.42 3.62-1.2l-.08.46c-.04.23.12.46.35.5h1.45c.21 0 .39-.15.43-.35l.91-5.16c.32-1.56.03-2.93-.88-4.08-.9-1.16-2.15-1.77-3.71-1.82m.83 8.37c-.87.77-1.8 1.12-2.81 1.08-.85-.01-1.65-.42-2.14-1.12-.53-.72-.69-1.54-.5-2.52.19-1 .73-1.91 1.53-2.56.75-.67 1.72-1.05 2.73-1.05.92 0 1.63.32 2.16.99.54.69.73 1.49.58 2.46-.17 1.07-.72 2.03-1.55 2.72m29.07-8.37c-1.58-.06-3.07.48-4.41 1.63-1.33 1.14-2.15 2.53-2.44 4.13-.27 1.56.04 2.93.92 4.08.89 1.15 2.12 1.76 3.66 1.81h.18c1.31 0 2.58-.42 3.63-1.2l-.08.46c-.04.23.12.46.35.5h1.45c.21 0 .39-.15.42-.35l.91-5.16c.33-1.56.03-2.93-.87-4.08-.9-1.16-2.15-1.77-3.72-1.82m.84 8.37c-.88.77-1.8 1.12-2.82 1.08-.85-.01-1.64-.42-2.13-1.12-.53-.72-.69-1.54-.5-2.52.19-1 .73-1.91 1.53-2.56.75-.67 1.72-1.05 2.73-1.05.92 0 1.63.32 2.16.99.54.69.73 1.49.58 2.46-.17 1.07-.72 2.03-1.55 2.72m15.19-6.55c-.89-1.16-2.13-1.77-3.69-1.82-1.57-.05-3.05.5-4.39 1.65-1.34 1.14-2.16 2.53-2.44 4.13-.28 1.56.03 2.93.91 4.08.89 1.15 2.13 1.75 3.69 1.79h.2c1.5 0 2.91-.55 4.2-1.65 1.34-1.14 2.16-2.52 2.44-4.09.28-1.56-.03-2.94-.92-4.09m-5.65 7.63c-.85.01-1.65-.4-2.14-1.1-.52-.72-.68-1.55-.49-2.53.19-1.01.73-1.92 1.53-2.57.73-.67 1.69-1.05 2.69-1.05h.04c.92 0 1.62.32 2.15 1s.73 1.49.59 2.46c-.17 1.04-.67 1.94-1.56 2.72-.87.78-1.79 1.12-2.81 1.07M40.59 8.31c-1.57-.05-3.06.5-4.41 1.65-1.34 1.14-2.16 2.51-2.44 4.09l-1.34 7.62c-.04.24.11.46.35.5.02.01.05.01.07.01h1.34c.21 0 .39-.15.43-.36l.55-3.15c.84.8 1.91 1.24 3.21 1.29 1.58.05 3.06-.5 4.4-1.65 1.33-1.14 2.15-2.53 2.44-4.13.27-1.56-.04-2.93-.92-4.08-.89-1.15-2.13-1.75-3.68-1.79m-1.92 9.45c-.93 0-1.65-.33-2.18-1-.54-.68-.73-1.49-.58-2.46.16-1.05.67-1.94 1.56-2.72.81-.73 1.67-1.08 2.61-1.08.07 0 .14 0 .21.01.85-.01 1.65.4 2.14 1.1.53.72.7 1.55.51 2.52-.2 1.01-.75 1.92-1.55 2.57-.83.71-1.72 1.06-2.72 1.06m32.24-9.38c-.96.05-1.88.37-2.66.93l.48-2.72c.04-.24-.11-.46-.35-.5-.02-.01-.05-.01-.07-.01h-1.38c-.2 0-.38.15-.42.36L64.26 19.2c-.04.23.12.46.35.5h1.45c.21 0 .39-.15.42-.35l1.08-6.11c.12-.76.53-1.44 1.13-1.92.59-.5 1.34-.77 2.11-.78.68-.04 1.33.24 1.76.76.45.52.62 1.23.47 1.9l-1.05 6c-.04.23.11.46.35.5h1.44c.21 0 .39-.15.43-.35l1.03-5.86c.26-1.45-.04-2.69-.89-3.69-.85-1.01-2.01-1.49-3.43-1.42m-8.93 2.29H64c.21 0 .39-.15.43-.36l.22-1.28c.04-.23-.11-.46-.35-.5-.02 0-.05-.01-.07-.01h-1.87l.34-1.93c.04-.24-.12-.46-.35-.5-.03-.01-.05-.01-.08-.01H60.9c-.21 0-.39.15-.42.36l-.37 2.08h-.56c-.21 0-.39.15-.43.36l-.22 1.28c-.04.24.11.46.35.5.02.01.04.01.07.01h.41l-.98 5.55c-.19 1.11-.03 2 .5 2.63.6.71 1.65 1.07 3.12 1.07.21 0 .39-.15.43-.35l.2-1.14c.04-.24-.12-.46-.35-.5-.03-.01-.05-.01-.08-.01-.67 0-1.13-.14-1.37-.43-.23-.28-.29-.74-.18-1.36z"/></svg>
+    </div>
+  </div>
 
   <!-- Internal: bKash/Nagad gateway-style -->
   <div class="detail-panel rv" id="panel-bkash-internal" style="--panel-accent:var(--bkash-text)">
@@ -546,6 +570,7 @@ const themeToggle = document.getElementById('themeToggle');
 let qrRendered = false; // hoisted early so applyTheme can safely reference it
 function applyTheme(dark){
   body.classList.toggle('dark-mode', dark);
+  themeToggle.classList.toggle('dark', dark);
   localStorage.setItem('sv-theme', dark ? 'dark' : 'light');
   if(typeof placeQrLogo === 'function' && qrRendered) placeQrLogo();
 }
@@ -1053,7 +1078,6 @@ payBtn.addEventListener('click', () => {
 
 document.getElementById('psCloseBtn').addEventListener('click', () => closeOverlay(successOverlay));
 document.getElementById('successOverlay').addEventListener('click', (e) => { if(e.target === successOverlay) closeOverlay(successOverlay); });
-document.querySelector('.nav-back').addEventListener('click', () => history.back());
 </script>
 </body>
 </html>
