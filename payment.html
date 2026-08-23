@@ -695,8 +695,17 @@ const S = { flow: (new URLSearchParams(location.search).get('flow') === 'proxy')
 
 /* ─── Internal cart: read real items from localStorage (written by store.html) ─── */
 const CART_KEY = 'sv-cart-internal';
-const SHIPPING_FLAT = 120;
-const SHIPPING_FREE_THRESHOLD = 6800;
+let SHIPPING_FLAT = 120;
+let SHIPPING_FREE_THRESHOLD = 6800;
+(function syncShippingRules(){
+  try {
+    const saved = JSON.parse(localStorage.getItem('sv-shipping') || 'null');
+    if(saved){
+      if(typeof saved.flat === 'number') SHIPPING_FLAT = saved.flat;
+      if(typeof saved.freeThreshold === 'number') SHIPPING_FREE_THRESHOLD = saved.freeThreshold;
+    }
+  } catch(e){}
+})();
 function fmt(n){ return '৳' + Math.round(n).toLocaleString('en-US'); }
 function readInternalCart(){
   try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }

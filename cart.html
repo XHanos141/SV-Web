@@ -567,6 +567,17 @@ const DATA = {
 };
 if (window.SVBadges) SVBadges.init();
 
+/* ─── Shared shipping rules (sv-shipping localStorage, synced from admin) ─── */
+(function syncShippingRules(){
+  try {
+    const saved = JSON.parse(localStorage.getItem('sv-shipping') || 'null');
+    if(saved && DATA.internal.shipping){
+      if(typeof saved.flat === 'number') DATA.internal.shipping.flat = saved.flat;
+      if(typeof saved.freeThreshold === 'number') DATA.internal.shipping.freeThreshold = saved.freeThreshold;
+    }
+  } catch(e){}
+})();
+
 /* ─── Merge items added from store.html (localStorage) into internal cart ─── */
 const CART_KEY = 'sv-cart-internal';
 function readStoredCart(){

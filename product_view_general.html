@@ -726,7 +726,7 @@ body.dark-mode .pv-dot.active{
         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" style="width:19px;height:19px" viewBox="0 0 406.215 406.215"><path d="M226.793 243.186v163.029h134.115c17.431 0 31.568-14.129 31.568-31.57V243.186zm-47.419 0H13.749v131.459c0 17.441 14.141 31.57 31.57 31.57h134.055zm-122.586 129.9c-6.545 0-11.855-5.311-11.855-11.854v-65.778c0-6.544 5.311-11.854 11.855-11.854s11.855 5.312 11.855 11.854v65.778c0 6.543-5.31 11.854-11.855 11.854m314.388-253.522h-59.293c8.184-3.928 15.049-7.986 19.2-12.133 24.423-24.419 24.423-64.03 0-88.453C318.857 6.768 302.85.664 286.844.664c-16.009 0-32.019 6.104-44.229 18.314-10.141 10.144-19.897 35.182-27.862 60.983-3.72-1.021-7.549-1.736-11.577-1.736-4.014 0-7.844.716-11.547 1.729-7.996-26.034-17.844-51.412-28.08-61.641C151.338 6.103 135.346 0 119.322 0c-16.008 0-32.016 6.104-44.227 18.313-24.422 24.432-24.422 64.035 0 88.453 4.369 4.388 11.73 8.679 20.562 12.798H35.038c-17.43 0-31.553 14.128-31.553 31.556v26.852c0 17.43 14.123 31.551 31.553 31.551h144.336v-88.707h47.419v88.707h144.384c17.428 0 31.553-14.123 31.553-31.552v-26.852c-.001-17.427-14.126-31.555-31.554-31.555M264.971 41.332c5.834-5.838 13.612-9.057 21.873-9.057 8.272 0 16.039 3.219 21.891 9.057 5.834 5.841 9.045 13.607 9.045 21.873s-3.211 16.031-9.016 21.835c-6.531 6.161-32.107 15.76-63.725 24.701-.894-3.066-2.101-5.967-3.627-8.716 8.614-29.753 17.661-53.458 23.559-59.693m-167.523-.664c5.836-5.834 13.615-9.053 21.875-9.053 8.273 0 16.039 3.211 21.857 9.037 5.945 6.291 15.098 30.303 23.773 60.365-1.436 2.577-2.576 5.296-3.473 8.158-31.768-8.952-57.502-18.6-64.033-24.758-12.056-12.064-12.056-31.685.001-43.749"/></svg>
       </div>
       <div class="pv-spec-body">
-        <div class="pv-spec-text">Free shipping over <b>৳10,000</b></div>
+        <div class="pv-spec-text">Free shipping over <b id="pvFreeShipThreshold">৳10,000</b></div>
         <svg class="pv-spec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
     </div>
@@ -831,6 +831,16 @@ function toggleTheme(){
   themeToggle.classList.toggle('dark', document.body.classList.contains('dark-mode'));
 }
 themeToggle.addEventListener('click', toggleTheme);
+
+// ─── Shared free-shipping threshold (sv-shipping localStorage, synced from admin) ───
+(function initFreeShipBadge(){
+  try {
+    const saved = JSON.parse(localStorage.getItem('sv-shipping') || 'null');
+    const threshold = (saved && saved.freeThreshold) ? saved.freeThreshold : 10000;
+    const el = document.getElementById('pvFreeShipThreshold');
+    if(el) el.textContent = '৳' + threshold.toLocaleString();
+  } catch(e){}
+})();
 
 let qty = 1;
 
