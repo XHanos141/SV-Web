@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuppVerse BD — About Us</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cyan:#009ddc; --orange:#f26430; --green:#009b72; --gold:#f4a922; --purple:#6761a8;
+  --font:'DM Sans',sans-serif; --fd:'Plus Jakarta Sans',sans-serif; --fs:'Outfit',sans-serif;
+  --bg:#ffffff; --surface:#ffffff; --surface2:#f5f7fc; --border:rgba(0,0,0,0.07);
+  --text:#0a1628; --t2:#4a5568; --t3:#9aa5b4;
+  --shadow:0 2px 16px rgba(0,0,0,0.07); --shadow-md:0 6px 28px rgba(0,0,0,0.1);
+}
+body.dark-mode {
+  --bg:#060d1a; --surface:#0f1a2e; --surface2:#162338; --border:rgba(255,255,255,0.08);
+  --text:#eef4ff; --t2:rgba(238,244,255,0.55); --t3:rgba(238,244,255,0.28);
+  --shadow:0 2px 16px rgba(0,0,0,0.4); --shadow-md:0 6px 28px rgba(0,0,0,0.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;display:flex;align-items:center;justify-content:center;padding:20px;transition:background .35s ease,color .35s ease}
+
+/* Card */
+.about-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 24px;box-shadow:var(--shadow);max-width:560px;width:100%;animation:cardIn .5s ease both}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.about-text{font-size:14px;font-weight:500;color:var(--t2);line-height:1.6;margin-bottom:16px;text-align:justify;text-align-last:left;word-spacing:0.5px}
+.about-text:last-child{margin-bottom:0}
+.about-text strong{color:var(--text);font-weight:700}
+.about-divider{height:1px;background:var(--border);margin:20px 0}
+.about-closing{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--text);text-align:center;margin-top:4px;letter-spacing:-.3px}
+.about-closing-sub{font-size:12px;font-weight:600;color:var(--t3);text-align:center;margin-top:6px;letter-spacing:.12em;text-transform:uppercase}
+
+/* Back link */
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--cyan);text-decoration:none;margin-bottom:20px;transition:opacity .2s}
+.back-link:hover{opacity:.75}
+.back-link svg{width:16px;height:16px;stroke:var(--cyan);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+
+<div class="about-card">
+  <a href="#" class="back-link" onclick="history.back();return false">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Back
+  </a>
+
+  <p class="about-text"><strong>SuppVerseBD</strong> was created with a simple idea: everyone in Bangladesh should have easy access to authentic products from trusted brands around the world.</p>
+
+  <p class="about-text">We know how frustrating it can be to search for genuine products, worry about counterfeits, or deal with the complexity of international shopping. That's why we built a service that makes the process simple, transparent, and reliable.</p>
+
+  <p class="about-text">Whether you're choosing from our <strong>local stock</strong> or placing a <strong>pre-order</strong> from your favorite international store, we take care of everything after your order is confirmed. From sourcing and purchasing to international shipping, customs clearance, and final delivery, we manage every step so you can shop with confidence.</p>
+
+  <p class="about-text">Trust is the foundation of everything we do. We carefully source products from trusted brands, authorized distributors, verified retailers, and reputable global marketplaces. Every order is handled with attention to detail because we believe authenticity isn't just a promise, it's our responsibility.</p>
+
+  <p class="about-text">Today, SuppVerseBD is more than an online store. We're building a trusted bridge between Bangladesh and the world's best products, making global shopping easier, safer, and more accessible for everyone.</p>
+
+  <p class="about-text">As we continue to grow, our commitment remains the same: honest service, authentic products, and a shopping experience you can rely on every time.</p>
+
+  <div class="about-divider"></div>
+
+  <p class="about-text" style="text-align:center;font-style:italic;color:var(--t3);text-align-last:center;">Thank you for choosing SuppVerseBD.</p>
+
+  <div class="about-closing">Discover Better.</div>
+  <div class="about-closing-sub">Beyond Borders.</div>
+</div>
+
+<script>
+(function(){
+  const theme = localStorage.getItem('sv-theme') || 'light';
+  document.body.classList.toggle('dark-mode', theme === 'dark');
+})();
+</script>
+
+</body>
+</html>

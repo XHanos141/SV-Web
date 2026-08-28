@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuppVerse BD — Terms & Conditions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cyan:#009ddc; --orange:#f26430; --green:#009b72; --gold:#f4a922; --purple:#6761a8;
+  --font:'DM Sans',sans-serif; --fd:'Plus Jakarta Sans',sans-serif; --fs:'Outfit',sans-serif;
+  --bg:#ffffff; --surface:#ffffff; --surface2:#f5f7fc; --border:rgba(0,0,0,0.07);
+  --text:#0a1628; --t2:#4a5568; --t3:#9aa5b4;
+  --shadow:0 2px 16px rgba(0,0,0,0.07); --shadow-md:0 6px 28px rgba(0,0,0,0.1);
+}
+body.dark-mode {
+  --bg:#060d1a; --surface:#0f1a2e; --surface2:#162338; --border:rgba(255,255,255,0.08);
+  --text:#eef4ff; --t2:rgba(238,244,255,0.55); --t3:rgba(238,244,255,0.28);
+  --shadow:0 2px 16px rgba(0,0,0,0.4); --shadow-md:0 6px 28px rgba(0,0,0,0.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;display:flex;align-items:center;justify-content:center;padding:20px;transition:background .35s ease,color .35s ease}
+
+/* Card */
+.tc-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 24px;box-shadow:var(--shadow);max-width:600px;width:100%;animation:cardIn .5s ease both}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Back link */
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--cyan);text-decoration:none;margin-bottom:24px;transition:opacity .2s}
+.back-link:hover{opacity:.75}
+.back-link svg{width:16px;height:16px;stroke:var(--cyan);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* Title */
+.tc-title{font-family:var(--fd);font-size:24px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.2;margin-bottom:4px}
+.tc-updated{font-size:11px;font-weight:600;color:var(--t3);letter-spacing:.08em;margin-bottom:20px}
+
+/* Sections */
+.tc-section{margin-bottom:22px}
+.tc-section:last-of-type{margin-bottom:16px}
+.tc-heading{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:-.2px}
+.tc-text{font-size:13.5px;font-weight:500;color:var(--t2);line-height:1.65;margin-bottom:10px;text-align:justify;text-align-last:left;word-spacing:0.5px}
+.tc-text:last-child{margin-bottom:0}
+.tc-text strong{color:var(--text);font-weight:700}
+
+/* Lists */
+.tc-list{list-style:none;padding:0;margin:0 0 10px 0}
+.tc-list li{position:relative;font-size:13px;font-weight:500;color:var(--t2);line-height:1.65;padding-left:16px;margin-bottom:4px}
+.tc-list li::before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--cyan);opacity:.7}
+.tc-list li:last-child{margin-bottom:0}
+
+/* Divider */
+.tc-divider{height:1px;background:var(--border);margin:18px 0}
+
+/* Closing */
+.tc-closing{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--text);text-align:center;margin-top:4px;letter-spacing:-.3px}
+.tc-closing-sub{font-size:12px;font-weight:600;color:var(--t3);text-align:center;margin-top:6px;letter-spacing:.12em;text-transform:uppercase}
+.tc-thanks{font-size:13px;font-weight:500;color:var(--t3);text-align:center;font-style:italic;margin-bottom:6px;text-align-last:center}
+
+/* Contact block */
+.tc-contact{font-size:13px;font-weight:500;color:var(--t2);line-height:1.7;text-align:center;margin-top:8px}
+.tc-contact a{color:var(--cyan);text-decoration:none;font-weight:600}
+.tc-contact a:hover{opacity:.75}
+</style>
+</head>
+<body>
+
+<div class="tc-card">
+  <a href="#" class="back-link" onclick="history.back();return false">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Back
+  </a>
+
+  <h1 class="tc-title">Terms & Conditions</h1>
+  <div class="tc-updated">Last Updated: 11 July 2026</div>
+
+  <p class="tc-text">Welcome to <strong>SuppVerseBD</strong>.</p>
+  <p class="tc-text">By accessing our website or placing an order with us, you agree to these Terms & Conditions. Please read them carefully before making a purchase.</p>
+
+  <div class="tc-divider"></div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Orders</div>
+    <p class="tc-text">An order is considered confirmed only after the required payment has been successfully received.</p>
+    <ul class="tc-list">
+      <li>Local stock orders using Cash on Delivery (COD) require the applicable local delivery charge to be paid in advance.</li>
+      <li>Pre-order items require an advance payment. The amount may vary depending on the product, supplier, or specific order conditions.</li>
+    </ul>
+    <p class="tc-text">Orders may be cancelled before payment. Once payment has been received and order processing has begun, cancellation may not be possible. Orders that have already been shipped cannot be cancelled.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Local Stock & Pre-Orders</div>
+    <p class="tc-text">SuppVerseBD offers both local stock and international pre-order services.</p>
+    <p class="tc-text">For pre-orders, simply share the product link from your preferred international store. Once your order is confirmed, we purchase the product, arrange international shipping, complete customs clearance, and deliver it to your doorstep.</p>
+    <p class="tc-text">Delivery times are estimated and may vary depending on supplier processing, international shipping, customs inspections, public holidays, or other circumstances beyond our control.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Pricing</div>
+    <p class="tc-text">Product prices may change due to exchange rate fluctuations, supplier price changes, shipping costs, taxes, or import-related expenses before a purchase is completed.</p>
+    <p class="tc-text">If an incorrect price is displayed because of a technical or human error, SuppVerseBD reserves the right to cancel the order and issue a full refund.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Product Availability</div>
+    <p class="tc-text">Although we work hard to keep our catalog up to date, product availability cannot always be guaranteed.</p>
+    <p class="tc-text">If a product becomes unavailable after your order is placed, you may choose to:</p>
+    <ul class="tc-list">
+      <li>Receive a full refund</li>
+      <li>Wait for the product to become available</li>
+      <li>Select an alternative product</li>
+    </ul>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Authenticity Guarantee</div>
+    <p class="tc-text">Authenticity is one of our highest priorities. Every product sold by SuppVerseBD is sourced from trusted brands, authorized distributors, verified retailers, or reputable international marketplaces. We proudly stand behind the authenticity of every product we sell.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Packaging & Product Changes</div>
+    <p class="tc-text">Manufacturers may occasionally update product packaging, labeling, ingredients, or manufacturing locations. As long as the product remains authentic, customers may receive packaging that differs from images shown on our website.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Shipping & Delivery</div>
+    <p class="tc-text">Delivery times are estimates and are not guaranteed. SuppVerseBD is not responsible for delays caused by:</p>
+    <ul class="tc-list">
+      <li>Courier services</li>
+      <li>Customs inspections</li>
+      <li>Airline delays</li>
+      <li>Public holidays</li>
+      <li>Natural disasters</li>
+      <li>Political events</li>
+      <li>Government restrictions</li>
+      <li>Strikes</li>
+      <li>Other circumstances beyond our reasonable control</li>
+    </ul>
+    <p class="tc-text">If a shipment is confirmed lost during local delivery, SuppVerseBD will investigate the issue and provide an appropriate solution, including replacement or refund where applicable.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Returns & Refunds</div>
+    <p class="tc-text"><strong>Local Stock</strong> — Eligible local stock items may be returned within 2–3 business days of delivery. To qualify, the product must remain unopened and unused, original packaging must be intact, and local courier charges will be deducted from the refund amount.</p>
+    <p class="tc-text"><strong>Pre-Orders</strong> — Because pre-order items are sourced specifically for each customer, they are generally non-returnable. Returns or replacements are available only if the wrong product was delivered, the item arrives damaged, or a verified product defect is confirmed.</p>
+    <p class="tc-text"><strong>Damaged Deliveries</strong> — If your order arrives damaged, please take clear photos or videos of the package and product, and contact SuppVerseBD within 24 hours of receiving the shipment. Claims submitted after this period may not be eligible for replacement or compensation.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Cash on Delivery (COD)</div>
+    <p class="tc-text">Customers who refuse a confirmed Cash on Delivery order without a valid reason may lose COD eligibility for future purchases. SuppVerseBD may require advance payment for future orders.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Payments</div>
+    <p class="tc-text">We currently accept:</p>
+    <ul class="tc-list">
+      <li>bKash</li>
+      <li>Nagad</li>
+      <li>Bank Transfer</li>
+      <li>Cash on Delivery (eligible orders)</li>
+      <li>Cryptocurrency including USDT, USDC, BTC, and other supported digital assets</li>
+    </ul>
+    <p class="tc-text">Payment availability may vary depending on the product or order type.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Vouchers & Promotions</div>
+    <p class="tc-text">Voucher terms are announced with each promotion. Unless otherwise stated:</p>
+    <ul class="tc-list">
+      <li>Voucher conditions apply only during the promotional period.</li>
+      <li>Only eligible orders may use promotional vouchers.</li>
+      <li>SuppVerseBD reserves the right to modify, suspend, revoke, or cancel any voucher or promotional campaign when necessary.</li>
+      <li>Returned orders purchased using a voucher may be refunded as Store Credit instead of cash.</li>
+      <li>Store Credit may include an expiration date and additional usage conditions.</li>
+    </ul>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Customer Responsibilities</div>
+    <p class="tc-text">Customers are responsible for providing accurate personal and delivery information, reviewing product details before placing an order, reading ingredients, specifications, and usage instructions before using any product, and following manufacturer recommendations.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Health Disclaimer</div>
+    <p class="tc-text">Products sold by SuppVerseBD, including dietary supplements, are not intended to diagnose, treat, cure, or prevent any disease. Information provided on our website is intended for educational and informational purposes only and should never replace professional medical advice. Always consult a qualified healthcare professional before using supplements or health-related products.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Privacy</div>
+    <p class="tc-text">Your personal information is handled according to our Privacy Policy. We never sell your personal information to third parties.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Reviews & User Content</div>
+    <p class="tc-text">By submitting reviews, photos, videos, or testimonials to SuppVerseBD, you grant us permission to use this content for our website, social media, and marketing materials. We will never intentionally publish sensitive personal information without your permission.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Customs & Import Compliance</div>
+    <p class="tc-text">International shipments may be subject to customs inspections or import regulations. SuppVerseBD manages the import process on behalf of our customers whenever applicable. However, customs procedures, government regulations, and clearance times remain under the authority of the relevant government agencies and may affect delivery schedules.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Intellectual Property</div>
+    <p class="tc-text">All content on the SuppVerseBD website, including our logo, branding, graphics, text, product descriptions, and design elements, is the property of SuppVerseBD unless otherwise stated. Unauthorized copying, reproduction, or commercial use is prohibited.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Order Refusal</div>
+    <p class="tc-text">SuppVerseBD reserves the right to refuse or cancel any order if we reasonably believe it involves fraudulent activity, payment verification issues, pricing errors, product unavailability, abuse or misuse of our services, or any activity that may harm our business or customers.</p>
+  </div>
+
+  <div class="tc-section">
+    <div class="tc-heading">Governing Law</div>
+    <p class="tc-text">These Terms & Conditions are governed by the laws of Bangladesh.</p>
+    <p class="tc-text">Our goal is simple: to provide authentic products, honest service, and a shopping experience you can trust.</p>
+  </div>
+
+  <div class="tc-divider"></div>
+
+  <div class="tc-section" style="margin-bottom:10px">
+    <div class="tc-heading" style="text-align:center">Contact Us</div>
+    <p class="tc-text" style="text-align:center;text-align-last:center">If you have any questions regarding these Terms & Conditions, please contact us.</p>
+    <div class="tc-contact">
+      <strong>SuppVerseBD</strong><br>
+      Email: <a href="mailto:suppverse141@gmail.com">suppverse141@gmail.com</a><br>
+      WhatsApp: <a href="https://wa.me/8801644232935">+880 1644-232935</a>
+    </div>
+  </div>
+
+  <div class="tc-divider"></div>
+
+  
+  <p class="tc-thanks">Thank you for choosing SuppVerseBD.</p>
+  <div class="tc-closing">Discover Better.</div>
+  <div class="tc-closing-sub">Beyond Borders.</div>
+</div>
+
+<script>
+(function(){
+  const theme = localStorage.getItem('sv-theme') || 'light';
+  document.body.classList.toggle('dark-mode', theme === 'dark');
+})();
+</script>
+
+</body>
+</html>
