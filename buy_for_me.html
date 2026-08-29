@@ -41,7 +41,7 @@ html{font-size:16px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
   *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}
   .rv{opacity:1;transform:none}
 }
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-top:var(--nav-h);padding-bottom:24px;transition:background .35s ease,color .35s ease;touch-action:manipulation}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-top:var(--nav-h);padding-bottom:calc(64px + 24px);transition:background .35s ease,color .35s ease;touch-action:manipulation}
 button{font-family:inherit;cursor:pointer}
 input,textarea{font-family:inherit}
 :focus-visible{outline:2px solid var(--orange);outline-offset:2px}
@@ -414,7 +414,25 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
 .lg-card h3{font-family:var(--fd);font-size:16px;font-weight:800;margin-bottom:6px}
 .lg-card p{font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:18px}
 .lg-login{width:100%;background:linear-gradient(135deg,#f26430,#b83200);color:#fff;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:800;margin-bottom:8px}
-.lg-cancel{width:100%;background:transparent;border:none;color:var(--t2);font-size:12px;font-weight:700;padding:8px}
+.lg-cancel{width:100%;background:transparent;border:none;color:var(--t2);font-size:12px;font-weight:700;padding:8px}.s-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;height:64px;
+  background:var(--surface);border-top:1px solid var(--border);
+  backdrop-filter:blur(20px) saturate(1.2);
+  display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;
+}
+.s-nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  color:var(--t3);font-size:10px;font-weight:600;cursor:pointer;
+  transition:color .2s;padding:6px 12px;border-radius:10px;
+  text-decoration:none;position:relative;
+}
+.s-nav-item.active{ color:var(--orange); }
+.s-nav-item svg{ width:22px;height:22px; }
+.s-nav-badge{
+  position:absolute;top:0;right:6px;min-width:16px;height:16px;padding:0 4px;
+  border-radius:9px;background:#e64848;color:#fff;font-size:9px;font-weight:700;
+  line-height:16px;text-align:center;align-items:center;justify-content:center;
+}
 </style>
 <base target="_blank">
 </head>
@@ -1458,6 +1476,37 @@ function openReview(){
   buildReviewPopup();
   openOverlay(reviewOverlay);
 }
+</script>
+
+<nav class="s-nav" id="svFooterNav">
+  <a href="store.html" class="s-nav-item" data-page="store">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Store
+  </a>
+  <a href="buy_for_me.html" class="s-nav-item active" data-page="buy_for_me">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.17 15a1.65 1.65 0 0 0-1.51-1H2a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.17 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.17a1.65 1.65 0 0 0 1-1.51V2a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Buy For Me
+  </a>
+  <a href="cart.html" class="s-nav-item" data-page="cart">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+    Cart
+    <span class="s-nav-badge" id="svNavCartBadge" style="display:none">0</span>
+  </a>
+  <a href="orders.html" class="s-nav-item" data-page="orders">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    Orders
+  </a>
+</nav>
+<script>
+try{
+  var cart = JSON.parse(localStorage.getItem('sv-cart-internal') || '[]');
+  var count = Array.isArray(cart) ? cart.reduce(function(n,i){return n+(i.qty||1);},0) : 0;
+  var badge = document.getElementById('svNavCartBadge');
+  if(badge){
+    if(count > 0){ badge.textContent = count; badge.style.display = 'flex'; }
+    else { badge.style.display = 'none'; }
+  }
+}catch(e){}
 </script>
 </body>
 </html>
