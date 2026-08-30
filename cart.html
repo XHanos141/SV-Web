@@ -69,17 +69,26 @@ body{
 }
 .flow-tabs{
   display:flex;gap:8px;background:var(--surface2);border-radius:12px;
-  padding:4px;margin:12px 16px 0;
+  padding:4px;margin:12px 16px 0;position:relative;
 }
+.flow-tabs::before{
+  content:'';position:absolute;top:4px;left:4px;
+  width:calc(50% - 6px);height:calc(100% - 8px);
+  background:var(--surface);border-radius:9px;box-shadow:var(--shadow-sm);
+  transition:transform .32s cubic-bezier(.65,0,.35,1),box-shadow .32s ease;
+  z-index:0;
+}
+.flow-tabs.flow-proxy::before{transform:translateX(calc(100% + 8px));box-shadow:0 2px 8px rgba(242,100,48,0.22)}
+.flow-tabs:not(.flow-proxy)::before{box-shadow:0 2px 8px rgba(10,155,220,0.22)}
 .flow-tab{
   flex:1;padding:9px;border:none;background:transparent;border-radius:9px;
   font-size:12px;font-weight:700;color:var(--text2);
-  transition:background .2s ease,color .2s ease;cursor:pointer;
-  font-family:var(--font-body);
+  transition:color .25s ease;cursor:pointer;
+  font-family:var(--font-body);position:relative;z-index:1;
 }
-.flow-tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm)}
-#tabInternal.active{color:var(--accent);box-shadow:0 2px 8px rgba(10,155,220,0.22)}
-#tabProxy.active{color:var(--orange);box-shadow:0 2px 8px rgba(242,100,48,0.22)}
+.flow-tab.active{background:transparent;color:var(--text)}
+#tabInternal.active{color:var(--accent)}
+#tabProxy.active{color:var(--orange)}
 .cc-badge-row{
   display:flex;align-items:center;gap:6px;margin-top:4px;
 }
@@ -469,7 +478,7 @@ body.dark-mode .summary-line.total{background-image:linear-gradient(to right, rg
   </div>
 </header>
 
-<div class="flow-tabs">
+<div class="flow-tabs" id="cartFlowTabs">
   <button class="flow-tab active" id="tabInternal" type="button">Cart Checkout</button>
   <button class="flow-tab" id="tabProxy" type="button">Proxy Quote</button>
 </div>
@@ -846,6 +855,7 @@ function setFlow(flow){
   viewInternal.style.display = flow === 'internal' ? '' : 'none';
   viewProxy.style.display = flow === 'proxy' ? '' : 'none';
   checkoutBtn.classList.toggle('proxy-theme', flow === 'proxy');
+  document.getElementById('cartFlowTabs').classList.toggle('flow-proxy', flow === 'proxy');
   updateBar();
 }
 tabInternal.addEventListener('click', () => setFlow('internal'));
