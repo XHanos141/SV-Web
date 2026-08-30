@@ -63,15 +63,25 @@ body.dark-mode .order-card{ border-color:rgba(45,190,245,0.32); }
 }
 .oc-head-left{ display:flex;flex-direction:column;gap:2px; }
 .oc-id{
-  font-family:var(--font-display);font-size:11px;font-weight:800;
-  color:#7C6FF7;background:rgba(124,111,247,0.12);
-  border:1px solid rgba(124,111,247,0.38);
-  padding:2px 7px;border-radius:6px;letter-spacing:.3px;
+  font-family:var(--font-display);font-size:11.5px;font-weight:800;
+  padding:2px 7px;border-radius:7px;letter-spacing:.2px;
   display:inline-flex;align-items:center;justify-content:center;
-  line-height:1;align-self:flex-start;
+  line-height:1;
 }
-body.dark-mode .oc-id{ background:rgba(124,111,247,0.18);border-color:rgba(124,111,247,0.5); }
-.oc-meta{ font-size:10.5px;color:var(--text3);font-weight:600; }
+.oc-id-row{ display:flex;align-items:center;gap:6px; }
+.oc-id-label{ font-size:10.5px;font-weight:700;color:var(--text3); }
+.oc-id.store{
+  color:var(--accent);background:rgba(10,155,220,0.12);
+  border:1.5px solid rgba(10,155,220,0.35);
+}
+body.dark-mode .oc-id.store{ background:rgba(45,190,245,0.16);border-color:rgba(45,190,245,0.45); }
+.oc-id.proxy{
+  color:var(--orange);background:rgba(242,100,48,0.08);
+  border:1.5px dashed rgba(242,100,48,0.55);
+}
+body.dark-mode .oc-id.proxy{ background:rgba(242,100,48,0.14);border-color:rgba(242,100,48,0.6); }
+.oc-meta{ font-size:10.5px;color:var(--text3);font-weight:600;margin-top:3px; }
+.oc-meta .oc-meta-date{ color:var(--text); }
 .oc-head-right{ display:flex;align-items:center;gap:10px; }
 .oc-chevron{ width:18px;height:18px;color:var(--text3);transition:transform .25s ease; }
 .order-card.collapsed .oc-chevron{ transform:rotate(-90deg); }
@@ -84,15 +94,17 @@ body.dark-mode .oc-id{ background:rgba(124,111,247,0.18);border-color:rgba(124,1
   max-height:0;opacity:0;margin-bottom:-16px;
 }
 .oc-status-pill{
-  font-size:9.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;
-  padding:4px 9px;border-radius:20px;white-space:nowrap;
+  font-size:10.5px;font-weight:800;letter-spacing:.2px;text-transform:none;
+  padding:2px 7px;border-radius:7px;white-space:nowrap;border:1.5px solid transparent;
 }
-.oc-status-pill.shipped{ background:var(--orange-soft);color:var(--orange); }
+.oc-status-pill.shipped{ background:var(--orange-soft);color:var(--orange);border-color:rgba(242,100,48,0.4); }
 
-.oc-status-pill.delivered{ background:var(--green-soft);color:var(--green); }
-.oc-status-pill.quote{ background:#EDE9FE;color:#7C6FF7; }
-.oc-status-pill.paid{ background:var(--accent-soft);color:var(--accent); }
-.oc-status-pill.purchased{ background:var(--accent-soft);color:var(--accent); }
+.oc-status-pill.delivered{ background:var(--green-soft);color:var(--green);border-color:rgba(10,155,114,0.4); }
+.oc-status-pill.quote{ background:#EDE9FE;color:#7C6FF7;border-color:rgba(124,111,247,0.4); }
+.oc-status-pill.paid{ background:var(--accent-soft);color:var(--accent);border-color:rgba(10,155,220,0.4); }
+.oc-status-pill.purchased{ background:var(--accent-soft);color:var(--accent);border-color:rgba(10,155,220,0.4); }
+.oc-status-wrap{ display:flex;flex-direction:column;align-items:flex-end;gap:3px; }
+.oc-status-date{ font-size:10.5px;font-weight:600;color:var(--text); }
 
 /* Flow tabs */
 .flow-tabs{
@@ -123,6 +135,30 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
   font-size:10px;font-weight:800;color:var(--text3);
   text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px;
 }
+
+/* Collapsible sub-sections (Items / Order Summary) */
+.oc-subhead{
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;margin-bottom:7px;-webkit-tap-highlight-color:transparent;
+}
+.oc-subhead .oc-section-label{ margin-bottom:0; }
+.oc-subhead-right{ display:flex;align-items:center;gap:6px; }
+.oc-subtotal-preview{
+  font-size:11px;font-weight:800;color:var(--text2);
+  opacity:0;transition:opacity .2s;
+}
+.oc-subsection.collapsed .oc-subtotal-preview{ opacity:1; }
+.oc-sub-chevron{
+  width:14px;height:14px;color:var(--text3);flex-shrink:0;
+  transition:transform .25s ease;
+}
+.oc-subsection.collapsed .oc-sub-chevron{ transform:rotate(-90deg); }
+.oc-subsection-content{
+  display:grid;grid-template-rows:1fr;
+  transition:grid-template-rows .28s ease;
+}
+.oc-subsection.collapsed .oc-subsection-content{ grid-template-rows:0fr; }
+.oc-subsection-content > div{ overflow:hidden; }
 
 /* Customer */
 .oc-customer-card{
@@ -163,7 +199,10 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 /* Math */
 .oc-math-card{
   background:var(--surface2);border-radius:var(--radius-sm);
+  border:1px solid var(--border-strong);
+  box-shadow:inset 0 1px 2px rgba(11,18,32,0.04);
   padding:11px 12px;display:flex;flex-direction:column;gap:7px;
+  margin-top:14px;
 }
 .oc-math-row{ display:flex;justify-content:space-between;align-items:center; }
 .oc-math-row span:first-child{ font-size:12px;font-weight:600;color:var(--text2); }
@@ -192,6 +231,28 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
   letter-spacing:.02em;text-transform:uppercase;
 }
 .oc-step.done .oc-step-label{ color:var(--text2); }
+
+/* Vertical stepper (Buy For Me timeline: 7 stages) */
+.oc-vprogress{ display:flex;flex-direction:column; }
+.oc-vstep{ display:flex;gap:12px;position:relative; }
+.oc-vstep-rail{ display:flex;flex-direction:column;align-items:center;width:16px;flex-shrink:0; }
+.oc-vdot{
+  width:10px;height:10px;border-radius:50%;background:var(--border-strong);
+  border:2px solid var(--surface);box-shadow:0 0 0 1px var(--border-strong);
+  flex-shrink:0;margin-top:2px;z-index:1;
+}
+.oc-vstep.done .oc-vdot{ background:var(--orange);box-shadow:0 0 0 1px var(--orange); }
+.oc-vstep.current .oc-vdot{ background:var(--orange);box-shadow:0 0 0 1px var(--orange);animation:pulseDotOrange 1.6s ease-in-out infinite; }
+.oc-vstep.delivered.done .oc-vdot{ background:var(--green);box-shadow:0 0 0 1px var(--green);animation:none; }
+.oc-vline{ width:2px;flex:1;background:var(--border-strong);margin:2px 0;min-height:18px; }
+.oc-vstep.done .oc-vline{ background:var(--orange); }
+.oc-vstep:last-child .oc-vline{ display:none; }
+.oc-vstep-body{ padding-bottom:16px;flex:1;min-width:0; }
+.oc-vstep:last-child .oc-vstep-body{ padding-bottom:0; }
+.oc-vstep-title{ font-size:12px;font-weight:700;color:var(--text3); }
+.oc-vstep.done .oc-vstep-title{ color:var(--text); }
+.oc-vstep.current .oc-vstep-title{ color:var(--orange); }
+.oc-vstep-day{ font-size:10.5px;font-weight:600;color:var(--text3);margin-top:1px; }
 
 .oc-track-link{
   display:flex;align-items:center;justify-content:center;gap:6px;
@@ -273,11 +334,17 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 
     <div class="oc-head" onclick="this.closest('.order-card').classList.toggle('collapsed')">
       <div class="oc-head-left">
-        <div class="oc-id">SV-24081</div>
-        <div class="oc-meta">Aug 24, 2026</div>
+        <div class="oc-id-row">
+          <span class="oc-id-label">Order ID</span>
+          <div class="oc-id store">SV-1021</div>
+        </div>
+        <div class="oc-meta">Order created <span class="oc-meta-date">24 Aug 2026</span></div>
       </div>
       <div class="oc-head-right">
-        <span class="oc-status-pill delivered">Delivered</span>
+        <div class="oc-status-wrap">
+          <span class="oc-status-pill delivered">Delivered</span>
+          <span class="oc-status-date">27 Aug 2026</span>
+        </div>
         <svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
     </div>
@@ -302,8 +369,15 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
         </div>
       </div>
 
-      <div>
-        <div class="oc-section-label">Items</div>
+      <div class="oc-subsection">
+        <div class="oc-subhead" onclick="this.closest('.oc-subsection').classList.toggle('collapsed')">
+          <div class="oc-section-label">Items &amp; Summary</div>
+          <div class="oc-subhead-right">
+            <span class="oc-subtotal-preview">৳8,400</span>
+            <svg class="oc-sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="oc-subsection-content"><div>
         <div class="oc-item-row">
           <div class="oc-item-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.5 7.28a1 1 0 0 0-.5-.87l-7.5-4.33a1 1 0 0 0-1 0L4 6.41a1 1 0 0 0-.5.87v8.44a1 1 0 0 0 .5.87l7.5 4.33a1 1 0 0 0 1 0l7.5-4.33a1 1 0 0 0 .5-.87z"/></svg></div>
           <div style="flex:1;min-width:0">
@@ -332,16 +406,13 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
             <div class="oc-item-linetotal">৳4,200</div>
           </div>
         </div>
-      </div>
-
-      <div>
-        <div class="oc-section-label">Order Summary</div>
         <div class="oc-math-card">
           <div class="oc-math-row"><span>Subtotal</span><span>৳8,400</span></div>
           <div class="oc-math-row"><span>Shipping</span><span>৳120</span></div>
           <div class="oc-math-row discount"><span>Discount</span><span>−৳120</span></div>
           <div class="oc-math-row total"><span>Total</span><span>৳8,400</span></div>
         </div>
+        </div></div>
       </div>
 
       <div>
@@ -368,11 +439,17 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 
     <div class="oc-head" onclick="this.closest('.order-card').classList.toggle('collapsed')">
       <div class="oc-head-left">
-        <div class="oc-id">PX-1042</div>
-        <div class="oc-meta">Aug 26, 2026</div>
+        <div class="oc-id-row">
+          <span class="oc-id-label">Order ID</span>
+          <div class="oc-id proxy">PX-1013</div>
+        </div>
+        <div class="oc-meta">Order created <span class="oc-meta-date">26 Aug 2026</span></div>
       </div>
       <div class="oc-head-right">
-        <span class="oc-status-pill paid">Paid</span>
+        <div class="oc-status-wrap">
+          <span class="oc-status-pill paid">Paid</span>
+          <span class="oc-status-date">26 Aug 2026</span>
+        </div>
         <svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
     </div>
@@ -397,8 +474,15 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
         </div>
       </div>
 
-      <div>
-        <div class="oc-section-label">Items</div>
+      <div class="oc-subsection">
+        <div class="oc-subhead" onclick="this.closest('.oc-subsection').classList.toggle('collapsed')">
+          <div class="oc-section-label">Items &amp; Summary</div>
+          <div class="oc-subhead-right">
+            <span class="oc-subtotal-preview">৳15,600</span>
+            <svg class="oc-sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="oc-subsection-content"><div>
         <div class="oc-item-row">
           <div class="oc-item-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.5 7.28a1 1 0 0 0-.5-.87l-7.5-4.33a1 1 0 0 0-1 0L4 6.41a1 1 0 0 0-.5.87v8.44a1 1 0 0 0 .5.87l7.5 4.33a1 1 0 0 0 1 0l7.5-4.33a1 1 0 0 0 .5-.87z"/></svg></div>
           <div style="flex:1;min-width:0">
@@ -413,25 +497,45 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
             <div class="oc-item-linetotal">৳15,600</div>
           </div>
         </div>
-      </div>
-
-      <div>
-        <div class="oc-section-label">Order Summary</div>
         <div class="oc-math-card">
           <div class="oc-math-row"><span>Product Cost</span><span>৳11,200</span></div>
           <div class="oc-math-row"><span>Shipping + Duty</span><span>৳4,400</span></div>
           <div class="oc-math-row total"><span>Total</span><span>৳15,600</span></div>
         </div>
+        </div></div>
       </div>
 
       <div>
         <div class="oc-section-label">Order Timeline</div>
-        <div class="oc-progress">
-          <div class="oc-step done"><div class="oc-line"></div><div class="oc-dot"></div><div class="oc-step-label">Quote</div></div>
-          <div class="oc-step done current"><div class="oc-line"></div><div class="oc-dot"></div><div class="oc-step-label">Paid</div></div>
-          <div class="oc-step"><div class="oc-line"></div><div class="oc-dot"></div><div class="oc-step-label">Purchased</div></div>
-          <div class="oc-step"><div class="oc-line"></div><div class="oc-dot"></div><div class="oc-step-label">Shipped</div></div>
-          <div class="oc-step"><div class="oc-line"></div><div class="oc-dot"></div><div class="oc-step-label">Delivered</div></div>
+        <div class="oc-vprogress">
+          <div class="oc-vstep delivered">
+            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
+            <div class="oc-vstep-body"><div class="oc-vstep-title">Delivered</div><div class="oc-vstep-day">Est. 9 Mar 2026</div></div>
+          </div>
+          <div class="oc-vstep">
+            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
+            <div class="oc-vstep-body"><div class="oc-vstep-title">Out for Delivery</div><div class="oc-vstep-day">Est. 7 Mar 2026</div></div>
+          </div>
+          <div class="oc-vstep">
+            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
+            <div class="oc-vstep-body"><div class="oc-vstep-title">Customs Cleared</div><div class="oc-vstep-day">Est. 5 Mar 2026</div></div>
+          </div>
+          <div class="oc-vstep">
+            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
+            <div class="oc-vstep-body"><div class="oc-vstep-title">Landed in Dhaka</div><div class="oc-vstep-day">Est. 3 Mar 2026</div></div>
+          </div>
+          <div class="oc-vstep done current">
+            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
+            <div class="oc-vstep-body"><div class="oc-vstep-title">In Air</div><div class="oc-vstep-day">24 Feb 2026</div></div>
+          </div>
+          <div class="oc-vstep done">
+            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
+            <div class="oc-vstep-body"><div class="oc-vstep-title">Reached US Warehouse</div><div class="oc-vstep-day">22 Feb 2026</div></div>
+          </div>
+          <div class="oc-vstep done">
+            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
+            <div class="oc-vstep-body"><div class="oc-vstep-title">Order Placed</div><div class="oc-vstep-day">20 Feb 2026</div></div>
+          </div>
         </div>
       </div>
 
@@ -444,11 +548,11 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 
 <nav class="s-nav" id="svFooterNav">
   <a href="store.html" class="s-nav-item" data-page="store">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5 3.8 3h16.4L22 8.5"/><path d="M2 8.5a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0"/><path d="M3.5 8.5V20a1 1 0 0 0 1 1h15a1 1 0 0 0 1-1V8.5"/><path d="M8.5 21v-6a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v6"/></svg>
     Store
   </a>
   <a href="buy_for_me.html" class="s-nav-item" data-page="buy_for_me">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.17 15a1.65 1.65 0 0 0-1.51-1H2a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.17 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.17a1.65 1.65 0 0 0 1-1.51V2a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
     Buy For Me
   </a>
   <a href="cart.html" class="s-nav-item" data-page="cart">
