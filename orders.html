@@ -47,6 +47,8 @@ body{
   background:var(--surface2);border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;color:var(--text);cursor:pointer;
 }
+.s-header-btn.is-logged-in{background:#009ddc;border-color:#009ddc;color:#fff}
+.hcart-initial{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;line-height:1}
 
 .order-list{ display:flex;flex-direction:column;gap:12px;padding:14px 16px 8px; }
 
@@ -283,6 +285,8 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
   line-height:16px;text-align:center;align-items:center;justify-content:center;
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
 </head>
 <body data-page="orders">
 
@@ -317,7 +321,7 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
     <button class="s-header-btn" id="themeToggle" aria-label="Toggle theme">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
     </button>
-    <button class="s-header-btn" onclick="window.location.href='login.html'" aria-label="Account">
+    <button class="s-header-btn" id="headerAccountBtn" onclick="window.location.href='login.html'" aria-label="Account">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </button>
   </div>
@@ -601,6 +605,7 @@ tabProxy.addEventListener('click', () => {
   tabProxy.classList.add('active'); tabStore.classList.remove('active');
   viewProxy.style.display = ''; viewStore.style.display = 'none';
 });
+svInitHeaderAuth('headerAccountBtn');
 </script>
 </body>
 </html>

@@ -55,6 +55,8 @@ body{
 .theme-toggle.dark .icon-sun{opacity:0;transform:rotate(-90deg) scale(.5)}
 .theme-toggle.dark .icon-moon{opacity:1;transform:rotate(0) scale(1)}
 .hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.hcart.is-logged-in{background:#009ddc;border-color:#009ddc}
+.hcart-initial{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:#fff;line-height:1}
 .hcart svg{width:19px;height:19px;stroke:rgba(255,255,255,.85);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .s-cart-dot{
   position:absolute;top:6px;right:6px;
@@ -947,6 +949,8 @@ body.dark-mode .s-tab{
   to{opacity:1;transform:scale(1) translateY(0)}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
 </head>
 <body data-page="store">
 <!-- CATEGORY ICON SPRITE -->
@@ -1085,7 +1089,7 @@ body.dark-mode .s-tab{
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
       </svg>
     </button>
-    <button class="hcart" aria-label="Account" onclick="window.location.href='login.html'">
+    <button class="hcart" id="headerAccountBtn" aria-label="Account" onclick="window.location.href='login.html'">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </button>
   </div>
@@ -1779,5 +1783,8 @@ function showToast(msg){
 </script>
 
 <div class="s-toast" id="wishToast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span id="wishToastText">Product added to the wishlist</span></div>
+<script>
+svInitHeaderAuth('headerAccountBtn');
+</script>
 </body>
 </html>

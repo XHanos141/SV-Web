@@ -37,3 +37,24 @@ async function svSignOut(redirectTo = 'login.html') {
   await sbClient.auth.signOut();
   window.location.href = redirectTo;
 }
+
+// Call on page load for any page with a header account/profile button.
+// Pass the button's element id. If logged in: shows initials avatar, clicking
+// goes to profile.html. If logged out: shows the default person icon, clicking
+// goes to login.html (unchanged from current behavior).
+async function svInitHeaderAuth(buttonId) {
+  const btn = document.getElementById(buttonId);
+  if (!btn) return;
+
+  const customer = await svGetCurrentCustomer();
+
+  if (customer) {
+    const initial = (customer.full_name || customer.email || '?').trim().charAt(0).toUpperCase();
+    btn.innerHTML = '<span class="hcart-initial">' + initial + '</span>';
+    btn.classList.add('is-logged-in');
+    btn.onclick = () => { window.location.href = 'profile.html'; };
+  } else {
+    btn.classList.remove('is-logged-in');
+    btn.onclick = () => { window.location.href = 'login.html'; };
+  }
+}

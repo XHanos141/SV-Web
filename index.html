@@ -59,6 +59,8 @@ input{font-family:inherit;outline:none;border:none;background:none}
 .hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,transform .15s}
 .hcart:active{transform:scale(.92)}
 .hcart svg{width:18px;height:18px;stroke:rgba(255,255,255,.75);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hcart.is-logged-in{background:#009ddc;border-color:#009ddc}
+.hcart-initial{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:#fff;line-height:1}
 .cbadge{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;border-radius:99px;background:var(--orange);color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid #001f3c}
 
 .hero{background:linear-gradient(to top,#ffffff 0%,rgba(255,255,255,0) 32px),var(--hero-bg);padding:44px 24px 56px;text-align:center;position:relative;overflow:hidden;transition:background .4s ease}
@@ -720,6 +722,8 @@ body.dark-mode .pay-badge-bank svg path[style*="fill:#66cde7"] { fill: #fff !imp
 /* ── Performance: content-visibility for below-fold sections ── */
 section:not(.hero){content-visibility:auto;contain-intrinsic-size:auto 500px}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
 </head>
 <body>
 <!-- CATEGORY ICON SPRITE -->
@@ -858,7 +862,7 @@ section:not(.hero){content-visibility:auto;contain-intrinsic-size:auto 500px}
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
       </svg>
     </button>
-    <button class="hcart" onclick="window.location.href='login.html'">
+    <button class="hcart" id="headerAccountBtn" aria-label="Account" onclick="window.location.href='login.html'">
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </button>
   </div>
@@ -2579,6 +2583,9 @@ document.querySelectorAll('.rv').forEach(el => {
     hero.classList.add('hero-visible');
   }
 })();
+</script>
+<script>
+svInitHeaderAuth('headerAccountBtn');
 </script>
 </body>
 </html>
