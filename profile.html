@@ -105,12 +105,12 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 }
 .cid-value{font-family:var(--font-display);font-size:12px;font-weight:800;color:#c4bdfd;letter-spacing:.2px}
 .cid-copy{
-  width:19px;height:19px;border-radius:50%;border:none;flex-shrink:0;cursor:pointer;
-  background:rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center;
-  transition:background .15s var(--ease);
+  width:22px;height:22px;border-radius:0;border:none;flex-shrink:0;cursor:pointer;
+  background:transparent;display:flex;align-items:center;justify-content:center;
+  transition:opacity .15s var(--ease);
 }
-.cid-copy:active{background:rgba(255,255,255,0.26)}
-.cid-copy svg{width:10px;height:10px;color:#c4bdfd}
+.cid-copy:active{opacity:.6}
+.cid-copy svg{width:16px;height:16px;color:#c4bdfd}
 .copy-toast{
   position:fixed;bottom:calc(var(--bottom-nav-h) + 20px);left:50%;transform:translateX(-50%) translateY(10px);
   background:var(--text);color:var(--bg);font-size:12.5px;font-weight:700;
@@ -185,10 +185,11 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 .addr-actions{display:flex;gap:8px;margin-top:10px;padding-left:34px}
 .addr-actions button{
   font-family:var(--font-body);font-size:11.5px;font-weight:700;
-  border:none;background:var(--surface2);color:var(--text2);
-  padding:6px 11px;border-radius:8px;cursor:pointer;
+  border:1.5px solid var(--border-strong);background:var(--surface2);color:var(--text2);
+  padding:7px 13px;border-radius:9px;cursor:pointer;transition:transform .12s,box-shadow .12s;
 }
-.addr-actions button.danger{color:var(--red)}
+.addr-actions button:active{transform:scale(.96)}
+.addr-actions button.danger{color:var(--red);border-color:rgba(225,67,67,0.3);background:var(--red-soft)}
 .add-addr-btn{
   margin:2px 16px 0;padding:13px;border-radius:var(--radius-sm);
   border:1.5px dashed var(--border-strong);background:transparent;
@@ -369,7 +370,7 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   </div>
 </div>
 <div class="addr-list" id="addrList">
-  <div class="addr-card default" data-id="a1">
+  <div class="addr-card default" data-id="a1" data-type="Home" data-name="Hasan" data-phone="+880 1XXX-XXXXXX" data-full="House 12, Road 5, Dhanmondi" data-district="Dhaka" data-postal="1209">
     <div class="addr-top">
       <div class="addr-icon"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10h14V10"/></svg></div>
       <span class="addr-label">Home</span>
@@ -382,7 +383,7 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
       <button class="danger" onclick="deleteAddr('a1')">Delete</button>
     </div>
   </div>
-  <div class="addr-card" data-id="a2">
+  <div class="addr-card" data-id="a2" data-type="Office" data-name="Hasan" data-phone="+880 1XXX-XXXXXX" data-full="Level 4, Gulshan Avenue, Gulshan-1" data-district="Dhaka" data-postal="1212">
     <div class="addr-top">
       <div class="addr-icon"><svg viewBox="0 0 24 24"><path d="M3 21V7l9-4 9 4v14"/><path d="M9 21v-6h6v6"/></svg></div>
       <span class="addr-label">Office</span>
@@ -492,10 +493,17 @@ let editingAddrId = null;
 function openAddrModal(id){
   editingAddrId = id || null;
   document.getElementById('addrModalTitle').textContent = id ? 'Edit Address' : 'Add New Address';
+  const card = id ? document.querySelector(`.addr-card[data-id="${id}"]`) : null;
+  document.getElementById('addrName').value = card ? card.dataset.name : '';
+  document.getElementById('addrLine').value = card ? card.dataset.full : '';
+  document.getElementById('addrDistrict').value = card ? card.dataset.district : '';
+  document.getElementById('addrPostal').value = card ? card.dataset.postal : '';
+  document.getElementById('addrPhone').value = card ? card.dataset.phone : '';
+  document.querySelectorAll('.addr-type-chip').forEach(c => c.classList.toggle('active', c.dataset.type === (card ? card.dataset.type : 'Home')));
+  document.getElementById('defaultSwitch').classList.toggle('on', card ? card.classList.contains('default') : false);
   document.getElementById('addrModal').classList.add('open');
-  // TODO: prefill fields when editing real data from Supabase
 }
-function closeAddrModal(){ document.getElementById('addrModal').classList.remove('open'); }
+function closeAddrModal(){ document.getElementById('addrModal').classList.remove('open'); document.getElementById('defaultSwitch').classList.remove('on'); }
 document.getElementById('addrModal').addEventListener('click', e=>{
   if(e.target.id === 'addrModal') closeAddrModal();
 });
@@ -540,15 +548,83 @@ document.getElementById('addrPostal').addEventListener('input', function(){
 });
 
 
+function addrIconSvg(type){
+  return type === 'Office'
+    ? '<svg viewBox="0 0 24 24"><path d="M3 21V7l9-4 9 4v14"/><path d="M9 21v-6h6v6"/></svg>'
+    : '<svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10h14V10"/></svg>';
+}
+function renderAddrCard(card, data){
+  card.dataset.type = data.type;
+  card.dataset.name = data.name;
+  card.dataset.phone = data.phone;
+  card.dataset.full = data.full;
+  card.dataset.district = data.district;
+  card.dataset.postal = data.postal;
+  const lineText = `${data.full}, ${data.district}${data.postal ? ' - ' + data.postal : ''}`;
+  card.innerHTML = `
+    <div class="addr-top">
+      <div class="addr-icon">${addrIconSvg(data.type)}</div>
+      <span class="addr-label">${data.type}</span>
+      ${card.classList.contains('default') ? '<span class="addr-default-chip">Default</span>' : ''}
+    </div>
+    <div class="addr-body">${lineText}</div>
+    <div class="addr-phone">${data.phone}</div>
+    <div class="addr-actions">
+      <button onclick="openAddrModal('${card.dataset.id}')">Edit</button>
+      ${card.classList.contains('default') ? '' : `<button onclick="setDefaultAddr('${card.dataset.id}')">Set Default</button>`}
+      <button class="danger" onclick="deleteAddr('${card.dataset.id}')">Delete</button>
+    </div>`;
+}
 function saveAddress(){
+  const data = {
+    type: document.querySelector('.addr-type-chip.active')?.dataset.type || 'Home',
+    name: document.getElementById('addrName').value.trim(),
+    full: document.getElementById('addrLine').value.trim(),
+    district: document.getElementById('addrDistrict').value.trim(),
+    postal: document.getElementById('addrPostal').value.trim(),
+    phone: document.getElementById('addrPhone').value.trim()
+  };
+  if(!data.name || !data.full || !data.district || !data.phone){ closeAddrModal(); return; }
+  const makeDefault = document.getElementById('defaultSwitch').classList.contains('on');
+  const addrList = document.getElementById('addrList');
+
+  let card = editingAddrId ? document.querySelector(`.addr-card[data-id="${editingAddrId}"]`) : null;
+  if(!card){
+    const newId = 'a' + (Date.now());
+    card = document.createElement('div');
+    card.className = 'addr-card';
+    card.dataset.id = newId;
+    addrList.appendChild(card);
+  }
+  if(makeDefault){
+    document.querySelectorAll('.addr-card.default').forEach(c => c.classList.remove('default'));
+    card.classList.add('default');
+    addrList.prepend(card);
+  }
+  renderAddrCard(card, data);
   // TODO: wire to Supabase — insert/update address row, link to customer SV-W#### id
   closeAddrModal();
 }
 function setDefaultAddr(id){
+  document.querySelectorAll('.addr-card').forEach(c => {
+    const wasDefault = c.classList.contains('default');
+    c.classList.toggle('default', c.dataset.id === id);
+    if(wasDefault !== c.classList.contains('default')) renderAddrCard(c, { ...c.dataset });
+  });
+  document.getElementById('addrList').prepend(document.querySelector(`.addr-card[data-id="${id}"]`));
   // TODO: Supabase update — clear other defaults, set this one
 }
 function deleteAddr(id){
-  // TODO: Supabase delete + confirm dialog
+  const card = document.querySelector(`.addr-card[data-id="${id}"]`);
+  if(!card) return;
+  if(!confirm('Delete this address?')) return;
+  const wasDefault = card.classList.contains('default');
+  card.remove();
+  if(wasDefault){
+    const next = document.querySelector('.addr-card');
+    if(next){ next.classList.add('default'); renderAddrCard(next, { ...next.dataset }); }
+  }
+  // TODO: Supabase delete
 }
 
 // ===== PASSWORD =====
