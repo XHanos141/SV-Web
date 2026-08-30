@@ -277,6 +277,8 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   margin-top:6px;cursor:pointer;box-shadow:0 6px 18px var(--accent-glow);
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
 </head>
 <body>
 
@@ -634,10 +636,31 @@ function openPasswordModal(){
 
 // ===== LOGOUT =====
 function handleLogout(){
-  // TODO: Supabase signOut()
-  localStorage.removeItem('sv-session');
-  location.href = 'login.html';
+  svSignOut('login.html');
 }
+
+// ===== LOAD REAL PROFILE DATA =====
+async function loadRealProfile(){
+  const customer = await svGetCurrentCustomer();
+
+  if(!customer){
+    // not logged in — send to login
+    location.href = 'login.html';
+    return;
+  }
+
+  const name = customer.full_name || 'SuppVerse Customer';
+  const email = customer.email || '';
+  const code = customer.customer_code || '';
+  const initial = name.trim().charAt(0).toUpperCase() || '?';
+
+  document.getElementById('custName').textContent = name;
+  document.getElementById('custEmail').textContent = email;
+  document.getElementById('custIdTag').textContent = code;
+  document.getElementById('avatarInitial').textContent = initial;
+}
+
+loadRealProfile();
 </script>
 </body>
 </html>
