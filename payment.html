@@ -323,7 +323,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
         <input class="pay-input" id="addrInputFull" type="text" placeholder="House, Road, Area" style="margin-bottom:0">
         <div class="addr-row">
           <div class="field-wrap" style="position:relative"><input class="pay-input" id="addrInputCity" type="text" placeholder="City" autocomplete="off" style="margin-bottom:0"><div class="city-suggest" id="citySuggest"></div></div>
-          <div class="field-wrap"><input class="pay-input" id="addrInputZip" type="text" placeholder="Postal Code" style="margin-bottom:0"></div>
+          <div class="field-wrap"><input class="pay-input" id="addrInputZip" type="text" placeholder="Postal Code" inputmode="numeric" pattern="[0-9]*" maxlength="4" style="margin-bottom:0"></div>
         </div>
         <label class="addr-save"><input type="checkbox" id="addrSaveChk" checked> Save this address for future orders</label>
       </div>
@@ -713,6 +713,11 @@ const addrInputCity = document.getElementById('addrInputCity');
 const addrInputZip = document.getElementById('addrInputZip');
 const addrSaveChk = document.getElementById('addrSaveChk');
 const citySuggest = document.getElementById('citySuggest');
+
+/* Postal code: digits only */
+addrInputZip.addEventListener('input', function(){
+  this.value = this.value.replace(/\D/g, '');
+});
 
 /* ─── City autocomplete: major Bangladesh districts/cities ─── */
 const BD_CITIES = ['Dhaka','Chittagong','Khulna','Rajshahi','Sylhet','Barishal','Rangpur','Mymensingh','Comilla','Narayanganj','Gazipur','Jessore','Bogura','Dinajpur','Tangail','Cox\'s Bazar','Feni','Brahmanbaria','Noakhali','Chandpur','Lakshmipur','Habiganj','Moulvibazar','Sunamganj','Kishoreganj','Netrokona','Jamalpur','Sherpur','Faridpur','Gopalganj','Madaripur','Shariatpur','Rajbari','Manikganj','Munshiganj','Narsingdi','Naogaon','Natore','Chapainawabganj','Pabna','Sirajganj','Joypurhat','Kurigram','Lalmonirhat','Nilphamari','Panchagarh','Thakurgaon','Gaibandha','Bagerhat','Chuadanga','Jhenaidah','Kushtia','Magura','Meherpur','Narail','Satkhira','Barguna','Bhola','Jhalokati','Patuakhali','Pirojpur','Khagrachari','Bandarban','Rangamati'];

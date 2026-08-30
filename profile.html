@@ -263,6 +263,11 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   background:var(--surface2);font-size:12.5px;font-weight:700;color:var(--text2);cursor:pointer;
 }
 .addr-type-chip.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.city-suggest{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1.5px solid var(--border-strong);border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.16);max-height:180px;overflow-y:auto;z-index:20;display:none}
+.city-suggest.show{display:block}
+.city-suggest-item{padding:10px 12px;font-size:12.5px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border)}
+.city-suggest-item:last-child{border-bottom:none}
+.city-suggest-item:active,.city-suggest-item.hl{background:var(--surface2)}
 .default-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 2px;margin-bottom:6px}
 .default-toggle-row span{font-size:12.5px;font-weight:700;color:var(--text)}
 .modal-save-btn{
@@ -439,12 +444,12 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
     <div class="chip-row">
       <div class="addr-type-chip active" data-type="Home" onclick="pickAddrType(this)">Home</div>
       <div class="addr-type-chip" data-type="Office" onclick="pickAddrType(this)">Office</div>
-      <div class="addr-type-chip" data-type="Other" onclick="pickAddrType(this)">Other</div>
     </div>
+    <div class="field"><label>Full Name</label><input type="text" id="addrName" placeholder="Recipient's name"></div>
     <div class="field"><label>Full Address</label><input type="text" id="addrLine" placeholder="House, Road, Area"></div>
     <div class="field-row">
-      <div class="field"><label>District</label><input type="text" id="addrDistrict" placeholder="e.g. Dhaka"></div>
-      <div class="field"><label>Postal Code</label><input type="text" id="addrPostal" placeholder="1209"></div>
+      <div class="field"><label>District</label><div style="position:relative"><input type="text" id="addrDistrict" placeholder="e.g. Dhaka" autocomplete="off"><div class="city-suggest" id="districtSuggest"></div></div></div>
+      <div class="field"><label>Postal Code</label><input type="text" id="addrPostal" placeholder="1209" inputmode="numeric" pattern="[0-9]*" maxlength="4"></div>
     </div>
     <div class="field"><label>Phone Number</label><input type="tel" id="addrPhone" placeholder="+880 1XXX-XXXXXX"></div>
     <div class="default-toggle-row">
@@ -498,6 +503,43 @@ function pickAddrType(el){
   document.querySelectorAll('.addr-type-chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
 }
+
+/* ─── District autocomplete: major Bangladesh districts/cities ─── */
+const BD_CITIES = ['Dhaka','Chittagong','Khulna','Rajshahi','Sylhet','Barishal','Rangpur','Mymensingh','Comilla','Narayanganj','Gazipur','Jessore','Bogura','Dinajpur','Tangail','Cox\'s Bazar','Feni','Brahmanbaria','Noakhali','Chandpur','Lakshmipur','Habiganj','Moulvibazar','Sunamganj','Kishoreganj','Netrokona','Jamalpur','Sherpur','Faridpur','Gopalganj','Madaripur','Shariatpur','Rajbari','Manikganj','Munshiganj','Narsingdi','Naogaon','Natore','Chapainawabganj','Pabna','Sirajganj','Joypurhat','Kurigram','Lalmonirhat','Nilphamari','Panchagarh','Thakurgaon','Gaibandha','Bagerhat','Chuadanga','Jhenaidah','Kushtia','Magura','Meherpur','Narail','Satkhira','Barguna','Bhola','Jhalokati','Patuakhali','Pirojpur','Khagrachari','Bandarban','Rangamati'];
+
+const addrDistrict = document.getElementById('addrDistrict');
+const districtSuggest = document.getElementById('districtSuggest');
+
+function renderDistrictSuggest(matches){
+  if(matches.length === 0){ districtSuggest.classList.remove('show'); districtSuggest.innerHTML = ''; return; }
+  districtSuggest.innerHTML = matches.map(c => '<div class="city-suggest-item">' + c + '</div>').join('');
+  districtSuggest.classList.add('show');
+}
+addrDistrict.addEventListener('input', () => {
+  const q = addrDistrict.value.trim().toLowerCase();
+  if(!q){ renderDistrictSuggest([]); return; }
+  renderDistrictSuggest(BD_CITIES.filter(c => c.toLowerCase().startsWith(q)).slice(0, 6));
+});
+addrDistrict.addEventListener('focus', () => {
+  const q = addrDistrict.value.trim().toLowerCase();
+  if(q){ renderDistrictSuggest(BD_CITIES.filter(c => c.toLowerCase().startsWith(q)).slice(0, 6)); }
+});
+districtSuggest.addEventListener('mousedown', (e) => {
+  const item = e.target.closest('.city-suggest-item');
+  if(!item) return;
+  addrDistrict.value = item.textContent;
+  renderDistrictSuggest([]);
+});
+document.addEventListener('click', (e) => {
+  if(!districtSuggest.contains(e.target) && e.target !== addrDistrict) districtSuggest.classList.remove('show');
+});
+
+/* Postal code: digits only */
+document.getElementById('addrPostal').addEventListener('input', function(){
+  this.value = this.value.replace(/\D/g, '');
+});
+
+
 function saveAddress(){
   // TODO: wire to Supabase — insert/update address row, link to customer SV-W#### id
   closeAddrModal();
