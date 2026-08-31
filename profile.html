@@ -83,7 +83,35 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   display:flex;align-items:center;justify-content:center;
   font-family:var(--font-display);font-weight:800;font-size:19px;color:#fff;
   box-shadow:0 4px 14px rgba(45,190,245,0.35),inset 0 1px 0 rgba(255,255,255,0.25);
+  position:relative;cursor:pointer;overflow:hidden;
+  transition:transform .15s ease;
 }
+.id-avatar:active{transform:scale(0.94)}
+.id-avatar img{
+  width:100%;height:100%;object-fit:cover;border-radius:16px;
+}
+.id-avatar .avatar-edit-badge{
+  position:absolute;bottom:-2px;right:-2px;
+  width:20px;height:20px;border-radius:50%;
+  background:#fff;border:2px solid var(--surface,#0f1621);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+.id-avatar .avatar-edit-badge svg{
+  width:11px;height:11px;stroke:var(--accent);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+}
+.id-avatar.uploading{opacity:0.6;pointer-events:none}
+.id-avatar .avatar-spinner{
+  display:none;position:absolute;inset:0;
+  align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.35);border-radius:16px;
+}
+.id-avatar.uploading .avatar-spinner{display:flex}
+.id-avatar .avatar-spinner .spin{
+  width:18px;height:18px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;
+  border-radius:50%;animation:avSpin .7s linear infinite;
+}
+@keyframes avSpin{to{transform:rotate(360deg)}}
 .id-name{font-family:var(--font-display);font-size:17px;font-weight:800;letter-spacing:-.2px}
 .id-name-row{display:flex;align-items:center;gap:8px}
 .id-email{font-size:11.5px;color:rgba(255,255,255,0.55);margin-top:2px;font-weight:600}
@@ -314,7 +342,13 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 <div class="id-card-wrap">
   <div class="id-card is-loading" id="idCard">
     <div class="id-top">
-      <div class="id-avatar" id="avatarInitial"></div>
+      <div class="id-avatar" id="avatarInitial" onclick="document.getElementById('avatarFileInput').click()">
+        <div class="avatar-edit-badge">
+          <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <div class="avatar-spinner"><div class="spin"></div></div>
+      </div>
+      <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
       <div>
         <div class="id-name-row">
           <span class="id-name" id="custName"></span>
@@ -654,6 +688,30 @@ function handleLogout(){
 }
 
 // ===== LOAD REAL PROFILE DATA =====
+let currentCustomer = null;
+
+function renderAvatar(customer){
+  const box = document.getElementById('avatarInitial');
+  const name = customer.full_name || 'SuppVerse Customer';
+  const initial = name.trim().charAt(0).toUpperCase() || '?';
+
+  // clear existing img if any, keep badge + spinner
+  const existingImg = box.querySelector('img');
+  if(existingImg) existingImg.remove();
+  box.childNodes.forEach(n => { if(n.nodeType === 3) n.remove(); }); // strip stray text nodes
+
+  if(customer.avatar_url){
+    const img = document.createElement('img');
+    img.src = customer.avatar_url;
+    img.alt = name;
+    box.insertBefore(img, box.firstChild);
+    box.dataset.hasImg = '1';
+  } else {
+    box.dataset.hasImg = '0';
+    box.insertBefore(document.createTextNode(initial), box.firstChild);
+  }
+}
+
 async function loadRealProfile(){
   const customer = await svGetCurrentCustomer();
 
@@ -662,18 +720,64 @@ async function loadRealProfile(){
     location.href = 'login.html';
     return;
   }
+  currentCustomer = customer;
 
   const name = customer.full_name || 'SuppVerse Customer';
   const email = customer.email || '';
   const code = customer.customer_code || '';
-  const initial = name.trim().charAt(0).toUpperCase() || '?';
 
   document.getElementById('custName').textContent = name;
   document.getElementById('custEmail').textContent = email;
   document.getElementById('custIdTag').textContent = code;
-  document.getElementById('avatarInitial').textContent = initial;
+  renderAvatar(customer);
   document.getElementById('idCard').classList.remove('is-loading');
 }
+
+document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+
+  if(file.size > 5 * 1024 * 1024){
+    alert('Image must be under 5MB.');
+    e.target.value = '';
+    return;
+  }
+
+  const box = document.getElementById('avatarInitial');
+  box.classList.add('uploading');
+
+  try{
+    const { data: { user } } = await sbClient.auth.getUser();
+    if(!user) throw new Error('Not signed in');
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    const path = `${user.id}/avatar.${ext}`;
+
+    const { error: uploadErr } = await sbClient.storage
+      .from('avatars')
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if(uploadErr) throw uploadErr;
+
+    const { data: signedData, error: signErr } = await sbClient.storage
+      .from('avatars')
+      .createSignedUrl(path, 60 * 60 * 24 * 365); // 1 year
+    if(signErr) throw signErr;
+
+    const { error: updateErr } = await sbClient
+      .from('customers')
+      .update({ avatar_url: signedData.signedUrl })
+      .eq('auth_id', user.id);
+    if(updateErr) throw updateErr;
+
+    currentCustomer.avatar_url = signedData.signedUrl;
+    renderAvatar(currentCustomer);
+  }catch(err){
+    alert('Could not update photo. Please try again.');
+  }finally{
+    box.classList.remove('uploading');
+    e.target.value = '';
+  }
+});
 
 loadRealProfile();
 </script>
