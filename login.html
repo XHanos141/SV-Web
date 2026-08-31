@@ -537,7 +537,7 @@ function showAuthError(form, message){
   if(!banner){
     banner = document.createElement('div');
     banner.className = 'auth-error-banner';
-    banner.style.cssText = 'background:rgba(217,83,83,0.12);border:1px solid var(--red,#d95353);color:var(--red,#d95353);padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:14px;';
+    banner.style.cssText = 'color:var(--red,#d95353);font-size:12.5px;font-weight:600;text-align:center;margin-bottom:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
     form.insertBefore(banner, form.firstChild);
   }
   banner.textContent = message;
