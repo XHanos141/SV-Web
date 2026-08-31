@@ -318,6 +318,42 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   background:var(--accent);color:#fff;font-family:var(--font-body);font-size:14.5px;font-weight:800;
   margin-top:6px;cursor:pointer;box-shadow:0 6px 18px var(--accent-glow);
 }
+
+/* Edit Profile modal — crop tool */
+.s-header-btn{position:relative}
+.crop-wrap{
+  width:200px;height:200px;margin:0 auto 12px;border-radius:50%;
+  overflow:hidden;position:relative;background:var(--surface2);
+  border:2px dashed var(--border-strong);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.crop-wrap.has-image{border-style:solid;border-color:var(--accent)}
+.crop-empty{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--text3);font-size:11.5px;font-weight:600;text-align:center;padding:0 20px;
+}
+.crop-empty svg{width:32px;height:32px;stroke:var(--text3)}
+#cropCanvas{width:200px;height:200px;touch-action:none;cursor:grab}
+#cropCanvas:active{cursor:grabbing}
+.crop-controls{margin-bottom:4px}
+.crop-pick-btn{
+  display:block;margin:0 auto 14px;background:none;border:none;
+  color:var(--accent);font-family:var(--font-body);font-size:12.5px;font-weight:700;cursor:pointer;
+  text-align:center;width:100%;
+}
+.crop-zoom-label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;text-align:center}
+#zoomSlider{width:100%;accent-color:var(--accent)}
+.edit-profile-err{
+  font-size:12px;color:var(--red);font-weight:600;text-align:center;margin-top:10px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:none;
+}
+.edit-profile-err.show{display:block}
+.modal-save-btn:disabled{opacity:0.6;pointer-events:none}
+.btn-spin{
+  display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,0.35);
+  border-top-color:#fff;border-radius:50%;animation:avSpin2 .7s linear infinite;vertical-align:middle;
+}
+@keyframes avSpin2{to{transform:rotate(360deg)}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
@@ -331,6 +367,9 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
     <span>Account &amp; settings</span>
   </div>
   <div class="s-header-actions">
+    <button class="s-header-btn" id="editProfileBtn" aria-label="Edit profile" onclick="openEditProfile()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+    </button>
     <button class="s-header-btn" id="themeToggle" aria-label="Toggle theme">
       <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -342,13 +381,7 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 <div class="id-card-wrap">
   <div class="id-card is-loading" id="idCard">
     <div class="id-top">
-      <div class="id-avatar" id="avatarInitial" onclick="document.getElementById('avatarFileInput').click()">
-        <div class="avatar-edit-badge">
-          <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        </div>
-        <div class="avatar-spinner"><div class="spin"></div></div>
-      </div>
-      <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+      <div class="id-avatar" id="avatarInitial"></div>
       <div>
         <div class="id-name-row">
           <span class="id-name" id="custName"></span>
@@ -486,6 +519,42 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   Log Out
 </button>
 <div class="version-tag">SuppVerse BD · v1.0</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="editProfileModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Edit Profile</div>
+
+    <div class="crop-wrap" id="cropWrap">
+      <div class="crop-empty" id="cropEmpty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <span>Tap to choose a photo</span>
+      </div>
+      <canvas id="cropCanvas" width="280" height="280" style="display:none"></canvas>
+    </div>
+    <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+
+    <div class="crop-controls" id="cropControls" style="display:none">
+      <button class="crop-pick-btn" onclick="document.getElementById('avatarFileInput').click()">Choose different photo</button>
+      <label class="crop-zoom-label">Zoom</label>
+      <input type="range" id="zoomSlider" min="1" max="3" step="0.01" value="1">
+    </div>
+    <button class="crop-pick-btn" id="cropPickInitial" onclick="document.getElementById('avatarFileInput').click()">Choose photo</button>
+
+    <div class="field" style="margin-top:16px">
+      <label>Full Name</label>
+      <input type="text" id="editNameInput" placeholder="Your name">
+    </div>
+
+    <div class="edit-profile-err" id="editProfileErr"></div>
+
+    <button class="modal-save-btn" id="saveProfileBtn" onclick="saveProfileChanges()">
+      <span class="btn-label">Save Changes</span>
+      <span class="btn-spin" style="display:none"></span>
+    </button>
+  </div>
+</div>
 
 <!-- ADDRESS MODAL -->
 <div class="modal-overlay" id="addrModal">
@@ -695,20 +764,15 @@ function renderAvatar(customer){
   const name = customer.full_name || 'SuppVerse Customer';
   const initial = name.trim().charAt(0).toUpperCase() || '?';
 
-  // clear existing img if any, keep badge + spinner
-  const existingImg = box.querySelector('img');
-  if(existingImg) existingImg.remove();
-  box.childNodes.forEach(n => { if(n.nodeType === 3) n.remove(); }); // strip stray text nodes
-
+  box.innerHTML = '';
   if(customer.avatar_url){
     const img = document.createElement('img');
     img.src = customer.avatar_url;
     img.alt = name;
-    box.insertBefore(img, box.firstChild);
-    box.dataset.hasImg = '1';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:16px';
+    box.appendChild(img);
   } else {
-    box.dataset.hasImg = '0';
-    box.insertBefore(document.createTextNode(initial), box.firstChild);
+    box.textContent = initial;
   }
 }
 
@@ -716,7 +780,6 @@ async function loadRealProfile(){
   const customer = await svGetCurrentCustomer();
 
   if(!customer){
-    // not logged in — send to login
     location.href = 'login.html';
     return;
   }
@@ -733,53 +796,222 @@ async function loadRealProfile(){
   document.getElementById('idCard').classList.remove('is-loading');
 }
 
-document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
+loadRealProfile();
+
+// ===== EDIT PROFILE MODAL + CROPPER =====
+const editModal = document.getElementById('editProfileModal');
+const cropCanvas = document.getElementById('cropCanvas');
+const cropCtx = cropCanvas.getContext('2d');
+const cropWrap = document.getElementById('cropWrap');
+const cropEmpty = document.getElementById('cropEmpty');
+const cropControls = document.getElementById('cropControls');
+const cropPickInitial = document.getElementById('cropPickInitial');
+const zoomSlider = document.getElementById('zoomSlider');
+
+let loadedImg = null;
+let imgScale = 1, baseScale = 1;
+let panX = 0, panY = 0;
+let dragging = false, dragStartX = 0, dragStartY = 0, panStartX = 0, panStartY = 0;
+let pendingBlob = null;
+
+function openEditProfile(){
+  document.getElementById('editNameInput').value = currentCustomer ? (currentCustomer.full_name || '') : '';
+  document.getElementById('editProfileErr').classList.remove('show');
+  resetCropState();
+  if(currentCustomer && currentCustomer.avatar_url){
+    loadImageFromUrl(currentCustomer.avatar_url);
+  }
+  editModal.classList.add('open');
+}
+function closeEditProfile(){
+  editModal.classList.remove('open');
+}
+editModal.addEventListener('click', (e) => { if(e.target === editModal) closeEditProfile(); });
+
+function resetCropState(){
+  loadedImg = null; pendingBlob = null;
+  imgScale = 1; panX = 0; panY = 0;
+  cropCanvas.style.display = 'none';
+  cropEmpty.style.display = 'flex';
+  cropWrap.classList.remove('has-image');
+  cropControls.style.display = 'none';
+  cropPickInitial.style.display = 'block';
+}
+
+cropEmpty.parentElement.addEventListener('click', () => {
+  if(!loadedImg) document.getElementById('avatarFileInput').click();
+});
+
+document.getElementById('avatarFileInput').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if(!file) return;
-
   if(file.size > 5 * 1024 * 1024){
-    alert('Image must be under 5MB.');
+    showEditErr('Image must be under 5MB.');
     e.target.value = '';
     return;
   }
+  const reader = new FileReader();
+  reader.onload = (ev) => loadImageFromUrl(ev.target.result);
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
 
-  const box = document.getElementById('avatarInitial');
-  box.classList.add('uploading');
+function loadImageFromUrl(url){
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    loadedImg = img;
+    const size = 280;
+    baseScale = Math.max(size / img.width, size / img.height);
+    imgScale = 1;
+    panX = 0; panY = 0;
+    zoomSlider.value = 1;
+    cropEmpty.style.display = 'none';
+    cropCanvas.style.display = 'block';
+    cropWrap.classList.add('has-image');
+    cropControls.style.display = 'block';
+    cropPickInitial.style.display = 'none';
+    drawCrop();
+  };
+  img.onerror = () => showEditErr('Could not load that image.');
+  img.src = url;
+}
+
+function drawCrop(){
+  if(!loadedImg) return;
+  const size = 280;
+  cropCtx.clearRect(0, 0, size, size);
+  const scale = baseScale * imgScale;
+  const w = loadedImg.width * scale;
+  const h = loadedImg.height * scale;
+  const x = (size - w) / 2 + panX;
+  const y = (size - h) / 2 + panY;
+  cropCtx.save();
+  cropCtx.beginPath();
+  cropCtx.arc(size/2, size/2, size/2, 0, Math.PI*2);
+  cropCtx.clip();
+  cropCtx.drawImage(loadedImg, x, y, w, h);
+  cropCtx.restore();
+}
+
+function clampPan(){
+  const size = 280;
+  const scale = baseScale * imgScale;
+  const w = loadedImg.width * scale;
+  const h = loadedImg.height * scale;
+  const maxPanX = Math.max(0, (w - size) / 2);
+  const maxPanY = Math.max(0, (h - size) / 2);
+  panX = Math.max(-maxPanX, Math.min(maxPanX, panX));
+  panY = Math.max(-maxPanY, Math.min(maxPanY, panY));
+}
+
+zoomSlider.addEventListener('input', () => {
+  imgScale = parseFloat(zoomSlider.value);
+  clampPan();
+  drawCrop();
+});
+
+function cropPointerDown(x, y){
+  dragging = true;
+  dragStartX = x; dragStartY = y;
+  panStartX = panX; panStartY = panY;
+}
+function cropPointerMove(x, y){
+  if(!dragging) return;
+  panX = panStartX + (x - dragStartX);
+  panY = panStartY + (y - dragStartY);
+  clampPan();
+  drawCrop();
+}
+function cropPointerUp(){ dragging = false; }
+
+cropCanvas.addEventListener('mousedown', (e) => {
+  const r = cropCanvas.getBoundingClientRect();
+  cropPointerDown((e.clientX - r.left) * (280/r.width), (e.clientY - r.top) * (280/r.height));
+});
+window.addEventListener('mousemove', (e) => {
+  if(!dragging) return;
+  const r = cropCanvas.getBoundingClientRect();
+  cropPointerMove((e.clientX - r.left) * (280/r.width), (e.clientY - r.top) * (280/r.height));
+});
+window.addEventListener('mouseup', cropPointerUp);
+
+cropCanvas.addEventListener('touchstart', (e) => {
+  const t = e.touches[0];
+  const r = cropCanvas.getBoundingClientRect();
+  cropPointerDown((t.clientX - r.left) * (280/r.width), (t.clientY - r.top) * (280/r.height));
+}, {passive:true});
+cropCanvas.addEventListener('touchmove', (e) => {
+  const t = e.touches[0];
+  const r = cropCanvas.getBoundingClientRect();
+  cropPointerMove((t.clientX - r.left) * (280/r.width), (t.clientY - r.top) * (280/r.height));
+  e.preventDefault();
+}, {passive:false});
+cropCanvas.addEventListener('touchend', cropPointerUp);
+
+function showEditErr(msg){
+  const el = document.getElementById('editProfileErr');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+async function saveProfileChanges(){
+  const nameInput = document.getElementById('editNameInput');
+  const newName = nameInput.value.trim();
+  const errEl = document.getElementById('editProfileErr');
+  errEl.classList.remove('show');
+
+  if(!newName){
+    showEditErr('Name cannot be empty.');
+    return;
+  }
+
+  const btn = document.getElementById('saveProfileBtn');
+  btn.disabled = true;
+  btn.querySelector('.btn-label').style.opacity = '0';
+  btn.querySelector('.btn-spin').style.display = 'inline-block';
 
   try{
     const { data: { user } } = await sbClient.auth.getUser();
     if(!user) throw new Error('Not signed in');
 
-    const ext = file.name.split('.').pop().toLowerCase();
-    const path = `${user.id}/avatar.${ext}`;
+    let avatarUrl = currentCustomer.avatar_url || null;
 
-    const { error: uploadErr } = await sbClient.storage
-      .from('avatars')
-      .upload(path, file, { upsert: true, contentType: file.type });
-    if(uploadErr) throw uploadErr;
+    if(loadedImg){
+      const blob = await new Promise(res => cropCanvas.toBlob(res, 'image/png', 0.92));
+      const path = `${user.id}/avatar.png`;
+      const { error: uploadErr } = await sbClient.storage
+        .from('avatars')
+        .upload(path, blob, { upsert: true, contentType: 'image/png' });
+      if(uploadErr) throw uploadErr;
 
-    const { data: signedData, error: signErr } = await sbClient.storage
-      .from('avatars')
-      .createSignedUrl(path, 60 * 60 * 24 * 365); // 1 year
-    if(signErr) throw signErr;
+      const { data: signedData, error: signErr } = await sbClient.storage
+        .from('avatars')
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if(signErr) throw signErr;
+      avatarUrl = signedData.signedUrl;
+    }
 
     const { error: updateErr } = await sbClient
       .from('customers')
-      .update({ avatar_url: signedData.signedUrl })
+      .update({ full_name: newName, avatar_url: avatarUrl })
       .eq('auth_id', user.id);
     if(updateErr) throw updateErr;
 
-    currentCustomer.avatar_url = signedData.signedUrl;
+    currentCustomer.full_name = newName;
+    currentCustomer.avatar_url = avatarUrl;
+    document.getElementById('custName').textContent = newName;
     renderAvatar(currentCustomer);
-  }catch(err){
-    alert('Could not update photo. Please try again.');
-  }finally{
-    box.classList.remove('uploading');
-    e.target.value = '';
-  }
-});
 
-loadRealProfile();
+    closeEditProfile();
+  }catch(err){
+    showEditErr('Could not save changes. Please try again.');
+  }finally{
+    btn.disabled = false;
+    btn.querySelector('.btn-label').style.opacity = '1';
+    btn.querySelector('.btn-spin').style.display = 'none';
+  }
+}
 </script>
 </body>
 </html>
