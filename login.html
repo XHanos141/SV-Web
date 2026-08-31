@@ -515,7 +515,7 @@ function friendlyAuthError(rawMessage){
     return "Email or password doesn't match. Double-check and try again.";
   }
   if(msg.includes('email not confirmed')){
-    return 'Please verify your email first — check your inbox for the confirmation link.';
+    return 'Please verify your email first. Check your inbox for the confirmation link.';
   }
   if(msg.includes('user already registered')){
     return 'An account with this email already exists. Try logging in instead.';
