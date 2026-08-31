@@ -78,17 +78,15 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 }
 .id-top{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
 .id-avatar{
-  width:52px;height:52px;border-radius:16px;flex-shrink:0;
+  width:52px;height:52px;border-radius:50%;flex-shrink:0;
   background:linear-gradient(135deg,var(--accent),#4fb7ea);
   display:flex;align-items:center;justify-content:center;
   font-family:var(--font-display);font-weight:800;font-size:19px;color:#fff;
   box-shadow:0 4px 14px rgba(45,190,245,0.35),inset 0 1px 0 rgba(255,255,255,0.25);
-  position:relative;cursor:pointer;overflow:hidden;
-  transition:transform .15s ease;
+  position:relative;overflow:hidden;
 }
-.id-avatar:active{transform:scale(0.94)}
 .id-avatar img{
-  width:100%;height:100%;object-fit:cover;border-radius:16px;
+  width:100%;height:100%;object-fit:cover;border-radius:50%;
 }
 .id-avatar .avatar-edit-badge{
   position:absolute;bottom:-2px;right:-2px;
@@ -290,6 +288,17 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 }
 .modal-overlay.open .modal-sheet{transform:translateY(0)}
 .modal-handle{width:36px;height:4px;border-radius:2px;background:var(--border-strong);margin:0 auto 14px}
+
+/* Centered popup variant — used for Edit Profile */
+.modal-overlay.center-popup{align-items:center;padding:20px}
+.modal-overlay.center-popup .modal-sheet{
+  border-radius:20px;max-width:380px;
+  transform:scale(0.92) translateY(0);opacity:0;
+  transition:transform .25s var(--ease),opacity .25s var(--ease);
+  max-height:85vh;
+}
+.modal-overlay.center-popup.open .modal-sheet{transform:scale(1) translateY(0);opacity:1}
+.modal-overlay.center-popup .modal-handle{display:none}
 .modal-title{font-family:var(--font-display);font-size:17px;font-weight:800;margin-bottom:14px}
 .field{margin-bottom:10px}
 .field label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
@@ -368,7 +377,7 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   </div>
   <div class="s-header-actions">
     <button class="s-header-btn" id="editProfileBtn" aria-label="Edit profile" onclick="openEditProfile()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
     </button>
     <button class="s-header-btn" id="themeToggle" aria-label="Toggle theme">
       <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -521,7 +530,7 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 <div class="version-tag">SuppVerse BD · v1.0</div>
 
 <!-- EDIT PROFILE MODAL -->
-<div class="modal-overlay" id="editProfileModal">
+<div class="modal-overlay center-popup" id="editProfileModal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div class="modal-title">Edit Profile</div>
@@ -769,7 +778,7 @@ function renderAvatar(customer){
     const img = document.createElement('img');
     img.src = customer.avatar_url;
     img.alt = name;
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:16px';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
     box.appendChild(img);
   } else {
     box.textContent = initial;
