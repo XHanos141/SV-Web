@@ -100,6 +100,38 @@ body{
 }
 .otp-box.error{border-color:var(--red);box-shadow:0 0 0 4px var(--red-soft)}
 
+@keyframes shakeBox{
+  0%,100%{transform:translateX(0)}
+  15%{transform:translateX(-8px)}
+  30%{transform:translateX(7px)}
+  45%{transform:translateX(-6px)}
+  60%{transform:translateX(4px)}
+  75%{transform:translateX(-2px)}
+  90%{transform:translateX(1px)}
+}
+.otp-box.shake{
+  animation:shakeBox .5s cubic-bezier(0.4,0,0.2,1);
+  border-color:var(--red)!important;
+  box-shadow:0 0 0 4px var(--red-soft)!important;
+}
+
+@keyframes waveSuccess{
+  0%{transform:translateY(0);border-color:var(--border-strong);box-shadow:none;background:var(--surface2)}
+  40%{transform:translateY(-10px);border-color:var(--green);box-shadow:0 6px 16px rgba(10,155,114,0.25);background:var(--green-soft)}
+  70%{transform:translateY(-10px);border-color:var(--green);box-shadow:0 6px 16px rgba(10,155,114,0.25);background:var(--green-soft)}
+  100%{transform:translateY(0);border-color:var(--green);box-shadow:0 0 0 3px var(--green-soft);background:var(--green-soft)}
+}
+.otp-box.wave-success{
+  animation:waveSuccess .5s cubic-bezier(0.34,1.56,0.64,1) both;
+  color:var(--green);
+}
+.otp-box.wave-done{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px var(--green-soft);
+  background:var(--green-soft);
+  color:var(--green);
+}
+
 .field-err{
   font-size:11.5px;color:var(--red);margin:10px 0 0;text-align:center;
   display:none;align-items:center;justify-content:center;gap:4px;font-weight:600;
@@ -256,6 +288,28 @@ function showOk(msg){
   document.getElementById('errBanner').classList.remove('show');
 }
 
+function shakeBoxes(){
+  boxes.forEach(b => {
+    b.classList.remove('shake');
+    void b.offsetWidth; // restart animation
+    b.classList.add('shake');
+  });
+  setTimeout(() => boxes.forEach(b => b.classList.remove('shake')), 500);
+}
+
+function waveSuccess(onComplete){
+  boxes.forEach((b, i) => {
+    setTimeout(() => {
+      b.classList.add('wave-success');
+      setTimeout(() => {
+        b.classList.remove('wave-success');
+        b.classList.add('wave-done');
+        if(i === boxes.length - 1 && onComplete) onComplete();
+      }, 500);
+    }, i * 130);
+  });
+}
+
 async function handleVerify(){
   const code = getCode();
   const otpErr = document.getElementById('otpErr');
@@ -278,8 +332,11 @@ async function handleVerify(){
     });
     if(error) throw error;
 
-    showOk('Verified! Taking you in...');
-    setTimeout(() => { window.location.href = 'store.html'; }, 900);
+    boxes.forEach(b => b.classList.remove('error','shake'));
+    waveSuccess(() => {
+      showOk('Verified! Taking you in...');
+      setTimeout(() => { window.location.href = 'store.html'; }, 500);
+    });
   }catch(err){
     btn.classList.remove('loading');
     btn.disabled = false;
@@ -292,6 +349,7 @@ async function handleVerify(){
       showErr('Could not verify. Please try again.');
     }
     boxes.forEach(b => b.classList.add('error'));
+    shakeBoxes();
   }
 }
 
