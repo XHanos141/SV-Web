@@ -78,16 +78,24 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 }
 .id-top{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
 .id-avatar{
-  width:52px;height:52px;border-radius:50%;flex-shrink:0;
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
   background:linear-gradient(135deg,var(--accent),#4fb7ea);
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-weight:800;font-size:19px;color:#fff;
+  font-family:var(--font-display);font-weight:800;font-size:16px;color:#fff;
   box-shadow:0 4px 14px rgba(45,190,245,0.35),inset 0 1px 0 rgba(255,255,255,0.25);
   position:relative;overflow:hidden;
 }
 .id-avatar img{
   width:100%;height:100%;object-fit:cover;border-radius:50%;
 }
+.id-edit-btn{
+  margin-left:auto;width:26px;height:26px;border-radius:8px;flex-shrink:0;
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.14);
+  display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.85);
+  cursor:pointer;transition:background .15s ease;
+}
+.id-edit-btn:active{background:rgba(255,255,255,0.18)}
+.id-edit-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .id-avatar .avatar-edit-badge{
   position:absolute;bottom:-2px;right:-2px;
   width:20px;height:20px;border-radius:50%;
@@ -331,7 +339,7 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 /* Edit Profile modal — crop tool */
 .s-header-btn{position:relative}
 .crop-wrap{
-  width:200px;height:200px;margin:0 auto 12px;border-radius:50%;
+  width:160px;height:160px;margin:0 auto 12px;border-radius:50%;
   overflow:hidden;position:relative;background:var(--surface2);
   border:2px dashed var(--border-strong);
   display:flex;align-items:center;justify-content:center;cursor:pointer;
@@ -342,7 +350,7 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   color:var(--text3);font-size:11.5px;font-weight:600;text-align:center;padding:0 20px;
 }
 .crop-empty svg{width:32px;height:32px;stroke:var(--text3)}
-#cropCanvas{width:200px;height:200px;touch-action:none;cursor:grab}
+#cropCanvas{width:160px;height:160px;touch-action:none;cursor:grab}
 #cropCanvas:active{cursor:grabbing}
 .crop-controls{margin-bottom:4px}
 .crop-pick-btn{
@@ -376,9 +384,6 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
     <span>Account &amp; settings</span>
   </div>
   <div class="s-header-actions">
-    <button class="s-header-btn" id="editProfileBtn" aria-label="Edit profile" onclick="openEditProfile()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
-    </button>
     <button class="s-header-btn" id="themeToggle" aria-label="Toggle theme">
       <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -391,13 +396,16 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   <div class="id-card is-loading" id="idCard">
     <div class="id-top">
       <div class="id-avatar" id="avatarInitial"></div>
-      <div>
+      <div style="flex:1;min-width:0">
         <div class="id-name-row">
           <span class="id-name" id="custName"></span>
           <span class="id-tag verified">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             Verified
           </span>
+          <button class="id-edit-btn" id="editProfileBtn" aria-label="Edit profile" onclick="openEditProfile()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+          </button>
         </div>
         <div class="id-email" id="custEmail"></div>
       </div>
