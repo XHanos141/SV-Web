@@ -8,6 +8,48 @@ const SUPABASE_ANON_KEY = 'sb_publishable_0dItRk9UZ40ZpwPqJRoOBw_6MyRFU6z';
 
 const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ---- Remember Me handling ----
+// Supabase always persists the session in localStorage so the client works
+// consistently across pages. When the user unchecks "Remember me" at login,
+// we flag the session as non-persistent; any other page load checks this flag
+// and signs the user out if the browser was fully closed and reopened
+// (sessionStorage does not survive a real browser close, localStorage does).
+const SV_REMEMBER_FLAG = 'sv-remember-session';
+
+function svSetRememberChoice(remember) {
+  if (remember) {
+    localStorage.removeItem(SV_REMEMBER_FLAG);
+    sessionStorage.removeItem(SV_REMEMBER_FLAG);
+  } else {
+    // mark this login as session-only: sessionStorage flag proves the tab
+    // is still the same browser session; localStorage flag survives to be
+    // checked next time the site loads (even after the browser fully closes)
+    localStorage.setItem(SV_REMEMBER_FLAG, 'pending-check');
+    sessionStorage.setItem(SV_REMEMBER_FLAG, '1');
+  }
+}
+
+// Call once per page load (done automatically below). If the login was
+// marked session-only and this is a fresh browser session (no sessionStorage
+// flag survived), the previous login should not persist — sign out.
+async function svEnforceRememberChoice() {
+  const { data: { session } } = await sbClient.auth.getSession();
+  if (!session) return;
+
+  // If there's a Supabase session in localStorage but no matching
+  // sessionStorage flag AND the user previously chose "don't remember me",
+  // localStorage still won't have anything to check against post-close —
+  // so we use a lightweight localStorage marker instead, checked against
+  // sessionStorage's survival.
+  const wasSessionOnly = localStorage.getItem(SV_REMEMBER_FLAG) === 'pending-check';
+  if (wasSessionOnly && !sessionStorage.getItem(SV_REMEMBER_FLAG)) {
+    // browser was closed and reopened after a "don't remember" login — sign out
+    await sbClient.auth.signOut();
+    localStorage.removeItem(SV_REMEMBER_FLAG);
+  }
+}
+svEnforceRememberChoice();
+
 // ---- Shared auth helpers used across pages ----
 
 // Returns the current logged-in session's Supabase auth user, or null.

@@ -313,7 +313,7 @@ body{
 
             <div class="row-between">
               <label class="checkbox-row">
-                <input type="checkbox">
+                <input type="checkbox" id="rememberMeCheckbox" checked>
                 <span>Remember me</span>
               </label>
               <button type="button" class="link-btn" onclick="switchTab('forgot')">Forgot password?</button>
@@ -573,9 +573,12 @@ async function handleSubmit(e, type){
     } else {
       const email = document.getElementById('loginEmailInput').value.trim();
       const password = document.getElementById('loginPwInput').value;
+      const remember = document.getElementById('rememberMeCheckbox').checked;
 
       const { error } = await sbClient.auth.signInWithPassword({ email, password });
       if(error) throw error;
+
+      svSetRememberChoice(remember);
 
       btn.classList.remove('loading');
       btn.disabled = false;
