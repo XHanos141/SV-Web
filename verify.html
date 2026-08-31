@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Verify Email — SuppVerse BD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F7FB; --surface:#ffffff; --surface2:#F8FAFD;
+  --border:rgba(10,22,40,0.07); --border-strong:rgba(10,22,40,0.10);
+  --text:#0B1220; --text2:#5E6B7D; --text3:#9AA3B2;
+  --accent:#0A9BDC; --accent-soft:rgba(10,155,220,0.08); --accent-glow:rgba(10,155,220,0.18);
+  --orange:#F26430; --orange-soft:rgba(242,100,48,0.10);
+  --green:#0A9B72; --green-soft:rgba(10,155,114,0.10);
+  --red:#E14343; --red-soft:rgba(225,67,67,0.10);
+  --purple:#7C6FF7;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.04),0 1px 2px rgba(0,0,0,0.02);
+  --shadow-md:0 4px 14px rgba(0,0,0,0.06),0 2px 4px rgba(0,0,0,0.03);
+  --shadow-lg:0 12px 32px rgba(0,0,0,0.08),0 4px 8px rgba(0,0,0,0.04);
+  --radius:18px; --radius-sm:12px; --radius-xs:8px;
+  --font-body:'DM Sans',sans-serif; --font-display:'Plus Jakarta Sans',sans-serif;
+  --ease:cubic-bezier(0.4,0,0.2,1);
+  --header-h:56px; --nav-h:58px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  padding-top:var(--nav-h);
+  overflow-x:hidden;
+}
+.header{
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,255,255,0.03) 0%,transparent 65%),radial-gradient(ellipse 60% 80% at -10% 0%,rgba(124,111,247,0.18) 0%,transparent 55%),linear-gradient(180deg,#0f3258 0%,#002248 22%,#001f3c 55%,#001532 82%,#000d20 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),inset 0 -1px 0 rgba(0,0,0,0.65),0 6px 28px rgba(0,0,0,0.55),0 1px 2px rgba(0,0,0,0.7);
+  border-bottom:1px solid rgba(0,0,0,0.5);
+  padding:0 20px;height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  position:fixed;top:0;left:0;right:0;z-index:500;
+}
+.logo{display:flex;flex-direction:column;line-height:1.1}
+.logo-name{font-family:var(--font-display);font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.2px}
+.logo-name .bd{color:#4fb7ea}
+.logo-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.5);margin-top:1px}
+.header-back{
+  width:34px;height:34px;border-radius:10px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .2s var(--ease);
+}
+.header-back:active{background:rgba(255,255,255,0.12)}
+.header-back svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.auth-wrap{
+  min-height:calc(100vh - var(--nav-h));
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:32px 20px 40px;
+}
+.auth-card{
+  width:100%;max-width:400px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-lg);
+  padding:24px 24px 22px;
+  animation:cardIn .5s var(--ease) both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+.otp-icon{
+  width:60px;height:60px;border-radius:50%;
+  background:var(--accent-soft);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+}
+.otp-icon svg{width:28px;height:28px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.auth-head{text-align:center;margin-bottom:22px}
+.auth-title{font-family:var(--font-display);font-size:21px;font-weight:800;color:var(--text);letter-spacing:-0.3px}
+.auth-sub{font-size:13px;color:var(--text2);margin-top:7px;line-height:1.5}
+.auth-sub b{color:var(--text);font-weight:700}
+
+.otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:8px}
+.otp-box{
+  width:44px;height:52px;
+  background:var(--surface2);border:1.5px solid var(--border-strong);
+  border-radius:var(--radius-sm);
+  text-align:center;font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--text);
+  outline:none;
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease);
+}
+.otp-box:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 4px var(--accent-soft);
+  background:var(--surface);
+}
+.otp-box.error{border-color:var(--red);box-shadow:0 0 0 4px var(--red-soft)}
+
+.field-err{
+  font-size:11.5px;color:var(--red);margin:10px 0 0;text-align:center;
+  display:none;align-items:center;justify-content:center;gap:4px;font-weight:600;
+}
+.field-err.show{display:flex}
+
+.auth-error-banner{
+  background:var(--red-soft);border:1px solid rgba(225,67,67,0.25);
+  border-radius:var(--radius-sm);padding:11px 14px;margin-bottom:16px;
+  font-size:12.5px;color:var(--red);font-weight:600;line-height:1.5;
+  display:none;
+}
+.auth-error-banner.show{display:block}
+.auth-success-banner{
+  background:var(--green-soft);border:1px solid rgba(10,155,114,0.25);
+  border-radius:var(--radius-sm);padding:11px 14px;margin-bottom:16px;
+  font-size:12.5px;color:var(--green);font-weight:600;line-height:1.5;
+  display:none;
+}
+.auth-success-banner.show{display:block}
+
+.btn-primary{
+  width:100%;border:none;border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--accent) 0%,#0788c0 100%);
+  color:#fff;font-family:var(--font-body);font-size:14.5px;font-weight:700;
+  padding:13px 0;cursor:pointer;margin-top:18px;
+  box-shadow:0 4px 14px var(--accent-glow);
+  transition:transform .15s var(--ease),box-shadow .15s var(--ease);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  position:relative;
+}
+.btn-primary:active{transform:scale(0.98);box-shadow:0 2px 8px var(--accent-glow)}
+.btn-primary:disabled{opacity:0.55;pointer-events:none}
+.btn-primary.loading .btn-label{opacity:0}
+.btn-primary .spinner{
+  display:none;position:absolute;width:17px;height:17px;
+  border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite;
+}
+.btn-primary.loading .spinner{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.resend-row{text-align:center;margin-top:16px;font-size:13px;color:var(--text2)}
+.resend-row button{
+  background:none;border:none;font-family:var(--font-body);
+  font-size:13px;font-weight:700;color:var(--accent);cursor:pointer;padding:0;
+}
+.resend-row button:disabled{color:var(--text3);cursor:default}
+
+.back-row{
+  display:flex;align-items:center;gap:6px;margin-bottom:18px;
+  cursor:pointer;color:var(--text2);font-size:13px;font-weight:700;
+}
+.back-row svg{width:16px;height:16px;stroke:var(--text2);fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-back" onclick="window.location.href='login.html'">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  </div>
+  <div class="logo" style="align-items:center">
+    <div class="logo-name">Supp<span style="color:#fff">Verse</span> <span class="bd">BD</span></div>
+    <div class="logo-sub">Verify Email</div>
+  </div>
+  <div style="width:34px"></div>
+</header>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+
+    <div class="back-row" onclick="window.location.href='login.html'">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+      Back to login
+    </div>
+
+    <div class="otp-icon">
+      <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+    </div>
+
+    <div class="auth-head">
+      <div class="auth-title">Verify your email</div>
+      <div class="auth-sub">Enter the 6-digit code sent to<br><b id="targetEmail">your email</b></div>
+    </div>
+
+    <div class="auth-error-banner" id="errBanner"></div>
+    <div class="auth-success-banner" id="okBanner"></div>
+
+    <div class="otp-row" id="otpRow">
+      <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="0">
+      <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="1">
+      <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="2">
+      <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="3">
+      <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="4">
+      <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="5">
+    </div>
+    <div class="field-err" id="otpErr">Enter all 6 digits</div>
+
+    <button class="btn-primary" id="verifyBtn" onclick="handleVerify()">
+      <span class="btn-label">Verify & Continue</span>
+      <span class="spinner"></span>
+    </button>
+
+    <div class="resend-row">
+      Didn't get it? <button id="resendBtn" onclick="handleResend()">Resend code</button>
+      <span id="resendTimer" style="display:none;color:var(--text3)"></span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const email = params.get('email') || '';
+document.getElementById('targetEmail').textContent = email || 'your email';
+
+const boxes = Array.from(document.querySelectorAll('.otp-box'));
+boxes.forEach((box, i) => {
+  box.addEventListener('input', () => {
+    box.value = box.value.replace(/[^0-9]/g, '');
+    if(box.value && i < boxes.length - 1) boxes[i+1].focus();
+    box.classList.remove('error');
+  });
+  box.addEventListener('keydown', (e) => {
+    if(e.key === 'Backspace' && !box.value && i > 0) boxes[i-1].focus();
+  });
+  box.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData.getData('text') || '').replace(/[^0-9]/g, '').slice(0, 6);
+    text.split('').forEach((ch, idx) => { if(boxes[idx]) boxes[idx].value = ch; });
+    const next = boxes[Math.min(text.length, 5)];
+    if(next) next.focus();
+  });
+});
+if(boxes[0]) boxes[0].focus();
+
+function getCode(){
+  return boxes.map(b => b.value).join('');
+}
+
+function showErr(msg){
+  const b = document.getElementById('errBanner');
+  b.textContent = msg;
+  b.classList.add('show');
+  document.getElementById('okBanner').classList.remove('show');
+}
+function showOk(msg){
+  const b = document.getElementById('okBanner');
+  b.textContent = msg;
+  b.classList.add('show');
+  document.getElementById('errBanner').classList.remove('show');
+}
+
+async function handleVerify(){
+  const code = getCode();
+  const otpErr = document.getElementById('otpErr');
+  if(code.length !== 6){
+    otpErr.classList.add('show');
+    boxes.forEach(b => { if(!b.value) b.classList.add('error'); });
+    return;
+  }
+  otpErr.classList.remove('show');
+
+  const btn = document.getElementById('verifyBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try{
+    const { data, error } = await sbClient.auth.verifyOtp({
+      email,
+      token: code,
+      type: 'signup'
+    });
+    if(error) throw error;
+
+    showOk('Verified! Taking you in...');
+    setTimeout(() => { window.location.href = 'store.html'; }, 900);
+  }catch(err){
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    const msg = (err.message || '').toLowerCase();
+    if(msg.includes('expired')){
+      showErr('This code has expired. Tap resend to get a new one.');
+    } else if(msg.includes('invalid') || msg.includes('token')){
+      showErr("That code doesn't match. Check and try again.");
+    } else {
+      showErr('Could not verify. Please try again.');
+    }
+    boxes.forEach(b => b.classList.add('error'));
+  }
+}
+
+let resendCooldown = 0;
+let resendTimerHandle = null;
+
+function startResendCooldown(seconds){
+  resendCooldown = seconds;
+  const btn = document.getElementById('resendBtn');
+  const timer = document.getElementById('resendTimer');
+  btn.style.display = 'none';
+  timer.style.display = 'inline';
+  clearInterval(resendTimerHandle);
+  resendTimerHandle = setInterval(() => {
+    resendCooldown--;
+    timer.textContent = `Resend in ${resendCooldown}s`;
+    if(resendCooldown <= 0){
+      clearInterval(resendTimerHandle);
+      btn.style.display = 'inline';
+      timer.style.display = 'none';
+    }
+  }, 1000);
+  timer.textContent = `Resend in ${resendCooldown}s`;
+}
+
+async function handleResend(){
+  if(!email){ showErr('Missing email. Go back and sign up again.'); return; }
+  const btn = document.getElementById('resendBtn');
+  btn.disabled = true;
+  try{
+    const { error } = await sbClient.auth.resend({ type: 'signup', email });
+    if(error) throw error;
+    showOk('New code sent. Check your inbox.');
+    startResendCooldown(30);
+  }catch(err){
+    showErr('Could not resend code. Try again shortly.');
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+startResendCooldown(30);
+</script>
+
+</body>
+</html>
