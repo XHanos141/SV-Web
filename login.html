@@ -564,7 +564,13 @@ async function handleSubmit(e, type){
     if(!ok) valid = false;
   });
 
-  if(!valid) return false;
+  if(!valid){
+    const uncheckedRequired = Array.from(inputs).some(inp => inp.type === 'checkbox' && inp.hasAttribute('required') && !inp.checked);
+    if(uncheckedRequired){
+      showAuthError(form, 'Please agree to the Terms & Privacy Policy to continue.');
+    }
+    return false;
+  }
 
   btn.classList.add('loading');
   btn.disabled = true;
