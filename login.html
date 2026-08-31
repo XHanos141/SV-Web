@@ -509,6 +509,29 @@ function validateEmail(v){
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
+function friendlyAuthError(rawMessage){
+  const msg = (rawMessage || '').toLowerCase();
+  if(msg.includes('invalid login credentials')){
+    return "Email or password doesn't match. Double-check and try again.";
+  }
+  if(msg.includes('email not confirmed')){
+    return 'Please verify your email first — check your inbox for the confirmation link.';
+  }
+  if(msg.includes('user already registered')){
+    return 'An account with this email already exists. Try logging in instead.';
+  }
+  if(msg.includes('password should be at least')){
+    return 'Password is too short. Use at least 6 characters.';
+  }
+  if(msg.includes('rate limit') || msg.includes('too many requests')){
+    return 'Too many attempts. Please wait a moment and try again.';
+  }
+  if(msg.includes('network') || msg.includes('fetch')){
+    return 'Connection issue. Check your internet and try again.';
+  }
+  return rawMessage || 'Something went wrong. Please try again.';
+}
+
 function showAuthError(form, message){
   let banner = form.querySelector('.auth-error-banner');
   if(!banner){
@@ -587,7 +610,7 @@ async function handleSubmit(e, type){
   } catch(err){
     btn.classList.remove('loading');
     btn.disabled = false;
-    showAuthError(form, err.message || 'Something went wrong. Try again.');
+    showAuthError(form, friendlyAuthError(err.message));
   }
 
   return false;
@@ -622,7 +645,7 @@ async function handleForgot(e){
   } catch(err2){
     btn.classList.remove('loading');
     btn.disabled = false;
-    showAuthError(e.target, err2.message || 'Could not send reset link. Try again.');
+    showAuthError(e.target, friendlyAuthError(err2.message) === (err2.message || '') ? 'Could not send reset link. Try again.' : friendlyAuthError(err2.message));
   }
 
   return false;
