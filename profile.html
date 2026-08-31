@@ -141,8 +141,11 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.16);
   color:#fff;
 }
-.id-tag.verified{ color:#7cf0c2; background:rgba(10,155,114,0.18); border-color:rgba(10,155,114,0.4); display:flex;align-items:center;gap:4px; }
-.id-tag.verified svg{width:11px;height:11px}
+.id-tag.verified{
+  color:#7cf0c2;background:none;border:none;padding:0;
+  display:flex;align-items:center;gap:3px;
+}
+.id-tag.verified svg{width:14px;height:14px;color:#2fd88a}
 
 .cid-wrap{display:flex;align-items:center;gap:8px;margin-top:11px;position:relative;z-index:1}
 .cid-label{font-size:13px;font-weight:700;color:rgba(255,255,255,0.7)}
@@ -338,28 +341,43 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 
 /* Edit Profile modal — crop tool */
 .s-header-btn{position:relative}
-.crop-wrap{
-  width:160px;height:160px;margin:0 auto 12px;border-radius:50%;
+.crop-stage{
+  width:170px;height:170px;margin:0 auto 14px;border-radius:14px;
   overflow:hidden;position:relative;background:var(--surface2);
-  border:2px dashed var(--border-strong);
+  border:1.5px solid var(--border-strong);
   display:flex;align-items:center;justify-content:center;cursor:pointer;
 }
-.crop-wrap.has-image{border-style:solid;border-color:var(--accent)}
+.crop-stage.has-image{cursor:default}
 .crop-empty{
   display:flex;flex-direction:column;align-items:center;gap:8px;
   color:var(--text3);font-size:11.5px;font-weight:600;text-align:center;padding:0 20px;
 }
 .crop-empty svg{width:32px;height:32px;stroke:var(--text3)}
-#cropCanvas{width:160px;height:160px;touch-action:none;cursor:grab}
-#cropCanvas:active{cursor:grabbing}
-.crop-controls{margin-bottom:4px}
+#cropCanvas{width:170px;height:170px;touch-action:none;position:absolute;top:0;left:0}
+.crop-mask{
+  position:absolute;inset:0;pointer-events:none;display:none;
+}
+.crop-stage.has-image .crop-mask{display:block}
+.crop-mask::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(circle at center, transparent 0, transparent calc(50% - 1px), rgba(0,0,0,0.55) 50%);
+}
+.crop-mask::after{
+  content:'';position:absolute;
+  top:50%;left:50%;width:calc(100% - 2px);height:calc(100% - 2px);
+  transform:translate(-50%,-50%);border-radius:50%;
+  border:1.5px solid rgba(255,255,255,0.8);
+  box-sizing:border-box;
+}
 .crop-pick-btn{
   display:block;margin:0 auto 14px;background:none;border:none;
   color:var(--accent);font-family:var(--font-body);font-size:12.5px;font-weight:700;cursor:pointer;
   text-align:center;width:100%;
 }
-.crop-zoom-label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;text-align:center}
-#zoomSlider{width:100%;accent-color:var(--accent)}
+.crop-hint{
+  text-align:center;font-size:10.5px;color:var(--text3);font-weight:600;margin:-8px 0 12px;
+}
 .edit-profile-err{
   font-size:12px;color:var(--red);font-weight:600;text-align:center;margin-top:10px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:none;
@@ -400,7 +418,7 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
         <div class="id-name-row">
           <span class="id-name" id="custName"></span>
           <span class="id-tag verified">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="m21.5609 10.7386-1.36-1.58001c-.26-.3-.47-.86-.47-1.26v-1.7c0-1.06-.87-1.93-1.93-1.93h-1.7c-.39 0-.96-.21-1.26-.47l-1.58-1.36c-.69-.59-1.82-.59-2.52 0l-1.57004 1.37c-.3.25-.87.46-1.26.46h-1.73c-1.06 0-1.93.87-1.93 1.93v1.71c0 .39-.21.95-.46 1.25l-1.35 1.59001c-.58.69-.58 1.81 0 2.5l1.35 1.59c.25.3.46.86.46 1.25v1.71c0 1.06.87 1.93 1.93 1.93h1.73c.39 0 .96.21 1.26.47l1.58004 1.36c.69.59 1.82.59 2.52 0l1.58-1.36c.3-.26.86-.47 1.26-.47h1.7c1.06 0 1.93-.87 1.93-1.93v-1.7c0-.39.21-.96.47-1.26l1.36-1.58c.58-.69.58-1.83-.01-2.52m-5.4-.63-4.83 4.83c-.14.14-.33.22-.53.22s-.39-.08-.53-.22l-2.42004-2.42c-.29-.29-.29-.77 0-1.06s.77-.29 1.06 0l1.89004 1.89 4.3-4.30001c.29-.29.77-.29 1.06 0s.29.77 0 1.06001"/></svg>
             Verified
           </span>
           <button class="id-edit-btn" id="editProfileBtn" aria-label="Edit profile" onclick="openEditProfile()">
@@ -543,19 +561,19 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
     <div class="modal-handle"></div>
     <div class="modal-title">Edit Profile</div>
 
-    <div class="crop-wrap" id="cropWrap">
+    <div class="crop-stage" id="cropWrap">
       <div class="crop-empty" id="cropEmpty">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
         <span>Tap to choose a photo</span>
       </div>
-      <canvas id="cropCanvas" width="280" height="280" style="display:none"></canvas>
+      <canvas id="cropCanvas" width="220" height="220" style="display:none"></canvas>
+      <div class="crop-mask"></div>
     </div>
     <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
 
     <div class="crop-controls" id="cropControls" style="display:none">
+      <div class="crop-hint">Drag to reposition · Pinch to zoom</div>
       <button class="crop-pick-btn" onclick="document.getElementById('avatarFileInput').click()">Choose different photo</button>
-      <label class="crop-zoom-label">Zoom</label>
-      <input type="range" id="zoomSlider" min="1" max="3" step="0.01" value="1">
     </div>
     <button class="crop-pick-btn" id="cropPickInitial" onclick="document.getElementById('avatarFileInput').click()">Choose photo</button>
 
@@ -823,13 +841,13 @@ const cropWrap = document.getElementById('cropWrap');
 const cropEmpty = document.getElementById('cropEmpty');
 const cropControls = document.getElementById('cropControls');
 const cropPickInitial = document.getElementById('cropPickInitial');
-const zoomSlider = document.getElementById('zoomSlider');
+const CROP_SIZE = 220;
 
 let loadedImg = null;
 let imgScale = 1, baseScale = 1;
 let panX = 0, panY = 0;
 let dragging = false, dragStartX = 0, dragStartY = 0, panStartX = 0, panStartY = 0;
-let pendingBlob = null;
+let pinchStartDist = 0, pinchStartScale = 1;
 
 function openEditProfile(){
   document.getElementById('editNameInput').value = currentCustomer ? (currentCustomer.full_name || '') : '';
@@ -846,7 +864,7 @@ function closeEditProfile(){
 editModal.addEventListener('click', (e) => { if(e.target === editModal) closeEditProfile(); });
 
 function resetCropState(){
-  loadedImg = null; pendingBlob = null;
+  loadedImg = null;
   imgScale = 1; panX = 0; panY = 0;
   cropCanvas.style.display = 'none';
   cropEmpty.style.display = 'flex';
@@ -878,11 +896,9 @@ function loadImageFromUrl(url){
   img.crossOrigin = 'anonymous';
   img.onload = () => {
     loadedImg = img;
-    const size = 280;
-    baseScale = Math.max(size / img.width, size / img.height);
+    baseScale = Math.max(CROP_SIZE / img.width, CROP_SIZE / img.height);
     imgScale = 1;
     panX = 0; panY = 0;
-    zoomSlider.value = 1;
     cropEmpty.style.display = 'none';
     cropCanvas.style.display = 'block';
     cropWrap.classList.add('has-image');
@@ -896,37 +912,30 @@ function loadImageFromUrl(url){
 
 function drawCrop(){
   if(!loadedImg) return;
-  const size = 280;
-  cropCtx.clearRect(0, 0, size, size);
+  cropCtx.clearRect(0, 0, CROP_SIZE, CROP_SIZE);
   const scale = baseScale * imgScale;
   const w = loadedImg.width * scale;
   const h = loadedImg.height * scale;
-  const x = (size - w) / 2 + panX;
-  const y = (size - h) / 2 + panY;
-  cropCtx.save();
-  cropCtx.beginPath();
-  cropCtx.arc(size/2, size/2, size/2, 0, Math.PI*2);
-  cropCtx.clip();
+  const x = (CROP_SIZE - w) / 2 + panX;
+  const y = (CROP_SIZE - h) / 2 + panY;
   cropCtx.drawImage(loadedImg, x, y, w, h);
-  cropCtx.restore();
 }
 
 function clampPan(){
-  const size = 280;
   const scale = baseScale * imgScale;
   const w = loadedImg.width * scale;
   const h = loadedImg.height * scale;
-  const maxPanX = Math.max(0, (w - size) / 2);
-  const maxPanY = Math.max(0, (h - size) / 2);
+  const maxPanX = Math.max(0, (w - CROP_SIZE) / 2);
+  const maxPanY = Math.max(0, (h - CROP_SIZE) / 2);
   panX = Math.max(-maxPanX, Math.min(maxPanX, panX));
   panY = Math.max(-maxPanY, Math.min(maxPanY, panY));
 }
 
-zoomSlider.addEventListener('input', () => {
-  imgScale = parseFloat(zoomSlider.value);
+function setZoom(newScale){
+  imgScale = Math.max(1, Math.min(3, newScale));
   clampPan();
   drawCrop();
-});
+}
 
 function cropPointerDown(x, y){
   dragging = true;
@@ -942,29 +951,64 @@ function cropPointerMove(x, y){
 }
 function cropPointerUp(){ dragging = false; }
 
-cropCanvas.addEventListener('mousedown', (e) => {
+function toCanvasCoords(clientX, clientY){
   const r = cropCanvas.getBoundingClientRect();
-  cropPointerDown((e.clientX - r.left) * (280/r.width), (e.clientY - r.top) * (280/r.height));
+  return [(clientX - r.left) * (CROP_SIZE / r.width), (clientY - r.top) * (CROP_SIZE / r.height)];
+}
+
+cropCanvas.addEventListener('mousedown', (e) => {
+  if(!loadedImg) return;
+  const [x, y] = toCanvasCoords(e.clientX, e.clientY);
+  cropPointerDown(x, y);
 });
 window.addEventListener('mousemove', (e) => {
   if(!dragging) return;
-  const r = cropCanvas.getBoundingClientRect();
-  cropPointerMove((e.clientX - r.left) * (280/r.width), (e.clientY - r.top) * (280/r.height));
+  const [x, y] = toCanvasCoords(e.clientX, e.clientY);
+  cropPointerMove(x, y);
 });
 window.addEventListener('mouseup', cropPointerUp);
 
-cropCanvas.addEventListener('touchstart', (e) => {
-  const t = e.touches[0];
-  const r = cropCanvas.getBoundingClientRect();
-  cropPointerDown((t.clientX - r.left) * (280/r.width), (t.clientY - r.top) * (280/r.height));
-}, {passive:true});
-cropCanvas.addEventListener('touchmove', (e) => {
-  const t = e.touches[0];
-  const r = cropCanvas.getBoundingClientRect();
-  cropPointerMove((t.clientX - r.left) * (280/r.width), (t.clientY - r.top) * (280/r.height));
+cropCanvas.addEventListener('wheel', (e) => {
+  if(!loadedImg) return;
   e.preventDefault();
+  setZoom(imgScale + (e.deltaY < 0 ? 0.08 : -0.08));
 }, {passive:false});
-cropCanvas.addEventListener('touchend', cropPointerUp);
+
+function touchDist(touches){
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.sqrt(dx*dx + dy*dy);
+}
+
+cropCanvas.addEventListener('touchstart', (e) => {
+  if(!loadedImg) return;
+  if(e.touches.length === 2){
+    dragging = false;
+    pinchStartDist = touchDist(e.touches);
+    pinchStartScale = imgScale;
+  } else if(e.touches.length === 1){
+    const [x, y] = toCanvasCoords(e.touches[0].clientX, e.touches[0].clientY);
+    cropPointerDown(x, y);
+  }
+}, {passive:true});
+
+cropCanvas.addEventListener('touchmove', (e) => {
+  if(!loadedImg) return;
+  if(e.touches.length === 2){
+    const dist = touchDist(e.touches);
+    const factor = dist / pinchStartDist;
+    setZoom(pinchStartScale * factor);
+    e.preventDefault();
+  } else if(e.touches.length === 1 && dragging){
+    const [x, y] = toCanvasCoords(e.touches[0].clientX, e.touches[0].clientY);
+    cropPointerMove(x, y);
+    e.preventDefault();
+  }
+}, {passive:false});
+
+cropCanvas.addEventListener('touchend', (e) => {
+  if(e.touches.length === 0) cropPointerUp();
+});
 
 function showEditErr(msg){
   const el = document.getElementById('editProfileErr');
@@ -995,7 +1039,18 @@ async function saveProfileChanges(){
     let avatarUrl = currentCustomer.avatar_url || null;
 
     if(loadedImg){
-      const blob = await new Promise(res => cropCanvas.toBlob(res, 'image/png', 0.92));
+      const exportCanvas = document.createElement('canvas');
+      exportCanvas.width = CROP_SIZE;
+      exportCanvas.height = CROP_SIZE;
+      const exCtx = exportCanvas.getContext('2d');
+      exCtx.save();
+      exCtx.beginPath();
+      exCtx.arc(CROP_SIZE/2, CROP_SIZE/2, CROP_SIZE/2, 0, Math.PI*2);
+      exCtx.clip();
+      exCtx.drawImage(cropCanvas, 0, 0);
+      exCtx.restore();
+
+      const blob = await new Promise(res => exportCanvas.toBlob(res, 'image/png', 0.92));
       const path = `${user.id}/avatar.png`;
       const { error: uploadErr } = await sbClient.storage
         .from('avatars')
