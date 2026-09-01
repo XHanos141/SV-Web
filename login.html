@@ -543,6 +543,21 @@ function showAuthError(form, message){
     banner.style.cssText = 'color:var(--red,#d95353);font-size:12.5px;font-weight:600;text-align:center;margin-bottom:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
     form.insertBefore(banner, form.firstChild);
   }
+  banner.style.color = 'var(--red,#d95353)';
+  banner.style.whiteSpace = 'nowrap';
+  banner.textContent = message;
+}
+
+function showAuthInfo(form, message){
+  let banner = form.querySelector('.auth-error-banner');
+  if(!banner){
+    banner = document.createElement('div');
+    banner.className = 'auth-error-banner';
+    banner.style.cssText = 'font-size:12.5px;font-weight:600;text-align:center;margin-bottom:14px;';
+    form.insertBefore(banner, form.firstChild);
+  }
+  banner.style.color = 'var(--brand-cyan,#009ddc)';
+  banner.style.whiteSpace = 'normal';
   banner.textContent = message;
 }
 
@@ -621,6 +636,18 @@ async function handleSubmit(e, type){
 
       btn.classList.remove('loading');
       btn.disabled = false;
+
+      // Supabase returns success with no error for an already-registered email
+      // (anti-enumeration behavior) — identities comes back empty and no new
+      // OTP is sent. Detect this and route into sign-in instead of a dead-end verify page.
+      const emailAlreadyRegistered = data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0;
+
+      if(emailAlreadyRegistered){
+        switchTab('login');
+        document.getElementById('loginEmailInput').value = email;
+        showAuthInfo(document.getElementById('panel-login').querySelector('form'), "Looks like you already have an account with this email, signing you in instead.");
+        return;
+      }
 
       if(!data.session){
         // OTP verification required — send to verify screen
