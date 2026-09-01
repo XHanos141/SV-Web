@@ -139,15 +139,16 @@ body{
 .field-err.show{display:flex}
 
 .auth-error-banner{
-  font-size:12.5px;color:var(--red);font-weight:600;
-  text-align:center;margin-bottom:16px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:11px;color:var(--red);font-weight:600;
+  text-align:center;margin:14px 4px 0;line-height:1.4;
+  white-space:normal;word-wrap:break-word;
   display:none;
 }
 .auth-error-banner.show{display:block}
 .auth-success-banner{
-  font-size:12.5px;color:var(--green);font-weight:600;
-  text-align:center;margin-bottom:16px;
+  font-size:11px;color:var(--green);font-weight:600;
+  text-align:center;margin:14px 4px 0;line-height:1.4;
+  white-space:normal;word-wrap:break-word;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   display:none;
 }
@@ -220,9 +221,6 @@ body{
       <div class="auth-sub">Enter the 6-digit code sent to<br><b id="targetEmail">your email</b></div>
     </div>
 
-    <div class="auth-error-banner" id="errBanner"></div>
-    <div class="auth-success-banner" id="okBanner"></div>
-
     <div class="otp-row" id="otpRow">
       <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="0">
       <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="1">
@@ -231,6 +229,9 @@ body{
       <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="4">
       <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="5">
     </div>
+
+    <div class="auth-error-banner" id="errBanner"></div>
+    <div class="auth-success-banner" id="okBanner"></div>
     <div class="field-err" id="otpErr">Enter all 6 digits</div>
 
     <button class="btn-primary" id="verifyBtn" onclick="handleVerify()">
