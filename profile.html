@@ -77,47 +77,28 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   pointer-events:none;
 }
 .id-top{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.id-avatar-wrap{position:relative;flex-shrink:0}
 .id-avatar{
-  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  width:52px;height:52px;border-radius:50%;flex-shrink:0;
   background:linear-gradient(135deg,var(--accent),#4fb7ea);
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-weight:800;font-size:16px;color:#fff;
+  font-family:var(--font-display);font-weight:800;font-size:18px;color:#fff;
   box-shadow:0 4px 14px rgba(45,190,245,0.35),inset 0 1px 0 rgba(255,255,255,0.25);
   position:relative;overflow:hidden;
 }
 .id-avatar img{
   width:100%;height:100%;object-fit:cover;border-radius:50%;
 }
-.id-edit-btn{
-  margin-left:auto;width:26px;height:26px;border-radius:8px;flex-shrink:0;
-  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.14);
-  display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.85);
-  cursor:pointer;transition:background .15s ease;
+.avatar-edit-fab{
+  position:absolute;bottom:-3px;right:-3px;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--accent);border:2.5px solid #0a1e38;
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.35);
+  transition:transform .15s ease;
 }
-.id-edit-btn:active{background:rgba(255,255,255,0.18)}
-.id-edit-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.id-avatar .avatar-edit-badge{
-  position:absolute;bottom:-2px;right:-2px;
-  width:20px;height:20px;border-radius:50%;
-  background:#fff;border:2px solid var(--surface,#0f1621);
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 6px rgba(0,0,0,0.3);
-}
-.id-avatar .avatar-edit-badge svg{
-  width:11px;height:11px;stroke:var(--accent);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
-}
-.id-avatar.uploading{opacity:0.6;pointer-events:none}
-.id-avatar .avatar-spinner{
-  display:none;position:absolute;inset:0;
-  align-items:center;justify-content:center;
-  background:rgba(0,0,0,0.35);border-radius:16px;
-}
-.id-avatar.uploading .avatar-spinner{display:flex}
-.id-avatar .avatar-spinner .spin{
-  width:18px;height:18px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;
-  border-radius:50%;animation:avSpin .7s linear infinite;
-}
-@keyframes avSpin{to{transform:rotate(360deg)}}
+.avatar-edit-fab:active{transform:scale(0.9)}
+.avatar-edit-fab svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .id-name{font-family:var(--font-display);font-size:17px;font-weight:800;letter-spacing:-.2px}
 .id-name-row{display:flex;align-items:center;gap:8px}
 .id-email{font-size:11.5px;color:rgba(255,255,255,0.55);margin-top:2px;font-weight:600}
@@ -339,44 +320,64 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   margin-top:6px;cursor:pointer;box-shadow:0 6px 18px var(--accent-glow);
 }
 
-/* Edit Profile modal — crop tool */
-.s-header-btn{position:relative}
-.crop-stage{
-  width:170px;height:170px;margin:0 auto 14px;border-radius:14px;
-  overflow:hidden;position:relative;background:var(--surface2);
-  border:1.5px solid var(--border-strong);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
+/* Full-screen avatar editor — Instagram-style */
+.avatar-editor{
+  position:fixed;inset:0;background:#000;z-index:1000;
+  display:none;flex-direction:column;
+  opacity:0;transition:opacity .2s ease;
 }
-.crop-stage.has-image{cursor:default}
+.avatar-editor.open{display:flex;opacity:1}
+.ae-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 8px;padding-top:calc(14px + env(safe-area-inset-top));
+  flex-shrink:0;
+}
+.ae-close{
+  width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.08);
+  border:none;display:flex;align-items:center;justify-content:center;
+  color:#fff;cursor:pointer;
+}
+.ae-close svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ae-title{color:#fff;font-family:var(--font-display);font-weight:800;font-size:15px}
+
+.ae-stage{
+  flex:1;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  background:#000;cursor:pointer;min-height:0;
+}
 .crop-empty{
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  color:var(--text3);font-size:11.5px;font-weight:600;text-align:center;padding:0 20px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  color:rgba(255,255,255,0.5);font-size:13px;font-weight:600;text-align:center;
 }
-.crop-empty svg{width:32px;height:32px;stroke:var(--text3)}
-#cropCanvas{width:170px;height:170px;touch-action:none;position:absolute;top:0;left:0}
-.crop-mask{
+.crop-empty svg{width:40px;height:40px;stroke:rgba(255,255,255,0.5)}
+#cropCanvas{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  touch-action:none;display:none;max-width:100%;max-height:100%;
+}
+.ae-dim-overlay{
   position:absolute;inset:0;pointer-events:none;display:none;
 }
-.crop-stage.has-image .crop-mask{display:block}
-.crop-mask::before{
+.ae-stage.has-image .ae-dim-overlay{display:block}
+.ae-dim-overlay::before{
   content:'';position:absolute;inset:0;
-  background:
-    radial-gradient(circle at center, transparent 0, transparent calc(50% - 1px), rgba(0,0,0,0.55) 50%);
+  background:radial-gradient(circle at center, transparent 0, transparent calc(min(50vw,50vh) - 1px), rgba(0,0,0,0.72) min(50vw,50vh));
 }
-.crop-mask::after{
-  content:'';position:absolute;
-  top:50%;left:50%;width:calc(100% - 2px);height:calc(100% - 2px);
+.ae-dim-overlay::after{
+  content:'';position:absolute;top:50%;left:50%;
+  width:min(86vw,55vh);height:min(86vw,55vh);
   transform:translate(-50%,-50%);border-radius:50%;
-  border:1.5px solid rgba(255,255,255,0.8);
-  box-sizing:border-box;
+  border:1.5px solid rgba(255,255,255,0.85);box-sizing:border-box;
 }
+
+.ae-panel{
+  flex-shrink:0;background:var(--surface);border-radius:20px 20px 0 0;
+  padding:16px 18px calc(16px + env(safe-area-inset-bottom));
+}
+.crop-hint{text-align:center;font-size:11px;color:var(--text3);font-weight:600;margin-bottom:12px}
 .crop-pick-btn{
-  display:block;margin:0 auto 14px;background:none;border:none;
-  color:var(--accent);font-family:var(--font-body);font-size:12.5px;font-weight:700;cursor:pointer;
-  text-align:center;width:100%;
-}
-.crop-hint{
-  text-align:center;font-size:10.5px;color:var(--text3);font-weight:600;margin:-8px 0 12px;
+  display:block;margin:0 auto 4px;background:none;border:none;
+  color:var(--accent);font-family:var(--font-body);font-size:13px;font-weight:700;cursor:pointer;
+  text-align:center;width:100%;padding:8px 0;
 }
 .edit-profile-err{
   font-size:12px;color:var(--red);font-weight:600;text-align:center;margin-top:10px;
@@ -413,7 +414,12 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 <div class="id-card-wrap">
   <div class="id-card is-loading" id="idCard">
     <div class="id-top">
-      <div class="id-avatar" id="avatarInitial"></div>
+      <div class="id-avatar-wrap">
+        <div class="id-avatar" id="avatarInitial"></div>
+        <button class="avatar-edit-fab" id="editProfileBtn" aria-label="Edit avatar" onclick="openEditProfile()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+        </button>
+      </div>
       <div style="flex:1;min-width:0">
         <div class="id-name-row">
           <span class="id-name" id="custName"></span>
@@ -421,9 +427,6 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="m21.5609 10.7386-1.36-1.58001c-.26-.3-.47-.86-.47-1.26v-1.7c0-1.06-.87-1.93-1.93-1.93h-1.7c-.39 0-.96-.21-1.26-.47l-1.58-1.36c-.69-.59-1.82-.59-2.52 0l-1.57004 1.37c-.3.25-.87.46-1.26.46h-1.73c-1.06 0-1.93.87-1.93 1.93v1.71c0 .39-.21.95-.46 1.25l-1.35 1.59001c-.58.69-.58 1.81 0 2.5l1.35 1.59c.25.3.46.86.46 1.25v1.71c0 1.06.87 1.93 1.93 1.93h1.73c.39 0 .96.21 1.26.47l1.58004 1.36c.69.59 1.82.59 2.52 0l1.58-1.36c.3-.26.86-.47 1.26-.47h1.7c1.06 0 1.93-.87 1.93-1.93v-1.7c0-.39.21-.96.47-1.26l1.36-1.58c.58-.69.58-1.83-.01-2.52m-5.4-.63-4.83 4.83c-.14.14-.33.22-.53.22s-.39-.08-.53-.22l-2.42004-2.42c-.29-.29-.29-.77 0-1.06s.77-.29 1.06 0l1.89004 1.89 4.3-4.30001c.29-.29.77-.29 1.06 0s.29.77 0 1.06001"/></svg>
             Verified
           </span>
-          <button class="id-edit-btn" id="editProfileBtn" aria-label="Edit profile" onclick="openEditProfile()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
-          </button>
         </div>
         <div class="id-email" id="custEmail"></div>
       </div>
@@ -555,29 +558,31 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 </button>
 <div class="version-tag">SuppVerse BD · v1.0</div>
 
-<!-- EDIT PROFILE MODAL -->
-<div class="modal-overlay center-popup" id="editProfileModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Edit Profile</div>
+<!-- EDIT AVATAR — FULL SCREEN -->
+<div class="avatar-editor" id="avatarEditor">
+  <div class="ae-header">
+    <button class="ae-close" onclick="closeEditProfile()" aria-label="Cancel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="ae-title">Edit Photo</div>
+    <div style="width:40px"></div>
+  </div>
 
-    <div class="crop-stage" id="cropWrap">
-      <div class="crop-empty" id="cropEmpty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <span>Tap to choose a photo</span>
-      </div>
-      <canvas id="cropCanvas" width="220" height="220" style="display:none"></canvas>
-      <div class="crop-mask"></div>
+  <div class="ae-stage" id="cropWrap">
+    <div class="crop-empty" id="cropEmpty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>Tap to choose a photo</span>
     </div>
-    <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+    <canvas id="cropCanvas" width="600" height="600" style="display:none"></canvas>
+    <div class="ae-dim-overlay"></div>
+  </div>
+  <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
 
-    <div class="crop-controls" id="cropControls" style="display:none">
-      <div class="crop-hint">Drag to reposition · Pinch to zoom</div>
-      <button class="crop-pick-btn" onclick="document.getElementById('avatarFileInput').click()">Choose different photo</button>
-    </div>
-    <button class="crop-pick-btn" id="cropPickInitial" onclick="document.getElementById('avatarFileInput').click()">Choose photo</button>
+  <div class="ae-panel" id="aePanel">
+    <div class="crop-hint" id="cropHint" style="display:none">Drag to reposition · Pinch to zoom</div>
+    <button class="crop-pick-btn" id="cropPickBtn" onclick="document.getElementById('avatarFileInput').click()">Choose photo</button>
 
-    <div class="field" style="margin-top:16px">
+    <div class="field" style="margin-top:14px">
       <label>Full Name</label>
       <input type="text" id="editNameInput" placeholder="Your name">
     </div>
@@ -833,15 +838,15 @@ async function loadRealProfile(){
 
 loadRealProfile();
 
-// ===== EDIT PROFILE MODAL + CROPPER =====
-const editModal = document.getElementById('editProfileModal');
+// ===== FULL-SCREEN AVATAR EDITOR + CROPPER =====
+const editModal = document.getElementById('avatarEditor');
 const cropCanvas = document.getElementById('cropCanvas');
 const cropCtx = cropCanvas.getContext('2d');
 const cropWrap = document.getElementById('cropWrap');
 const cropEmpty = document.getElementById('cropEmpty');
-const cropControls = document.getElementById('cropControls');
-const cropPickInitial = document.getElementById('cropPickInitial');
-const CROP_SIZE = 220;
+const cropHint = document.getElementById('cropHint');
+const cropPickBtn = document.getElementById('cropPickBtn');
+const CROP_SIZE = 600;
 
 let loadedImg = null;
 let imgScale = 1, baseScale = 1;
@@ -857,11 +862,12 @@ function openEditProfile(){
     loadImageFromUrl(currentCustomer.avatar_url);
   }
   editModal.classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 function closeEditProfile(){
   editModal.classList.remove('open');
+  document.body.style.overflow = '';
 }
-editModal.addEventListener('click', (e) => { if(e.target === editModal) closeEditProfile(); });
 
 function resetCropState(){
   loadedImg = null;
@@ -869,11 +875,11 @@ function resetCropState(){
   cropCanvas.style.display = 'none';
   cropEmpty.style.display = 'flex';
   cropWrap.classList.remove('has-image');
-  cropControls.style.display = 'none';
-  cropPickInitial.style.display = 'block';
+  cropHint.style.display = 'none';
+  cropPickBtn.textContent = 'Choose photo';
 }
 
-cropEmpty.parentElement.addEventListener('click', () => {
+cropWrap.addEventListener('click', () => {
   if(!loadedImg) document.getElementById('avatarFileInput').click();
 });
 
@@ -902,8 +908,8 @@ function loadImageFromUrl(url){
     cropEmpty.style.display = 'none';
     cropCanvas.style.display = 'block';
     cropWrap.classList.add('has-image');
-    cropControls.style.display = 'block';
-    cropPickInitial.style.display = 'none';
+    cropHint.style.display = 'block';
+    cropPickBtn.textContent = 'Choose different photo';
     drawCrop();
   };
   img.onerror = () => showEditErr('Could not load that image.');
