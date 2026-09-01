@@ -494,11 +494,14 @@ function togglePw(id, btn){
 
 function checkStrength(val){
   const bars = document.querySelectorAll('#panel-signup .pw-meter span');
+  const hasEmoji = /[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\uFE0F]/u.test(val);
   let score = 0;
-  if(val.length >= 8) score++;
-  if(/[0-9]/.test(val)) score++;
-  if(/[A-Z]/.test(val)) score++;
-  if(/[^A-Za-z0-9]/.test(val)) score++;
+  if(!hasEmoji){
+    if(val.length >= 8) score++;
+    if(/[0-9]/.test(val)) score++;
+    if(/[A-Z]/.test(val)) score++;
+    if(/[!@#$%^&*()\-_=+\[\]{};:'",.<>?/\\|`~]/.test(val)) score++;
+  }
   const colors = ['var(--red)','var(--red)','var(--yellow)','var(--green)','var(--green)'];
   bars.forEach((b,i) => {
     b.style.background = i < score ? colors[score] : 'var(--border-strong)';
@@ -543,6 +546,18 @@ function showAuthError(form, message){
   banner.textContent = message;
 }
 
+function validatePassword(val){
+  // Reject emoji and other non-printable/surrogate-pair characters
+  const hasEmoji = /[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\uFE0F]/u.test(val);
+  if(hasEmoji) return { ok:false, reason:'emoji' };
+  // Only allow standard printable ASCII for passwords
+  const onlyPrintableAscii = /^[\x20-\x7E]+$/.test(val);
+  if(!onlyPrintableAscii) return { ok:false, reason:'invalid_chars' };
+  if(val.length < 8) return { ok:false, reason:'too_short' };
+  if(!/[0-9]/.test(val)) return { ok:false, reason:'no_number' };
+  return { ok:true };
+}
+
 async function handleSubmit(e, type){
   e.preventDefault();
   const form = e.target;
@@ -556,6 +571,7 @@ async function handleSubmit(e, type){
     let ok = true;
     if(inp.type === 'email') ok = validateEmail(inp.value);
     else if(inp.type === 'checkbox') ok = inp.checked;
+    else if(inp.type === 'password' && type === 'signup') ok = validatePassword(inp.value).ok;
     else ok = inp.value.trim().length > 0;
 
     field.classList.toggle('error', !ok);
@@ -568,6 +584,20 @@ async function handleSubmit(e, type){
     const uncheckedRequired = Array.from(inputs).some(inp => inp.type === 'checkbox' && inp.hasAttribute('required') && !inp.checked);
     if(uncheckedRequired){
       showAuthError(form, 'Please agree to the Terms & Privacy Policy to continue.');
+    } else if(type === 'signup'){
+      const pwInput = Array.from(inputs).find(inp => inp.type === 'password');
+      if(pwInput){
+        const result = validatePassword(pwInput.value);
+        if(!result.ok){
+          const messages = {
+            emoji: "Password can't contain emoji.",
+            invalid_chars: 'Password contains characters that are not allowed.',
+            too_short: 'Password must be at least 8 characters.',
+            no_number: 'Password must include at least 1 number.'
+          };
+          showAuthError(form, messages[result.reason] || 'Please enter a valid password.');
+        }
+      }
     }
     return false;
   }
