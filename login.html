@@ -516,7 +516,7 @@ function validateEmail(v){
 function friendlyAuthError(rawMessage){
   const msg = (rawMessage || '').toLowerCase();
   if(msg.includes('invalid login credentials')){
-    return "Wrong password, or signed up with Google — try that instead.";
+    return "No match found. If you signed up with Google, use 'Continue with Google' instead.";
   }
   if(msg.includes('email not confirmed')){
     return 'Please verify your email first. Check your inbox for the confirmation link.';
