@@ -229,6 +229,48 @@ body{
 .pw-meter span{flex:1;border-radius:2px;background:var(--border-strong);transition:background .25s var(--ease)}
 .pw-hint{font-size:11px;color:var(--text3);margin-top:5px;font-weight:500}
 
+/* OTP boxes (reset password flow) */
+.otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:8px}
+.otp-box{
+  width:44px;height:52px;
+  background:var(--surface2);border:1.5px solid var(--border-strong);
+  border-radius:var(--radius-sm);
+  text-align:center;font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--text);
+  outline:none;
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease);
+}
+.otp-box:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);background:var(--surface)}
+.otp-box.error{border-color:var(--red);box-shadow:0 0 0 4px var(--red-soft)}
+@keyframes shakeBox{
+  0%,100%{transform:translateX(0)} 15%{transform:translateX(-8px)} 30%{transform:translateX(7px)}
+  45%{transform:translateX(-6px)} 60%{transform:translateX(4px)} 75%{transform:translateX(-2px)} 90%{transform:translateX(1px)}
+}
+.otp-box.shake{animation:shakeBox .5s cubic-bezier(0.4,0,0.2,1);border-color:var(--red)!important;box-shadow:0 0 0 4px var(--red-soft)!important}
+@keyframes waveSuccess{
+  0%{transform:translateY(0);border-color:var(--border-strong);box-shadow:none;background:var(--surface2)}
+  40%,70%{transform:translateY(-10px);border-color:var(--green);box-shadow:0 6px 16px rgba(10,155,114,0.25);background:var(--green-soft)}
+  100%{transform:translateY(0);border-color:var(--green);box-shadow:0 0 0 3px var(--green-soft);background:var(--green-soft)}
+}
+.otp-box.wave-success{animation:waveSuccess .5s cubic-bezier(0.34,1.56,0.64,1) both;color:var(--green)}
+.otp-box.wave-done{border-color:var(--green);box-shadow:0 0 0 3px var(--green-soft);background:var(--green-soft);color:var(--green)}
+
+.resend-row{text-align:center;margin-top:16px;font-size:13px;color:var(--text2)}
+.resend-row button{background:none;border:none;font-family:var(--font-body);font-size:13px;font-weight:700;color:var(--accent);cursor:pointer;padding:0}
+.resend-row button:disabled{color:var(--text3);cursor:default}
+
+.provider-notice{
+  text-align:center;padding:12px 0 4px;
+}
+.provider-notice-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--accent-soft);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;
+}
+.provider-notice-icon svg{width:26px;height:26px}
+.provider-notice h3{font-family:var(--font-display);font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px}
+.provider-notice p{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:18px}
+
 /* ===== FORGOT PASSWORD PANEL ===== */
 #panel-forgot .back-row{
   display:flex;align-items:center;gap:6px;margin-bottom:16px;
@@ -409,7 +451,7 @@ body{
       <div id="forgotForm">
         <div class="auth-head" style="text-align:left;margin-bottom:20px">
           <div class="auth-title" style="font-size:19px">Reset password</div>
-          <div class="auth-sub" style="margin-top:6px">Enter your email and we'll send a reset link</div>
+          <div class="auth-sub" style="margin-top:6px">Enter your email and we'll send a code</div>
         </div>
         <form onsubmit="return handleForgot(event)" novalidate>
           <div class="field">
@@ -422,23 +464,87 @@ body{
           </div>
           <button type="submit" class="btn-primary" style="margin-top:6px">
             <span class="spinner"></span>
-            <span class="btn-label">Send Reset Link</span>
+            <span class="btn-label">Send Code</span>
           </button>
         </form>
       </div>
 
-      <div id="forgotSuccess" style="display:none">
-        <div class="success-box">
-          <div class="success-icon">
-            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+      <div id="forgotGoogleNotice" style="display:none">
+        <div class="provider-notice">
+          <div class="provider-notice-icon">
+            <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           </div>
-          <h3>Check your email</h3>
-          <p>We sent a password reset link to<br><strong id="sentEmailDisplay" style="color:var(--text)"></strong></p>
-          <button class="btn-primary" style="position:static" onclick="switchTab('login')">
-            <span class="btn-label">Back to Log In</span>
+          <h3>This account uses Google</h3>
+          <p>There's no password to reset. Sign in with Google instead.</p>
+          <button class="btn-google" onclick="handleGoogle()">
+            <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
           </button>
         </div>
       </div>
+
+      <div id="forgotOtp" style="display:none">
+        <div class="auth-head" style="text-align:left;margin-bottom:18px">
+          <div class="auth-title" style="font-size:19px">Enter the code</div>
+          <div class="auth-sub" style="margin-top:6px">We sent a 6-digit code to<br><strong id="otpTargetEmail" style="color:var(--text)"></strong></div>
+        </div>
+        <div class="otp-row" id="resetOtpRow">
+          <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="0">
+          <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="1">
+          <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="2">
+          <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="3">
+          <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="4">
+          <input class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-i="5">
+        </div>
+        <div class="auth-error-banner" id="resetOtpErrBanner" style="display:none;color:var(--red);font-size:12.5px;font-weight:600;text-align:center;margin:10px 0 0;white-space:normal;overflow-wrap:break-word;line-height:1.4"></div>
+        <div class="field-err" id="resetOtpFieldErr">Enter all 6 digits</div>
+        <button class="btn-primary" id="resetOtpBtn" style="margin-top:16px" onclick="handleVerifyResetOtp()">
+          <span class="spinner"></span>
+          <span class="btn-label">Verify Code</span>
+        </button>
+        <div class="resend-row">
+          Didn't get it? <button id="resetResendBtn" onclick="handleResendResetOtp()">Resend code</button>
+          <span id="resetResendTimer" style="display:none;color:var(--text3)"></span>
+        </div>
+      </div>
+
+      <div id="forgotNewPass" style="display:none">
+        <div class="auth-head" style="text-align:left;margin-bottom:20px">
+          <div class="auth-title" style="font-size:19px">Set new password</div>
+          <div class="auth-sub" style="margin-top:6px">Choose a new password for your account</div>
+        </div>
+        <form onsubmit="return handleSetNewPassword(event)" novalidate>
+          <div class="field">
+            <label>New password</label>
+            <div class="input-shell">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" placeholder="At least 8 characters" required id="newPass1Input">
+              <button type="button" class="eye-toggle" onclick="togglePw('newPass1Input',this)" aria-label="Show password">
+                <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-closed" viewBox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.6 18.6 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+            <div class="field-err" id="newPass1Err">Min 8 characters, 1 number</div>
+          </div>
+          <div class="field">
+            <label>Confirm new password</label>
+            <div class="input-shell">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" placeholder="Re-enter password" required id="newPass2Input">
+              <button type="button" class="eye-toggle" onclick="togglePw('newPass2Input',this)" aria-label="Show password">
+                <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-closed" viewBox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.6 18.6 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+            <div class="field-err" id="newPass2Err">Passwords don't match</div>
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top:6px" id="setNewPassBtn">
+            <span class="spinner"></span>
+            <span class="btn-label">Save & Log In</span>
+          </button>
+        </form>
+      </div>
+
     </div>
 
   </div>
@@ -461,7 +567,10 @@ function switchTab(which){
     mainAuth.style.display = 'none';
     panelForgot.style.display = 'block';
     document.getElementById('forgotForm').style.display = 'block';
-    document.getElementById('forgotSuccess').style.display = 'none';
+    document.getElementById('forgotGoogleNotice').style.display = 'none';
+    document.getElementById('forgotOtp').style.display = 'none';
+    document.getElementById('forgotNewPass').style.display = 'none';
+    document.getElementById('forgotEmailInput').value = '';
     return;
   }
 
@@ -680,6 +789,8 @@ async function handleSubmit(e, type){
   return false;
 }
 
+let resetEmail = '';
+
 async function handleForgot(e){
   e.preventDefault();
   const input = document.getElementById('forgotEmailInput');
@@ -695,21 +806,210 @@ async function handleForgot(e){
   btn.classList.add('loading');
   btn.disabled = true;
 
+  const email = input.value.trim();
+
   try{
-    const { error } = await sbClient.auth.resetPasswordForEmail(input.value, {
-      redirectTo: window.location.origin + '/login.html'
-    });
+    // Check provider first — Google-only accounts have no password to reset
+    const { data: provider, error: providerErr } = await sbClient.rpc('get_auth_provider', { lookup_email: email });
+    if(!providerErr && provider === 'google'){
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      document.getElementById('forgotForm').style.display = 'none';
+      document.getElementById('forgotGoogleNotice').style.display = 'block';
+      return false;
+    }
+
+    const { error } = await sbClient.auth.resetPasswordForEmail(email);
     if(error) throw error;
 
+    resetEmail = email;
     btn.classList.remove('loading');
     btn.disabled = false;
-    document.getElementById('sentEmailDisplay').textContent = input.value;
+    document.getElementById('otpTargetEmail').textContent = email;
     document.getElementById('forgotForm').style.display = 'none';
-    document.getElementById('forgotSuccess').style.display = 'block';
+    document.getElementById('forgotOtp').style.display = 'block';
+    startResetResendCooldown(30);
+    setTimeout(() => { const b = resetOtpBoxes()[0]; if(b) b.focus(); }, 100);
   } catch(err2){
     btn.classList.remove('loading');
     btn.disabled = false;
-    showAuthError(e.target, friendlyAuthError(err2.message) === (err2.message || '') ? 'Could not send reset link. Try again.' : friendlyAuthError(err2.message));
+    showAuthError(e.target, 'Could not send code. Try again.');
+  }
+
+  return false;
+}
+
+function resetOtpBoxes(){
+  return Array.from(document.querySelectorAll('#resetOtpRow .otp-box'));
+}
+
+(function initResetOtpBoxes(){
+  const boxes = resetOtpBoxes();
+  boxes.forEach((box, i) => {
+    box.addEventListener('input', () => {
+      box.value = box.value.replace(/[^0-9]/g, '');
+      if(box.value && i < boxes.length - 1) boxes[i+1].focus();
+      box.classList.remove('error');
+    });
+    box.addEventListener('keydown', (e) => {
+      if(e.key === 'Backspace' && !box.value && i > 0) boxes[i-1].focus();
+    });
+    box.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const text = (e.clipboardData.getData('text') || '').replace(/[^0-9]/g, '').slice(0, 6);
+      text.split('').forEach((ch, idx) => { if(boxes[idx]) boxes[idx].value = ch; });
+      const next = boxes[Math.min(text.length, 5)];
+      if(next) next.focus();
+    });
+  });
+})();
+
+function getResetOtpCode(){
+  return resetOtpBoxes().map(b => b.value).join('');
+}
+
+function shakeResetOtpBoxes(){
+  const boxes = resetOtpBoxes();
+  boxes.forEach(b => {
+    b.classList.remove('shake');
+    void b.offsetWidth;
+    b.classList.add('shake');
+  });
+  setTimeout(() => boxes.forEach(b => b.classList.remove('shake')), 500);
+}
+
+function waveResetOtpSuccess(onComplete){
+  const boxes = resetOtpBoxes();
+  boxes.forEach((b, i) => {
+    setTimeout(() => {
+      b.classList.add('wave-success');
+      setTimeout(() => {
+        b.classList.remove('wave-success');
+        b.classList.add('wave-done');
+        if(i === boxes.length - 1 && onComplete) onComplete();
+      }, 500);
+    }, i * 130);
+  });
+}
+
+async function handleVerifyResetOtp(){
+  const code = getResetOtpCode();
+  const fieldErr = document.getElementById('resetOtpFieldErr');
+  const banner = document.getElementById('resetOtpErrBanner');
+  const boxes = resetOtpBoxes();
+
+  if(code.length !== 6){
+    fieldErr.classList.add('show');
+    boxes.forEach(b => { if(!b.value) b.classList.add('error'); });
+    return;
+  }
+  fieldErr.classList.remove('show');
+  banner.style.display = 'none';
+
+  const btn = document.getElementById('resetOtpBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try{
+    const { error } = await sbClient.auth.verifyOtp({
+      email: resetEmail,
+      token: code,
+      type: 'recovery'
+    });
+    if(error) throw error;
+
+    boxes.forEach(b => b.classList.remove('error','shake'));
+    waveResetOtpSuccess(() => {
+      document.getElementById('forgotOtp').style.display = 'none';
+      document.getElementById('forgotNewPass').style.display = 'block';
+    });
+  }catch(err){
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    const msg = (err.message || '').toLowerCase();
+    if(msg.includes('expired')){
+      banner.textContent = 'This code has expired. Tap resend to get a new one.';
+    } else if(msg.includes('invalid') || msg.includes('token')){
+      banner.textContent = "That code doesn't match. Check and try again.";
+    } else {
+      banner.textContent = 'Could not verify. Please try again.';
+    }
+    banner.style.display = 'block';
+    boxes.forEach(b => b.classList.add('error'));
+    shakeResetOtpBoxes();
+  }
+}
+
+let resetResendCooldownVal = 0;
+let resetResendTimerHandle = null;
+
+function startResetResendCooldown(seconds){
+  resetResendCooldownVal = seconds;
+  const btn = document.getElementById('resetResendBtn');
+  const timer = document.getElementById('resetResendTimer');
+  btn.style.display = 'none';
+  timer.style.display = 'inline';
+  clearInterval(resetResendTimerHandle);
+  resetResendTimerHandle = setInterval(() => {
+    resetResendCooldownVal--;
+    timer.textContent = `Resend in ${resetResendCooldownVal}s`;
+    if(resetResendCooldownVal <= 0){
+      clearInterval(resetResendTimerHandle);
+      btn.style.display = 'inline';
+      timer.style.display = 'none';
+    }
+  }, 1000);
+  timer.textContent = `Resend in ${resetResendCooldownVal}s`;
+}
+
+async function handleResendResetOtp(){
+  if(!resetEmail) return;
+  const btn = document.getElementById('resetResendBtn');
+  const banner = document.getElementById('resetOtpErrBanner');
+  btn.disabled = true;
+  try{
+    const { error } = await sbClient.auth.resetPasswordForEmail(resetEmail);
+    if(error) throw error;
+    banner.style.display = 'none';
+    startResetResendCooldown(30);
+  }catch(err){
+    banner.textContent = 'Could not resend code. Try again shortly.';
+    banner.style.display = 'block';
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+async function handleSetNewPassword(e){
+  e.preventDefault();
+  const p1 = document.getElementById('newPass1Input');
+  const p2 = document.getElementById('newPass2Input');
+  const p1Err = document.getElementById('newPass1Err');
+  const p2Err = document.getElementById('newPass2Err');
+  const btn = document.getElementById('setNewPassBtn');
+
+  const v1 = validatePassword(p1.value);
+  p1.closest('.field').classList.toggle('error', !v1.ok);
+  p1Err.classList.toggle('show', !v1.ok);
+
+  const match = p1.value === p2.value && p2.value.length > 0;
+  p2.closest('.field').classList.toggle('error', !match);
+  p2Err.classList.toggle('show', !match);
+
+  if(!v1.ok || !match) return false;
+
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try{
+    const { error } = await sbClient.auth.updateUser({ password: p1.value });
+    if(error) throw error;
+
+    window.location.href = 'store.html';
+  }catch(err){
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    showAuthError(e.target, 'Could not update password. Try again.');
   }
 
   return false;
