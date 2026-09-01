@@ -772,7 +772,16 @@ async function handleSubmit(e, type){
       const remember = document.getElementById('rememberMeCheckbox').checked;
 
       const { error } = await sbClient.auth.signInWithPassword({ email, password });
-      if(error) throw error;
+      if(error){
+        if((error.message || '').toLowerCase().includes('invalid login credentials')){
+          const { data: provider } = await sbClient.rpc('get_auth_provider', { lookup_email: email });
+          if(provider === 'google'){
+            throw new Error('This account uses Google sign-in. Use \'Continue with Google\' instead.');
+          }
+          throw new Error('Wrong password. Double-check and try again.');
+        }
+        throw error;
+      }
 
       svSetRememberChoice(remember);
 
