@@ -778,7 +778,7 @@ async function handleSubmit(e, type){
           if(provider === 'google'){
             throw new Error('This account uses Google sign-in. Use \'Continue with Google\' instead.');
           }
-          throw new Error('Wrong password. Double-check and try again.');
+          throw new Error('Wrong password. Check and try again.');
         }
         throw error;
       }
