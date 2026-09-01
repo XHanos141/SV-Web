@@ -346,8 +346,10 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   background:#000;cursor:pointer;min-height:0;
 }
 .crop-empty{
-  display:flex;flex-direction:column;align-items:center;gap:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
   color:rgba(255,255,255,0.5);font-size:13px;font-weight:600;text-align:center;
+  width:min(80%,80%);aspect-ratio:1;
+  border:2px dashed rgba(255,255,255,0.25);border-radius:50%;
 }
 .crop-empty svg{width:40px;height:40px;stroke:rgba(255,255,255,0.5)}
 #cropCanvas{
@@ -360,13 +362,14 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 .ae-stage.has-image .ae-dim-overlay{display:block}
 .ae-dim-overlay::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(circle at center, transparent 0, transparent calc(min(50vw,50vh) - 1px), rgba(0,0,0,0.72) min(50vw,50vh));
+  background:radial-gradient(circle at center, transparent 0, transparent calc(40% - 1px), rgba(0,0,0,0.72) 40%, rgba(0,0,0,0.72) 100%);
 }
 .ae-dim-overlay::after{
   content:'';position:absolute;top:50%;left:50%;
-  width:min(86vw,55vh);height:min(86vw,55vh);
+  width:80%;aspect-ratio:1;
   transform:translate(-50%,-50%);border-radius:50%;
-  border:1.5px solid rgba(255,255,255,0.85);box-sizing:border-box;
+  border:2px solid rgba(255,255,255,0.9);box-sizing:border-box;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4);
 }
 
 .ae-panel{
