@@ -898,6 +898,7 @@ async function saveProfileChanges(){
     if(!user) throw new Error('Not signed in');
 
     let avatarUrl = currentCustomer.avatar_url || null;
+    let avatarIsCustom = currentCustomer.avatar_is_custom || false;
 
     if(pendingAvatarBlob){
       const path = `${user.id}/avatar.png`;
@@ -911,16 +912,18 @@ async function saveProfileChanges(){
         .createSignedUrl(path, 60 * 60 * 24 * 365);
       if(signErr) throw signErr;
       avatarUrl = signedData.signedUrl;
+      avatarIsCustom = true;
     }
 
     const { error: updateErr } = await sbClient
       .from('customers')
-      .update({ full_name: newName, avatar_url: avatarUrl })
+      .update({ full_name: newName, avatar_url: avatarUrl, avatar_is_custom: avatarIsCustom })
       .eq('auth_id', user.id);
     if(updateErr) throw updateErr;
 
     currentCustomer.full_name = newName;
     currentCustomer.avatar_url = avatarUrl;
+    currentCustomer.avatar_is_custom = avatarIsCustom;
     document.getElementById('custName').textContent = newName;
     renderAvatar(currentCustomer);
 
