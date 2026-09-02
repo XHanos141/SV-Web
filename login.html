@@ -622,9 +622,21 @@ function switchTab(which){
   switchTab('forgot');
   const input = document.getElementById('forgotEmailInput');
   input.value = email;
-  setTimeout(() => {
-    document.querySelector('#forgotForm form').dispatchEvent(new Event('submit', { cancelable: true }));
-  }, 150);
+
+  // Wait for sbClient to exist before auto-submitting — on a slow
+  // connection the Supabase CDN script may not have finished loading yet,
+  // and a blind timeout would silently fail, stranding the user on the
+  // empty email screen with no error shown.
+  let attempts = 0;
+  const tryAutoSubmit = () => {
+    attempts++;
+    if(typeof sbClient !== 'undefined'){
+      document.querySelector('#forgotForm form').dispatchEvent(new Event('submit', { cancelable: true }));
+    } else if(attempts < 40){
+      setTimeout(tryAutoSubmit, 150);
+    }
+  };
+  tryAutoSubmit();
 })();
 
 function togglePw(id, btn){
@@ -899,25 +911,40 @@ function resetOtpBoxes(){
 
 (function initResetOtpBoxes(){
   const boxes = resetOtpBoxes();
+  let pressTimer = null;
+  let longPressFired = false;
+
   boxes.forEach((box, i) => {
     box.addEventListener('input', () => {
       box.value = box.value.replace(/[^0-9]/g, '');
       if(box.value && i < boxes.length - 1) boxes[i+1].focus();
       box.classList.remove('error');
     });
+    // Backspace only clears the box currently focused — no auto-jump to
+    // the previous box, so each box needs its own tap+backspace to clear.
     box.addEventListener('keydown', (e) => {
-      if(e.key === 'Backspace'){
-        if(box.value){
-          // let the input event clear this box normally
-          return;
-        }
-        if(i > 0){
-          e.preventDefault();
-          boxes[i-1].value = '';
-          boxes[i-1].focus();
-        }
+      if(e.key === 'Backspace' && box.value){
+        // let the input event clear this box normally
+        return;
       }
     });
+    // Long-press any box clears the whole code.
+    const startPress = () => {
+      longPressFired = false;
+      pressTimer = setTimeout(() => {
+        longPressFired = true;
+        boxes.forEach(b => { b.value = ''; b.classList.remove('error'); });
+        boxes[0].focus();
+        if(navigator.vibrate) navigator.vibrate(15);
+      }, 500);
+    };
+    const cancelPress = () => { clearTimeout(pressTimer); };
+    box.addEventListener('touchstart', startPress, { passive: true });
+    box.addEventListener('touchend', cancelPress);
+    box.addEventListener('touchmove', cancelPress);
+    box.addEventListener('mousedown', startPress);
+    box.addEventListener('mouseup', cancelPress);
+    box.addEventListener('mouseleave', cancelPress);
     box.addEventListener('paste', (e) => {
       e.preventDefault();
       const text = (e.clipboardData.getData('text') || '').replace(/[^0-9]/g, '').slice(0, 6);
