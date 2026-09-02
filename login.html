@@ -410,7 +410,7 @@ body{
               </div>
               <div class="field-err">Enter a valid password</div>
               <div class="pw-meter"><span></span><span></span><span></span><span></span></div>
-              <div class="pw-hint">Min 8 characters, 1 number</div>
+              <div class="pw-hint">Min 8 characters, upper, lower & a number</div>
             </div>
 
             <div class="field" style="margin-bottom:18px">
@@ -524,7 +524,7 @@ body{
                 <svg class="eye-closed" viewBox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.6 18.6 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
               </button>
             </div>
-            <div class="field-err" id="newPass1Err">Min 8 characters, 1 number</div>
+            <div class="field-err" id="newPass1Err">Min 8 characters, upper, lower & a number</div>
           </div>
           <div class="field">
             <label>Confirm new password</label>
@@ -636,6 +636,12 @@ function friendlyAuthError(rawMessage){
   if(msg.includes('password should be at least')){
     return 'Password is too short. Use at least 6 characters.';
   }
+  if(msg.includes('password should contain') || msg.includes('character of each')){
+    return 'Password needs uppercase, lowercase, and a number.';
+  }
+  if(msg.includes('error sending confirmation') || msg.includes('error sending')){
+    return 'Could not send confirmation email. Please try again shortly.';
+  }
   if(msg.includes('rate limit') || msg.includes('too many requests')){
     return 'Too many attempts. Please wait a moment and try again.';
   }
@@ -672,6 +678,7 @@ function showAuthInfo(form, message){
 }
 
 function validatePassword(val){
+  if(!val) return { ok:false, reason:'empty' };
   // Reject emoji and other non-printable/surrogate-pair characters
   const hasEmoji = /[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\uFE0F]/u.test(val);
   if(hasEmoji) return { ok:false, reason:'emoji' };
@@ -680,6 +687,8 @@ function validatePassword(val){
   if(!onlyPrintableAscii) return { ok:false, reason:'invalid_chars' };
   if(val.length < 8) return { ok:false, reason:'too_short' };
   if(!/[0-9]/.test(val)) return { ok:false, reason:'no_number' };
+  if(!/[a-z]/.test(val)) return { ok:false, reason:'no_lower' };
+  if(!/[A-Z]/.test(val)) return { ok:false, reason:'no_upper' };
   return { ok:true };
 }
 
@@ -715,10 +724,13 @@ async function handleSubmit(e, type){
         const result = validatePassword(pwInput.value);
         if(!result.ok){
           const messages = {
+            empty: 'Please enter a password.',
             emoji: "Password can't contain emoji.",
             invalid_chars: 'Password contains characters that are not allowed.',
             too_short: 'Password must be at least 8 characters.',
-            no_number: 'Password must include at least 1 number.'
+            no_number: 'Password must include at least 1 number.',
+            no_lower: 'Password must include a lowercase letter.',
+            no_upper: 'Password must include an uppercase letter.'
           };
           showAuthError(form, messages[result.reason] || 'Please enter a valid password.');
         }
