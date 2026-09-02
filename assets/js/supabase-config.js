@@ -91,8 +91,12 @@ async function svInitHeaderAuth(buttonId) {
   const customer = await svGetCurrentCustomer();
 
   if (customer) {
-    const initial = (customer.full_name || customer.email || '?').trim().charAt(0).toUpperCase();
-    btn.innerHTML = '<span class="hcart-initial">' + initial + '</span>';
+    if (customer.avatar_url) {
+      btn.innerHTML = '<img src="' + customer.avatar_url + '" class="hcart-avatar-img" alt="">';
+    } else {
+      const initial = (customer.full_name || customer.email || '?').trim().charAt(0).toUpperCase();
+      btn.innerHTML = '<span class="hcart-initial">' + initial + '</span>';
+    }
     btn.classList.add('is-logged-in');
     btn.onclick = () => { window.location.href = 'profile.html'; };
   } else {
