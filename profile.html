@@ -241,6 +241,8 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   border-bottom:1px solid var(--border);cursor:pointer;
 }
 .setting-row:last-child{border-bottom:none}
+.setting-row.is-disabled{cursor:default;opacity:.55}
+.setting-row.is-disabled .setting-icon{background:var(--surface2)}
 .setting-icon{width:32px;height:32px;border-radius:9px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .setting-icon svg{width:16px;height:16px;stroke:var(--text2);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .setting-text{flex:1}
@@ -496,7 +498,7 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 <!-- ACCOUNT SETTINGS -->
 <div class="sect"><span class="sect-label">Account Settings</span></div>
 <div class="settings-card">
-  <div class="setting-row" onclick="openPasswordModal()">
+  <div class="setting-row" id="changePasswordRow" onclick="openPasswordModal()">
     <div class="setting-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
     <div class="setting-text">
       <div class="setting-title">Change Password</div>
@@ -799,6 +801,19 @@ async function loadRealProfile(){
   document.getElementById('custIdTag').textContent = code;
   renderAvatar(customer);
   document.getElementById('idCard').classList.remove('is-loading');
+
+  // Change Password only applies to email/password accounts — Google-only
+  // accounts have no password to change.
+  const user = await svGetCurrentUser();
+  const providers = (user && user.app_metadata && user.app_metadata.providers) || [];
+  const isGoogleOnly = providers.length > 0 && providers.every(p => p === 'google');
+  if(isGoogleOnly){
+    const pwRow = document.getElementById('changePasswordRow');
+    pwRow.classList.add('is-disabled');
+    pwRow.onclick = null;
+    pwRow.querySelector('.setting-sub').textContent = 'Signed in with Google — no password to change';
+    pwRow.querySelector('.setting-chevron').style.display = 'none';
+  }
 }
 
 loadRealProfile();
