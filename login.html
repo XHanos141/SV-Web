@@ -258,6 +258,20 @@ body{
 .resend-row button{background:none;border:none;font-family:var(--font-body);font-size:13px;font-weight:700;color:var(--accent);cursor:pointer;padding:0}
 .resend-row button:disabled{color:var(--text3);cursor:default}
 
+/* Toast */
+.toast{
+  position:fixed;bottom:32px;left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--text);color:var(--surface);
+  padding:12px 20px;border-radius:30px;
+  font-size:12.5px;font-weight:700;
+  box-shadow:0 8px 24px rgba(0,0,0,.2);
+  opacity:0;pointer-events:none;
+  transition:opacity .3s ease,transform .3s ease;
+  z-index:2000;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
 .provider-notice{
   text-align:center;padding:12px 0 4px;
 }
@@ -550,6 +564,8 @@ body{
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
 function switchTab(which){
   const thumb = document.getElementById('tabThumb');
@@ -648,7 +664,7 @@ function friendlyAuthError(rawMessage){
   if(msg.includes('network') || msg.includes('fetch')){
     return 'Connection issue. Check your internet and try again.';
   }
-  return rawMessage || 'Something went wrong. Please try again.';
+  return 'Something went wrong. Please try again.';
 }
 
 function showAuthError(form, message){
@@ -1037,7 +1053,8 @@ async function handleSetNewPassword(e){
     const { error } = await sbClient.auth.updateUser({ password: p1.value });
     if(error) throw error;
 
-    window.location.href = 'store.html';
+    showToast('Your account password has been changed successfully.');
+    setTimeout(() => { window.location.href = 'store.html'; }, 1400);
   }catch(err){
     btn.classList.remove('loading');
     btn.disabled = false;
@@ -1054,6 +1071,14 @@ async function handleGoogle(){
   });
 }
 
+const toastEl = document.getElementById('toast');
+let toastTimer;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000);
+}
 </script>
 </body>
 </html>
