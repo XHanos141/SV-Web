@@ -755,7 +755,8 @@ function deleteAddr(id){
 
 // ===== PASSWORD =====
 function openPasswordModal(){
-  // TODO: build change-password sheet once Supabase auth is wired
+  if(!currentCustomer || !currentCustomer.email) return;
+  window.location.href = 'login.html?mode=reset&email=' + encodeURIComponent(currentCustomer.email);
 }
 
 // ===== LOGOUT =====

@@ -610,6 +610,23 @@ function switchTab(which){
   }
 }
 
+// ===== CHANGE-PASSWORD DEEP LINK (from profile.html) =====
+// profile.html links here with ?mode=reset&email=... to reuse the same
+// forgot-password OTP flow for logged-in users changing their password.
+(function initChangePasswordDeepLink(){
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('mode') !== 'reset') return;
+  const email = params.get('email');
+  if(!email) return;
+
+  switchTab('forgot');
+  const input = document.getElementById('forgotEmailInput');
+  input.value = email;
+  setTimeout(() => {
+    document.querySelector('#forgotForm form').dispatchEvent(new Event('submit', { cancelable: true }));
+  }, 150);
+})();
+
 function togglePw(id, btn){
   const input = document.getElementById(id);
   const isPw = input.type === 'password';
@@ -1054,7 +1071,9 @@ async function handleSetNewPassword(e){
     if(error) throw error;
 
     showToast('Your account password has been changed successfully.');
-    setTimeout(() => { window.location.href = 'store.html'; }, 1400);
+    const params = new URLSearchParams(window.location.search);
+    const backTo = params.get('mode') === 'reset' ? 'profile.html' : 'store.html';
+    setTimeout(() => { window.location.href = backTo; }, 1400);
   }catch(err){
     btn.classList.remove('loading');
     btn.disabled = false;
