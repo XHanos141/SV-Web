@@ -348,10 +348,13 @@ async function handleVerify(){
     btn.classList.remove('loading');
     btn.disabled = false;
     const msg = (err.message || '').toLowerCase();
-    if(msg.includes('expired')){
-      showErr('This code has expired. Tap resend to get a new one.');
-    } else if(msg.includes('invalid') || msg.includes('token')){
+    // Supabase's error string for a wrong code is "Token has expired or is
+    // invalid" — it contains "expired" even when the real issue is a wrong
+    // code. Check "invalid" first since a mistyped code is far more common.
+    if(msg.includes('invalid')){
       showErr("That code doesn't match. Check and try again.");
+    } else if(msg.includes('expired')){
+      showErr('This code has expired. Tap resend to get a new one.');
     } else {
       showErr('Could not verify. Please try again.');
     }

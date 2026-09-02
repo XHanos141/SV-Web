@@ -991,10 +991,14 @@ async function handleVerifyResetOtp(){
     btn.classList.remove('loading');
     btn.disabled = false;
     const msg = (err.message || '').toLowerCase();
-    if(msg.includes('expired')){
-      banner.textContent = 'This code has expired. Tap resend to get a new one.';
-    } else if(msg.includes('invalid') || msg.includes('token')){
+    // Supabase returns "Token has expired or is invalid" for BOTH a wrong
+    // code and a genuinely expired one — the string always contains
+    // "expired", so checking that first misreports wrong codes as expired.
+    // Check "invalid" first since a mistyped code is far more common.
+    if(msg.includes('invalid')){
       banner.textContent = "That code doesn't match. Check and try again.";
+    } else if(msg.includes('expired')){
+      banner.textContent = 'This code has expired. Tap resend to get a new one.';
     } else {
       banner.textContent = 'Could not verify. Please try again.';
     }
