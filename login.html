@@ -911,8 +911,6 @@ function resetOtpBoxes(){
 
 (function initResetOtpBoxes(){
   const boxes = resetOtpBoxes();
-  let pressTimer = null;
-  let longPressFired = false;
 
   boxes.forEach((box, i) => {
     box.addEventListener('input', () => {
@@ -929,17 +927,21 @@ function resetOtpBoxes(){
       }
     });
     // Long-press any box clears the whole code.
-    const startPress = () => {
-      longPressFired = false;
-      pressTimer = setTimeout(() => {
-        longPressFired = true;
+    // Per-box timer (not shared across boxes/events) so a synthetic
+    // mousedown firing right after touchstart can't orphan the first
+    // timer and clear the row late on a quick tap.
+    let boxPressTimer = null;
+    const startPress = (e) => {
+      if(e.type === 'mousedown' && box.dataset.touched === '1') return; // skip synthetic mousedown after touch
+      if(boxPressTimer) clearTimeout(boxPressTimer);
+      boxPressTimer = setTimeout(() => {
         boxes.forEach(b => { b.value = ''; b.classList.remove('error'); });
         boxes[0].focus();
         if(navigator.vibrate) navigator.vibrate(15);
       }, 500);
     };
-    const cancelPress = () => { clearTimeout(pressTimer); };
-    box.addEventListener('touchstart', startPress, { passive: true });
+    const cancelPress = () => { clearTimeout(boxPressTimer); boxPressTimer = null; };
+    box.addEventListener('touchstart', (e) => { box.dataset.touched = '1'; startPress(e); }, { passive: true });
     box.addEventListener('touchend', cancelPress);
     box.addEventListener('touchmove', cancelPress);
     box.addEventListener('mousedown', startPress);

@@ -252,7 +252,6 @@ const email = params.get('email') || '';
 document.getElementById('targetEmail').textContent = email || 'your email';
 
 const boxes = Array.from(document.querySelectorAll('.otp-box'));
-let pressTimer = null;
 boxes.forEach((box, i) => {
   box.addEventListener('input', () => {
     box.value = box.value.replace(/[^0-9]/g, '');
@@ -264,15 +263,21 @@ boxes.forEach((box, i) => {
     if(e.key === 'Backspace' && box.value) return;
   });
   // Long-press any box clears the whole code.
-  const startPress = () => {
-    pressTimer = setTimeout(() => {
+  // Each box gets its own timer (not shared) to avoid a second pointer
+  // event (touch fires a synthetic mousedown too) silently overwriting
+  // and orphaning the first timer, which then fires late on a quick tap.
+  let boxPressTimer = null;
+  const startPress = (e) => {
+    if(e.type === 'mousedown' && box.dataset.touched === '1') return; // skip synthetic mousedown after touch
+    if(boxPressTimer) clearTimeout(boxPressTimer);
+    boxPressTimer = setTimeout(() => {
       boxes.forEach(b => { b.value = ''; b.classList.remove('error'); });
       boxes[0].focus();
       if(navigator.vibrate) navigator.vibrate(15);
     }, 500);
   };
-  const cancelPress = () => { clearTimeout(pressTimer); };
-  box.addEventListener('touchstart', startPress, { passive: true });
+  const cancelPress = () => { clearTimeout(boxPressTimer); boxPressTimer = null; };
+  box.addEventListener('touchstart', (e) => { box.dataset.touched = '1'; startPress(e); }, { passive: true });
   box.addEventListener('touchend', cancelPress);
   box.addEventListener('touchmove', cancelPress);
   box.addEventListener('mousedown', startPress);
