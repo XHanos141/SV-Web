@@ -295,7 +295,7 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 .modal-overlay.center-popup.open .modal-sheet{transform:scale(1) translateY(0);opacity:1}
 .modal-overlay.center-popup .modal-handle{display:none}
 
-/* Avatar crop stage — drag to pan, slider/pinch to zoom, circular mask */
+/* Avatar crop stage — drag to pan, pinch/scroll/buttons to zoom, 90° + fine rotate, circular mask */
 .crop-sheet{max-width:340px}
 .crop-stage{
   position:relative;width:100%;aspect-ratio:1/1;border-radius:14px;overflow:hidden;
@@ -303,16 +303,37 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 }
 .crop-stage.dragging{cursor:grabbing}
 .crop-stage canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
+.crop-grid{
+  position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .15s var(--ease);
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.4) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.4) 1px, transparent 1px);
+  background-size:33.333% 33.333%;
+}
+.crop-stage.dragging .crop-grid,.crop-stage.adjusting .crop-grid{opacity:1}
 .crop-mask{
   position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(circle at center, transparent 0%, transparent 49%, rgba(5,10,20,0.62) 50%);
+  /* closest-side (not the default farthest-corner) so the visible circle
+     spans the full stage width — matches what actually stays visible
+     once the final image is shown in a border-radius:50% avatar. */
+  background:radial-gradient(circle closest-side at center, transparent 0%, transparent 99%, rgba(5,10,20,0.62) 100%);
 }
-.crop-zoom-row{
-  display:flex;align-items:center;gap:10px;margin-top:16px;color:var(--text3);
+.crop-controls{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.crop-control-row{display:flex;align-items:center;gap:10px}
+.crop-control-row input[type="range"]{flex:1;accent-color:var(--accent,#009ddc);height:4px}
+.crop-icon-btn{
+  width:30px;height:30px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--border-strong);
+  background:var(--surface2);color:var(--text2);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .15s,border-color .15s,color .15s;
 }
-.crop-zoom-row input[type="range"]{
-  flex:1;accent-color:var(--accent,#009ddc);height:4px;
+.crop-icon-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.crop-icon-btn:active{transform:scale(0.9)}
+.crop-icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+.crop-reset-btn{
+  align-self:center;font-size:12px;font-weight:700;color:var(--text3);background:none;border:none;
+  cursor:pointer;padding:2px 8px;text-decoration:underline;text-underline-offset:2px;
 }
+.crop-reset-btn:active{opacity:0.6}
 .modal-title{font-family:var(--font-display);font-size:17px;font-weight:800;margin-bottom:14px}
 .field{margin-bottom:10px}
 .field label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
@@ -582,19 +603,38 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   </div>
 </div>
 
-<!-- AVATAR CROP MODAL — drag to pan, pinch/scroll to zoom, circular mask -->
+<!-- AVATAR CROP MODAL — drag to pan, pinch/scroll/buttons to zoom, 90° + fine rotate, circular mask -->
 <div class="modal-overlay center-popup" id="cropModal">
   <div class="modal-sheet crop-sheet">
     <div class="modal-title">Adjust Photo</div>
     <div class="crop-stage" id="cropStage">
       <canvas id="cropCanvas"></canvas>
+      <div class="crop-grid" id="cropGrid"></div>
       <div class="crop-mask"></div>
     </div>
-    <div class="crop-zoom-row">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-      <input type="range" id="cropZoomSlider" min="1" max="3" step="0.01" value="1">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+
+    <div class="crop-controls">
+      <div class="crop-control-row">
+        <button class="crop-icon-btn" id="zoomOutBtn" aria-label="Zoom out" type="button">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <input type="range" id="cropZoomSlider" min="1" max="3" step="0.01" value="1" aria-label="Zoom">
+        <button class="crop-icon-btn" id="zoomInBtn" aria-label="Zoom in" type="button">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+      <div class="crop-control-row">
+        <button class="crop-icon-btn" id="rotateLeftBtn" aria-label="Rotate left 90°" type="button">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4M3 4v5h5"/></svg>
+        </button>
+        <input type="range" id="cropRotateSlider" min="-45" max="45" step="1" value="0" aria-label="Straighten">
+        <button class="crop-icon-btn" id="rotateRightBtn" aria-label="Rotate right 90°" type="button">
+          <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>
+        </button>
+      </div>
+      <button class="crop-reset-btn" id="cropResetBtn" type="button">Reset</button>
     </div>
+
     <div class="ae-btn-row">
       <button class="ae-cancel-btn" onclick="closeCropModal()">Cancel</button>
       <button class="modal-save-btn" style="margin-top:0" onclick="confirmCrop()">Use Photo</button>
@@ -938,36 +978,62 @@ document.getElementById('avatarFileInput').addEventListener('change', (e) => {
   reader.readAsDataURL(file);
 });
 
-// ===== AVATAR CROP MODAL: pan (drag) + zoom (slider or pinch), circular mask =====
+// ===== AVATAR CROP MODAL: pan (drag) + zoom (slider/buttons/pinch) + rotate (90° snap + fine straighten) =====
 const cropModal = document.getElementById('cropModal');
 const cropStage = document.getElementById('cropStage');
 const cropCanvas = document.getElementById('cropCanvas');
 const cropCtx = cropCanvas.getContext('2d');
 const cropZoomSlider = document.getElementById('cropZoomSlider');
+const cropRotateSlider = document.getElementById('cropRotateSlider');
+const zoomOutBtn = document.getElementById('zoomOutBtn');
+const zoomInBtn = document.getElementById('zoomInBtn');
+const rotateLeftBtn = document.getElementById('rotateLeftBtn');
+const rotateRightBtn = document.getElementById('rotateRightBtn');
+const cropResetBtn = document.getElementById('cropResetBtn');
 
 let cropImg = null;
-let cropScale = 1;       // current zoom relative to "fit" scale
-let cropMinScale = 1;    // scale at which image just covers the stage
-let cropOffsetX = 0;     // pan offset in canvas px
+let cropScale = 1;         // current zoom relative to "cover" scale
+let cropMinScale = 1;      // scale at which the (possibly rotated) image just covers the stage
+let cropOffsetX = 0;       // pan offset in canvas px
 let cropOffsetY = 0;
-let cropStageSize = 300; // resolved on open, canvas is square
+let cropStageSize = 300;   // resolved on open, canvas is square
+let cropBaseRotation = 0;  // 90° snap turns, degrees
+let cropFineRotation = 0;  // straighten slider, -45..45 degrees
+let cropRotation = 0;      // total = base + fine
+let adjustTimer = null;
+
+// Scale needed so a WxH image, rotated by angleDeg and centered, fully covers a stageSize square.
+function coverScaleForRotation(w, h, stageSize, angleDeg){
+  const theta = angleDeg * Math.PI / 180;
+  const span = stageSize * (Math.abs(Math.cos(theta)) + Math.abs(Math.sin(theta)));
+  return Math.max(span / w, span / h);
+}
+
+function flashGrid(){
+  cropStage.classList.add('adjusting');
+  clearTimeout(adjustTimer);
+  adjustTimer = setTimeout(() => cropStage.classList.remove('adjusting'), 500);
+}
 
 function openCropModal(img){
   cropImg = img;
   cropScale = 1;
   cropOffsetX = 0;
   cropOffsetY = 0;
+  cropBaseRotation = 0;
+  cropFineRotation = 0;
+  cropRotation = 0;
   cropZoomSlider.value = 1;
+  cropRotateSlider.value = 0;
 
   cropModal.classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  // Wait a frame so the modal has real layout dimensions to size the canvas from.
   requestAnimationFrame(() => {
     cropStageSize = cropStage.clientWidth || 300;
     cropCanvas.width = cropStageSize;
     cropCanvas.height = cropStageSize;
-    cropMinScale = Math.max(cropStageSize / img.width, cropStageSize / img.height);
+    cropMinScale = coverScaleForRotation(img.width, img.height, cropStageSize, cropRotation);
     drawCrop();
   });
 }
@@ -979,10 +1045,12 @@ function closeCropModal(){
 }
 
 function clampCropOffsets(){
-  const drawW = cropImg.width * cropMinScale * cropScale;
-  const drawH = cropImg.height * cropMinScale * cropScale;
-  const maxX = Math.max(0, (drawW - cropStageSize) / 2);
-  const maxY = Math.max(0, (drawH - cropStageSize) / 2);
+  const scale = cropMinScale * cropScale;
+  const theta = cropRotation * Math.PI / 180;
+  const effW = cropImg.width * scale * Math.abs(Math.cos(theta)) + cropImg.height * scale * Math.abs(Math.sin(theta));
+  const effH = cropImg.width * scale * Math.abs(Math.sin(theta)) + cropImg.height * scale * Math.abs(Math.cos(theta));
+  const maxX = Math.max(0, (effW - cropStageSize) / 2);
+  const maxY = Math.max(0, (effH - cropStageSize) / 2);
   cropOffsetX = Math.max(-maxX, Math.min(maxX, cropOffsetX));
   cropOffsetY = Math.max(-maxY, Math.min(maxY, cropOffsetY));
 }
@@ -990,13 +1058,47 @@ function clampCropOffsets(){
 function drawCrop(){
   if(!cropImg) return;
   clampCropOffsets();
-  const drawW = cropImg.width * cropMinScale * cropScale;
-  const drawH = cropImg.height * cropMinScale * cropScale;
-  const dx = (cropStageSize - drawW) / 2 + cropOffsetX;
-  const dy = (cropStageSize - drawH) / 2 + cropOffsetY;
+  const scale = cropMinScale * cropScale;
+  const angle = cropRotation * Math.PI / 180;
   cropCtx.clearRect(0, 0, cropStageSize, cropStageSize);
-  cropCtx.drawImage(cropImg, dx, dy, drawW, drawH);
+  cropCtx.save();
+  cropCtx.translate(cropStageSize / 2 + cropOffsetX, cropStageSize / 2 + cropOffsetY);
+  cropCtx.rotate(angle);
+  cropCtx.drawImage(cropImg, -cropImg.width * scale / 2, -cropImg.height * scale / 2, cropImg.width * scale, cropImg.height * scale);
+  cropCtx.restore();
 }
+
+function applyRotation(){
+  cropRotation = cropBaseRotation + cropFineRotation;
+  cropMinScale = coverScaleForRotation(cropImg.width, cropImg.height, cropStageSize, cropRotation);
+  flashGrid();
+  drawCrop();
+}
+
+function setZoom(next){
+  cropScale = Math.max(1, Math.min(3, next));
+  cropZoomSlider.value = cropScale;
+  flashGrid();
+  drawCrop();
+}
+
+function resetCrop(){
+  cropBaseRotation = 0;
+  cropFineRotation = 0;
+  cropRotateSlider.value = 0;
+  cropScale = 1;
+  cropZoomSlider.value = 1;
+  cropOffsetX = 0;
+  cropOffsetY = 0;
+  applyRotation();
+}
+
+zoomOutBtn.addEventListener('click', () => setZoom(cropScale - 0.15));
+zoomInBtn.addEventListener('click', () => setZoom(cropScale + 0.15));
+rotateLeftBtn.addEventListener('click', () => { cropBaseRotation = (cropBaseRotation - 90 + 360) % 360; applyRotation(); });
+rotateRightBtn.addEventListener('click', () => { cropBaseRotation = (cropBaseRotation + 90) % 360; applyRotation(); });
+cropRotateSlider.addEventListener('input', () => { cropFineRotation = parseFloat(cropRotateSlider.value); applyRotation(); });
+cropResetBtn.addEventListener('click', resetCrop);
 
 // --- Drag to pan (mouse + touch) ---
 let dragActive = false;
@@ -1005,6 +1107,7 @@ let dragStartX = 0, dragStartY = 0, dragStartOffX = 0, dragStartOffY = 0;
 function cropDragStart(x, y){
   dragActive = true;
   cropStage.classList.add('dragging');
+  clearTimeout(adjustTimer);
   dragStartX = x; dragStartY = y;
   dragStartOffX = cropOffsetX; dragStartOffY = cropOffsetY;
 }
@@ -1051,6 +1154,7 @@ cropStage.addEventListener('touchmove', (e) => {
     const ratio = dist / (pinchStartDist || dist);
     cropScale = Math.max(1, Math.min(3, pinchStartScale * ratio));
     cropZoomSlider.value = cropScale;
+    flashGrid();
     drawCrop();
   }
 }, { passive: true });
@@ -1062,26 +1166,31 @@ cropStage.addEventListener('wheel', (e) => {
   e.preventDefault();
   cropScale = Math.max(1, Math.min(3, cropScale - e.deltaY * 0.001));
   cropZoomSlider.value = cropScale;
+  flashGrid();
   drawCrop();
 }, { passive: false });
 
 cropZoomSlider.addEventListener('input', () => {
   cropScale = parseFloat(cropZoomSlider.value);
+  flashGrid();
   drawCrop();
 });
 
 function confirmCrop(){
-  // Render the final 512x512 square crop from the same transform shown on screen.
+  // Render the final 512x512 square crop using the same pan+zoom+rotate transform shown on screen.
   const outSize = 512;
   const out = document.createElement('canvas');
   out.width = outSize; out.height = outSize;
   const outCtx = out.getContext('2d');
   const ratio = outSize / cropStageSize;
-  const drawW = cropImg.width * cropMinScale * cropScale * ratio;
-  const drawH = cropImg.height * cropMinScale * cropScale * ratio;
-  const dx = (outSize - drawW) / 2 + cropOffsetX * ratio;
-  const dy = (outSize - drawH) / 2 + cropOffsetY * ratio;
-  outCtx.drawImage(cropImg, dx, dy, drawW, drawH);
+  const scale = cropMinScale * cropScale * ratio;
+  const angle = cropRotation * Math.PI / 180;
+
+  outCtx.save();
+  outCtx.translate(outSize / 2 + cropOffsetX * ratio, outSize / 2 + cropOffsetY * ratio);
+  outCtx.rotate(angle);
+  outCtx.drawImage(cropImg, -cropImg.width * scale / 2, -cropImg.height * scale / 2, cropImg.width * scale, cropImg.height * scale);
+  outCtx.restore();
 
   pendingAvatarDataUrl = out.toDataURL('image/png');
   out.toBlob((blob) => { pendingAvatarBlob = blob; }, 'image/png', 0.92);

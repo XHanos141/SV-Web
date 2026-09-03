@@ -253,19 +253,27 @@ document.getElementById('targetEmail').textContent = email || 'your email';
 
 const boxes = Array.from(document.querySelectorAll('.otp-box'));
 boxes.forEach((box, i) => {
-  box.addEventListener('input', () => {
+  // Backspace: let the browser do the actual deleting (fighting it with
+  // preventDefault + a synchronous .focus() is what broke this on Android —
+  // Gboard swallows the focus jump when it happens inside a prevented
+  // beforeinput/keydown). Instead we react AFTER the native deletion via
+  // the 'input' event and just move focus, so one physical backspace press
+  // clears the box you're on and hands focus to the previous one, ready
+  // for the next press to clear that one too.
+  box.addEventListener('input', (e) => {
     box.value = box.value.replace(/[^0-9]/g, '');
-    if(box.value && i < boxes.length - 1) boxes[i+1].focus();
+    if(box.value && i < boxes.length - 1){
+      boxes[i+1].focus();
+    } else if(!box.value && e.inputType === 'deleteContentBackward' && i > 0){
+      boxes[i-1].focus();
+    }
     box.classList.remove('error');
   });
-  // Backspace cascade: clears current box, or if already empty, clears
-  // the previous box and moves focus there. Uses 'beforeinput' (not
-  // 'keydown') because many Android virtual keyboards (Gboard etc.)
-  // never fire a proper keydown with key 'Backspace' for on-screen
-  // keys — they only emit an inputType of 'deleteContentBackward'.
+  // Box is already empty, so there's nothing for the browser to delete and
+  // no 'input' event will fire — handle the cascade ourselves here.
   box.addEventListener('beforeinput', (e) => {
     if(e.inputType !== 'deleteContentBackward') return;
-    if(box.value) return; // input event will clear this box's own digit
+    if(box.value) return;
     if(i > 0){
       e.preventDefault();
       boxes[i-1].value = '';
@@ -274,6 +282,8 @@ boxes.forEach((box, i) => {
     }
   });
   // Fallback for physical keyboards / browsers that do report keydown.
+  // Physical keyboards don't have the IME timing conflict, so
+  // preventDefault() here is safe and keeps behavior instant.
   box.addEventListener('keydown', (e) => {
     if(e.key !== 'Backspace' || box.value) return;
     if(i > 0){
