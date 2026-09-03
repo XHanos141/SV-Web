@@ -6,7 +6,16 @@
 const SUPABASE_URL = 'https://tlkoxltugvfwxmnrthvr.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_0dItRk9UZ40ZpwPqJRoOBw_6MyRFU6z';
 
-const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Guard against the Supabase CDN script failing to load (offline preview,
+// blocked network, etc). Without this, window.supabase being undefined
+// would throw here and abort the rest of this file — including the
+// svInitHeaderAuth definition every page depends on.
+let sbClient = null;
+try {
+  sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} catch (e) {
+  console.error('Supabase client failed to initialize:', e);
+}
 
 // ---- Remember Me handling ----
 // Supabase always persists the session in localStorage so the client works
@@ -33,6 +42,7 @@ function svSetRememberChoice(remember) {
 // marked session-only and this is a fresh browser session (no sessionStorage
 // flag survived), the previous login should not persist — sign out.
 async function svEnforceRememberChoice() {
+  if (!sbClient) return;
   const { data: { session } } = await sbClient.auth.getSession();
   if (!session) return;
 
@@ -54,6 +64,7 @@ svEnforceRememberChoice();
 
 // Returns the current logged-in session's Supabase auth user, or null.
 async function svGetCurrentUser() {
+  if (!sbClient) return null;
   const { data: { user } } = await sbClient.auth.getUser();
   return user;
 }
@@ -76,7 +87,7 @@ async function svGetCurrentCustomer() {
 
 // Signs the user out and redirects to login.
 async function svSignOut(redirectTo = 'login.html') {
-  await sbClient.auth.signOut();
+  if (sbClient) await sbClient.auth.signOut();
   window.location.href = redirectTo;
 }
 
