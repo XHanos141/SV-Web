@@ -831,7 +831,10 @@ async function handleSubmit(e, type){
       const { error } = await sbClient.auth.signInWithPassword({ email, password });
       if(error){
         if((error.message || '').toLowerCase().includes('invalid login credentials')){
-          const { data: provider } = await sbClient.rpc('get_auth_provider', { lookup_email: email });
+          const { data: provider, error: providerErr } = await sbClient.rpc('get_auth_provider', { lookup_email: email });
+          if(providerErr && (providerErr.message || '').toLowerCase().includes('rate_limit_exceeded')){
+            throw new Error('Too many attempts. Please wait a moment and try again.');
+          }
           if(provider === 'google'){
             throw new Error('This account uses Google sign-in. Use \'Continue with Google\' instead.');
           }
@@ -877,6 +880,12 @@ async function handleForgot(e){
   try{
     // Check provider first — Google-only accounts have no password to reset
     const { data: provider, error: providerErr } = await sbClient.rpc('get_auth_provider', { lookup_email: email });
+    if(providerErr && (providerErr.message || '').toLowerCase().includes('rate_limit_exceeded')){
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      showAuthError(e.target, 'Too many attempts. Please wait a moment and try again.');
+      return false;
+    }
     if(!providerErr && provider === 'google'){
       btn.classList.remove('loading');
       btn.disabled = false;
