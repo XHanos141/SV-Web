@@ -602,6 +602,20 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   </div>
 </div>
 
+<!-- CHANGE PASSWORD CONFIRM MODAL -->
+<div class="modal-overlay center-popup" id="pwConfirmModal">
+  <div class="modal-sheet">
+    <div class="modal-title">Send Reset Code?</div>
+    <p style="font-size:14px;color:var(--text-muted);line-height:1.5;margin:-6px 0 18px">
+      We'll email a 6-digit code to <strong id="pwConfirmEmail" style="color:var(--text)"></strong> to reset your password.
+    </p>
+    <div class="ae-btn-row">
+      <button class="ae-cancel-btn" onclick="closePasswordConfirm()">Cancel</button>
+      <button class="modal-save-btn" style="margin-top:0" onclick="confirmPasswordReset()">Send Code</button>
+    </div>
+  </div>
+</div>
+
 <!-- ADDRESS MODAL -->
 <div class="modal-overlay" id="addrModal">
   <div class="modal-sheet">
@@ -793,8 +807,18 @@ function deleteAddr(id){
 }
 
 // ===== PASSWORD =====
+// Reset flow auto-sends an OTP email the instant login.html loads with
+// ?mode=reset, so we confirm here first — an accidental tap on the
+// settings row would otherwise fire off an email with no way to cancel.
 function openPasswordModal(){
   if(!currentCustomer || !currentCustomer.email) return;
+  document.getElementById('pwConfirmEmail').textContent = currentCustomer.email;
+  document.getElementById('pwConfirmModal').classList.add('open');
+}
+function closePasswordConfirm(){
+  document.getElementById('pwConfirmModal').classList.remove('open');
+}
+function confirmPasswordReset(){
   window.location.href = 'login.html?mode=reset&email=' + encodeURIComponent(currentCustomer.email);
 }
 

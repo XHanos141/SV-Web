@@ -918,35 +918,31 @@ function resetOtpBoxes(){
       if(box.value && i < boxes.length - 1) boxes[i+1].focus();
       box.classList.remove('error');
     });
-    // Backspace only clears the box currently focused — no auto-jump to
-    // the previous box, so each box needs its own tap+backspace to clear.
-    box.addEventListener('keydown', (e) => {
-      if(e.key === 'Backspace' && box.value){
-        // let the input event clear this box normally
-        return;
+    // Backspace cascade: clears current box, or if already empty, clears
+    // the previous box and moves focus there. Uses 'beforeinput' (not
+    // 'keydown') because many Android virtual keyboards (Gboard etc.)
+    // never fire a proper keydown with key 'Backspace' for on-screen
+    // keys — they only emit an inputType of 'deleteContentBackward'.
+    box.addEventListener('beforeinput', (e) => {
+      if(e.inputType !== 'deleteContentBackward') return;
+      if(box.value) return; // input event will clear this box's own digit
+      if(i > 0){
+        e.preventDefault();
+        boxes[i-1].value = '';
+        boxes[i-1].classList.remove('error');
+        boxes[i-1].focus();
       }
     });
-    // Long-press any box clears the whole code.
-    // Per-box timer (not shared across boxes/events) so a synthetic
-    // mousedown firing right after touchstart can't orphan the first
-    // timer and clear the row late on a quick tap.
-    let boxPressTimer = null;
-    const startPress = (e) => {
-      if(e.type === 'mousedown' && box.dataset.touched === '1') return; // skip synthetic mousedown after touch
-      if(boxPressTimer) clearTimeout(boxPressTimer);
-      boxPressTimer = setTimeout(() => {
-        boxes.forEach(b => { b.value = ''; b.classList.remove('error'); });
-        boxes[0].focus();
-        if(navigator.vibrate) navigator.vibrate(15);
-      }, 500);
-    };
-    const cancelPress = () => { clearTimeout(boxPressTimer); boxPressTimer = null; };
-    box.addEventListener('touchstart', (e) => { box.dataset.touched = '1'; startPress(e); }, { passive: true });
-    box.addEventListener('touchend', cancelPress);
-    box.addEventListener('touchmove', cancelPress);
-    box.addEventListener('mousedown', startPress);
-    box.addEventListener('mouseup', cancelPress);
-    box.addEventListener('mouseleave', cancelPress);
+    // Fallback for physical keyboards / browsers that do report keydown.
+    box.addEventListener('keydown', (e) => {
+      if(e.key !== 'Backspace' || box.value) return;
+      if(i > 0){
+        e.preventDefault();
+        boxes[i-1].value = '';
+        boxes[i-1].classList.remove('error');
+        boxes[i-1].focus();
+      }
+    });
     box.addEventListener('paste', (e) => {
       e.preventDefault();
       const text = (e.clipboardData.getData('text') || '').replace(/[^0-9]/g, '').slice(0, 6);
