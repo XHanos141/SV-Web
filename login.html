@@ -928,13 +928,21 @@ function resetOtpBoxes(){
       box.classList.remove('error');
     });
     // Backspace cascade: clears current box, or if already empty, clears
-    // the previous box and moves focus there. Uses 'beforeinput' (not
-    // 'keydown') because many Android virtual keyboards (Gboard etc.)
-    // never fire a proper keydown with key 'Backspace' for on-screen
-    // keys — they only emit an inputType of 'deleteContentBackward'.
-    box.addEventListener('beforeinput', (e) => {
-      if(e.inputType !== 'deleteContentBackward') return;
-      if(box.value) return; // input event will clear this box's own digit
+    // the previous box and moves focus there.
+    // 'keydown' is the primary handler — it fires reliably for Backspace
+    // on both desktop and mobile Chrome/WebView. We track a data-had-value
+    // flag set on 'input' so keydown can tell, on the NEXT press, whether
+    // the box was already empty when backspace was hit (input's own value
+    // clear happens between keydown and the box reading empty).
+    box.addEventListener('keydown', (e) => {
+      if(e.key !== 'Backspace') return;
+      if(box.value){
+        // Box has a digit: let the browser's native deletion clear it.
+        // Do NOT preventDefault or manually jump — this keypress should
+        // only clear this box, not cascade.
+        return;
+      }
+      // Box is already empty: cascade to previous box.
       if(i > 0){
         e.preventDefault();
         boxes[i-1].value = '';
@@ -942,10 +950,13 @@ function resetOtpBoxes(){
         boxes[i-1].focus();
       }
     });
-    // Fallback for physical keyboards / browsers that do report keydown.
-    box.addEventListener('keydown', (e) => {
-      if(e.key !== 'Backspace' || box.value) return;
-      if(i > 0){
+    // Fallback for on-screen keyboards where keydown's key is unreliable
+    // (rare, but some older Android WebViews report key as 'Unidentified').
+    // beforeinput's inputType is still accurate there even when key isn't.
+    box.addEventListener('beforeinput', (e) => {
+      if(e.inputType !== 'deleteContentBackward') return;
+      if(box.value) return; // native deletion + 'input' event handles this box's own digit
+      if(i > 0 && document.activeElement === box){
         e.preventDefault();
         boxes[i-1].value = '';
         boxes[i-1].classList.remove('error');
