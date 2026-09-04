@@ -679,7 +679,7 @@ function friendlyAuthError(rawMessage){
     return 'An account with this email already exists. Try logging in instead.';
   }
   if(msg.includes('password should be at least')){
-    return 'Password is too short. Use at least 6 characters.';
+    return 'Password is too short. Use at least 8 characters.';
   }
   if(msg.includes('password should contain') || msg.includes('character of each')){
     return 'Password needs uppercase, lowercase, and a number.';
