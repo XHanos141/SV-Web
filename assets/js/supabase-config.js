@@ -70,6 +70,8 @@ async function svGetCurrentUser() {
 }
 
 // Returns the customers row linked to the current auth user, or null.
+// Hits the network every time — use svGetCurrentCustomerCached for anything
+// UI-facing (header avatar, etc) to avoid a visible load delay.
 async function svGetCurrentCustomer() {
   const user = await svGetCurrentUser();
   if (!user) return null;
@@ -85,8 +87,56 @@ async function svGetCurrentCustomer() {
   return data;
 }
 
+// ---- Customer cache (instant header avatar, no per-page network wait) ----
+// sessionStorage survives page navigations within the same tab session but
+// clears on full browser close, matching the "Remember Me" trust boundary
+// already used above. Cache is per-browser-tab, never shared cross-device.
+const SV_CUSTOMER_CACHE_KEY = 'sv-customer-cache';
+
+function svGetCachedCustomer() {
+  try {
+    const raw = sessionStorage.getItem(SV_CUSTOMER_CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function svSetCachedCustomer(customer) {
+  try {
+    if (customer) {
+      sessionStorage.setItem(SV_CUSTOMER_CACHE_KEY, JSON.stringify(customer));
+    } else {
+      sessionStorage.removeItem(SV_CUSTOMER_CACHE_KEY);
+    }
+  } catch (e) {
+    // sessionStorage unavailable (private browsing etc) — fail silently,
+    // callers fall back to the network fetch every time.
+  }
+}
+
+// Cache-first customer lookup: returns the cached row instantly if present
+// (synchronously fast, avoids header flicker), while always kicking off a
+// fresh network fetch in the background to keep the cache correct. Pass a
+// callback to get notified if the fresh data differs from the cached copy.
+async function svGetCurrentCustomerCached(onRefresh) {
+  const cached = svGetCachedCustomer();
+
+  const refresh = svGetCurrentCustomer().then(fresh => {
+    svSetCachedCustomer(fresh);
+    if (onRefresh && JSON.stringify(fresh) !== JSON.stringify(cached)) {
+      onRefresh(fresh);
+    }
+    return fresh;
+  });
+
+  if (cached) return cached;
+  return refresh;
+}
+
 // Signs the user out and redirects to login.
 async function svSignOut(redirectTo = 'login.html') {
+  svSetCachedCustomer(null);
   if (sbClient) await sbClient.auth.signOut();
   window.location.href = redirectTo;
 }
@@ -95,12 +145,7 @@ async function svSignOut(redirectTo = 'login.html') {
 // Pass the button's element id. If logged in: shows initials avatar, clicking
 // goes to profile.html. If logged out: shows the default person icon, clicking
 // goes to login.html (unchanged from current behavior).
-async function svInitHeaderAuth(buttonId) {
-  const btn = document.getElementById(buttonId);
-  if (!btn) return;
-
-  const customer = await svGetCurrentCustomer();
-
+function svRenderHeaderAuth(btn, customer) {
   if (customer) {
     if (customer.avatar_url) {
       btn.innerHTML = '<img src="' + customer.avatar_url + '" class="hcart-avatar-img" alt="">';
@@ -112,6 +157,18 @@ async function svInitHeaderAuth(buttonId) {
     btn.onclick = () => { window.location.href = 'profile.html'; };
   } else {
     btn.classList.remove('is-logged-in');
+    btn.innerHTML = '';
     btn.onclick = () => { window.location.href = 'login.html'; };
   }
+}
+
+async function svInitHeaderAuth(buttonId) {
+  const btn = document.getElementById(buttonId);
+  if (!btn) return;
+
+  // Cache-first: renders instantly from sessionStorage if we have a cached
+  // customer from an earlier page this session, no network wait/flicker.
+  // A background fetch always runs and silently re-renders if stale.
+  const customer = await svGetCurrentCustomerCached(fresh => svRenderHeaderAuth(btn, fresh));
+  svRenderHeaderAuth(btn, customer);
 }
