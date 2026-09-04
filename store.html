@@ -40,7 +40,7 @@ body.dark-mode{
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 h1,h2,h3,h4,h5,h6{font-family:var(--font-display)}
-.section-title{font-family:'Space Grotesk',var(--font-display);color:red}
+.section-title{font-family:var(--font-display)}
 body{
   font-family:var(--font-body);background:var(--bg);color:var(--text);
   min-height:100dvh;padding-top:var(--nav-h);padding-bottom:var(--bottom-nav-h);
@@ -1084,7 +1084,7 @@ body.dark-mode .s-tab{
 
 <!-- HEADER -->
 <header class="header">
-  <div class="header-logo">
+  <div class="header-logo" onclick="window.location.href='index.html'" style="cursor:pointer">
     <svg class="logo-icon" viewBox="0 0 375 375" width="56.5" height="56.5" aria-hidden="true" style="flex-shrink:0;overflow:visible;transform:translate(-10px, -1px);"><use href="#icon-logo"/></svg>
     <div class="logo-text-wrap">
       <div class="logo-name">SUPPVERSE</div>
