@@ -263,6 +263,12 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
 .pay-success-sheet h3{font-family:var(--fd);font-size:17px;font-weight:800;margin-bottom:6px}
 .pay-success-sheet p{font-size:11.5px;color:var(--t2);line-height:1.5;margin-bottom:16px}
 .ps-btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:11px;padding:12px;font-size:12.5px;font-weight:800}
+.hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,transform .15s}
+.hcart:active{transform:scale(.92)}
+.hcart svg{width:18px;height:18px;stroke:rgba(255,255,255,.75);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hcart.is-logged-in{background:#009ddc;border-color:#009ddc}
+.hcart-initial{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:#fff;line-height:1}
+.hcart-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover}
 </style>
 </head>
 <body>
@@ -287,6 +293,9 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <svg class="icon-moon" viewBox="0 0 24 24">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
       </svg>
+    </button>
+    <button class="hcart" id="headerAccountBtn" aria-label="Account" onclick="window.location.href='login.html'">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </button>
   </div>
 </header>
@@ -684,8 +693,10 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
   </div>
 </div>
 
+<script src="assets/js/supabase-config.js"></script>
 <script>
 /* Theme */
+svInitHeaderAuth('headerAccountBtn');
 const body = document.body;
 const themeToggle = document.getElementById('themeToggle');
 let qrRendered = false; // hoisted early so applyTheme can safely reference it

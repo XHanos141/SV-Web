@@ -461,8 +461,15 @@ body.dark-mode .summary-line.total{background-image:linear-gradient(to right, rg
   from{opacity:0;transform:translateY(16px) scale(0.96)}
   to{opacity:1;transform:translateY(0) scale(1)}
 }
+.hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,transform .15s}
+.hcart:active{transform:scale(.92)}
+.hcart svg{width:18px;height:18px;stroke:rgba(255,255,255,.75);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hcart.is-logged-in{background:#009ddc;border-color:#009ddc}
+.hcart-initial{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:#fff;line-height:1}
+.hcart-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover}
 </style>
 <script src="assets/js/catalog-badges.js"></script>
+<script src="assets/js/supabase-config.js"></script>
 </head>
 <body>
 
@@ -474,6 +481,9 @@ body.dark-mode .summary-line.total{background-image:linear-gradient(to right, rg
   <div class="s-header-actions">
     <button class="s-header-btn" id="themeToggle" aria-label="Toggle theme">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+    <button class="hcart" id="headerAccountBtn" aria-label="Account" onclick="window.location.href='login.html'">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </button>
   </div>
 </header>
@@ -546,6 +556,7 @@ body.dark-mode .summary-line.total{background-image:linear-gradient(to right, rg
 <div class="toast" id="toast"></div>
 
 <script>
+svInitHeaderAuth('headerAccountBtn');
 const DATA = {
   internal: {
     items: [
