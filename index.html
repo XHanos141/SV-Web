@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Outfit:wght@400;500;500;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<link href="assets/css/fonts.css" rel="stylesheet">
 <style>
 :root {
   --cyan:#009ddc; --orange:#f26430; --green:#009b72; --gold:#f4a922; --purple:#6761a8;
@@ -43,11 +44,6 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;color:inhe
 input{font-family:inherit;outline:none;border:none;background:none}
 
 .header{background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,255,255,0.03) 0%,transparent 65%),radial-gradient(ellipse 60% 80% at -10% 0%,rgba(124,111,247,0.18) 0%,transparent 55%),linear-gradient(180deg,#0f3258 0%,#002248 22%,#001f3c 55%,#001532 82%,#000d20 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),inset 0 -1px 0 rgba(0,0,0,0.65),0 6px 28px rgba(0,0,0,0.55),0 1px 2px rgba(0,0,0,0.7);border-bottom:1px solid rgba(0,0,0,0.5);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:12px;position:fixed;top:0;left:0;right:0;z-index:500}
-@font-face {
-  font-family: 'BARABARA-FINAL';
-  src: url('data:font/woff2;charset=utf-8;base64,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') format('woff2');
-  font-weight: normal; font-style: normal; font-display: swap;
-}
 .logo{display:flex;flex-direction:column;gap:1px;cursor:pointer;user-select:none}
 .header-logo { display: flex; align-items: center; gap: 10px; min-width: 0; height: 38px; }
 .logo-text-wrap { position: relative; display: inline-block; padding-top: 0; line-height: 1; transform: translate(-21.5px, 5px); }
