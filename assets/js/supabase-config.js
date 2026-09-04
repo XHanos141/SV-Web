@@ -145,6 +145,8 @@ async function svSignOut(redirectTo = 'login.html') {
 // Pass the button's element id. If logged in: shows initials avatar, clicking
 // goes to profile.html. If logged out: shows the default person icon, clicking
 // goes to login.html (unchanged from current behavior).
+const SV_DEFAULT_ACCOUNT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+
 function svRenderHeaderAuth(btn, customer) {
   if (customer) {
     if (customer.avatar_url) {
@@ -157,7 +159,7 @@ function svRenderHeaderAuth(btn, customer) {
     btn.onclick = () => { window.location.href = 'profile.html'; };
   } else {
     btn.classList.remove('is-logged-in');
-    btn.innerHTML = '';
+    btn.innerHTML = SV_DEFAULT_ACCOUNT_ICON;
     btn.onclick = () => { window.location.href = 'login.html'; };
   }
 }
