@@ -15,7 +15,7 @@
   --cyan:#009ddc; --orange:#f26430; --green:#009b72; --gold:#f4a922; --purple:#6761a8;
   --font:'DM Sans',sans-serif; --fd:'Plus Jakarta Sans',sans-serif;
   --nav-h:58px;
-  --bg:#ffffff; --surface:#ffffff; --surface2:#f5f7fc; --border:rgba(0,0,0,0.07);
+  --bg:#ffffff; --surface:#ffffff; --surface2:#f5f7fc; --border:rgba(0,0,0,0.07); --p2p-border:rgba(0,0,0,0.20);
   --text:#0a1628; --t2:#4a5568; --t3:#9aa5b4;
   --shadow:0 2px 16px rgba(0,0,0,0.07); --shadow-md:0 6px 28px rgba(0,0,0,0.1);
   --err:#e5484d; --err-soft:rgba(229,72,77,0.10);
@@ -30,7 +30,7 @@
   --bank-bg:rgba(36,74,36,.10);     --bank-bdr:rgba(36,74,36,.22);     --bank-text:#244a24;
 }
 body.dark-mode {
-  --bg:#060d1a; --surface:#0f1a2e; --surface2:#162338; --border:rgba(255,255,255,0.08);
+  --bg:#060d1a; --surface:#0f1a2e; --surface2:#162338; --border:rgba(255,255,255,0.08); --p2p-border:rgba(255,255,255,0.22);
   --text:#eef4ff; --t2:rgba(238,244,255,0.55); --t3:rgba(238,244,255,0.28);
   --shadow:0 2px 16px rgba(0,0,0,0.4); --shadow-md:0 6px 28px rgba(0,0,0,0.5);
   --err:#ff6b6b; --err-soft:rgba(255,107,107,0.10);
@@ -101,7 +101,7 @@ body.dark-mode .pay-line.total{border-top-color:rgba(255,255,255,0.18)}
 .promo-input:focus{border-color:var(--cyan)}
 #summaryProxy .promo-input:focus{border-color:var(--orange)}
 .promo-apply-btn{background:#009b72;color:#fff;border:2px solid var(--surface);border-radius:6px;padding:0 16px;font-size:12px;font-weight:800;flex-shrink:0;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform .15s ease,box-shadow .15s ease,opacity .15s}
-.promo-apply-btn:active{transform:scale(.94) translateY(2px);background:#008a5e;box-shadow:0 1px 3px rgba(0,0,0,.22);opacity:.9}
+.promo-apply-btn:active{transform:scale(.80) translateY(2px);background:#008a5e;box-shadow:0 1px 3px rgba(0,0,0,.22);opacity:.9}
 .promo-apply-btn:disabled{opacity:.4;pointer-events:none}
 .promo-applied{display:none;align-items:center;justify-content:space-between;background:rgba(0,155,114,.10);border:1.5px solid rgba(0,155,114,.28);border-radius:10px;padding:10px 12px;margin:12px 0 4px}
 .promo-applied span{color:var(--green);font-size:11.5px}
@@ -129,7 +129,7 @@ body.dark-mode .pay-line.total{border-top-color:rgba(255,255,255,0.18)}
 /* Method selector */
 .section-label{font-family:var(--fd);font-size:14px;font-weight:800;margin-bottom:10px}
 .method-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
-.method-card{position:relative;background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;width:64px;height:48px;display:flex;align-items:center;justify-content:center;padding:8px;transition:border-color .18s ease,background .18s ease,transform .12s ease}
+.method-card{position:relative;background:var(--surface2);border:1.5px solid var(--p2p-border);border-radius:12px;width:64px;height:48px;display:flex;align-items:center;justify-content:center;padding:8px;transition:border-color .18s ease,background .18s ease,transform .12s ease}
 .method-card:active{transform:scale(.94)}
 .method-card.selected{border-color:var(--sel-bdr);background:var(--sel-bg);box-shadow:0 2px 8px var(--sel-bdr)}
 .method-icon{width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -173,7 +173,7 @@ body.dark-mode .pay-input{border-color:rgba(255,255,255,0.25)}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 /* P2P-style (proxy bKash/Nagad/Card) */
-.p2p-number{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1.5px dashed var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.p2p-number{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1.5px dashed var(--p2p-border);border-radius:12px;padding:12px 14px;margin-bottom:10px}
 .crypto-qr-wrap{display:flex;justify-content:center;padding:0;max-height:0;opacity:0;overflow:hidden;margin-bottom:0;transition:max-height .35s cubic-bezier(.16,1,.3,1),opacity .25s ease,padding .35s ease,margin .35s ease}
 .crypto-qr-wrap.show{max-height:220px;opacity:1;padding:16px;margin-bottom:12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:14px}
 .crypto-qr-wrap #cryptoQr{border-radius:8px;overflow:hidden;background:#fff;padding:8px;line-height:0}
@@ -182,9 +182,20 @@ body.dark-mode .pay-input{border-color:rgba(255,255,255,0.25)}
 .p2p-icon-btn svg{width:16px;height:16px;stroke:var(--text);stroke-width:2;fill:none}
 .p2p-icon-btn.active{background:var(--crypto-bg);border-color:var(--crypto-text)}
 .p2p-icon-btn.active svg{stroke:var(--crypto-text)}
+#panel-bkash-internal .p2p-icon-btn.active{background:var(--bkash-bg);border-color:var(--bkash-text)}
+#panel-bkash-internal .p2p-icon-btn.active svg{stroke:var(--bkash-text)}
+#panel-nagad-internal .p2p-icon-btn.active{background:var(--nagad-bg);border-color:var(--nagad-text)}
+#panel-nagad-internal .p2p-icon-btn.active svg{stroke:var(--nagad-text)}
+#panel-rocket-internal .p2p-icon-btn.active{background:var(--rocket-bg);border-color:var(--rocket-text)}
+#panel-rocket-internal .p2p-icon-btn.active svg{stroke:var(--rocket-text)}
+#panel-cellfin-internal .p2p-icon-btn.active{background:var(--cellfin-bg);border-color:var(--cellfin-text)}
+#panel-cellfin-internal .p2p-icon-btn.active svg{stroke:var(--cellfin-text)}
+.mfs-qr-wrap #bkashQr,.mfs-qr-wrap #nagadQr,.mfs-qr-wrap #rocketQr,.mfs-qr-wrap #cellfinQr{border-radius:8px;overflow:hidden;background:#fff;padding:8px;line-height:0}
 .p2p-number-info{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700}
 .p2p-number-val{font-family:var(--fd);font-size:16px;font-weight:800;color:var(--text);margin-top:2px;opacity:.9}
-.p2p-copy-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:7px 12px;font-size:11px;font-weight:700;color:var(--text);flex-shrink:0}
+.p2p-copy-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:7px 12px;font-size:11px;font-weight:700;color:var(--text);flex-shrink:0;transition:transform .12s ease,background .15s ease,border-color .15s ease,color .15s ease;cursor:pointer}
+.p2p-copy-btn:active{transform:scale(.92)}
+.p2p-copy-btn.copied-flash{background:var(--panel-accent, #2f9b68);border-color:var(--panel-accent, #2f9b68);color:#fff}
 .p2p-steps{list-style:none;padding:0;margin-bottom:4px}
 .p2p-steps li{display:flex;gap:8px;font-size:11.5px;color:var(--t2);line-height:1.5;padding:5px 0}
 .p2p-steps li b{color:var(--text);flex-shrink:0}
@@ -228,6 +239,9 @@ body.dark-mode .pay-input{border-color:rgba(255,255,255,0.25)}
 .delivery-card .d-badge{font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:20px;background:rgba(0,155,114,.10);color:var(--green);flex-shrink:0}
 .partner-showcase{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .partner-box{width:96px;height:48px;flex-shrink:0;border-radius:12px;background:#fff;border:1.5px solid var(--border);border-color:rgba(0,0,0,0.12);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;padding:8px}
+.partner-box.pb-steadfast{border-color:rgba(52,149,116,.35)}
+.partner-box.pb-pathao{border-color:rgba(232,51,48,.35)}
+.partner-box.pb-carrybee{border-color:rgba(255,203,6,.45)}
 .partner-box svg{width:100%;height:100%;object-fit:contain}
 .partner-info .d-partner{font-size:12.5px;font-weight:800;color:var(--text)}
 .partner-info .d-eta{font-size:11px;color:var(--t2);margin-top:2px}
@@ -456,17 +470,45 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
   <!-- Internal: bKash/Nagad gateway-style -->
   <div class="detail-panel rv" id="panel-bkash-internal" style="--panel-accent:var(--bkash-text)">
     <div class="detail-head"><div class="dot"></div><h3>Pay with bKash</h3></div>
-    <label class="field-label" for="bkNumber">bKash Account Number</label>
-    <input class="pay-input" id="bkNumber" type="tel" inputmode="numeric" placeholder="01XXX-XXXXXX" maxlength="11">
-    <label class="field-label" for="bkPin">PIN</label>
-    <input class="pay-input" id="bkPin" type="password" inputmode="numeric" placeholder="••••" maxlength="5" style="margin-bottom:0">
+    <div class="p2p-number">
+      <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val" id="bkSendNumber">01725-492479</div></div>
+      <div class="p2p-addr-actions">
+        <button class="p2p-icon-btn mfs-qr-btn" type="button" data-mfs="bkash" aria-label="Show QR code"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M14 20h3M20 14v3M20 20v.01"/></svg></button>
+        <button class="p2p-copy-btn" type="button" data-copy="01725492479" data-label="bKash number">Copy</button>
+      </div>
+    </div>
+    <div class="p2p-number" style="background:var(--bkash-bg);border:1.5px solid var(--bkash-bdr)">
+      <div><div class="p2p-number-info">Amount to send</div><div class="p2p-number-val mfs-amount-val" style="color:var(--bkash-text)">৳0</div></div>
+      <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
+    </div>
+    <div class="crypto-qr-wrap mfs-qr-wrap" id="bkashQrWrap"><div class="mfs-qr" id="bkashQr"></div></div>
+    <ul class="p2p-steps">
+      <li><b>1.</b> Open bKash, select "Send Money" — or scan the QR above.</li>
+      <li><b>2.</b> Enter the number and exact amount shown above.</li>
+      <li><b>3.</b> Enter your Transaction ID below once sent.</li>
+    </ul>
+    <div class="p2p-txn-row"><input class="pay-input" id="bkTxn" type="text" placeholder="Transaction ID (e.g. 8N7A2K9XYZ)" style="margin-bottom:0"></div>
   </div>
   <div class="detail-panel rv" id="panel-nagad-internal" style="--panel-accent:var(--nagad-text)">
     <div class="detail-head"><div class="dot"></div><h3>Pay with Nagad</h3></div>
-    <label class="field-label" for="ngNumber">Nagad Account Number</label>
-    <input class="pay-input" id="ngNumber" type="tel" inputmode="numeric" placeholder="01XXX-XXXXXX" maxlength="11">
-    <label class="field-label" for="ngPin">PIN</label>
-    <input class="pay-input" id="ngPin" type="password" inputmode="numeric" placeholder="••••" maxlength="5" style="margin-bottom:0">
+    <div class="p2p-number">
+      <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val" id="ngSendNumber">01725-492479</div></div>
+      <div class="p2p-addr-actions">
+        <button class="p2p-icon-btn mfs-qr-btn" type="button" data-mfs="nagad" aria-label="Show QR code"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M14 20h3M20 14v3M20 20v.01"/></svg></button>
+        <button class="p2p-copy-btn" type="button" data-copy="01725492479" data-label="Nagad number">Copy</button>
+      </div>
+    </div>
+    <div class="p2p-number" style="background:var(--nagad-bg);border:1.5px solid var(--nagad-bdr)">
+      <div><div class="p2p-number-info">Amount to send</div><div class="p2p-number-val mfs-amount-val" style="color:var(--nagad-text)">৳0</div></div>
+      <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
+    </div>
+    <div class="crypto-qr-wrap mfs-qr-wrap" id="nagadQrWrap"><div class="mfs-qr" id="nagadQr"></div></div>
+    <ul class="p2p-steps">
+      <li><b>1.</b> Open Nagad, select "Send Money" — or scan the QR above.</li>
+      <li><b>2.</b> Enter the number and exact amount shown above.</li>
+      <li><b>3.</b> Enter your Transaction ID below once sent.</li>
+    </ul>
+    <div class="p2p-txn-row"><input class="pay-input" id="ngTxn" type="text" placeholder="Transaction ID (e.g. 8N7A2K9XYZ)" style="margin-bottom:0"></div>
   </div>
   <div class="detail-panel rv" id="panel-card-internal" style="--panel-accent:var(--card-text)">
     <div class="detail-head"><div class="dot"></div><h3>Pay with Card</h3></div>
@@ -479,10 +521,24 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
   </div>
   <div class="detail-panel rv" id="panel-rocket-internal" style="--panel-accent:var(--rocket-text)">
     <div class="detail-head"><div class="dot"></div><h3>Pay with Rocket</h3></div>
-    <label class="field-label" for="rkNumber">Rocket Account Number</label>
-    <input class="pay-input" id="rkNumber" type="tel" inputmode="numeric" placeholder="01XXX-XXXXXXX" maxlength="12">
-    <label class="field-label" for="rkPin">PIN</label>
-    <input class="pay-input" id="rkPin" type="password" inputmode="numeric" placeholder="••••" maxlength="4" style="margin-bottom:0">
+    <div class="p2p-number">
+      <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val" id="rkSendNumber">01725-492479</div></div>
+      <div class="p2p-addr-actions">
+        <button class="p2p-icon-btn mfs-qr-btn" type="button" data-mfs="rocket" aria-label="Show QR code"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M14 20h3M20 14v3M20 20v.01"/></svg></button>
+        <button class="p2p-copy-btn" type="button" data-copy="01725492479" data-label="Rocket number">Copy</button>
+      </div>
+    </div>
+    <div class="p2p-number" style="background:var(--rocket-bg);border:1.5px solid var(--rocket-bdr)">
+      <div><div class="p2p-number-info">Amount to send</div><div class="p2p-number-val mfs-amount-val" style="color:var(--rocket-text)">৳0</div></div>
+      <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
+    </div>
+    <div class="crypto-qr-wrap mfs-qr-wrap" id="rocketQrWrap"><div class="mfs-qr" id="rocketQr"></div></div>
+    <ul class="p2p-steps">
+      <li><b>1.</b> Open Rocket, select "Send Money" — or scan the QR above.</li>
+      <li><b>2.</b> Enter the number and exact amount shown above.</li>
+      <li><b>3.</b> Enter your Transaction ID below once sent.</li>
+    </ul>
+    <div class="p2p-txn-row"><input class="pay-input" id="rkTxn" type="text" placeholder="Transaction ID (e.g. 8N7A2K9XYZ)" style="margin-bottom:0"></div>
   </div>
   <div class="detail-panel rv" id="panel-upay-internal" style="--panel-accent:var(--upay-text)">
     <div class="detail-head"><div class="dot"></div><h3>Pay with Upay</h3></div>
@@ -493,36 +549,50 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
   </div>
   <div class="detail-panel rv" id="panel-cellfin-internal" style="--panel-accent:var(--cellfin-text)">
     <div class="detail-head"><div class="dot"></div><h3>Pay with Cellfin</h3></div>
-    <label class="field-label" for="cfNumber">Cellfin Account Number</label>
-    <input class="pay-input" id="cfNumber" type="tel" inputmode="numeric" placeholder="01XXX-XXXXXX" maxlength="11">
-    <label class="field-label" for="cfPin">PIN</label>
-    <input class="pay-input" id="cfPin" type="password" inputmode="numeric" placeholder="••••" maxlength="5" style="margin-bottom:0">
+    <div class="p2p-number">
+      <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val" id="cfSendNumber">01725-492479</div></div>
+      <div class="p2p-addr-actions">
+        <button class="p2p-icon-btn mfs-qr-btn" type="button" data-mfs="cellfin" aria-label="Show QR code"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M14 20h3M20 14v3M20 20v.01"/></svg></button>
+        <button class="p2p-copy-btn" type="button" data-copy="01725492479" data-label="Cellfin number">Copy</button>
+      </div>
+    </div>
+    <div class="p2p-number" style="background:var(--cellfin-bg);border:1.5px solid var(--cellfin-bdr)">
+      <div><div class="p2p-number-info">Amount to send</div><div class="p2p-number-val mfs-amount-val" style="color:var(--cellfin-text)">৳0</div></div>
+      <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
+    </div>
+    <div class="crypto-qr-wrap mfs-qr-wrap" id="cellfinQrWrap"><div class="mfs-qr" id="cellfinQr"></div></div>
+    <ul class="p2p-steps">
+      <li><b>1.</b> Open Cellfin, select "Send Money" — or scan the QR above.</li>
+      <li><b>2.</b> Enter the number and exact amount shown above.</li>
+      <li><b>3.</b> Enter your Transaction ID below once sent.</li>
+    </ul>
+    <div class="p2p-txn-row"><input class="pay-input" id="cfTxn" type="text" placeholder="Transaction ID (e.g. 8N7A2K9XYZ)" style="margin-bottom:0"></div>
   </div>
   <div class="detail-panel rv" id="panel-bkash-proxy" style="--panel-accent:var(--bkash-text)">
     <div class="detail-head"><div class="dot"></div><h3>Send via bKash (Send Money)</h3></div>
     <div class="p2p-number">
       <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXX</div></div>
-      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX">Copy</button>
+      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX" data-label="bKash number">Copy</button>
     </div>
     <ul class="p2p-steps">
       <li><b>1.</b> Open bKash, select "Send Money."</li>
       <li><b>2.</b> Enter the number above and the exact due amount.</li>
       <li><b>3.</b> Enter the last 4 digits of your transaction ID below.</li>
     </ul>
-    <div class="p2p-txn-row"><input class="pay-input" id="bkTxn" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
+    <div class="p2p-txn-row"><input class="pay-input" id="bkTxnP" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
   </div>
   <div class="detail-panel rv" id="panel-nagad-proxy" style="--panel-accent:var(--nagad-text)">
     <div class="detail-head"><div class="dot"></div><h3>Send via Nagad (Send Money)</h3></div>
     <div class="p2p-number">
       <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXX</div></div>
-      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX">Copy</button>
+      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX" data-label="Nagad number">Copy</button>
     </div>
     <ul class="p2p-steps">
       <li><b>1.</b> Open Nagad, select "Send Money."</li>
       <li><b>2.</b> Enter the number above and the exact due amount.</li>
       <li><b>3.</b> Enter the last 4 digits of your transaction ID below.</li>
     </ul>
-    <div class="p2p-txn-row"><input class="pay-input" id="ngTxn" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
+    <div class="p2p-txn-row"><input class="pay-input" id="ngTxnP" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
   </div>
   <div class="detail-panel rv" id="panel-card-proxy" style="--panel-accent:var(--card-text)">
     <div class="detail-head"><div class="dot"></div><h3>Card Payment (Manual)</h3></div>
@@ -532,20 +602,20 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     <div class="detail-head"><div class="dot"></div><h3>Send via Rocket (Send Money)</h3></div>
     <div class="p2p-number">
       <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXXX</div></div>
-      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXXX">Copy</button>
+      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXXX" data-label="Rocket number">Copy</button>
     </div>
     <ul class="p2p-steps">
       <li><b>1.</b> Open Rocket, select "Send Money."</li>
       <li><b>2.</b> Enter the number above and the exact due amount.</li>
       <li><b>3.</b> Enter the last 4 digits of your transaction ID below.</li>
     </ul>
-    <div class="p2p-txn-row"><input class="pay-input" id="rkTxn" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
+    <div class="p2p-txn-row"><input class="pay-input" id="rkTxnP" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
   </div>
   <div class="detail-panel rv" id="panel-upay-proxy" style="--panel-accent:var(--upay-text)">
     <div class="detail-head"><div class="dot"></div><h3>Send via Upay (Send Money)</h3></div>
     <div class="p2p-number">
       <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXX</div></div>
-      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX">Copy</button>
+      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX" data-label="Upay number">Copy</button>
     </div>
     <ul class="p2p-steps">
       <li><b>1.</b> Open Upay, select "Send Money."</li>
@@ -558,41 +628,83 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     <div class="detail-head"><div class="dot"></div><h3>Send via Cellfin (Send Money)</h3></div>
     <div class="p2p-number">
       <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXX</div></div>
-      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX">Copy</button>
+      <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX" data-label="Cellfin number">Copy</button>
     </div>
     <ul class="p2p-steps">
       <li><b>1.</b> Open Cellfin, select "Send Money."</li>
       <li><b>2.</b> Enter the number above and the exact due amount.</li>
       <li><b>3.</b> Enter the last 4 digits of your transaction ID below.</li>
     </ul>
-    <div class="p2p-txn-row"><input class="pay-input" id="cfTxn" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
+    <div class="p2p-txn-row"><input class="pay-input" id="cfTxnP" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
   </div>
   <div class="detail-panel rv" id="panel-bank-internal" style="--panel-accent:var(--bank-text)">
     <div class="detail-head"><div class="dot"></div><h3>Bank Transfer</h3></div>
     <div class="p2p-number">
-      <div><div class="p2p-number-info">Account Name</div><div class="p2p-number-val" style="font-size:13px">SuppVerse BD</div></div>
+      <div><div class="p2p-number-info">Bank</div><div class="p2p-number-val" style="font-size:13px">Islami Bank Bangladesh PLC</div></div>
+      <button class="p2p-copy-btn" type="button" data-copy="Islami Bank Bangladesh PLC" data-label="Bank name">Copy</button>
     </div>
     <div class="p2p-number">
-      <div><div class="p2p-number-info">Account Number</div><div class="p2p-number-val">2050-XXXXXXX-XXX</div></div>
-      <button class="p2p-copy-btn" type="button" data-copy="2050-XXXXXXX-XXX">Copy</button>
+      <div><div class="p2p-number-info">Account Title</div><div class="p2p-number-val" style="font-size:13px">MOHAMMAD HASAN</div></div>
+      <button class="p2p-copy-btn" type="button" data-copy="MOHAMMAD HASAN" data-label="Account title">Copy</button>
+    </div>
+    <div class="p2p-number" style="background:var(--bank-bg);border:1.5px solid var(--bank-bdr)">
+      <div><div class="p2p-number-info">Account Number</div><div class="p2p-number-val" style="color:var(--bank-text)">2050 225 02 05882102</div></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNTAgMTY0IiB3aWR0aD0iMzUwIiBoZWlnaHQ9IjE2NCI+CjxwYXRoIGQ9Ik0zNDMuODUgMjguNUMzNDMuNCAyOS4wMSAzNDIuOTUgMjkuNTIgMzQyLjUgMzAuMDNDMzM2Ljc0IDI5LjAxIDMzMS4xOCAyNS44OSAzMjUuNjEgMjQuMkMyOTguNzcgMTYuMDcgMjYzLjI2IDIuOTEgMjQwLjI1IDI2LjQxQzIzNi4zMiAzMC40MiAyMzIuODEgMzUuNDMgMjMwLjIgNDAuMzZDMjI1LjQ4IDQ5LjI5IDIyMi4wOCA1OC41MyAyMTguODcgNjguMDhDMjE2LjA4IDc2LjM2IDIxMy42IDg0Ljg5IDIxMS45MiA5My41QzIxMS40MyA5Ni4wNCAyMDkuNDggOTkuMDQgMjEwLjE3IDEwMS42N0MyMDguMzIgMTAzLjU3IDIwOC41OCAxMDcuNTEgMjA3LjgzIDEwOS45OEMyMDUuNjggMTE3LjA1IDIwMy44MiAxMjQuNDcgMjAyLjE3IDEzMS42NkMyMDEuNDYgMTM0LjczIDIwMC4zOCAxNDEuOTMgMTk2LjUgMTQyLjEyQzE5NC43OSAxMzkuOTkgMTk1LjYgMTI4Ljc3IDE5NS42NSAxMjUuNUMxOTUuNzUgMTE2Ljk2IDE5NC4wNyA5OS4wNiAxOTEuMjUgOTEuMTlDMTkwLjEzIDg4LjA5IDE4OS43MSA3OC43MiAxODUuMTcgNzguNzJDMTgwLjY1IDc4LjcxIDE3Ni40NyA5MS43IDE3NC44NCA5NS4zN0MxNjguOTkgMTA4LjU2IDE2My4yMSAxMjEuODggMTU3LjIgMTM1LjA0QzE1NS44OCAxMzcuOTQgMTUyLjUzIDE0Ny4wNSAxNDkuNSAxNDcuOTZDMTQ1LjI4IDE0NCAxNDkuMDUgMTI5Ljk0IDE1MC43IDEyNC44NEMxNTMuNDUgMTE2LjMyIDE1NS41MiAxMDcuNTQgMTU4LjE1IDk5QzE2MC40MiA5MS42MSAxNjMuNjMgODQuNDQgMTY1LjgzIDc3QzE2Ny4zNSA3MS44NCAxNjguMzkgNjUuOTggMTcwLjU3IDYxLjA4QzE3Mi42NiA1Ni4zNyAxNzQuMDggNDkuODYgMTc0Ljg4IDQ0Ljc4QzE3NS4yMiA0Mi41OSAxNzUuNTcgMzguNzMgMTc4LjE3IDM4LjAzQzE4My4zMiAzNi42NiAxODUuMDcgNDYuMzIgMTg2LjI2IDQ5LjUxQzE4OS43MyA1OC44MSAxOTQuMjcgNzIuNDcgMTk2IDgyLjE2QzE5Ni40NyA4NC43OCAxOTguMDcgOTIuNTUgMjAxLjE3IDkyLjk0QzIwNC4yMyA5MS42MyAyMDUuNCA4MS4zNyAyMDYuMTIgNzguMkMyMDkuMTIgNjUuMSAyMTMuMiA1Mi4yMyAyMTkuMTEgNDAuMjRDMjI4LjQ3IDIxLjIyIDI0Ni4xMyA1LjI2IDI2Ny44MyAzLjAxQzI4NC45OSAxLjIzIDMwMy4wMiA2LjM2IDMxOC4xIDEzLjc0QzMyNi41OCAxNy45IDMzNy4xNCAyMS41NCAzNDMuODUgMjguNVoiIGZpbGw9IiMzZTM2NGQiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlPSIjM2UzNjRkIiBzdHJva2Utd2lkdGg9IjAuMjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggZD0iTTMyNS42NCAzMi41QzMyMi40MSAzNC4yMSAzMTcuNjUgMzMuNCAzMTQuMDggMzQuMkMzMDUuMTYgMzYuMjEgMjk3LjI1IDQwLjU3IDI5Mi4yIDQ4LjM2QzI4MS4zNyA2NS4wNSAyODkuNTEgODUuNzQgMjkyLjg0IDEwMy4yOUMyOTUuNzYgMTE4LjY4IDI5Mi42NCAxMzcgMjgxLjg5IDE0OC43NEMyNzAuMjIgMTYxLjUgMjUzLjQzIDE2My41IDIzNy41NyAxNTcuODdDMjMyLjU1IDE1Ni4wOSAyMjYuOTUgMTUyLjcyIDIyMi44NyAxNDkuM0MyMjAuOTYgMTQ3LjY5IDIxOC4yNyAxNDUuODkgMjIwLjQ5IDE0My4xN0MyMjQuNjYgMTQyLjQzIDIyOC4xOSAxNDQuNjIgMjMxLjk5IDE0NS44M0MyNDMuMjggMTQ5LjQ0IDI2Mi4yIDE1Ny4zIDI3MC44IDE0NC42NEMyNzYuOCAxMzUuOCAyNzUuODkgMTIyLjI0IDI3NC4yMyAxMTIuMTdDMjcwLjAxIDg2LjYgMjU5LjI0IDUxLjgzIDI4OC4yMyAzNi43NEMyOTMuMjQgMzQuMTMgMjk4LjY3IDMyLjUzIDMwNC4zMSAzMS44M0MzMTAuOSAzMS4wMSAzMTkuMjYgMzAuMTEgMzI1LjY0IDMyLjVaIiBmaWxsPSIjMTQwMTdjIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHN0cm9rZT0iIzE0MDE3YyIgc3Ryb2tlLXdpZHRoPSIwLjI1IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik0yMzEuMzkgMTA4LjgzQzIyNi43MyAxMTguNjUgMjI1Ljg2IDEzMS40NCAyMTguNDcgMTM5Ljk0QzIxNi40NCAxNDIuMjggMjExLjY2IDE0OC40OCAyMDguMTUgMTQ1LjE3QzIwNy4xNSAxNDIuNTcgMjEwLjEzIDEzOC4yMyAyMTAuODEgMTM1LjY0QzIxMy4zNiAxMjUuODggMjE4LjQ1IDExNi40NSAyMjAuMDIgMTA2LjVDMjE2Ljg5IDEwNC44MyAyMTMuNzYgMTAzLjE3IDIxMC42MyAxMDEuNUMyMTMuMyA5OC40MSAyMTkgMTAwLjY1IDIyMi41IDk5LjgzQzIyNC40MyA5Ni4zNSAyMjQuNjYgOTEuODUgMjI2LjExIDg4LjE2QzIyOC45NiA4MC44NiAyMzIuMDIgNzIuMjcgMjMzLjgxIDY0LjY1QzIzNC40OSA2MS44IDIzNS4wNCA1OC41NCAyMzYuMDggNTUuODJDMjM4LjA5IDUwLjYgMjQwLjkxIDQyLjE2IDI0OC41IDQ1LjA2QzI1My44MiA0Ny4wOSAyNTYuNzQgNTMuMzMgMjU5LjI4IDU3Ljg4QzI2Ni4wMyA3MC4wMSAyNjcuNDMgODcuMzYgMjU3Ljk2IDk4LjUxQzI1My42NiAxMDMuNTcgMjQ2LjY3IDEwNi4zMiAyNDAuNTEgMTA3LjkzQzIzNy42MSAxMDguNjkgMjM0LjM4IDEwOC4xMSAyMzEuMzkgMTA4LjgzWk0yNDIuNSA3MS4xMkMyMzguMSA3NS41NCAyMzcuODQgODYuMjMgMjM1Ljk0IDkyLjE4QzIzNS4yOSA5NC4xOCAyMzQuMDggOTYuNjggMjM0LjE3IDk4Ljc4QzIzNi4xIDk5LjQxIDIzNy45NyA5OC41OSAyMzkuODIgOTguMDZDMjQxLjY0IDk3LjU1IDI0My41OCA5Ny42MSAyNDUuMzIgOTYuNzNDMjUxLjI1IDkzLjc1IDI1MS4yOSA4NS4zMyAyNDkuMTYgNzkuODNDMjQ3Ljk5IDc2Ljc5IDI0Ni43IDcxLjA5IDI0Mi41IDcxLjEyWiIgZmlsbD0iIzZkNTZhNSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiM2ZDU2YTUiIHN0cm9rZS13aWR0aD0iMC4yNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNMzI0LjM5IDg1LjE3QzMyNS44NCA4Ni44NCAzMjguNjcgODcuNiAzMzAuNTEgODkuMDJDMzM2LjUzIDkzLjcgMzQzLjE4IDk5LjQgMzQ0LjEgMTA3LjVDMzQ1LjY2IDEyMS4zMiAzMjIuOTQgMTMwLjQ2IDMxMy4wOSAxMzQuMjJDMzEwLjU4IDEzNS4xOCAzMDIuMjEgMTM5LjE1IDMwMC4xIDEzOC41QzMwMS41MSAxMzUuNzIgMzAyLjkyIDEzMi45NCAzMDQuMzMgMTMwLjE3QzMxMi42OCAxMjguNTggMzIxLjkyIDEyNC43IDMyOC40MSAxMTkuMjRDMzMxLjk5IDExNi4yMyAzMzQuNjcgMTExLjk0IDMzMS44IDEwNy4zNkMzMjUuOTEgOTcuOTQgMzEyLjc2IDk2Ljk3IDMwNC4xNyA5MkMzMDMuNjUgODkuODYgMzA0LjE4IDg4LjU1IDMwNC43MyA4Ni41NkMzMDcuOTQgNzUgMzIyLjA4IDc2LjM0IDMyNC44MSA2NS45NEMzMjYuMjggNjAuMzUgMzIxLjg0IDUzLjY5IDMxOC42NiA0OS41NUMzMTcuNTMgNDguMDggMzEzLjg1IDQ2LjA1IDMxMy44NCA0NC4xN0MzMTYuNjMgNDMuNiAzMjAuMTMgNDYuNDUgMzIyLjU1IDQ3LjdDMzMwLjYxIDUxLjg0IDM0My45OCA2MC42MyAzMzkuOTMgNzEuNDlDMzM4LjM4IDc1LjYzIDMzMy4wMyA3OS42NyAzMjkuMzMgODEuODZDMzI3Ljk5IDgyLjY1IDMyNC44MSA4My43NyAzMjQuMzkgODUuMTdaIiBmaWxsPSIjNmI2ZDcwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHN0cm9rZT0iIzZiNmQ3MCIgc3Ryb2tlLXdpZHRoPSIwLjI1IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik0xMjYuNjcgNzcuMjVDMTIxLjIyIDc3LjI1IDExNS43OCA3Ny4yNiAxMTAuMzMgNzcuMjZDMTE1Ljc4IDc3LjI2IDEyMS4yMiA3Ny4yNSAxMjYuNjcgNzcuMjVaTTEyNi41IDEzNi4wNUMxMjQuNjkgMTM1LjEzIDEyMi45MiAxMzUuNiAxMjEuMTYgMTM0LjkxQzExNC43NiAxMzIuNCAxMDcuMzggMTMxLjY2IDEwMC41IDEzMC45NUM4MS41OSAxMjguOTkgNjIuNTIgMTI4LjYgNDMuNSAxMzAuMjJDMzkuNDkgMTMwLjU2IDM1LjQ4IDEzMS40MiAzMS41MSAxMzEuOThDMjguNjcgMTMyLjM4IDI1LjY2IDEzMS43NCAyMi44NiAxMzIuNDVDMjAuNTMgMTMzLjAzIDEyLjg1IDEzNC4zNCAxMC45NCAxMzMuNUMxMi4xNSAxMzMuMDYgMTMuMzYgMTMyLjYxIDE0LjU3IDEzMi4xN0MyOS4wOSAxMjguNzUgNDIuOTkgMTIzLjQ4IDU3LjczIDEyMC44NUM1OS44NSAxMjAuNDcgNjIuMDIgMTE5LjA5IDY0LjE4IDExOC44OUM2Ny44NyAxMTguNTUgNzEuNTIgMTE3LjM1IDc1LjE3IDExNi44NkM4Ni4wNyAxMTUuNDIgOTcuMSAxMTQuOTEgMTA4LjE3IDExNC44MUMxMTMuNTIgMTE0Ljc2IDEyNi4yNiAxMTQuNTggMTMwLjUxIDExNy4wNUMxMzguNzQgMTIxLjgzIDEzNS4yNCAxMzMuNDggMTI2LjUgMTM2LjA1WiIgZmlsbD0iI2NlYTE0ZiIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiNjZWExNGYiIHN0cm9rZS13aWR0aD0iMC4yNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNMzMuNTYgNTcuNUMzNC43MSA1Ny4wMiAzNS45IDU3LjIzIDM3LjAzIDU2LjgzQzQzLjgxIDU0LjQ2IDUwLjk0IDUyLjY5IDU3LjkzIDUwLjhDNjcuNjkgNDguMTUgNzcuNDIgNDUuNDEgODcuMzUgNDMuMTdDOTkuMTcgNDAuNSAxMTQuMzYgMzkuNzUgMTI2LjUgMzkuNDlDMTMxLjQgMzkuMzggMTM1Ljk1IDM5LjU3IDE0MC44MyAzOS44MUMxNDguODIgNDAuMiAxNTYuOTggMzkuNjcgMTU3LjQ3IDUwLjE3QzE1Ny43MyA1NS44MiAxNTMuMDIgNjAuOTQgMTQ3LjE3IDU5Ljk2QzE0MC4yMSA1OC44MSAxMzMuMzEgNTYuMyAxMjYuMiA1NS4yMUMxMDguODIgNTIuNTUgOTAuOTggNTMuMDQgNzMuNSA1My45N0M2My43OSA1NC40OCA1NC4yIDU2LjM1IDQ0LjUgNTYuOTZDNDEuMyA1Ny4xNyAzNi41MSA1OC44OCAzMy41NiA1Ny41WiIgZmlsbD0iIzAzODkzOSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMzg5MzkiIHN0cm9rZS13aWR0aD0iMC4yNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNMTEwLjMzIDc3LjI2QzExNS43OCA3Ny4yNiAxMjEuMjIgNzcuMjUgMTI2LjY3IDc3LjI1QzEzMS41OCA3NyAxNDAuMjUgNzcuMzMgMTQzLjY4IDgxLjE2QzE0OC40IDg2LjQ0IDE0NS41IDk1Ljg0IDEzOC44NiA5Ny43NEMxMzYuMTkgOTguNSAxMzMuMDUgOTYuNjIgMTMwLjQ4IDk2LjA5QzEyMy4xNiA5NC42IDExNS45NCA5My4yMSAxMDguNSA5Mi4zQzg4LjgyIDg5Ljg4IDY5LjQ2IDkxLjgxIDQ5LjgzIDkzLjA1QzQzLjA1IDkzLjQ3IDM2LjE4IDk0LjM3IDI5LjQzIDk1LjE5QzI3LjExIDk1LjQ3IDIzLjYxIDk2Ljg2IDIxLjU0IDk1LjVDMjMuNDcgOTQuNDkgMjYuMDcgOTQuNCAyOC4xOCA5My43M0MzMy44NCA5MS45NCAzOS41NiA5MC4zNCA0NS4yOSA4OC44MUM2NC42OSA4My42MyA4NC4yMiA3OC4yNyAxMDQuNSA3Ny44MkMxMDYuNDYgNzcuNzcgMTA4LjM5IDc3LjEgMTEwLjMzIDc3LjI2WiIgZmlsbD0iI2ZmMGMwNCIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiNmZjBjMDQiIHN0cm9rZS13aWR0aD0iMC4yNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4=" alt="Islami Bank" style="height:22px;width:auto;flex-shrink:0;margin-right:2px">
+        <button class="p2p-copy-btn" type="button" data-copy="205022502005882102" data-label="Account number">Copy</button>
+      </div>
     </div>
     <div class="p2p-number">
-      <div><div class="p2p-number-info">Branch / Routing</div><div class="p2p-number-val" style="font-size:12px">Islami Bank BD — Gulshan Branch</div></div>
+      <div><div class="p2p-number-info">Branch</div><div class="p2p-number-val" style="font-size:13px">Maijdee Court Branch</div></div>
+      <button class="p2p-copy-btn" type="button" data-copy="Maijdee Court Branch" data-label="Branch name">Copy</button>
     </div>
+    <div class="p2p-number">
+      <div><div class="p2p-number-info">Routing No</div><div class="p2p-number-val">125751571</div></div>
+      <button class="p2p-copy-btn" type="button" data-copy="125751571" data-label="Routing number">Copy</button>
+    </div>
+    <div class="p2p-number" style="background:var(--bank-bg);border:1.5px solid var(--bank-bdr)">
+      <div><div class="p2p-number-info">Amount to send</div><div class="p2p-number-val mfs-amount-val" style="color:var(--bank-text)">৳0</div></div>
+      <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
+    </div>
+    <ul class="p2p-steps">
+      <li><b>1.</b> Transfer the exact due amount to the account above via your bank app or branch.</li>
+      <li><b>2.</b> Enter your transaction/reference ID below once sent.</li>
+    </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="bnkTxn" type="text" placeholder="Transaction / Reference ID" style="margin-bottom:0"></div>
   </div>
   <div class="detail-panel rv" id="panel-bank-proxy" style="--panel-accent:var(--bank-text)">
     <div class="detail-head"><div class="dot"></div><h3>Bank Transfer</h3></div>
     <div class="p2p-number">
-      <div><div class="p2p-number-info">Account Name</div><div class="p2p-number-val" style="font-size:13px">SuppVerse BD</div></div>
+      <div><div class="p2p-number-info">Bank</div><div class="p2p-number-val" style="font-size:13px">Islami Bank Bangladesh PLC</div></div>
+      <button class="p2p-copy-btn" type="button" data-copy="Islami Bank Bangladesh PLC" data-label="Bank name">Copy</button>
     </div>
     <div class="p2p-number">
-      <div><div class="p2p-number-info">Account Number</div><div class="p2p-number-val">2050-XXXXXXX-XXX</div></div>
-      <button class="p2p-copy-btn" type="button" data-copy="2050-XXXXXXX-XXX">Copy</button>
+      <div><div class="p2p-number-info">Account Title</div><div class="p2p-number-val" style="font-size:13px">MOHAMMAD HASAN</div></div>
+      <button class="p2p-copy-btn" type="button" data-copy="MOHAMMAD HASAN" data-label="Account title">Copy</button>
+    </div>
+    <div class="p2p-number" style="background:var(--bank-bg);border:1.5px solid var(--bank-bdr)">
+      <div><div class="p2p-number-info">Account Number</div><div class="p2p-number-val" style="color:var(--bank-text)">2050 225 02 05882102</div></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNTAgMTY0IiB3aWR0aD0iMzUwIiBoZWlnaHQ9IjE2NCI+CjxwYXRoIGQ9Ik0zNDMuODUgMjguNUMzNDMuNCAyOS4wMSAzNDIuOTUgMjkuNTIgMzQyLjUgMzAuMDNDMzM2Ljc0IDI5LjAxIDMzMS4xOCAyNS44OSAzMjUuNjEgMjQuMkMyOTguNzcgMTYuMDcgMjYzLjI2IDIuOTEgMjQwLjI1IDI2LjQxQzIzNi4zMiAzMC40MiAyMzIuODEgMzUuNDMgMjMwLjIgNDAuMzZDMjI1LjQ4IDQ5LjI5IDIyMi4wOCA1OC41MyAyMTguODcgNjguMDhDMjE2LjA4IDc2LjM2IDIxMy42IDg0Ljg5IDIxMS45MiA5My41QzIxMS40MyA5Ni4wNCAyMDkuNDggOTkuMDQgMjEwLjE3IDEwMS42N0MyMDguMzIgMTAzLjU3IDIwOC41OCAxMDcuNTEgMjA3LjgzIDEwOS45OEMyMDUuNjggMTE3LjA1IDIwMy44MiAxMjQuNDcgMjAyLjE3IDEzMS42NkMyMDEuNDYgMTM0LjczIDIwMC4zOCAxNDEuOTMgMTk2LjUgMTQyLjEyQzE5NC43OSAxMzkuOTkgMTk1LjYgMTI4Ljc3IDE5NS42NSAxMjUuNUMxOTUuNzUgMTE2Ljk2IDE5NC4wNyA5OS4wNiAxOTEuMjUgOTEuMTlDMTkwLjEzIDg4LjA5IDE4OS43MSA3OC43MiAxODUuMTcgNzguNzJDMTgwLjY1IDc4LjcxIDE3Ni40NyA5MS43IDE3NC44NCA5NS4zN0MxNjguOTkgMTA4LjU2IDE2My4yMSAxMjEuODggMTU3LjIgMTM1LjA0QzE1NS44OCAxMzcuOTQgMTUyLjUzIDE0Ny4wNSAxNDkuNSAxNDcuOTZDMTQ1LjI4IDE0NCAxNDkuMDUgMTI5Ljk0IDE1MC43IDEyNC44NEMxNTMuNDUgMTE2LjMyIDE1NS41MiAxMDcuNTQgMTU4LjE1IDk5QzE2MC40MiA5MS42MSAxNjMuNjMgODQuNDQgMTY1LjgzIDc3QzE2Ny4zNSA3MS44NCAxNjguMzkgNjUuOTggMTcwLjU3IDYxLjA4QzE3Mi42NiA1Ni4zNyAxNzQuMDggNDkuODYgMTc0Ljg4IDQ0Ljc4QzE3NS4yMiA0Mi41OSAxNzUuNTcgMzguNzMgMTc4LjE3IDM4LjAzQzE4My4zMiAzNi42NiAxODUuMDcgNDYuMzIgMTg2LjI2IDQ5LjUxQzE4OS43MyA1OC44MSAxOTQuMjcgNzIuNDcgMTk2IDgyLjE2QzE5Ni40NyA4NC43OCAxOTguMDcgOTIuNTUgMjAxLjE3IDkyLjk0QzIwNC4yMyA5MS42MyAyMDUuNCA4MS4zNyAyMDYuMTIgNzguMkMyMDkuMTIgNjUuMSAyMTMuMiA1Mi4yMyAyMTkuMTEgNDAuMjRDMjI4LjQ3IDIxLjIyIDI0Ni4xMyA1LjI2IDI2Ny44MyAzLjAxQzI4NC45OSAxLjIzIDMwMy4wMiA2LjM2IDMxOC4xIDEzLjc0QzMyNi41OCAxNy45IDMzNy4xNCAyMS41NCAzNDMuODUgMjguNVoiIGZpbGw9IiMzZTM2NGQiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlPSIjM2UzNjRkIiBzdHJva2Utd2lkdGg9IjAuMjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggZD0iTTMyNS42NCAzMi41QzMyMi40MSAzNC4yMSAzMTcuNjUgMzMuNCAzMTQuMDggMzQuMkMzMDUuMTYgMzYuMjEgMjk3LjI1IDQwLjU3IDI5Mi4yIDQ4LjM2QzI4MS4zNyA2NS4wNSAyODkuNTEgODUuNzQgMjkyLjg0IDEwMy4yOUMyOTUuNzYgMTE4LjY4IDI5Mi42NCAxMzcgMjgxLjg5IDE0OC43NEMyNzAuMjIgMTYxLjUgMjUzLjQzIDE2My41IDIzNy41NyAxNTcuODdDMjMyLjU1IDE1Ni4wOSAyMjYuOTUgMTUyLjcyIDIyMi44NyAxNDkuM0MyMjAuOTYgMTQ3LjY5IDIxOC4yNyAxNDUuODkgMjIwLjQ5IDE0My4xN0MyMjQuNjYgMTQyLjQzIDIyOC4xOSAxNDQuNjIgMjMxLjk5IDE0NS44M0MyNDMuMjggMTQ5LjQ0IDI2Mi4yIDE1Ny4zIDI3MC44IDE0NC42NEMyNzYuOCAxMzUuOCAyNzUuODkgMTIyLjI0IDI3NC4yMyAxMTIuMTdDMjcwLjAxIDg2LjYgMjU5LjI0IDUxLjgzIDI4OC4yMyAzNi43NEMyOTMuMjQgMzQuMTMgMjk4LjY3IDMyLjUzIDMwNC4zMSAzMS44M0MzMTAuOSAzMS4wMSAzMTkuMjYgMzAuMTEgMzI1LjY0IDMyLjVaIiBmaWxsPSIjMTQwMTdjIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHN0cm9rZT0iIzE0MDE3YyIgc3Ryb2tlLXdpZHRoPSIwLjI1IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik0yMzEuMzkgMTA4LjgzQzIyNi43MyAxMTguNjUgMjI1Ljg2IDEzMS40NCAyMTguNDcgMTM5Ljk0QzIxNi40NCAxNDIuMjggMjExLjY2IDE0OC40OCAyMDguMTUgMTQ1LjE3QzIwNy4xNSAxNDIuNTcgMjEwLjEzIDEzOC4yMyAyMTAuODEgMTM1LjY0QzIxMy4zNiAxMjUuODggMjE4LjQ1IDExNi40NSAyMjAuMDIgMTA2LjVDMjE2Ljg5IDEwNC44MyAyMTMuNzYgMTAzLjE3IDIxMC42MyAxMDEuNUMyMTMuMyA5OC40MSAyMTkgMTAwLjY1IDIyMi41IDk5LjgzQzIyNC40MyA5Ni4zNSAyMjQuNjYgOTEuODUgMjI2LjExIDg4LjE2QzIyOC45NiA4MC44NiAyMzIuMDIgNzIuMjcgMjMzLjgxIDY0LjY1QzIzNC40OSA2MS44IDIzNS4wNCA1OC41NCAyMzYuMDggNTUuODJDMjM4LjA5IDUwLjYgMjQwLjkxIDQyLjE2IDI0OC41IDQ1LjA2QzI1My44MiA0Ny4wOSAyNTYuNzQgNTMuMzMgMjU5LjI4IDU3Ljg4QzI2Ni4wMyA3MC4wMSAyNjcuNDMgODcuMzYgMjU3Ljk2IDk4LjUxQzI1My42NiAxMDMuNTcgMjQ2LjY3IDEwNi4zMiAyNDAuNTEgMTA3LjkzQzIzNy42MSAxMDguNjkgMjM0LjM4IDEwOC4xMSAyMzEuMzkgMTA4LjgzWk0yNDIuNSA3MS4xMkMyMzguMSA3NS41NCAyMzcuODQgODYuMjMgMjM1Ljk0IDkyLjE4QzIzNS4yOSA5NC4xOCAyMzQuMDggOTYuNjggMjM0LjE3IDk4Ljc4QzIzNi4xIDk5LjQxIDIzNy45NyA5OC41OSAyMzkuODIgOTguMDZDMjQxLjY0IDk3LjU1IDI0My41OCA5Ny42MSAyNDUuMzIgOTYuNzNDMjUxLjI1IDkzLjc1IDI1MS4yOSA4NS4zMyAyNDkuMTYgNzkuODNDMjQ3Ljk5IDc2Ljc5IDI0Ni43IDcxLjA5IDI0Mi41IDcxLjEyWiIgZmlsbD0iIzZkNTZhNSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiM2ZDU2YTUiIHN0cm9rZS13aWR0aD0iMC4yNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNMzI0LjM5IDg1LjE3QzMyNS44NCA4Ni44NCAzMjguNjcgODcuNiAzMzAuNTEgODkuMDJDMzM2LjUzIDkzLjcgMzQzLjE4IDk5LjQgMzQ0LjEgMTA3LjVDMzQ1LjY2IDEyMS4zMiAzMjIuOTQgMTMwLjQ2IDMxMy4wOSAxMzQuMjJDMzEwLjU4IDEzNS4xOCAzMDIuMjEgMTM5LjE1IDMwMC4xIDEzOC41QzMwMS41MSAxMzUuNzIgMzAyLjkyIDEzMi45NCAzMDQuMzMgMTMwLjE3QzMxMi42OCAxMjguNTggMzIxLjkyIDEyNC43IDMyOC40MSAxMTkuMjRDMzMxLjk5IDExNi4yMyAzMzQuNjcgMTExLjk0IDMzMS44IDEwNy4zNkMzMjUuOTEgOTcuOTQgMzEyLjc2IDk2Ljk3IDMwNC4xNyA5MkMzMDMuNjUgODkuODYgMzA0LjE4IDg4LjU1IDMwNC43MyA4Ni41NkMzMDcuOTQgNzUgMzIyLjA4IDc2LjM0IDMyNC44MSA2NS45NEMzMjYuMjggNjAuMzUgMzIxLjg0IDUzLjY5IDMxOC42NiA0OS41NUMzMTcuNTMgNDguMDggMzEzLjg1IDQ2LjA1IDMxMy44NCA0NC4xN0MzMTYuNjMgNDMuNiAzMjAuMTMgNDYuNDUgMzIyLjU1IDQ3LjdDMzMwLjYxIDUxLjg0IDM0My45OCA2MC42MyAzMzkuOTMgNzEuNDlDMzM4LjM4IDc1LjYzIDMzMy4wMyA3OS42NyAzMjkuMzMgODEuODZDMzI3Ljk5IDgyLjY1IDMyNC44MSA4My43NyAzMjQuMzkgODUuMTdaIiBmaWxsPSIjNmI2ZDcwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHN0cm9rZT0iIzZiNmQ3MCIgc3Ryb2tlLXdpZHRoPSIwLjI1IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik0xMjYuNjcgNzcuMjVDMTIxLjIyIDc3LjI1IDExNS43OCA3Ny4yNiAxMTAuMzMgNzcuMjZDMTE1Ljc4IDc3LjI2IDEyMS4yMiA3Ny4yNSAxMjYuNjcgNzcuMjVaTTEyNi41IDEzNi4wNUMxMjQuNjkgMTM1LjEzIDEyMi45MiAxMzUuNiAxMjEuMTYgMTM0LjkxQzExNC43NiAxMzIuNCAxMDcuMzggMTMxLjY2IDEwMC41IDEzMC45NUM4MS41OSAxMjguOTkgNjIuNTIgMTI4LjYgNDMuNSAxMzAuMjJDMzkuNDkgMTMwLjU2IDM1LjQ4IDEzMS40MiAzMS41MSAxMzEuOThDMjguNjcgMTMyLjM4IDI1LjY2IDEzMS43NCAyMi44NiAxMzIuNDVDMjAuNTMgMTMzLjAzIDEyLjg1IDEzNC4zNCAxMC45NCAxMzMuNUMxMi4xNSAxMzMuMDYgMTMuMzYgMTMyLjYxIDE0LjU3IDEzMi4xN0MyOS4wOSAxMjguNzUgNDIuOTkgMTIzLjQ4IDU3LjczIDEyMC44NUM1OS44NSAxMjAuNDcgNjIuMDIgMTE5LjA5IDY0LjE4IDExOC44OUM2Ny44NyAxMTguNTUgNzEuNTIgMTE3LjM1IDc1LjE3IDExNi44NkM4Ni4wNyAxMTUuNDIgOTcuMSAxMTQuOTEgMTA4LjE3IDExNC44MUMxMTMuNTIgMTE0Ljc2IDEyNi4yNiAxMTQuNTggMTMwLjUxIDExNy4wNUMxMzguNzQgMTIxLjgzIDEzNS4yNCAxMzMuNDggMTI2LjUgMTM2LjA1WiIgZmlsbD0iI2NlYTE0ZiIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiNjZWExNGYiIHN0cm9rZS13aWR0aD0iMC4yNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNMzMuNTYgNTcuNUMzNC43MSA1Ny4wMiAzNS45IDU3LjIzIDM3LjAzIDU2LjgzQzQzLjgxIDU0LjQ2IDUwLjk0IDUyLjY5IDU3LjkzIDUwLjhDNjcuNjkgNDguMTUgNzcuNDIgNDUuNDEgODcuMzUgNDMuMTdDOTkuMTcgNDAuNSAxMTQuMzYgMzkuNzUgMTI2LjUgMzkuNDlDMTMxLjQgMzkuMzggMTM1Ljk1IDM5LjU3IDE0MC44MyAzOS44MUMxNDguODIgNDAuMiAxNTYuOTggMzkuNjcgMTU3LjQ3IDUwLjE3QzE1Ny43MyA1NS44MiAxNTMuMDIgNjAuOTQgMTQ3LjE3IDU5Ljk2QzE0MC4yMSA1OC44MSAxMzMuMzEgNTYuMyAxMjYuMiA1NS4yMUMxMDguODIgNTIuNTUgOTAuOTggNTMuMDQgNzMuNSA1My45N0M2My43OSA1NC40OCA1NC4yIDU2LjM1IDQ0LjUgNTYuOTZDNDEuMyA1Ny4xNyAzNi41MSA1OC44OCAzMy41NiA1Ny41WiIgZmlsbD0iIzAzODkzOSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMzg5MzkiIHN0cm9rZS13aWR0aD0iMC4yNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNMTEwLjMzIDc3LjI2QzExNS43OCA3Ny4yNiAxMjEuMjIgNzcuMjUgMTI2LjY3IDc3LjI1QzEzMS41OCA3NyAxNDAuMjUgNzcuMzMgMTQzLjY4IDgxLjE2QzE0OC40IDg2LjQ0IDE0NS41IDk1Ljg0IDEzOC44NiA5Ny43NEMxMzYuMTkgOTguNSAxMzMuMDUgOTYuNjIgMTMwLjQ4IDk2LjA5QzEyMy4xNiA5NC42IDExNS45NCA5My4yMSAxMDguNSA5Mi4zQzg4LjgyIDg5Ljg4IDY5LjQ2IDkxLjgxIDQ5LjgzIDkzLjA1QzQzLjA1IDkzLjQ3IDM2LjE4IDk0LjM3IDI5LjQzIDk1LjE5QzI3LjExIDk1LjQ3IDIzLjYxIDk2Ljg2IDIxLjU0IDk1LjVDMjMuNDcgOTQuNDkgMjYuMDcgOTQuNCAyOC4xOCA5My43M0MzMy44NCA5MS45NCAzOS41NiA5MC4zNCA0NS4yOSA4OC44MUM2NC42OSA4My42MyA4NC4yMiA3OC4yNyAxMDQuNSA3Ny44MkMxMDYuNDYgNzcuNzcgMTA4LjM5IDc3LjEgMTEwLjMzIDc3LjI2WiIgZmlsbD0iI2ZmMGMwNCIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiNmZjBjMDQiIHN0cm9rZS13aWR0aD0iMC4yNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4=" alt="Islami Bank" style="height:22px;width:auto;flex-shrink:0;margin-right:2px">
+        <button class="p2p-copy-btn" type="button" data-copy="205022502005882102" data-label="Account number">Copy</button>
+      </div>
     </div>
     <div class="p2p-number">
-      <div><div class="p2p-number-info">Branch / Routing</div><div class="p2p-number-val" style="font-size:12px">Islami Bank BD — Gulshan Branch</div></div>
+      <div><div class="p2p-number-info">Branch</div><div class="p2p-number-val" style="font-size:13px">Maijdee Court Branch</div></div>
+      <button class="p2p-copy-btn" type="button" data-copy="Maijdee Court Branch" data-label="Branch name">Copy</button>
     </div>
+    <div class="p2p-number">
+      <div><div class="p2p-number-info">Routing No</div><div class="p2p-number-val">125751571</div></div>
+      <button class="p2p-copy-btn" type="button" data-copy="125751571" data-label="Routing number">Copy</button>
+    </div>
+    <div class="p2p-number" style="background:var(--bank-bg);border:1.5px solid var(--bank-bdr)">
+      <div><div class="p2p-number-info">Amount to send</div><div class="p2p-number-val mfs-amount-val" style="color:var(--bank-text)">৳0</div></div>
+      <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
+    </div>
+    <ul class="p2p-steps">
+      <li><b>1.</b> Transfer the exact due amount to the account above via your bank app or branch.</li>
+      <li><b>2.</b> Enter your transaction/reference ID below once sent.</li>
+    </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="bnkTxnP" type="text" placeholder="Transaction / Reference ID" style="margin-bottom:0"></div>
   </div>
 
@@ -620,7 +732,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <div><div class="p2p-number-info">BEP20 Wallet Address</div><div class="p2p-number-val" style="font-size:11px;word-break:break-all;line-height:1.4">0x48698E8fc2bcf3324a9A6869d549e2e75AEEC586</div></div>
       <div class="p2p-addr-actions">
         <button class="p2p-icon-btn" type="button" id="cryptoQrBtn" aria-label="Show QR code"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M14 20h3M20 14v3M20 20v.01"/></svg></button>
-        <button class="p2p-copy-btn" type="button" data-copy="0x48698E8fc2bcf3324a9A6869d549e2e75AEEC586">Copy</button>
+        <button class="p2p-copy-btn" type="button" data-copy="0x48698E8fc2bcf3324a9A6869d549e2e75AEEC586" data-label="Wallet address">Copy</button>
       </div>
     </div>
     <div class="crypto-qr-wrap" id="cryptoQrWrap"><div id="cryptoQr"></div></div>
@@ -657,13 +769,13 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
   </div>
   <h2 class="section-label rv">Our Delivery Partner</h2>
   <div class="partner-showcase rv">
-    <div class="partner-box">
+    <div class="partner-box pb-steadfast">
       <svg xmlns="http://www.w3.org/2000/svg" width="186.143" height="38.565" viewBox="0 0 186.143 38.565"><defs><linearGradient id="b" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#349574"/><stop offset="1" stop-color="#fff"/></linearGradient><clipPath id="a"><path d="M0 0h186.143v38.565H0z"/></clipPath></defs><g clip-path="url(#a)"><path fill="#3d3d3d" d="m13.625 11.716-3.905 2.43S3.645 6.248 0 4.165L42.575 0S10.5 4.513 7.984 6.075Z"/><path fill="#349574" d="M45.17 0S30.764 3.84 20.133 24.516L16.011 15.4 12.54 18s6.509 11.846 6.917 18.036c0 0 8.9-25.759 25.713-36.043"/><path fill="#3d3d3d" d="M2.517 23.756s11-13.59 36.42-22.236a120.936 120.936 0 0 0-36.42 22.236m128.476 8.885a2.466 2.466 0 0 0-2.46-1.241 4.319 4.319 0 0 0-2.685.846 3.86 3.86 0 0 0-1.467 2.381 3.72 3.72 0 0 0-.1.835 2.145 2.145 0 0 0 .8 1.805 3.088 3.088 0 0 0 1.952.564 4.115 4.115 0 0 0 3.035-1.264l.541.395a5.031 5.031 0 0 1-3.7 1.557 3.443 3.443 0 0 1-2.775-1.049 2.689 2.689 0 0 1-.621-1.817 4.63 4.63 0 0 1 .113-.981 4.78 4.78 0 0 1 1.783-2.911 5.18 5.18 0 0 1 3.272-1.049 3.089 3.089 0 0 1 3.035 1.534Zm9.026 5.123a3.485 3.485 0 0 1-1.207.7 4.74 4.74 0 0 1-1.162.1 2.7 2.7 0 0 1-1.749-.53 1.953 1.953 0 0 1-.71-1.625 3.574 3.574 0 0 1 .079-.722 3.525 3.525 0 0 1 1.275-2.1 3.673 3.673 0 0 1 2.347-.784 2.744 2.744 0 0 1 1.76.53 1.985 1.985 0 0 1 .71 1.636 3.615 3.615 0 0 1-.079.722 3.529 3.529 0 0 1-1.264 2.076m.265-3.683a1.441 1.441 0 0 0-.683-.525 3.108 3.108 0 0 0-.857-.079 2.676 2.676 0 0 0-2.731 2.211 2.61 2.61 0 0 0-.068.564 1.49 1.49 0 0 0 .53 1.23 2.021 2.021 0 0 0 1.32.406 2.76 2.76 0 0 0 1.783-.6 2.708 2.708 0 0 0 .959-1.6 2.806 2.806 0 0 0 .068-.587 1.609 1.609 0 0 0-.321-1.021m9.223 4.369.124-.6a3.162 3.162 0 0 1-2.087.711 2.569 2.569 0 0 1-1.4-.339 1.352 1.352 0 0 1-.632-1.218 2.647 2.647 0 0 1 .057-.519l.756-3.554h.745l-.756 3.543a1.926 1.926 0 0 0-.045.395q0 1.015 1.41 1.015a2.3 2.3 0 0 0 1.557-.525 2.575 2.575 0 0 0 .812-1.45l.632-2.979h.745l-1.173 5.517Zm6.781-2.246-.474 2.234h-.745l1.173-5.517h.745l-.158.756a3.7 3.7 0 0 1 2.583-.88l-.135.677q-2.4 0-2.99 2.73m6.364 2.235 1.2-5.641h.745l-1.2 5.641Zm1.7-6.374q-.237 0-.293-.282l.181-.812a.522.522 0 0 1 .406-.282q.181 0 .339.248l-.18.88a.721.721 0 0 1-.451.248m4.729 3.903a2.585 2.585 0 0 0-.034.406q0 1.513 1.794 1.512a2.594 2.594 0 0 0 2.369-1.3h.767a3.484 3.484 0 0 1-3.294 1.974 2.716 2.716 0 0 1-1.7-.474 1.839 1.839 0 0 1-.677-1.557 3.812 3.812 0 0 1 .1-.835 3.568 3.568 0 0 1 3.554-2.9 2.857 2.857 0 0 1 1.715.474 1.806 1.806 0 0 1 .734 1.546 3.187 3.187 0 0 1-.079.677l-.09.462Zm2.742-2.493a2.705 2.705 0 0 0-1.6.48 2.677 2.677 0 0 0-.987 1.337h4.321a1.92 1.92 0 0 0 .023-.293 1.389 1.389 0 0 0-.508-1.151 1.969 1.969 0 0 0-1.252-.372m7.493 2.728-.474 2.234h-.745l1.173-5.517h.745l-.158.756a3.7 3.7 0 0 1 2.583-.88l-.135.677q-2.4 0-2.99 2.73"/><path fill="#3d3d3d" d="M45.985 11.2a.564.564 0 0 0-.377.133.724.724 0 0 0-.22.306.124.124 0 0 1-.016.047.47.47 0 0 0-.032.11q-.016.079-.047.228t-.086.369-.134.549-.188.769a.642.642 0 0 0 .126.518.55.55 0 0 0 .455.22h7.642a4.051 4.051 0 0 1 3.381 1.639 4.319 4.319 0 0 1 .777 3.774.22.22 0 0 1-.008.047c-.005.021-.013.055-.024.1s-.026.115-.047.2-.05.2-.087.337-.078.306-.125.51-.1.442-.173.714l-.236.941q-.133.533-.29 1.208a4.645 4.645 0 0 1-1.632 2.51 4.432 4.432 0 0 1-2.84.973H36.445a.32.32 0 0 1 .008-.055c.005-.026.016-.068.031-.125s.037-.139.063-.243l.1-.408q.063-.251.141-.612t.2-.855q.118-.494.274-1.137t.345-1.443h13.51a.62.62 0 0 0 .612-.455.206.206 0 0 1 .008-.047c.005-.021.013-.057.024-.11s.029-.128.055-.228.057-.222.094-.369.081-.33.133-.549.11-.476.173-.769a.508.508 0 0 0-.055-.51.525.525 0 0 0-.447-.228h-7.7a4.1 4.1 0 0 1-3.389-1.608 4.3 4.3 0 0 1-.785-3.789.22.22 0 0 1 .008-.047c.005-.021.016-.058.032-.11s.034-.123.055-.212.047-.2.078-.337.073-.3.126-.5.11-.437.172-.714.139-.593.228-.949.191-.758.306-1.208q1.333-3.4 4.456-3.4h15.44a.34.34 0 0 1-.008.055c-.005.026-.016.068-.032.126s-.037.139-.063.243-.063.238-.11.4-.1.361-.157.6-.128.515-.212.839l-.29 1.122q-.165.636-.369 1.436H-45.867Zm16.24-4.817h5.158a.068.068 0 0 1-.008.032c-.005.011-.013.029-.023.055a.77.77 0 0 0-.032.1l-.039.157c-.016.062-.037.139-.063.227s-.052.191-.078.306-.058.243-.094.384-.078.3-.125.486-.1.384-.157.6-.118.46-.18.722-.133.547-.212.855-.165.641-.259 1h3.7l-1.02 4.66h-3.75a.066.066 0 0 1-.008.031.265.265 0 0 0-.016.063q-.008.047-.023.118t-.039.181c-.016.073-.034.159-.055.259s-.05.217-.086.353-.076.29-.118.463-.089.369-.141.588-.11.463-.173.73-.133.56-.212.887-.165.675-.259 1.051-.2.79-.314 1.24a.975.975 0 0 0 .188.722.792.792 0 0 0 .675.314h2.683l-1.035 4.441h-3.527a3.96 3.96 0 0 1-3.35-1.648 4.554 4.554 0 0 1-.777-3.828Zm10.56 8.12a10.866 10.866 0 0 1 7.391-3.177h3.829a3.943 3.943 0 0 1 3.225 1.475 3.709 3.709 0 0 1 .745 3.374q-.126.47-.22.816t-.157.581-.11.392a2.33 2.33 0 0 0-.063.243.494.494 0 0 1-.032.117.122.122 0 0 0-.016.047 4.189 4.189 0 0 1-1.577 2.408 4.484 4.484 0 0 1-2.769.9h-4.739a1.478 1.478 0 0 1-1.287-1.091 2.273 2.273 0 0 1 .306-1.867 2.917 2.917 0 0 1 2.11-1.232h3q.094-.376.165-.651c.047-.183.089-.337.126-.463s.065-.23.086-.314.036-.149.047-.2.018-.078.024-.094a.124.124 0 0 0 .008-.039h-3.236a4.817 4.817 0 0 0-2.9.886 4.907 4.907 0 0 0-1.742 2.848 3.651 3.651 0 0 0 .439 2.573 2.881 2.881 0 0 0 2.714 1.177h8.018q-.173.706-.322 1.255t-.267.965-.2.73-.141.526q-.063.212-.094.345c-.021.089-.039.159-.055.212s-.026.089-.031.11a.207.207 0 0 0-.008.047h-9.163q-3.264 0-4.692-1.562a5.454 5.454 0 0 1-1.459-3.726 10.22 10.22 0 0 1 3.044-7.618m21.452 12.85q-3.954-.423-5.225-3.428t.659-7.445q3.3-5.492 10.23-5.115h7.327l-.236.832h.016l-1.287 5.084-2.573 10.136h-5.131Zm6.37-10.073h-.016l.424-1.695h-2.459a4.942 4.942 0 0 0-3.2 1.059 5.137 5.137 0 0 0-1.663 2.456q-.832 3.781 2.62 3.734h2.856Zm22.297 4.442h-5.052l1.428-6.01h-3.17q-3.373-.032-4.456 3.719a3.509 3.509 0 0 0 .416 2.589 2.9 2.9 0 0 0 2.613 1.193h7.877l-1.1 4.205h-8.96a6.018 6.018 0 0 1-4.543-1.6 5.8 5.8 0 0 1-1.53-3.734 11.013 11.013 0 0 1 3.052-7.649 10.37 10.37 0 0 1 7.194-3.193h3.75l1.287-4.849h5.052Z"/><path fill="#349574" d="M127.467 9.866q1.208-3.483 4.456-3.483h14.452l-1.1 4.8h-8.411v.016H132.8a.576.576 0 0 0-.353.141.774.774 0 0 0-.259.376l-.628 2.777h8.473l-1.035 4.8h-8.52l-1.82 8.112h-5.147Z"/><path fill="#349574" d="M146.477 27.346q-3.954-.423-5.225-3.428t.659-7.445q3.3-5.492 10.23-5.115h7.328l-.235.832h.016l-1.287 5.084-2.57 10.135h-5.131Zm6.371-10.073h-.016l.424-1.695h-2.463a4.942 4.942 0 0 0-3.2 1.059 5.142 5.142 0 0 0-1.663 2.456q-.832 3.781 2.62 3.734h2.856Zm24.499-5.932 1.2-4.958h5.162a.066.066 0 0 1-.008.032c-.005.011-.013.029-.023.055a.77.77 0 0 0-.032.1l-.039.157c-.016.062-.037.139-.063.227s-.053.191-.079.306-.057.243-.094.384-.079.3-.126.487-.1.384-.157.6-.118.46-.18.722-.133.547-.212.855-.164.641-.259 1h3.7l-1.02 4.66h-3.75a.076.076 0 0 1-.008.032.245.245 0 0 0-.016.063q-.0075.0465-.024.117l-.039.181-.055.259q-.032.15-.086.353t-.118.463q-.062.259-.141.588t-.172.73q-.094.4-.212.887t-.259 1.051q-.142.565-.314 1.24a.973.973 0 0 0 .188.722.792.792 0 0 0 .675.314h2.683l-1.036 4.441h-3.531a3.96 3.96 0 0 1-3.35-1.647 4.553 4.553 0 0 1-.777-3.829l1.55-6.4h-10.047q-.973-.047-1.114.706a.657.657 0 0 0 .416.769 3.177 3.177 0 0 0 1.31.141l2.087-.063q2.934.095 3.883 1.656a5.983 5.983 0 0 1 .51 4.166q-.973 4.676-6.449 4.5h-9.32l.894-4.362h8.269q1.318.11 1.585-.816.031-1.02-1.522-.926h-2.322a4.7 4.7 0 0 1-3.7-1.553 4.8 4.8 0 0 1-.792-4.158q1.4-4.582 7.045-4.252h10.285Z"/></g><path fill="url(#b)" d="M36.444 34.91H121.4v1.133H36.444z"/></svg>
     </div>
-    <div class="partner-box">
+    <div class="partner-box pb-pathao">
       <svg xmlns="http://www.w3.org/2000/svg" width="100" height="29" viewBox="0 0 100 29"><path fill="#fff" d="M28.26 14.13a14.13 14.13 0 1 1-28.26 0 14.13 14.13 0 0 1 28.26 0"/><path fill="#e83330" d="M14.13 0C9.76 0 5.86 1.98 3.26 5.1c.47 2.34 1.15 4.43 2.01 6.22-.29.75-.51 1.52-.62 2.24l-.67 3.68c-1.3-1.58-2.57-3.66-3.59-6.41-.25 1.06-.39 2.16-.39 3.3 0 3.56 1.32 6.81 3.49 9.29l1.8-9.75c.09-.57.24-1.17.45-1.77l.09-.24c.03-.1.07-.21.12-.31.02-.07.05-.14.08-.21.05-.1.09-.21.14-.31.03-.07.07-.15.11-.22.04-.1.09-.19.14-.29s.11-.2.17-.3c.03-.07.07-.14.11-.21 1.35-2.27 3.7-4.36 7.48-4.36h.01c3.54.01 6.65 2.14 7.91 5.43 1.29 3.36.38 6.99-2.37 9.49-2.58 2.32-6.64 2.76-10.36 1.11-.15-.06-.31-.14-.47-.22l.82-4.46c.45.3.91.55 1.39.77 2.17.96 4.42.81 5.74-.38 1.44-1.3 1.9-3.08 1.25-4.77-.49-1.3-1.78-2.68-3.91-2.68h-.01c-3.81 0-4.59 4.14-4.66 4.62l-.01.06-2.23 12.07c2.03 1.13 4.37 1.77 6.85 1.77 7.81 0 14.13-6.33 14.13-14.13S21.93 0 14.13 0"/><path fill="#182229" d="M53.05 8.29c-1.59-.06-3.08.48-4.42 1.63-1.33 1.14-2.15 2.53-2.43 4.13-.28 1.56.03 2.93.91 4.08.89 1.15 2.12 1.76 3.66 1.81h.19c1.3 0 2.57-.42 3.62-1.2l-.08.46c-.04.23.12.46.35.5h1.45c.21 0 .39-.15.43-.35l.91-5.16c.32-1.56.03-2.93-.88-4.08-.9-1.16-2.15-1.77-3.71-1.82m.83 8.37c-.87.77-1.8 1.12-2.81 1.08-.85-.01-1.65-.42-2.14-1.12-.53-.72-.69-1.54-.5-2.52.19-1 .73-1.91 1.53-2.56.75-.67 1.72-1.05 2.73-1.05.92 0 1.63.32 2.16.99.54.69.73 1.49.58 2.46-.17 1.07-.72 2.03-1.55 2.72m29.07-8.37c-1.58-.06-3.07.48-4.41 1.63-1.33 1.14-2.15 2.53-2.44 4.13-.27 1.56.04 2.93.92 4.08.89 1.15 2.12 1.76 3.66 1.81h.18c1.31 0 2.58-.42 3.63-1.2l-.08.46c-.04.23.12.46.35.5h1.45c.21 0 .39-.15.42-.35l.91-5.16c.33-1.56.03-2.93-.87-4.08-.9-1.16-2.15-1.77-3.72-1.82m.84 8.37c-.88.77-1.8 1.12-2.82 1.08-.85-.01-1.64-.42-2.13-1.12-.53-.72-.69-1.54-.5-2.52.19-1 .73-1.91 1.53-2.56.75-.67 1.72-1.05 2.73-1.05.92 0 1.63.32 2.16.99.54.69.73 1.49.58 2.46-.17 1.07-.72 2.03-1.55 2.72m15.19-6.55c-.89-1.16-2.13-1.77-3.69-1.82-1.57-.05-3.05.5-4.39 1.65-1.34 1.14-2.16 2.53-2.44 4.13-.28 1.56.03 2.93.91 4.08.89 1.15 2.13 1.75 3.69 1.79h.2c1.5 0 2.91-.55 4.2-1.65 1.34-1.14 2.16-2.52 2.44-4.09.28-1.56-.03-2.94-.92-4.09m-5.65 7.63c-.85.01-1.65-.4-2.14-1.1-.52-.72-.68-1.55-.49-2.53.19-1.01.73-1.92 1.53-2.57.73-.67 1.69-1.05 2.69-1.05h.04c.92 0 1.62.32 2.15 1s.73 1.49.59 2.46c-.17 1.04-.67 1.94-1.56 2.72-.87.78-1.79 1.12-2.81 1.07M40.59 8.31c-1.57-.05-3.06.5-4.41 1.65-1.34 1.14-2.16 2.51-2.44 4.09l-1.34 7.62c-.04.24.11.46.35.5.02.01.05.01.07.01h1.34c.21 0 .39-.15.43-.36l.55-3.15c.84.8 1.91 1.24 3.21 1.29 1.58.05 3.06-.5 4.4-1.65 1.33-1.14 2.15-2.53 2.44-4.13.27-1.56-.04-2.93-.92-4.08-.89-1.15-2.13-1.75-3.68-1.79m-1.92 9.45c-.93 0-1.65-.33-2.18-1-.54-.68-.73-1.49-.58-2.46.16-1.05.67-1.94 1.56-2.72.81-.73 1.67-1.08 2.61-1.08.07 0 .14 0 .21.01.85-.01 1.65.4 2.14 1.1.53.72.7 1.55.51 2.52-.2 1.01-.75 1.92-1.55 2.57-.83.71-1.72 1.06-2.72 1.06m32.24-9.38c-.96.05-1.88.37-2.66.93l.48-2.72c.04-.24-.11-.46-.35-.5-.02-.01-.05-.01-.07-.01h-1.38c-.2 0-.38.15-.42.36L64.26 19.2c-.04.23.12.46.35.5h1.45c.21 0 .39-.15.42-.35l1.08-6.11c.12-.76.53-1.44 1.13-1.92.59-.5 1.34-.77 2.11-.78.68-.04 1.33.24 1.76.76.45.52.62 1.23.47 1.9l-1.05 6c-.04.23.11.46.35.5h1.44c.21 0 .39-.15.43-.35l1.03-5.86c.26-1.45-.04-2.69-.89-3.69-.85-1.01-2.01-1.49-3.43-1.42m-8.93 2.29H64c.21 0 .39-.15.43-.36l.22-1.28c.04-.23-.11-.46-.35-.5-.02 0-.05-.01-.07-.01h-1.87l.34-1.93c.04-.24-.12-.46-.35-.5-.03-.01-.05-.01-.08-.01H60.9c-.21 0-.39.15-.42.36l-.37 2.08h-.56c-.21 0-.39.15-.43.36l-.22 1.28c-.04.24.11.46.35.5.02.01.04.01.07.01h.41l-.98 5.55c-.19 1.11-.03 2 .5 2.63.6.71 1.65 1.07 3.12 1.07.21 0 .39-.15.43-.35l.2-1.14c.04-.24-.12-.46-.35-.5-.03-.01-.05-.01-.08-.01-.67 0-1.13-.14-1.37-.43-.23-.28-.29-.74-.18-1.36z"/></svg>
     </div>
-    <div class="partner-box">
+    <div class="partner-box pb-carrybee">
       <svg xmlns="http://www.w3.org/2000/svg" width="512" height="173" viewBox="0 0 512 173" style="position:relative;top:2px"><path fill="#1c1c1c" fill-rule="evenodd" stroke="#1c1c1c" stroke-linejoin="round" stroke-width=".25" d="M.06 71V59c1.23-.55 1.46-4.68 2-6.1 1.57-4.12 4.2-7.62 6.94-11.07 9.18-11.56 25.92-12.71 38.56-7.89 3.42 1.3 11.31 5.91 12.38 9.62 1.67 5.81-2.95 11.91-9.38 10.38-3.95-.95-6.85-5.74-11.46-6.88a18.9 18.9 0 0 0-23.42 15.45C13.53 76.2 26.6 85.53 39.1 82.94c4.66-.97 7.34-6.21 11.74-6.93 6.39-1.05 10.5 4.56 9.1 10.43-.96 3.99-7 7.07-10.26 8.74-12.98 6.64-30.43 4.65-40.5-6.52-2.81-3.12-5.94-7.49-7.12-11.56-.39-1.37-.9-5.61-2-6.1Zm116.77 23c-3.13.63-5.83 3.17-9.06 3.94-7.81 1.86-16.56 1.57-23.87-2-24.96-12.19-25.01-45.7-2.56-60.1 16.35-10.48 41.34-2.8 48.49 15.49 3.51 8.96 2.84 18.2 2.84 27.84 0 4.18.75 9.18-.07 13.27-1.12 5.62-7.45 8.14-12.26 5.38-1.44-.83-2.36-2.67-3.51-3.82Zm38.25-35.04L154.72 93c-1.11 7.23-11.96 8.85-14.66 1.77-1.93-5.08-.73-12.19-.73-17.6 0-5.55-.84-11.85.01-17.33 1.81-11.53 8.37-23.42 20.43-26.9 3.66-1.06 7.42-2.55 11.39-1.93 5.81.91 8.4 8 4.84 12.49-2.68 3.38-6.73 2.65-10.44 3.56-6.07 1.5-8.57 6.7-10.48 11.9Zm37.99 1-.35 33.37c-1.03 6.91-12.62 8.5-14.66 1.44-1.48-5.15-.73-11.23-.73-16.6 0-19.34-.58-37.22 20.44-45.23 3.53-1.35 7.85-2.56 11.72-1.93 5.16.84 8.26 7.51 5.18 11.82-2.85 3.99-6.93 3.2-11.11 4.23-5.13 1.27-10.55 7.57-10.49 12.9ZM222.28 72V37c2.25-6.76 12.99-8.56 14.99-.44 3.3 13.36-7.5 44.83 13.9 46.77 21.18 1.93 16.5-25.95 16.5-39.16 0-2.53-.19-5.17.39-7.61 1.05-4.39 6.89-6.41 10.71-4.5 7.42 3.71 4.9 23.13 4.9 30.44 0 12.44 1.58 31.73-.73 43.27-1.88 9.4-9.6 19.57-19.04 22.29-3.85 1.11-7.87 2.92-12.06 2.26a7.65 7.65 0 0 1-4.84-12.49c2.69-3.38 6.94-1.89 10.44-3.23 8.67-3.3 10.23-10.59 10.23-19.1-1.82-.25-9.4 3.22-12.5 3.5-15.39 1.4-31.87-11.16-32.89-27ZM95.56 46.73c-24.95 4.8-17.01 42.43 8.21 36.21 22.09-5.45 14.54-40.59-8.21-36.21Z"/><path fill="#ffcb06" fill-rule="evenodd" stroke="#ffcb06" stroke-linejoin="round" stroke-width=".25" d="M334.34.06h5.32c.61 1.6 4.84 3.13 6.2 4.91 4.79 6.28 5.94 17.92.64 24.34-8.65-2.16-18.17-13.17-16.33-22.48.68-3.42 3.32-4.51 4.17-6.77Zm14.93 30.44c1.84-2.36 3.25-5.2 5.01-7.65 5.55-7.7 15.86-12.63 25.22-12.03 4.8.31 11.45 1.9 13.37 7.09 2.42 6.52-3.34 13.76-9.07 16.13-2.85 1.18-5.48 2.42-8.63 2.81-6.69.84-21-1.51-25.9-6.35Zm-42.1 11.85c1.47-.88 2.66-2.83 3.99-4.03A28 28 0 0 1 324 31.83c1.72-.38 3.36-1.2 5-.33.21 11.25-10.07 25.66-18.72 32.3-3.7 2.85-8.09 4.39-11.78 7.07-2.52-3.16-2.61-8.59-3.75-12.4a565 565 0 0 1-7.62-28.29c-1.05-4.31-2.83-10.09 1.93-12.96 11.84-7.14 13.97 11.13 15.79 18.27.45 1.73.64 6.2 2.32 6.86Zm81.5 28.48c.81 11.06 16.11 14.36 24.54 11.13 3.28-1.26 5.72-5.4 9.24-5.92 5.52-.82 11.82 4.43 9.23 10.42-3.67 8.5-18.27 12.61-26.51 12.61-20.41 0-38.76-20.83-32.94-41.57 8.83-31.5 51.31-36.83 64.58-6 2.01 4.67 4.68 13.61-.09 17.38-3.66 2.9-9.88 1.85-14.22 1.85-11.22 0-22.68-.52-33.83.1Zm123.27-12.11V66c-1.6.66-2.11 3.2-4.13 3.91-6.54 2.27-23.96.82-31.64.82-2.31 0-13.95-.61-15 .5.6 8.98 15.35 14.26 22.67 11.48 4.04-1.53 7.02-5.43 10.98-6.61 6.47-1.92 11.83 5.51 9 11.2-1.05 2.1-3.42 3.72-5.25 5.07a34.8 34.8 0 0 1-33.38 4.34c-19.65-7.84-27.62-34.08-14.97-51.32 12.25-16.68 38.02-19.72 52.58-4.03a36 36 0 0 1 7.02 11.14c.58 1.47.9 5.66 2.12 6.22ZM335.5 31.27l4.51.9c1.84 3.52.64 8.58.23 12.33-1.6 14.38-9.35 27.06-20.93 35.65-2.88 2.14-10.57 7.27-14.07 6.68-1.34-1.74-4.76-5.06-3.88-7.33 2.41-1.37 5.28-2.33 7.8-3.56 11.14-5.43 19.62-17.39 23.6-28.72 1.76-4.98 1.35-12.15 2.74-15.95Zm9.67 2.84c5.59.5 5.73 12.1 6.16 16.39 1.62 16.24-6.68 31.76-18.49 42.18-5.11 4.51-8.8 7.03-15.36 3.65-1.52-.79-3.48-1.07-3.98-2.83 2.35-1.38 5.05-2.29 7.47-3.7 10.99-6.44 19.31-17.8 22.82-29.89a50 50 0 0 0 1.85-18.08c-.17-1.79-1.74-6.4-.47-7.72ZM352.5 38c13.24 11.9 17.47 27.68 8.69 44-2.82 5.23-7.41 9.24-12.4 12.3-1.69 1.03-4.67 3.22-6.62 2.46.8-2.19 6.01-7.49 7.64-10.1 4.48-7.15 6.83-16.39 7.1-24.83.21-6.26-1.38-11.91-2.81-17.83-.39-1.6-2.6-4.63-1.6-6Zm70.1 21.69c.32-2.85-2.29-5.97-4.24-7.88-6.17-6.06-16.4-7.29-23.42-1.73-2.57 2.03-6.8 5.92-5.93 9.61zm72.29 0c.91-3.84-3.45-7.78-6.2-9.83-7.95-5.93-18.79-3.49-24.82 3.85-1.33 1.62-2.69 3.87-2.56 5.98z"/><path fill="#d4d3d1" fill-rule="evenodd" stroke="#d4d3d1" stroke-linejoin="round" stroke-width=".25" d="M222.28 37v35c-1.37-1.17-.65-5.32-.65-7.17v-20c0-1.95-.79-6.6.65-7.83Zm-67.2 21.96c1.44 4.39.27 20.24.27 25.87 0 1.99.82 6.9-.63 8.17zm37.99 1c1.43 4.17.3 19.81.3 25.21 0 1.99.82 6.92-.65 8.16z"/></svg>
     </div>
   </div>
@@ -889,6 +1001,7 @@ function renderInternalSummary(){
   if(S.flow === 'internal'){
     payBarVal.textContent = fmt(total);
     updateCryptoConversion();
+    if(typeof updateMfsAmounts === 'function') updateMfsAmounts();
   }
 }
 function escHtml(str){
@@ -921,6 +1034,7 @@ function renderProxySummary(){
   if(S.flow === 'proxy'){
     payBarVal.textContent = fmt(total);
     updateCryptoConversion();
+    if(typeof updateMfsAmounts === 'function') updateMfsAmounts();
   }
 }
 
@@ -958,6 +1072,11 @@ wirePromo('proxy', 'Proxy', renderProxySummary);
 
 /* BDT totals per flow — internal is computed live from cart; proxy stays admin-quoted (static demo for now) */
 const TOTALS_BDT = { internal: 0, proxy: 48260 };
+
+/* MFS (bKash/Nagad) shared state — declared early since renderInternalSummary/renderProxySummary call updateMfsAmounts() before their own definition below. */
+const MFS_NUMBER = '01725492479';
+const MFS_ACCENTS = { bkash: '#e21966', nagad: '#e88316', rocket: '#8b3392', cellfin: '#09853e' };
+const mfsQrRendered = { bkash: false, nagad: false, rocket: false, cellfin: false };
 
 /* Admin-controlled BDT-per-USDT rate. Placeholder until wired to Supabase admin settings. */
 const EXCHANGE_RATE_BDT_PER_USDT = 130;
@@ -998,6 +1117,7 @@ function setFlow(flow){
   dueBanner.style.display = flow === 'proxy' ? 'flex' : 'none';
   payBarLabel.textContent = flow === 'proxy' ? 'Total Due' : 'Total';
   payBarVal.textContent = flow === 'proxy' ? fmt(TOTALS_BDT.proxy) : fmt(TOTALS_BDT.internal);
+  if(typeof updateMfsAmounts === 'function') updateMfsAmounts();
   updateCryptoConversion();
   // Re-render method selection for new flow context
   if(S.method) selectMethod(S.method);
@@ -1038,6 +1158,10 @@ function selectMethod(method){
 
 const CRYPTO_WALLET = '0x48698E8fc2bcf3324a9A6869d549e2e75AEEC586';
 const SV_LOGO_URI_LIGHT = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjMyMSA1NSAxMjg5IDE3NDMiIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsMTg0NC4wMDAwMDApIHNjYWxlKDAuMTAwMDAwLC0wLjEwMDAwMCkiCmZpbGw9IiNmMjY0MzAiIHN0cm9rZT0ibm9uZSI+CjxwYXRoIGQ9Ik05ODg0IDE3MDg5IGMtNDU3IC0yNSAtODc3IC04OSAtMTMyNCAtMjAzIC0zMzUgLTg1IC01NTEgLTE1OSAtODM3Ci0yODcgLTQ4MSAtMjE0IC04NDEgLTQ1MCAtMTE1NyAtNzU5IC0yNjQgLTI1OSAtNDE1IC00NjAgLTU1NSAtNzM4IC04OCAtMTc2Ci0xNjYgLTQzNiAtMTk3IC02NjEgLTQ3IC0zMzQgMjcgLTc4NSAxNzggLTEwODQgMTg3IC0zNzIgNDQwIC02ODcgNzgzIC05NzIKMzIxIC0yNjggNjIzIC00NjMgMTEwNSAtNzEzIDE3OSAtOTMgMjU1IC0xMjggNjU1IC0zMDcgNDI5IC0xOTEgMTMwOSAtNTM1CjE5MjAgLTc1MCA5OSAtMzUgMjg4IC0xMDMgNDIwIC0xNTAgMTMyIC00OCAzNTUgLTEyNyA0OTUgLTE3NSAxNDAgLTQ5IDMxOAotMTEyIDM5NSAtMTQwIDc3IC0yOSAyNTcgLTkyIDQwMCAtMTQwIDI3MSAtOTEgNzgyIC0yNjkgOTkzIC0zNDYgNjcgLTI0IDEzMgotNDQgMTQzIC00NCAzMSAwIDc5IDUzIDc5IDg4IDAgNDIgLTI1IDY4IC0xNzMgMTgzIC03MiA1NyAtMTg4IDE0OSAtMjU3IDIwNAotNjkgNTYgLTE3MiAxMzcgLTIzMCAxODAgLTU4IDQzIC0xNDggMTEzIC0yMDAgMTU1IC01MiA0MiAtMTYwIDEyNiAtMjQwIDE4NgotODAgNjAgLTIyNCAxNzAgLTMyMCAyNDUgLTk2IDc0IC0yMTMgMTY0IC0yNjAgMTk5IC0xNTggMTE5IC02MDMgNDg0IC03MTQKNTg2IC0xMzYgMTI0IC0yMjEgMjEzIC0zMTggMzM1IC0yNDAgMzAwIC0zMTUgNDc3IC0zMjUgNzY1IC01IDEyOSAtMyAxNDkgMjIKMjUwIDEwMiA0MDcgMzk0IDc2MCA5MjAgMTExNCAxNzkgMTIwIDUxMCAyOTMgNzI1IDM3OCAyMDAgNzkgNTc0IDE5OCA3NDkgMjM3CjQxMSA5MiA2NTUgMTI0IDEwOTYgMTQ2IDMxNiAxNSA2MDEgLTMgOTk3IC02MiA4NyAtMTMgODggLTEzIDExMyAxMSAxNCAxMyAyNQozMyAyNSA0NiAwIDI2IC0xMDAgMTgxIC0xODAgMjc5IC0xNjEgMTk2IC00NjUgNDg2IC03NTAgNzE0IC00ODYgMzg5IC0xMjQ3Cjc3MSAtMTkzMCA5NjggLTcyNCAyMDggLTE1MjMgMzAyIC0yMjQ2IDI2MnogTTUzMzAgMTQ3ODcgYy0xNjggLTE0MSAtNDI4Ci00MzUgLTU1NSAtNjI3IC04MCAtMTIxIC0yMTYgLTM1MiAtMjY3IC00NTUgLTc3IC0xNTIgLTIwMCAtNTA4IC0yNDIgLTY5NQotNTUgLTI1MSAtNzEgLTQwNCAtNzAgLTY4NSAwIC00MDggMzkgLTY1MSAxNjQgLTEwMjUgMTA3IC0zMjIgMjA1IC01MjkgMzk0Ci04MzMgMTY4IC0yNjkgNDQ5IC01OTUgNzIxIC04MzQgNDIyIC0zNzIgOTU0IC02OTUgMTU4NSAtOTYzIDI1OCAtMTA5IDg3NQotMzI4IDEyOTUgLTQ1OSA2MDAgLTE4NyA3NTAgLTIzMyA5NjAgLTI5NiA0NDQgLTEzNCAxMDIyIC0zMjQgMTM1MCAtNDQ1IDEwOTEKLTQwMSAxOTA1IC04ODQgMjQ4NiAtMTQ3NiAyMjIgLTIyNyA0MjIgLTQ5OSA1MzMgLTcyOCAxODcgLTM4MiAyNjAgLTYzMyAyODYKLTk4NCAxOCAtMjQ4IC0xNCAtNTI1IC05NSAtODA2IC01MCAtMTc1IC01MiAtMTkzIC0zMCAtMjM2IDIwIC0zOSA0OSAtNTMgOTQKLTQ1IDMwIDUgNzAgNDEgMjU2IDIyOCAyMjggMjMwIDMzNyAzNjAgNDk1IDU5MyAzNjMgNTM1IDU4MiAxMTc1IDYyMSAxODEyIDEyCjE5OCAtMSA0OTMgLTMxIDcwMyAtNTEgMzYxIC0xOTUgNzk1IC0zNzIgMTEyMiAtNjkgMTI5IC0yNjAgNDE5IC0zNDIgNTIxCi0zMzUgNDE2IC03OTYgODAxIC0xMzE5IDExMDAgLTM1NyAyMDQgLTcwOSAzNjIgLTEyNzcgNTczIC0xNjcgNjIgLTkxNSAzMDgKLTEyMTAgMzk3IC0yNjYgODEgLTM5OCAxMjMgLTEwNzUgMzM2IC0zMDkgOTggLTg3NyAyOTIgLTEwNjAgMzYyIC03MSAyOCAtMTkzCjc0IC0yNzAgMTAzIC0zMzYgMTI3IC04NTQgMzY3IC0xMTEwIDUxNSAtMzA5IDE3OCAtNTgwIDM1OSAtNzUyIDUwMSAtMzMxIDI3MwotNTQ1IDUwMiAtNzI4IDc3OSAtMTkwIDI4NiAtMjg3IDUwNyAtMzQ5IDc5MCAtNzMgMzM1IC01OSA2NDkgNDQgMTAzNSAzMSAxMTgKMzEgMTE5IDEyIDE0NCAtMzMgNDUgLTY4IDM5IC0xNDIgLTIyeiBNNjY4NiA4NDA3IGMtMjkgLTI5IC00MyAtODYgLTI3IC0xMTUKNiAtMTEgNjggLTY0IDEzOCAtMTE4IDI5NyAtMjI3IDkxMiAtNzQwIDExODQgLTk4OSAxNTggLTE0NSA0MTcgLTQxNCA1MTQKLTUzNCAyMTMgLTI2NCAzMzUgLTUwMiA0MDYgLTc5MSAzMiAtMTMyIDMzIC0zNTUgMiAtNDgxIC03MiAtMjg2IC0yNDkgLTU3MgotNTA1IC04MTUgLTIzMiAtMjE5IC00ODYgLTM5NCAtNzgzIC01MzkgLTI0OSAtMTIxIC0zNTYgLTE2NiAtNTUwIC0yMzEgLTQwMQotMTMzIC03NTYgLTIwNiAtMTI0MCAtMjU2IC0xOTggLTIwIC05MzIgLTE3IC0xMTQ1IDUgLTI1NCAyNiAtNDEyIDQ1IC01MTcgNjIKLTg0IDE0IC05NSAxNCAtMTE3IDAgLTMxIC0yMSAtNTAgLTY3IC00MSAtMTAyIDE0IC01OSAzNjYgLTM4NyA2NzUgLTYzMCA0ODEKLTM3OCAxMTY3IC03NzYgMTc1MCAtMTAxNiA0ODMgLTE5OSA5MDUgLTMzMyAxMzk1IC00NDIgMzIwIC03MSA1ODcgLTExMyA5NzUKLTE1MiAyMjAgLTIyIDkzMyAtMjUgMTE2MCAtNSA0MjkgMzkgNzgzIDEwNSAxMTY5IDIxOSAxMjU1IDM2OSAyMTA5IDExMzkKMjM1NSAyMTIxIDQzIDE3MSA1MSAyNDUgNTEgNDgyIC0xIDQwOSAtNjIgNjU2IC0yNTkgMTA0NSAtMTI0IDI0NCAtMjIzIDM4NAotNDUwIDYzOCAtNzIgODEgLTMwNSAyOTUgLTQyMCAzODcgLTE4NiAxNDggLTU1MyAzOTIgLTc5NiA1MjggLTE2MiA5MCAtNjUxCjMzNSAtODA1IDQwMiAtNzQ2IDMyNiAtMTQ4OCA1OTAgLTI3MzAgOTcxIC00MDIgMTIzIC0xMjY1IDM2OCAtMTMyNyAzNzYgLTMwCjQgLTQxIDEgLTYyIC0yMHoiLz4KPC9nPgo8L3N2Zz4=';
+const SV_LOGO_URI_BKASH = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjMyMSA1NSAxMjg5IDE3NDMiIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsMTg0NC4wMDAwMDApIHNjYWxlKDAuMTAwMDAwLC0wLjEwMDAwMCkiCmZpbGw9IiNlMjE5NjYiIHN0cm9rZT0ibm9uZSI+CjxwYXRoIGQ9Ik05ODg0IDE3MDg5IGMtNDU3IC0yNSAtODc3IC04OSAtMTMyNCAtMjAzIC0zMzUgLTg1IC01NTEgLTE1OSAtODM3Ci0yODcgLTQ4MSAtMjE0IC04NDEgLTQ1MCAtMTE1NyAtNzU5IC0yNjQgLTI1OSAtNDE1IC00NjAgLTU1NSAtNzM4IC04OCAtMTc2Ci0xNjYgLTQzNiAtMTk3IC02NjEgLTQ3IC0zMzQgMjcgLTc4NSAxNzggLTEwODQgMTg3IC0zNzIgNDQwIC02ODcgNzgzIC05NzIKMzIxIC0yNjggNjIzIC00NjMgMTEwNSAtNzEzIDE3OSAtOTMgMjU1IC0xMjggNjU1IC0zMDcgNDI5IC0xOTEgMTMwOSAtNTM1CjE5MjAgLTc1MCA5OSAtMzUgMjg4IC0xMDMgNDIwIC0xNTAgMTMyIC00OCAzNTUgLTEyNyA0OTUgLTE3NSAxNDAgLTQ5IDMxOAotMTEyIDM5NSAtMTQwIDc3IC0yOSAyNTcgLTkyIDQwMCAtMTQwIDI3MSAtOTEgNzgyIC0yNjkgOTkzIC0zNDYgNjcgLTI0IDEzMgotNDQgMTQzIC00NCAzMSAwIDc5IDUzIDc5IDg4IDAgNDIgLTI1IDY4IC0xNzMgMTgzIC03MiA1NyAtMTg4IDE0OSAtMjU3IDIwNAotNjkgNTYgLTE3MiAxMzcgLTIzMCAxODAgLTU4IDQzIC0xNDggMTEzIC0yMDAgMTU1IC01MiA0MiAtMTYwIDEyNiAtMjQwIDE4NgotODAgNjAgLTIyNCAxNzAgLTMyMCAyNDUgLTk2IDc0IC0yMTMgMTY0IC0yNjAgMTk5IC0xNTggMTE5IC02MDMgNDg0IC03MTQKNTg2IC0xMzYgMTI0IC0yMjEgMjEzIC0zMTggMzM1IC0yNDAgMzAwIC0zMTUgNDc3IC0zMjUgNzY1IC01IDEyOSAtMyAxNDkgMjIKMjUwIDEwMiA0MDcgMzk0IDc2MCA5MjAgMTExNCAxNzkgMTIwIDUxMCAyOTMgNzI1IDM3OCAyMDAgNzkgNTc0IDE5OCA3NDkgMjM3CjQxMSA5MiA2NTUgMTI0IDEwOTYgMTQ2IDMxNiAxNSA2MDEgLTMgOTk3IC02MiA4NyAtMTMgODggLTEzIDExMyAxMSAxNCAxMyAyNQozMyAyNSA0NiAwIDI2IC0xMDAgMTgxIC0xODAgMjc5IC0xNjEgMTk2IC00NjUgNDg2IC03NTAgNzE0IC00ODYgMzg5IC0xMjQ3Cjc3MSAtMTkzMCA5NjggLTcyNCAyMDggLTE1MjMgMzAyIC0yMjQ2IDI2MnogTTUzMzAgMTQ3ODcgYy0xNjggLTE0MSAtNDI4Ci00MzUgLTU1NSAtNjI3IC04MCAtMTIxIC0yMTYgLTM1MiAtMjY3IC00NTUgLTc3IC0xNTIgLTIwMCAtNTA4IC0yNDIgLTY5NQotNTUgLTI1MSAtNzEgLTQwNCAtNzAgLTY4NSAwIC00MDggMzkgLTY1MSAxNjQgLTEwMjUgMTA3IC0zMjIgMjA1IC01MjkgMzk0Ci04MzMgMTY4IC0yNjkgNDQ5IC01OTUgNzIxIC04MzQgNDIyIC0zNzIgOTU0IC02OTUgMTU4NSAtOTYzIDI1OCAtMTA5IDg3NQotMzI4IDEyOTUgLTQ1OSA2MDAgLTE4NyA3NTAgLTIzMyA5NjAgLTI5NiA0NDQgLTEzNCAxMDIyIC0zMjQgMTM1MCAtNDQ1IDEwOTEKLTQwMSAxOTA1IC04ODQgMjQ4NiAtMTQ3NiAyMjIgLTIyNyA0MjIgLTQ5OSA1MzMgLTcyOCAxODcgLTM4MiAyNjAgLTYzMyAyODYKLTk4NCAxOCAtMjQ4IC0xNCAtNTI1IC05NSAtODA2IC01MCAtMTc1IC01MiAtMTkzIC0zMCAtMjM2IDIwIC0zOSA0OSAtNTMgOTQKLTQ1IDMwIDUgNzAgNDEgMjU2IDIyOCAyMjggMjMwIDMzNyAzNjAgNDk1IDU5MyAzNjMgNTM1IDU4MiAxMTc1IDYyMSAxODEyIDEyCjE5OCAtMSA0OTMgLTMxIDcwMyAtNTEgMzYxIC0xOTUgNzk1IC0zNzIgMTEyMiAtNjkgMTI5IC0yNjAgNDE5IC0zNDIgNTIxCi0zMzUgNDE2IC03OTYgODAxIC0xMzE5IDExMDAgLTM1NyAyMDQgLTcwOSAzNjIgLTEyNzcgNTczIC0xNjcgNjIgLTkxNSAzMDgKLTEyMTAgMzk3IC0yNjYgODEgLTM5OCAxMjMgLTEwNzUgMzM2IC0zMDkgOTggLTg3NyAyOTIgLTEwNjAgMzYyIC03MSAyOCAtMTkzCjc0IC0yNzAgMTAzIC0zMzYgMTI3IC04NTQgMzY3IC0xMTEwIDUxNSAtMzA5IDE3OCAtNTgwIDM1OSAtNzUyIDUwMSAtMzMxIDI3MwotNTQ1IDUwMiAtNzI4IDc3OSAtMTkwIDI4NiAtMjg3IDUwNyAtMzQ5IDc5MCAtNzMgMzM1IC01OSA2NDkgNDQgMTAzNSAzMSAxMTgKMzEgMTE5IDEyIDE0NCAtMzMgNDUgLTY4IDM5IC0xNDIgLTIyeiBNNjY4NiA4NDA3IGMtMjkgLTI5IC00MyAtODYgLTI3IC0xMTUKNiAtMTEgNjggLTY0IDEzOCAtMTE4IDI5NyAtMjI3IDkxMiAtNzQwIDExODQgLTk4OSAxNTggLTE0NSA0MTcgLTQxNCA1MTQKLTUzNCAyMTMgLTI2NCAzMzUgLTUwMiA0MDYgLTc5MSAzMiAtMTMyIDMzIC0zNTUgMiAtNDgxIC03MiAtMjg2IC0yNDkgLTU3MgotNTA1IC04MTUgLTIzMiAtMjE5IC00ODYgLTM5NCAtNzgzIC01MzkgLTI0OSAtMTIxIC0zNTYgLTE2NiAtNTUwIC0yMzEgLTQwMQotMTMzIC03NTYgLTIwNiAtMTI0MCAtMjU2IC0xOTggLTIwIC05MzIgLTE3IC0xMTQ1IDUgLTI1NCAyNiAtNDEyIDQ1IC01MTcgNjIKLTg0IDE0IC05NSAxNCAtMTE3IDAgLTMxIC0yMSAtNTAgLTY3IC00MSAtMTAyIDE0IC01OSAzNjYgLTM4NyA2NzUgLTYzMCA0ODEKLTM3OCAxMTY3IC03NzYgMTc1MCAtMTAxNiA0ODMgLTE5OSA5MDUgLTMzMyAxMzk1IC00NDIgMzIwIC03MSA1ODcgLTExMyA5NzUKLTE1MiAyMjAgLTIyIDkzMyAtMjUgMTE2MCAtNSA0MjkgMzkgNzgzIDEwNSAxMTY5IDIxOSAxMjU1IDM2OSAyMTA5IDExMzkKMjM1NSAyMTIxIDQzIDE3MSA1MSAyNDUgNTEgNDgyIC0xIDQwOSAtNjIgNjU2IC0yNTkgMTA0NSAtMTI0IDI0NCAtMjIzIDM4NAotNDUwIDYzOCAtNzIgODEgLTMwNSAyOTUgLTQyMCAzODcgLTE4NiAxNDggLTU1MyAzOTIgLTc5NiA1MjggLTE2MiA5MCAtNjUxCjMzNSAtODA1IDQwMiAtNzQ2IDMyNiAtMTQ4OCA1OTAgLTI3MzAgOTcxIC00MDIgMTIzIC0xMjY1IDM2OCAtMTMyNyAzNzYgLTMwCjQgLTQxIDEgLTYyIC0yMHoiLz4KPC9nPgo8L3N2Zz4=';
+const SV_LOGO_URI_NAGAD = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjMyMSA1NSAxMjg5IDE3NDMiIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsMTg0NC4wMDAwMDApIHNjYWxlKDAuMTAwMDAwLC0wLjEwMDAwMCkiCmZpbGw9IiNlODgzMTYiIHN0cm9rZT0ibm9uZSI+CjxwYXRoIGQ9Ik05ODg0IDE3MDg5IGMtNDU3IC0yNSAtODc3IC04OSAtMTMyNCAtMjAzIC0zMzUgLTg1IC01NTEgLTE1OSAtODM3Ci0yODcgLTQ4MSAtMjE0IC04NDEgLTQ1MCAtMTE1NyAtNzU5IC0yNjQgLTI1OSAtNDE1IC00NjAgLTU1NSAtNzM4IC04OCAtMTc2Ci0xNjYgLTQzNiAtMTk3IC02NjEgLTQ3IC0zMzQgMjcgLTc4NSAxNzggLTEwODQgMTg3IC0zNzIgNDQwIC02ODcgNzgzIC05NzIKMzIxIC0yNjggNjIzIC00NjMgMTEwNSAtNzEzIDE3OSAtOTMgMjU1IC0xMjggNjU1IC0zMDcgNDI5IC0xOTEgMTMwOSAtNTM1CjE5MjAgLTc1MCA5OSAtMzUgMjg4IC0xMDMgNDIwIC0xNTAgMTMyIC00OCAzNTUgLTEyNyA0OTUgLTE3NSAxNDAgLTQ5IDMxOAotMTEyIDM5NSAtMTQwIDc3IC0yOSAyNTcgLTkyIDQwMCAtMTQwIDI3MSAtOTEgNzgyIC0yNjkgOTkzIC0zNDYgNjcgLTI0IDEzMgotNDQgMTQzIC00NCAzMSAwIDc5IDUzIDc5IDg4IDAgNDIgLTI1IDY4IC0xNzMgMTgzIC03MiA1NyAtMTg4IDE0OSAtMjU3IDIwNAotNjkgNTYgLTE3MiAxMzcgLTIzMCAxODAgLTU4IDQzIC0xNDggMTEzIC0yMDAgMTU1IC01MiA0MiAtMTYwIDEyNiAtMjQwIDE4NgotODAgNjAgLTIyNCAxNzAgLTMyMCAyNDUgLTk2IDc0IC0yMTMgMTY0IC0yNjAgMTk5IC0xNTggMTE5IC02MDMgNDg0IC03MTQKNTg2IC0xMzYgMTI0IC0yMjEgMjEzIC0zMTggMzM1IC0yNDAgMzAwIC0zMTUgNDc3IC0zMjUgNzY1IC01IDEyOSAtMyAxNDkgMjIKMjUwIDEwMiA0MDcgMzk0IDc2MCA5MjAgMTExNCAxNzkgMTIwIDUxMCAyOTMgNzI1IDM3OCAyMDAgNzkgNTc0IDE5OCA3NDkgMjM3CjQxMSA5MiA2NTUgMTI0IDEwOTYgMTQ2IDMxNiAxNSA2MDEgLTMgOTk3IC02MiA4NyAtMTMgODggLTEzIDExMyAxMSAxNCAxMyAyNQozMyAyNSA0NiAwIDI2IC0xMDAgMTgxIC0xODAgMjc5IC0xNjEgMTk2IC00NjUgNDg2IC03NTAgNzE0IC00ODYgMzg5IC0xMjQ3Cjc3MSAtMTkzMCA5NjggLTcyNCAyMDggLTE1MjMgMzAyIC0yMjQ2IDI2MnogTTUzMzAgMTQ3ODcgYy0xNjggLTE0MSAtNDI4Ci00MzUgLTU1NSAtNjI3IC04MCAtMTIxIC0yMTYgLTM1MiAtMjY3IC00NTUgLTc3IC0xNTIgLTIwMCAtNTA4IC0yNDIgLTY5NQotNTUgLTI1MSAtNzEgLTQwNCAtNzAgLTY4NSAwIC00MDggMzkgLTY1MSAxNjQgLTEwMjUgMTA3IC0zMjIgMjA1IC01MjkgMzk0Ci04MzMgMTY4IC0yNjkgNDQ5IC01OTUgNzIxIC04MzQgNDIyIC0zNzIgOTU0IC02OTUgMTU4NSAtOTYzIDI1OCAtMTA5IDg3NQotMzI4IDEyOTUgLTQ1OSA2MDAgLTE4NyA3NTAgLTIzMyA5NjAgLTI5NiA0NDQgLTEzNCAxMDIyIC0zMjQgMTM1MCAtNDQ1IDEwOTEKLTQwMSAxOTA1IC04ODQgMjQ4NiAtMTQ3NiAyMjIgLTIyNyA0MjIgLTQ5OSA1MzMgLTcyOCAxODcgLTM4MiAyNjAgLTYzMyAyODYKLTk4NCAxOCAtMjQ4IC0xNCAtNTI1IC05NSAtODA2IC01MCAtMTc1IC01MiAtMTkzIC0zMCAtMjM2IDIwIC0zOSA0OSAtNTMgOTQKLTQ1IDMwIDUgNzAgNDEgMjU2IDIyOCAyMjggMjMwIDMzNyAzNjAgNDk1IDU5MyAzNjMgNTM1IDU4MiAxMTc1IDYyMSAxODEyIDEyCjE5OCAtMSA0OTMgLTMxIDcwMyAtNTEgMzYxIC0xOTUgNzk1IC0zNzIgMTEyMiAtNjkgMTI5IC0yNjAgNDE5IC0zNDIgNTIxCi0zMzUgNDE2IC03OTYgODAxIC0xMzE5IDExMDAgLTM1NyAyMDQgLTcwOSAzNjIgLTEyNzcgNTczIC0xNjcgNjIgLTkxNSAzMDgKLTEyMTAgMzk3IC0yNjYgODEgLTM5OCAxMjMgLTEwNzUgMzM2IC0zMDkgOTggLTg3NyAyOTIgLTEwNjAgMzYyIC03MSAyOCAtMTkzCjc0IC0yNzAgMTAzIC0zMzYgMTI3IC04NTQgMzY3IC0xMTEwIDUxNSAtMzA5IDE3OCAtNTgwIDM1OSAtNzUyIDUwMSAtMzMxIDI3MwotNTQ1IDUwMiAtNzI4IDc3OSAtMTkwIDI4NiAtMjg3IDUwNyAtMzQ5IDc5MCAtNzMgMzM1IC01OSA2NDkgNDQgMTAzNSAzMSAxMTgKMzEgMTE5IDEyIDE0NCAtMzMgNDUgLTY4IDM5IC0xNDIgLTIyeiBNNjY4NiA4NDA3IGMtMjkgLTI5IC00MyAtODYgLTI3IC0xMTUKNiAtMTEgNjggLTY0IDEzOCAtMTE4IDI5NyAtMjI3IDkxMiAtNzQwIDExODQgLTk4OSAxNTggLTE0NSA0MTcgLTQxNCA1MTQKLTUzNCAyMTMgLTI2NCAzMzUgLTUwMiA0MDYgLTc5MSAzMiAtMTMyIDMzIC0zNTUgMiAtNDgxIC03MiAtMjg2IC0yNDkgLTU3MgotNTA1IC04MTUgLTIzMiAtMjE5IC00ODYgLTM5NCAtNzgzIC01MzkgLTI0OSAtMTIxIC0zNTYgLTE2NiAtNTUwIC0yMzEgLTQwMQotMTMzIC03NTYgLTIwNiAtMTI0MCAtMjU2IC0xOTggLTIwIC05MzIgLTE3IC0xMTQ1IDUgLTI1NCAyNiAtNDEyIDQ1IC01MTcgNjIKLTg0IDE0IC05NSAxNCAtMTE3IDAgLTMxIC0yMSAtNTAgLTY3IC00MSAtMTAyIDE0IC01OSAzNjYgLTM4NyA2NzUgLTYzMCA0ODEKLTM3OCAxMTY3IC03NzYgMTc1MCAtMTAxNiA0ODMgLTE5OSA5MDUgLTMzMyAxMzk1IC00NDIgMzIwIC03MSA1ODcgLTExMyA5NzUKLTE1MiAyMjAgLTIyIDkzMyAtMjUgMTE2MCAtNSA0MjkgMzkgNzgzIDEwNSAxMTY5IDIxOSAxMjU1IDM2OSAyMTA5IDExMzkKMjM1NSAyMTIxIDQzIDE3MSA1MSAyNDUgNTEgNDgyIC0xIDQwOSAtNjIgNjU2IC0yNTkgMTA0NSAtMTI0IDI0NCAtMjIzIDM4NAotNDUwIDYzOCAtNzIgODEgLTMwNSAyOTUgLTQyMCAzODcgLTE4NiAxNDggLTU1MyAzOTIgLTc5NiA1MjggLTE2MiA5MCAtNjUxCjMzNSAtODA1IDQwMiAtNzQ2IDMyNiAtMTQ4OCA1OTAgLTI3MzAgOTcxIC00MDIgMTIzIC0xMjY1IDM2OCAtMTMyNyAzNzYgLTMwCjQgLTQxIDEgLTYyIC0yMHoiLz4KPC9nPgo8L3N2Zz4=';
+const SV_LOGO_URI_ROCKET = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjMyMSA1NSAxMjg5IDE3NDMiIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsMTg0NC4wMDAwMDApIHNjYWxlKDAuMTAwMDAwLC0wLjEwMDAwMCkiCmZpbGw9IiM4YjMzOTIiIHN0cm9rZT0ibm9uZSI+CjxwYXRoIGQ9Ik05ODg0IDE3MDg5IGMtNDU3IC0yNSAtODc3IC04OSAtMTMyNCAtMjAzIC0zMzUgLTg1IC01NTEgLTE1OSAtODM3Ci0yODcgLTQ4MSAtMjE0IC04NDEgLTQ1MCAtMTE1NyAtNzU5IC0yNjQgLTI1OSAtNDE1IC00NjAgLTU1NSAtNzM4IC04OCAtMTc2Ci0xNjYgLTQzNiAtMTk3IC02NjEgLTQ3IC0zMzQgMjcgLTc4NSAxNzggLTEwODQgMTg3IC0zNzIgNDQwIC02ODcgNzgzIC05NzIKMzIxIC0yNjggNjIzIC00NjMgMTEwNSAtNzEzIDE3OSAtOTMgMjU1IC0xMjggNjU1IC0zMDcgNDI5IC0xOTEgMTMwOSAtNTM1CjE5MjAgLTc1MCA5OSAtMzUgMjg4IC0xMDMgNDIwIC0xNTAgMTMyIC00OCAzNTUgLTEyNyA0OTUgLTE3NSAxNDAgLTQ5IDMxOAotMTEyIDM5NSAtMTQwIDc3IC0yOSAyNTcgLTkyIDQwMCAtMTQwIDI3MSAtOTEgNzgyIC0yNjkgOTkzIC0zNDYgNjcgLTI0IDEzMgotNDQgMTQzIC00NCAzMSAwIDc5IDUzIDc5IDg4IDAgNDIgLTI1IDY4IC0xNzMgMTgzIC03MiA1NyAtMTg4IDE0OSAtMjU3IDIwNAotNjkgNTYgLTE3MiAxMzcgLTIzMCAxODAgLTU4IDQzIC0xNDggMTEzIC0yMDAgMTU1IC01MiA0MiAtMTYwIDEyNiAtMjQwIDE4NgotODAgNjAgLTIyNCAxNzAgLTMyMCAyNDUgLTk2IDc0IC0yMTMgMTY0IC0yNjAgMTk5IC0xNTggMTE5IC02MDMgNDg0IC03MTQKNTg2IC0xMzYgMTI0IC0yMjEgMjEzIC0zMTggMzM1IC0yNDAgMzAwIC0zMTUgNDc3IC0zMjUgNzY1IC01IDEyOSAtMyAxNDkgMjIKMjUwIDEwMiA0MDcgMzk0IDc2MCA5MjAgMTExNCAxNzkgMTIwIDUxMCAyOTMgNzI1IDM3OCAyMDAgNzkgNTc0IDE5OCA3NDkgMjM3CjQxMSA5MiA2NTUgMTI0IDEwOTYgMTQ2IDMxNiAxNSA2MDEgLTMgOTk3IC02MiA4NyAtMTMgODggLTEzIDExMyAxMSAxNCAxMyAyNQozMyAyNSA0NiAwIDI2IC0xMDAgMTgxIC0xODAgMjc5IC0xNjEgMTk2IC00NjUgNDg2IC03NTAgNzE0IC00ODYgMzg5IC0xMjQ3Cjc3MSAtMTkzMCA5NjggLTcyNCAyMDggLTE1MjMgMzAyIC0yMjQ2IDI2MnogTTUzMzAgMTQ3ODcgYy0xNjggLTE0MSAtNDI4Ci00MzUgLTU1NSAtNjI3IC04MCAtMTIxIC0yMTYgLTM1MiAtMjY3IC00NTUgLTc3IC0xNTIgLTIwMCAtNTA4IC0yNDIgLTY5NQotNTUgLTI1MSAtNzEgLTQwNCAtNzAgLTY4NSAwIC00MDggMzkgLTY1MSAxNjQgLTEwMjUgMTA3IC0zMjIgMjA1IC01MjkgMzk0Ci04MzMgMTY4IC0yNjkgNDQ5IC01OTUgNzIxIC04MzQgNDIyIC0zNzIgOTU0IC02OTUgMTU4NSAtOTYzIDI1OCAtMTA5IDg3NQotMzI4IDEyOTUgLTQ1OSA2MDAgLTE4NyA3NTAgLTIzMyA5NjAgLTI5NiA0NDQgLTEzNCAxMDIyIC0zMjQgMTM1MCAtNDQ1IDEwOTEKLTQwMSAxOTA1IC04ODQgMjQ4NiAtMTQ3NiAyMjIgLTIyNyA0MjIgLTQ5OSA1MzMgLTcyOCAxODcgLTM4MiAyNjAgLTYzMyAyODYKLTk4NCAxOCAtMjQ4IC0xNCAtNTI1IC05NSAtODA2IC01MCAtMTc1IC01MiAtMTkzIC0zMCAtMjM2IDIwIC0zOSA0OSAtNTMgOTQKLTQ1IDMwIDUgNzAgNDEgMjU2IDIyOCAyMjggMjMwIDMzNyAzNjAgNDk1IDU5MyAzNjMgNTM1IDU4MiAxMTc1IDYyMSAxODEyIDEyCjE5OCAtMSA0OTMgLTMxIDcwMyAtNTEgMzYxIC0xOTUgNzk1IC0zNzIgMTEyMiAtNjkgMTI5IC0yNjAgNDE5IC0zNDIgNTIxCi0zMzUgNDE2IC03OTYgODAxIC0xMzE5IDExMDAgLTM1NyAyMDQgLTcwOSAzNjIgLTEyNzcgNTczIC0xNjcgNjIgLTkxNSAzMDgKLTEyMTAgMzk3IC0yNjYgODEgLTM5OCAxMjMgLTEwNzUgMzM2IC0zMDkgOTggLTg3NyAyOTIgLTEwNjAgMzYyIC03MSAyOCAtMTkzCjc0IC0yNzAgMTAzIC0zMzYgMTI3IC04NTQgMzY3IC0xMTEwIDUxNSAtMzA5IDE3OCAtNTgwIDM1OSAtNzUyIDUwMSAtMzMxIDI3MwotNTQ1IDUwMiAtNzI4IDc3OSAtMTkwIDI4NiAtMjg3IDUwNyAtMzQ5IDc5MCAtNzMgMzM1IC01OSA2NDkgNDQgMTAzNSAzMSAxMTgKMzEgMTE5IDEyIDE0NCAtMzMgNDUgLTY4IDM5IC0xNDIgLTIyeiBNNjY4NiA4NDA3IGMtMjkgLTI5IC00MyAtODYgLTI3IC0xMTUKNiAtMTEgNjggLTY0IDEzOCAtMTE4IDI5NyAtMjI3IDkxMiAtNzQwIDExODQgLTk4OSAxNTggLTE0NSA0MTcgLTQxNCA1MTQKLTUzNCAyMTMgLTI2NCAzMzUgLTUwMiA0MDYgLTc5MSAzMiAtMTMyIDMzIC0zNTUgMiAtNDgxIC03MiAtMjg2IC0yNDkgLTU3MgotNTA1IC04MTUgLTIzMiAtMjE5IC00ODYgLTM5NCAtNzgzIC01MzkgLTI0OSAtMTIxIC0zNTYgLTE2NiAtNTUwIC0yMzEgLTQwMQotMTMzIC03NTYgLTIwNiAtMTI0MCAtMjU2IC0xOTggLTIwIC05MzIgLTE3IC0xMTQ1IDUgLTI1NCAyNiAtNDEyIDQ1IC01MTcgNjIKLTg0IDE0IC05NSAxNCAtMTE3IDAgLTMxIC0yMSAtNTAgLTY3IC00MSAtMTAyIDE0IC01OSAzNjYgLTM4NyA2NzUgLTYzMCA0ODEKLTM3OCAxMTY3IC03NzYgMTc1MCAtMTAxNiA0ODMgLTE5OSA5MDUgLTMzMyAxMzk1IC00NDIgMzIwIC03MSA1ODcgLTExMyA5NzUKLTE1MiAyMjAgLTIyIDkzMyAtMjUgMTE2MCAtNSA0MjkgMzkgNzgzIDEwNSAxMTY5IDIxOSAxMjU1IDM2OSAyMTA5IDExMzkKMjM1NSAyMTIxIDQzIDE3MSA1MSAyNDUgNTEgNDgyIC0xIDQwOSAtNjIgNjU2IC0yNTkgMTA0NSAtMTI0IDI0NCAtMjIzIDM4NAotNDUwIDYzOCAtNzIgODEgLTMwNSAyOTUgLTQyMCAzODcgLTE4NiAxNDggLTU1MyAzOTIgLTc5NiA1MjggLTE2MiA5MCAtNjUxCjMzNSAtODA1IDQwMiAtNzQ2IDMyNiAtMTQ4OCA1OTAgLTI3MzAgOTcxIC00MDIgMTIzIC0xMjY1IDM2OCAtMTMyNyAzNzYgLTMwCjQgLTQxIDEgLTYyIC0yMHoiLz4KPC9nPgo8L3N2Zz4=';
+const SV_LOGO_URI_CELLFIN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjMyMSA1NSAxMjg5IDE3NDMiIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsMTg0NC4wMDAwMDApIHNjYWxlKDAuMTAwMDAwLC0wLjEwMDAwMCkiCmZpbGw9IiMwOTg1M2UiIHN0cm9rZT0ibm9uZSI+CjxwYXRoIGQ9Ik05ODg0IDE3MDg5IGMtNDU3IC0yNSAtODc3IC04OSAtMTMyNCAtMjAzIC0zMzUgLTg1IC01NTEgLTE1OSAtODM3Ci0yODcgLTQ4MSAtMjE0IC04NDEgLTQ1MCAtMTE1NyAtNzU5IC0yNjQgLTI1OSAtNDE1IC00NjAgLTU1NSAtNzM4IC04OCAtMTc2Ci0xNjYgLTQzNiAtMTk3IC02NjEgLTQ3IC0zMzQgMjcgLTc4NSAxNzggLTEwODQgMTg3IC0zNzIgNDQwIC02ODcgNzgzIC05NzIKMzIxIC0yNjggNjIzIC00NjMgMTEwNSAtNzEzIDE3OSAtOTMgMjU1IC0xMjggNjU1IC0zMDcgNDI5IC0xOTEgMTMwOSAtNTM1CjE5MjAgLTc1MCA5OSAtMzUgMjg4IC0xMDMgNDIwIC0xNTAgMTMyIC00OCAzNTUgLTEyNyA0OTUgLTE3NSAxNDAgLTQ5IDMxOAotMTEyIDM5NSAtMTQwIDc3IC0yOSAyNTcgLTkyIDQwMCAtMTQwIDI3MSAtOTEgNzgyIC0yNjkgOTkzIC0zNDYgNjcgLTI0IDEzMgotNDQgMTQzIC00NCAzMSAwIDc5IDUzIDc5IDg4IDAgNDIgLTI1IDY4IC0xNzMgMTgzIC03MiA1NyAtMTg4IDE0OSAtMjU3IDIwNAotNjkgNTYgLTE3MiAxMzcgLTIzMCAxODAgLTU4IDQzIC0xNDggMTEzIC0yMDAgMTU1IC01MiA0MiAtMTYwIDEyNiAtMjQwIDE4NgotODAgNjAgLTIyNCAxNzAgLTMyMCAyNDUgLTk2IDc0IC0yMTMgMTY0IC0yNjAgMTk5IC0xNTggMTE5IC02MDMgNDg0IC03MTQKNTg2IC0xMzYgMTI0IC0yMjEgMjEzIC0zMTggMzM1IC0yNDAgMzAwIC0zMTUgNDc3IC0zMjUgNzY1IC01IDEyOSAtMyAxNDkgMjIKMjUwIDEwMiA0MDcgMzk0IDc2MCA5MjAgMTExNCAxNzkgMTIwIDUxMCAyOTMgNzI1IDM3OCAyMDAgNzkgNTc0IDE5OCA3NDkgMjM3CjQxMSA5MiA2NTUgMTI0IDEwOTYgMTQ2IDMxNiAxNSA2MDEgLTMgOTk3IC02MiA4NyAtMTMgODggLTEzIDExMyAxMSAxNCAxMyAyNQozMyAyNSA0NiAwIDI2IC0xMDAgMTgxIC0xODAgMjc5IC0xNjEgMTk2IC00NjUgNDg2IC03NTAgNzE0IC00ODYgMzg5IC0xMjQ3Cjc3MSAtMTkzMCA5NjggLTcyNCAyMDggLTE1MjMgMzAyIC0yMjQ2IDI2MnogTTUzMzAgMTQ3ODcgYy0xNjggLTE0MSAtNDI4Ci00MzUgLTU1NSAtNjI3IC04MCAtMTIxIC0yMTYgLTM1MiAtMjY3IC00NTUgLTc3IC0xNTIgLTIwMCAtNTA4IC0yNDIgLTY5NQotNTUgLTI1MSAtNzEgLTQwNCAtNzAgLTY4NSAwIC00MDggMzkgLTY1MSAxNjQgLTEwMjUgMTA3IC0zMjIgMjA1IC01MjkgMzk0Ci04MzMgMTY4IC0yNjkgNDQ5IC01OTUgNzIxIC04MzQgNDIyIC0zNzIgOTU0IC02OTUgMTU4NSAtOTYzIDI1OCAtMTA5IDg3NQotMzI4IDEyOTUgLTQ1OSA2MDAgLTE4NyA3NTAgLTIzMyA5NjAgLTI5NiA0NDQgLTEzNCAxMDIyIC0zMjQgMTM1MCAtNDQ1IDEwOTEKLTQwMSAxOTA1IC04ODQgMjQ4NiAtMTQ3NiAyMjIgLTIyNyA0MjIgLTQ5OSA1MzMgLTcyOCAxODcgLTM4MiAyNjAgLTYzMyAyODYKLTk4NCAxOCAtMjQ4IC0xNCAtNTI1IC05NSAtODA2IC01MCAtMTc1IC01MiAtMTkzIC0zMCAtMjM2IDIwIC0zOSA0OSAtNTMgOTQKLTQ1IDMwIDUgNzAgNDEgMjU2IDIyOCAyMjggMjMwIDMzNyAzNjAgNDk1IDU5MyAzNjMgNTM1IDU4MiAxMTc1IDYyMSAxODEyIDEyCjE5OCAtMSA0OTMgLTMxIDcwMyAtNTEgMzYxIC0xOTUgNzk1IC0zNzIgMTEyMiAtNjkgMTI5IC0yNjAgNDE5IC0zNDIgNTIxCi0zMzUgNDE2IC03OTYgODAxIC0xMzE5IDExMDAgLTM1NyAyMDQgLTcwOSAzNjIgLTEyNzcgNTczIC0xNjcgNjIgLTkxNSAzMDgKLTEyMTAgMzk3IC0yNjYgODEgLTM5OCAxMjMgLTEwNzUgMzM2IC0zMDkgOTggLTg3NyAyOTIgLTEwNjAgMzYyIC03MSAyOCAtMTkzCjc0IC0yNzAgMTAzIC0zMzYgMTI3IC04NTQgMzY3IC0xMTEwIDUxNSAtMzA5IDE3OCAtNTgwIDM1OSAtNzUyIDUwMSAtMzMxIDI3MwotNTQ1IDUwMiAtNzI4IDc3OSAtMTkwIDI4NiAtMjg3IDUwNyAtMzQ5IDc5MCAtNzMgMzM1IC01OSA2NDkgNDQgMTAzNSAzMSAxMTgKMzEgMTE5IDEyIDE0NCAtMzMgNDUgLTY4IDM5IC0xNDIgLTIyeiBNNjY4NiA4NDA3IGMtMjkgLTI5IC00MyAtODYgLTI3IC0xMTUKNiAtMTEgNjggLTY0IDEzOCAtMTE4IDI5NyAtMjI3IDkxMiAtNzQwIDExODQgLTk4OSAxNTggLTE0NSA0MTcgLTQxNCA1MTQKLTUzNCAyMTMgLTI2NCAzMzUgLTUwMiA0MDYgLTc5MSAzMiAtMTMyIDMzIC0zNTUgMiAtNDgxIC03MiAtMjg2IC0yNDkgLTU3MgotNTA1IC04MTUgLTIzMiAtMjE5IC00ODYgLTM5NCAtNzgzIC01MzkgLTI0OSAtMTIxIC0zNTYgLTE2NiAtNTUwIC0yMzEgLTQwMQotMTMzIC03NTYgLTIwNiAtMTI0MCAtMjU2IC0xOTggLTIwIC05MzIgLTE3IC0xMTQ1IDUgLTI1NCAyNiAtNDEyIDQ1IC01MTcgNjIKLTg0IDE0IC05NSAxNCAtMTE3IDAgLTMxIC0yMSAtNTAgLTY3IC00MSAtMTAyIDE0IC01OSAzNjYgLTM4NyA2NzUgLTYzMCA0ODEKLTM3OCAxMTY3IC03NzYgMTc1MCAtMTAxNiA0ODMgLTE5OSA5MDUgLTMzMyAxMzk1IC00NDIgMzIwIC03MSA1ODcgLTExMyA5NzUKLTE1MiAyMjAgLTIyIDkzMyAtMjUgMTE2MCAtNSA0MjkgMzkgNzgzIDEwNSAxMTY5IDIxOSAxMjU1IDM2OSAyMTA5IDExMzkKMjM1NSAyMTIxIDQzIDE3MSA1MSAyNDUgNTEgNDgyIC0xIDQwOSAtNjIgNjU2IC0yNTkgMTA0NSAtMTI0IDI0NCAtMjIzIDM4NAotNDUwIDYzOCAtNzIgODEgLTMwNSAyOTUgLTQyMCAzODcgLTE4NiAxNDggLTU1MyAzOTIgLTc5NiA1MjggLTE2MiA5MCAtNjUxCjMzNSAtODA1IDQwMiAtNzQ2IDMyNiAtMTQ4OCA1OTAgLTI3MzAgOTcxIC00MDIgMTIzIC0xMjY1IDM2OCAtMTMyNyAzNzYgLTMwCjQgLTQxIDEgLTYyIC0yMHoiLz4KPC9nPgo8L3N2Zz4=';
 const SV_LOGO_URI_DARK = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjMyMSA1NSAxMjg5IDE3NDMiIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsMTg0NC4wMDAwMDApIHNjYWxlKDAuMTAwMDAwLC0wLjEwMDAwMCkiCmZpbGw9IiNmZmZmZmYiIHN0cm9rZT0ibm9uZSI+CjxwYXRoIGQ9Ik05ODg0IDE3MDg5IGMtNDU3IC0yNSAtODc3IC04OSAtMTMyNCAtMjAzIC0zMzUgLTg1IC01NTEgLTE1OSAtODM3Ci0yODcgLTQ4MSAtMjE0IC04NDEgLTQ1MCAtMTE1NyAtNzU5IC0yNjQgLTI1OSAtNDE1IC00NjAgLTU1NSAtNzM4IC04OCAtMTc2Ci0xNjYgLTQzNiAtMTk3IC02NjEgLTQ3IC0zMzQgMjcgLTc4NSAxNzggLTEwODQgMTg3IC0zNzIgNDQwIC02ODcgNzgzIC05NzIKMzIxIC0yNjggNjIzIC00NjMgMTEwNSAtNzEzIDE3OSAtOTMgMjU1IC0xMjggNjU1IC0zMDcgNDI5IC0xOTEgMTMwOSAtNTM1CjE5MjAgLTc1MCA5OSAtMzUgMjg4IC0xMDMgNDIwIC0xNTAgMTMyIC00OCAzNTUgLTEyNyA0OTUgLTE3NSAxNDAgLTQ5IDMxOAotMTEyIDM5NSAtMTQwIDc3IC0yOSAyNTcgLTkyIDQwMCAtMTQwIDI3MSAtOTEgNzgyIC0yNjkgOTkzIC0zNDYgNjcgLTI0IDEzMgotNDQgMTQzIC00NCAzMSAwIDc5IDUzIDc5IDg4IDAgNDIgLTI1IDY4IC0xNzMgMTgzIC03MiA1NyAtMTg4IDE0OSAtMjU3IDIwNAotNjkgNTYgLTE3MiAxMzcgLTIzMCAxODAgLTU4IDQzIC0xNDggMTEzIC0yMDAgMTU1IC01MiA0MiAtMTYwIDEyNiAtMjQwIDE4NgotODAgNjAgLTIyNCAxNzAgLTMyMCAyNDUgLTk2IDc0IC0yMTMgMTY0IC0yNjAgMTk5IC0xNTggMTE5IC02MDMgNDg0IC03MTQKNTg2IC0xMzYgMTI0IC0yMjEgMjEzIC0zMTggMzM1IC0yNDAgMzAwIC0zMTUgNDc3IC0zMjUgNzY1IC01IDEyOSAtMyAxNDkgMjIKMjUwIDEwMiA0MDcgMzk0IDc2MCA5MjAgMTExNCAxNzkgMTIwIDUxMCAyOTMgNzI1IDM3OCAyMDAgNzkgNTc0IDE5OCA3NDkgMjM3CjQxMSA5MiA2NTUgMTI0IDEwOTYgMTQ2IDMxNiAxNSA2MDEgLTMgOTk3IC02MiA4NyAtMTMgODggLTEzIDExMyAxMSAxNCAxMyAyNQozMyAyNSA0NiAwIDI2IC0xMDAgMTgxIC0xODAgMjc5IC0xNjEgMTk2IC00NjUgNDg2IC03NTAgNzE0IC00ODYgMzg5IC0xMjQ3Cjc3MSAtMTkzMCA5NjggLTcyNCAyMDggLTE1MjMgMzAyIC0yMjQ2IDI2MnogTTUzMzAgMTQ3ODcgYy0xNjggLTE0MSAtNDI4Ci00MzUgLTU1NSAtNjI3IC04MCAtMTIxIC0yMTYgLTM1MiAtMjY3IC00NTUgLTc3IC0xNTIgLTIwMCAtNTA4IC0yNDIgLTY5NQotNTUgLTI1MSAtNzEgLTQwNCAtNzAgLTY4NSAwIC00MDggMzkgLTY1MSAxNjQgLTEwMjUgMTA3IC0zMjIgMjA1IC01MjkgMzk0Ci04MzMgMTY4IC0yNjkgNDQ5IC01OTUgNzIxIC04MzQgNDIyIC0zNzIgOTU0IC02OTUgMTU4NSAtOTYzIDI1OCAtMTA5IDg3NQotMzI4IDEyOTUgLTQ1OSA2MDAgLTE4NyA3NTAgLTIzMyA5NjAgLTI5NiA0NDQgLTEzNCAxMDIyIC0zMjQgMTM1MCAtNDQ1IDEwOTEKLTQwMSAxOTA1IC04ODQgMjQ4NiAtMTQ3NiAyMjIgLTIyNyA0MjIgLTQ5OSA1MzMgLTcyOCAxODcgLTM4MiAyNjAgLTYzMyAyODYKLTk4NCAxOCAtMjQ4IC0xNCAtNTI1IC05NSAtODA2IC01MCAtMTc1IC01MiAtMTkzIC0zMCAtMjM2IDIwIC0zOSA0OSAtNTMgOTQKLTQ1IDMwIDUgNzAgNDEgMjU2IDIyOCAyMjggMjMwIDMzNyAzNjAgNDk1IDU5MyAzNjMgNTM1IDU4MiAxMTc1IDYyMSAxODEyIDEyCjE5OCAtMSA0OTMgLTMxIDcwMyAtNTEgMzYxIC0xOTUgNzk1IC0zNzIgMTEyMiAtNjkgMTI5IC0yNjAgNDE5IC0zNDIgNTIxCi0zMzUgNDE2IC03OTYgODAxIC0xMzE5IDExMDAgLTM1NyAyMDQgLTcwOSAzNjIgLTEyNzcgNTczIC0xNjcgNjIgLTkxNSAzMDgKLTEyMTAgMzk3IC0yNjYgODEgLTM5OCAxMjMgLTEwNzUgMzM2IC0zMDkgOTggLTg3NyAyOTIgLTEwNjAgMzYyIC03MSAyOCAtMTkzCjc0IC0yNzAgMTAzIC0zMzYgMTI3IC04NTQgMzY3IC0xMTEwIDUxNSAtMzA5IDE3OCAtNTgwIDM1OSAtNzUyIDUwMSAtMzMxIDI3MwotNTQ1IDUwMiAtNzI4IDc3OSAtMTkwIDI4NiAtMjg3IDUwNyAtMzQ5IDc5MCAtNzMgMzM1IC01OSA2NDkgNDQgMTAzNSAzMSAxMTgKMzEgMTE5IDEyIDE0NCAtMzMgNDUgLTY4IDM5IC0xNDIgLTIyeiBNNjY4NiA4NDA3IGMtMjkgLTI5IC00MyAtODYgLTI3IC0xMTUKNiAtMTEgNjggLTY0IDEzOCAtMTE4IDI5NyAtMjI3IDkxMiAtNzQwIDExODQgLTk4OSAxNTggLTE0NSA0MTcgLTQxNCA1MTQKLTUzNCAyMTMgLTI2NCAzMzUgLTUwMiA0MDYgLTc5MSAzMiAtMTMyIDMzIC0zNTUgMiAtNDgxIC03MiAtMjg2IC0yNDkgLTU3MgotNTA1IC04MTUgLTIzMiAtMjE5IC00ODYgLTM5NCAtNzgzIC01MzkgLTI0OSAtMTIxIC0zNTYgLTE2NiAtNTUwIC0yMzEgLTQwMQotMTMzIC03NTYgLTIwNiAtMTI0MCAtMjU2IC0xOTggLTIwIC05MzIgLTE3IC0xMTQ1IDUgLTI1NCAyNiAtNDEyIDQ1IC01MTcgNjIKLTg0IDE0IC05NSAxNCAtMTE3IDAgLTMxIC0yMSAtNTAgLTY3IC00MSAtMTAyIDE0IC01OSAzNjYgLTM4NyA2NzUgLTYzMCA0ODEKLTM3OCAxMTY3IC03NzYgMTc1MCAtMTAxNiA0ODMgLTE5OSA5MDUgLTMzMyAxMzk1IC00NDIgMzIwIC03MSA1ODcgLTExMyA5NzUKLTE1MiAyMjAgLTIyIDkzMyAtMjUgMTE2MCAtNSA0MjkgMzkgNzgzIDEwNSAxMTY5IDIxOSAxMjU1IDM2OSAyMTA5IDExMzkKMjM1NSAyMTIxIDQzIDE3MSA1MSAyNDUgNTEgNDgyIC0xIDQwOSAtNjIgNjU2IC0yNTkgMTA0NSAtMTI0IDI0NCAtMjIzIDM4NAotNDUwIDYzOCAtNzIgODEgLTMwNSAyOTUgLTQyMCAzODcgLTE4NiAxNDggLTU1MyAzOTIgLTc5NiA1MjggLTE2MiA5MCAtNjUxCjMzNSAtODA1IDQwMiAtNzQ2IDMyNiAtMTQ4OCA1OTAgLTI3MzAgOTcxIC00MDIgMTIzIC0xMjY1IDM2OCAtMTMyNyAzNzYgLTMwCjQgLTQxIDEgLTYyIC0yMHoiLz4KPC9nPgo8L3N2Zz4=';
 function placeQrLogo(){
   const el = document.getElementById('cryptoQr');
@@ -1053,9 +1177,43 @@ function placeQrLogo(){
   logoImg.className = 'sv-qr-logo';
   logoImg.src = src;
   logoImg.alt = 'SuppVerse BD';
-  logoImg.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:33px;height:33px;display:block;';
+  logoImg.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px;display:block;';
   el.appendChild(logoImg);
 }
+/* qr-code-styling hardcodes clip-path ids (clip-path-dot-color,
+   clip-path-background-color, clip-path-corners-*) with no per-instance
+   uniqueness. Since bKash/Nagad/crypto QR containers all live in the DOM
+   simultaneously (only hidden via CSS), a second/third QR ends up with
+   duplicate ids — url(#id) references resolve to the FIRST matching id in
+   the document, so later QRs' fill rects get clipped by an earlier QR's
+   (differently-sized/positioned) clip path, wiping out their dots while
+   leaving directly-filled corner markers untouched. Rewriting every id
+   in each freshly-rendered SVG to be unique fixes this permanently.
+   Must run before requestAnimationFrame-deferred deletion/logo logic reads
+   the SVG, since defer only fixes premature reads, not id collisions. */
+function makeQrIdsUnique(svgEl, suffix){
+  if(!svgEl) return;
+  const idMap = {};
+  svgEl.querySelectorAll('[id]').forEach(node => {
+    const oldId = node.getAttribute('id');
+    const newId = oldId + '-' + suffix;
+    idMap[oldId] = newId;
+    node.setAttribute('id', newId);
+  });
+  svgEl.querySelectorAll('*').forEach(node => {
+    ['fill', 'clip-path'].forEach(attr => {
+      const val = node.getAttribute(attr);
+      if(val && val.includes('url(')){
+        Object.keys(idMap).forEach(oldId => {
+          if(val.includes(oldId)){
+            node.setAttribute(attr, val.split(oldId).join(idMap[oldId]));
+          }
+        });
+      }
+    });
+  });
+}
+
 function renderCryptoQr(){
   const el = document.getElementById('cryptoQr');
   if(!el) return;
@@ -1076,15 +1234,16 @@ function renderCryptoQr(){
     });
     qr.append(el);
     qrRendered = true;
-    // Delete dots inside a RECTANGLE matching the logo's own proportions
-    // (taller than wide, same as the S itself) — not a circle. Even with
-    // zero overlap, a perfectly circular clear zone still reads as an
-    // artificial "hole punched in the QR." A rectangle sized to the
-    // letter's actual shape, with the naturally jagged QR dots framing it,
-    // looks like the pattern simply has fewer dots there — not a badge.
+    makeQrIdsUnique(el.querySelector('svg'), 'crypto');
+    // qr.append() can resolve before the SVG's child nodes are fully
+    // painted into the DOM. Defer the dot-deletion + logo placement one
+    // frame so querySelectorAll reliably sees the complete node set —
+    // without this, the deletion pass can run against a still-empty or
+    // partially-built SVG and wipe far more than intended.
+    requestAnimationFrame(() => {
     const svgEl = el.querySelector('svg');
     if(svgEl){
-      const cx0 = 84, cy0 = 84, halfW = 22, halfH = 29;
+      const cx0 = 84, cy0 = 84, halfW = 15, halfH = 18;
       const left = cx0 - halfW, right = cx0 + halfW, top = cy0 - halfH, bottom = cy0 + halfH;
       // Square-style dots render as <rect> elements (not <path>, which is
       // what the "rounded" style used) — query both, and skip anything
@@ -1118,7 +1277,7 @@ function renderCryptoQr(){
       // box. Positioned to stay clear of the S's own ink.
       const svgNS = 'http://www.w3.org/2000/svg';
       const fillerSpots = [
-        [69, 61], [99, 60], [63, 84], [105, 85], [70, 107], [98, 108]
+        [74, 71], [94, 70], [70, 84], [98, 85], [75, 97], [93, 98]
       ];
       fillerSpots.forEach(([fx, fy]) => {
         const r = document.createElementNS(svgNS, 'rect');
@@ -1131,12 +1290,14 @@ function renderCryptoQr(){
         svgEl.appendChild(r);
       });
     }
+    placeQrLogo();
+    });
   } else {
     // Fallback if the styling library fails to load
     el.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=168x168&data=${encodeURIComponent(CRYPTO_WALLET)}" width="168" height="168" alt="Wallet QR code" style="display:block">`;
     qrRendered = true;
+    placeQrLogo();
   }
-  placeQrLogo();
 }
 const cryptoQrBtn = document.getElementById('cryptoQrBtn');
 const cryptoQrWrap = document.getElementById('cryptoQrWrap');
@@ -1145,6 +1306,130 @@ cryptoQrBtn.addEventListener('click', () => {
   const showing = cryptoQrWrap.classList.toggle('show');
   cryptoQrBtn.classList.toggle('active', showing);
 });
+
+/* MFS (bKash/Nagad) — dynamic QR: orderID|number|amount, mirrors crypto QR treatment */
+
+// Placeholder order ID until real Supabase order IDs are wired into checkout.
+function getPendingOrderId(){
+  return 'SV-' + (Math.floor(Math.random() * 900) + 1000);
+}
+const PENDING_ORDER_ID = getPendingOrderId();
+
+function updateMfsAmounts(){
+  const bdt = TOTALS_BDT[S.flow] || 0;
+  document.querySelectorAll('.mfs-amount-val').forEach(el => { el.textContent = '৳' + bdt.toLocaleString('en-US'); });
+  document.querySelectorAll('.mfs-amount-copy').forEach(btn => { btn.dataset.copy = String(bdt); });
+  // Re-render any already-open QR so it reflects the current total.
+  ['bkash','nagad','rocket','cellfin'].forEach(m => { if(mfsQrRendered[m]) renderMfsQr(m, true); });
+}
+
+function renderMfsQr(method, force){
+  const el = document.getElementById(method + 'Qr');
+  if(!el) return;
+  if(mfsQrRendered[method] && !force){ placeMfsQrLogo(el, method); return; }
+  // Guard against overlapping renders: if a render is already in-flight for
+  // this method (force-triggered again before the first finished), skip —
+  // clearing el.innerHTML mid-flight can orphan the first QRCodeStyling
+  // instance's async append, leaving a half-built or empty SVG behind.
+  if(el.dataset.rendering === '1') return;
+  el.dataset.rendering = '1';
+  el.innerHTML = '';
+  el.style.position = 'relative';
+  const bdt = TOTALS_BDT[S.flow] || 0;
+  const payload = [PENDING_ORDER_ID, MFS_NUMBER, bdt].join('|');
+  const accent = MFS_ACCENTS[method];
+  if(window.QRCodeStyling){
+    const qr = new QRCodeStyling({
+      width: 168,
+      height: 168,
+      type: 'svg',
+      data: payload,
+      margin: 0,
+      qrOptions: { errorCorrectionLevel: 'H' },
+      dotsOptions: { type: 'rounded', color: '#0a1628' },
+      cornersSquareOptions: { type: 'extra-rounded', color: accent },
+      cornersDotOptions: { type: 'dot', color: accent },
+      backgroundOptions: { color: '#ffffff' }
+    });
+    qr.append(el);
+    mfsQrRendered[method] = true;
+    makeQrIdsUnique(el.querySelector('svg'), method);
+    requestAnimationFrame(() => {
+      const svgEl = el.querySelector('svg');
+      if(svgEl){
+        const cx0 = 84, cy0 = 84, halfW = 15, halfH = 18;
+        const left = cx0 - halfW, right = cx0 + halfW, top = cy0 - halfH, bottom = cy0 + halfH;
+        svgEl.querySelectorAll('rect, path').forEach(p => {
+          let hit = false;
+          try {
+            const box = p.getBBox();
+            if(box && (box.width > 0 || box.height > 0) && box.width < 20 && box.height < 20){
+              const overlapsX = box.x < right && (box.x + box.width) > left;
+              const overlapsY = box.y < bottom && (box.y + box.height) > top;
+              if(overlapsX && overlapsY) hit = true;
+            }
+          } catch(e) {}
+          if(!hit){
+            const t = p.getAttribute('transform');
+            if(t){
+              const m = t.match(/rotate\([-\d.]+,\s*([\d.]+)\s*,\s*([\d.]+)\)/);
+              if(m){
+                const px = parseFloat(m[1]), py = parseFloat(m[2]);
+                if(px > left && px < right && py > top && py < bottom) hit = true;
+              }
+            }
+          }
+          if(hit) p.remove();
+        });
+        const svgNS = 'http://www.w3.org/2000/svg';
+        const fillerSpots = [
+          [74, 71], [94, 70], [70, 84], [98, 85], [75, 97], [93, 98]
+        ];
+        fillerSpots.forEach(([fx, fy]) => {
+          const r = document.createElementNS(svgNS, 'rect');
+          r.setAttribute('x', fx - 2.2);
+          r.setAttribute('y', fy - 2.2);
+          r.setAttribute('width', 4.4);
+          r.setAttribute('height', 4.4);
+          r.setAttribute('rx', 1.2);
+          r.setAttribute('fill', '#0a1628');
+          svgEl.appendChild(r);
+        });
+      }
+      placeMfsQrLogo(el, method);
+      el.dataset.rendering = '0';
+    });
+  } else {
+    el.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=168x168&data=${encodeURIComponent(payload)}" width="168" height="168" alt="Payment QR code" style="display:block">`;
+    mfsQrRendered[method] = true;
+    el.dataset.rendering = '0';
+  }
+}
+const MFS_LOGOS = { bkash: SV_LOGO_URI_BKASH, nagad: SV_LOGO_URI_NAGAD, rocket: SV_LOGO_URI_ROCKET, cellfin: SV_LOGO_URI_CELLFIN };
+function placeMfsQrLogo(el, method){
+  // Same treatment as crypto's placeQrLogo: no white backing plate, logo
+  // sits directly on the genuinely-cleared white space from dot removal.
+  const src = MFS_LOGOS[method] || SV_LOGO_URI_LIGHT;
+  let logoImg = el.querySelector('.sv-qr-logo');
+  if(logoImg){ logoImg.src = src; return; }
+  logoImg = document.createElement('img');
+  logoImg.className = 'sv-qr-logo';
+  logoImg.src = src;
+  logoImg.alt = 'SuppVerse BD';
+  logoImg.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px;display:block;';
+  el.appendChild(logoImg);
+}
+
+document.querySelectorAll('.mfs-qr-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const method = btn.dataset.mfs;
+    const wrap = document.getElementById(method + 'QrWrap');
+    renderMfsQr(method, false);
+    const showing = wrap.classList.toggle('show');
+    btn.classList.toggle('active', showing);
+  });
+});
+updateMfsAmounts();
 
 methodCards.forEach(card => {
   card.addEventListener('click', () => selectMethod(card.dataset.method));
@@ -1186,7 +1471,13 @@ document.querySelectorAll('.p2p-copy-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const val = btn.dataset.copy;
     if(navigator.clipboard) navigator.clipboard.writeText(val).catch(()=>{});
-    showToast('Number copied');
+    const label = btn.dataset.label || 'Copied';
+    showToast(label + ' copied');
+    // Brief visual confirmation on the button itself, on top of the toast —
+    // reassures on a slow/queued clipboard write, not just a fire-and-forget click.
+    btn.classList.add('copied-flash');
+    clearTimeout(btn._flashTimer);
+    btn._flashTimer = setTimeout(() => btn.classList.remove('copied-flash'), 900);
   });
 });
 
