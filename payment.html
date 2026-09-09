@@ -170,11 +170,8 @@ body.dark-mode .mc-visa-svg path{fill:#fff}
 .detail-head h3{flex:1}
 .pay-timer-card{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .pay-timer-lottie{width:82px;height:82px;flex-shrink:0;position:relative}
-.pay-timer-tick{position:absolute;top:50%;left:50%;width:42px;height:42px;margin:-21px 0 0 -21px;animation:bk-tick-spin 1s linear infinite}
-.pay-timer-tick-arc{stroke:var(--t2);opacity:.5;transition:stroke .2s ease,opacity .2s ease}
-.pay-timer-card.warn .pay-timer-tick-arc{stroke:#c07a1e;opacity:.7}
-.pay-timer-card.danger .pay-timer-tick-arc{stroke:#c23b3b;opacity:.8}
-@keyframes bk-tick-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.pay-timer-lottie svg{opacity:0;transition:opacity .25s ease}
+.pay-timer-lottie.ready svg{opacity:1}
 .pay-timer-info{flex:1;min-width:0}
 .pay-timer-label{font-size:11px;color:var(--t2);font-weight:600}
 .pay-timer-value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13.5px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:.2px;pointer-events:none}
@@ -543,7 +540,6 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     </div>
     <div class="pay-timer-card" id="bkTimerCard">
       <div class="pay-timer-lottie" id="bkTimerLottie">
-        <svg class="pay-timer-tick" viewBox="0 0 44 44"><circle class="pay-timer-tick-arc" cx="22" cy="22" r="18" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="26 87"/></svg>
         <div class="pay-timer-value" id="bkCountdownText">30:00</div>
       </div>
       <div class="pay-timer-info">
@@ -1732,10 +1728,12 @@ function startBkashCountdown(){
       // call made before this point was silently ignored (animation wasn't ready),
       // so the ring sat at its default full-frame render, then visibly snapped to
       // the correct frame once loading finished. Sync to the CURRENT elapsed time
-      // right here so there's a single correct paint instead of a jarring reset.
+      // right here, and only reveal the SVG once it's on the right frame — this
+      // way nothing is ever visible except the correct progress, no flash/reset.
       const remainingNow = Math.max(0, Math.round((deadline - Date.now()) / 1000));
       const fractionNow = 1 - (remainingNow / durationSec);
       bkLottieAnim.goToAndStop(Math.min(totalFrames, Math.round(fractionNow * totalFrames)), true);
+      lottieEl.classList.add('ready');
     });
   }
 
