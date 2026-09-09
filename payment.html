@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie_light.min.js"></script>
 <style>
 :root {
   --cyan:#009ddc; --orange:#f26430; --green:#009b72; --gold:#f4a922; --purple:#6761a8;
@@ -164,6 +165,19 @@ body.dark-mode .mc-visa-svg path{fill:#fff}
 .detail-head .dot{width:8px;height:8px;border-radius:50%;background:var(--panel-accent)}
 .coin-inline{width:14px;height:14px;display:inline-block;vertical-align:middle;margin:0 3px -2px 3px}
 .detail-head h3{font-size:13px;font-weight:800}
+.detail-head h3{flex:1}
+.pay-timer-card{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.pay-timer-lottie{width:84px;height:84px;flex-shrink:0;position:relative}
+.pay-timer-tick{position:absolute;top:50%;left:50%;width:44px;height:44px;margin:-22px 0 0 -22px;animation:bk-tick-spin 1s linear infinite}
+.pay-timer-tick-arc{stroke:var(--t2);opacity:.5;transition:stroke .2s ease,opacity .2s ease}
+.pay-timer-card.warn .pay-timer-tick-arc{stroke:#c07a1e;opacity:.7}
+.pay-timer-card.danger .pay-timer-tick-arc{stroke:#c23b3b;opacity:.8}
+@keyframes bk-tick-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.pay-timer-info{flex:1;min-width:0}
+.pay-timer-label{font-size:11px;color:var(--t2);font-weight:600}
+.pay-timer-value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13.5px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:.2px;pointer-events:none}
+.pay-timer-card.warn .pay-timer-value{color:#c07a1e}
+.pay-timer-card.danger .pay-timer-value{color:#c23b3b}
 
 /* Gateway-style (internal bKash/Nagad/Card) */
 .field-label{font-size:11px;font-weight:700;color:var(--t2);margin-bottom:6px;display:block}
@@ -197,11 +211,28 @@ body.dark-mode .pay-input{border-color:rgba(255,255,255,0.25)}
 .p2p-copy-btn:active{transform:scale(.92)}
 .p2p-copy-btn.copied-flash{background:var(--panel-accent, #2f9b68);border-color:var(--panel-accent, #2f9b68);color:#fff}
 .p2p-steps{list-style:none;padding:0;margin-bottom:4px}
-.p2p-steps li{display:flex;gap:8px;font-size:11.5px;color:var(--t2);line-height:1.5;padding:5px 0}
+.p2p-guide-img-wrap{border:1.5px solid rgba(15,35,65,0.14);border-radius:11px;overflow:hidden;margin-bottom:10px}
+body.dark-mode .p2p-guide-img-wrap{border-color:rgba(255,255,255,0.14)}
+.p2p-guide-img-wrap img{display:block;width:100%;height:auto}
+.p2p-steps li{display:flex;gap:8px;font-size:13.5px;color:var(--t2);line-height:1.55;padding:6px 0}
 .p2p-steps li b{color:var(--text);flex-shrink:0}
 
 .p2p-txn-row{margin-top:8px}
 .p2p-txn-row input{margin-bottom:0}
+.p2p-upload-row{margin-top:10px}
+.p2p-upload-box{border:1.5px dashed rgba(15,35,65,0.28);border-radius:11px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+body.dark-mode .p2p-upload-box{border-color:rgba(255,255,255,0.25)}
+.p2p-upload-box:hover{border-color:var(--panel-accent)}
+.p2p-upload-box svg{width:22px;height:22px;stroke:var(--t2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.p2p-upload-label{font-size:12px;font-weight:700;color:var(--t1)}
+.p2p-upload-hint{font-size:10.5px;color:var(--t2)}
+.p2p-upload-preview{display:none;align-items:center;gap:10px;border:1.5px solid rgba(15,35,65,0.28);border-radius:11px;padding:8px 10px}
+body.dark-mode .p2p-upload-preview{border-color:rgba(255,255,255,0.25)}
+.p2p-upload-preview.show{display:flex}
+.p2p-upload-preview img{width:40px;height:40px;object-fit:cover;border-radius:8px;flex-shrink:0}
+.p2p-upload-name{flex:1;font-size:11.5px;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p2p-upload-remove{width:24px;height:24px;border-radius:50%;background:var(--bg);border:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--t2)}
+.p2p-upload-remove svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.2;fill:none}
 
 /* COD */
 .cod-note{display:flex;gap:10px;background:var(--cod-bg);border:1px solid var(--cod-bdr);border-radius:12px;padding:12px 14px}
@@ -277,6 +308,33 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
 .ps-icon svg{width:28px;height:28px;stroke:#fff;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .pay-success-sheet h3{font-family:var(--fd);font-size:17px;font-weight:800;margin-bottom:6px}
 .pay-success-sheet p{font-size:11.5px;color:var(--t2);line-height:1.5;margin-bottom:16px}
+
+/* bKash sender-number popup — mirrors bKash PGW's own account-number entry screen */
+.bkash-popup-overlay{position:fixed;inset:0;background:rgba(6,10,20,.6);z-index:970;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:20px}
+.bkash-popup-overlay.show{opacity:1;pointer-events:auto}
+.bkash-popup-sheet{width:100%;max-width:340px;background:#fff;border-radius:14px;overflow:hidden;transform:scale(.9);opacity:0;transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .25s ease;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.bkash-popup-overlay.show .bkash-popup-sheet{transform:scale(1);opacity:1}
+.bkp-brand{padding:18px 0 14px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #eee}
+.bkp-logo-svg{height:24px;width:auto}
+.bkp-merchant{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid #eee}
+.bkp-merchant-left{display:flex;align-items:center;gap:10px;min-width:0}
+.bkp-merchant-icon{width:32px;height:32px;border-radius:8px;background:#fff3f8;border:1px solid #f5d9e6;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:5px}
+.bkp-merchant-icon img{width:100%;height:100%;object-fit:contain}
+.bkp-merchant-name{font-size:12.5px;font-weight:800;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bkp-merchant-inv{font-size:10px;color:#8a8a8a;margin-top:1px}
+.bkp-merchant-amt{font-size:15px;font-weight:800;color:#1a1a1a;flex-shrink:0}
+.bkp-pink{background:linear-gradient(135deg,#e2136e,#c8105f);padding:26px 20px 22px;text-align:center}
+.bkp-label{font-size:14px;font-weight:700;color:#fff;margin-bottom:14px}
+.bkp-input{width:100%;border:none;border-radius:8px;padding:12px 14px;font-size:15px;font-weight:700;letter-spacing:1px;color:#1a1a1a;text-align:center;outline:2px solid transparent;transition:outline-color .15s ease}
+.bkp-input:focus{outline-color:#fff}
+.bkp-sub{font-size:11px;color:rgba(255,255,255,.85);margin-top:14px}
+.bkp-sub a,.bkp-sub u{color:#fff;text-decoration:underline}
+.bkp-footer{display:flex;gap:10px;padding:14px 18px}
+.bkp-cancel,.bkp-confirm{flex:1;border:none;border-radius:9px;padding:11px;font-size:12.5px;font-weight:800}
+.bkp-cancel{background:#eee;color:#333}
+.bkp-confirm{background:#e2136e;color:#fff}
+.bkp-confirm:disabled{opacity:.4}
+.bkp-help{text-align:center;padding:0 18px 16px;font-size:10px;color:#9a9a9a}
 .ps-btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:11px;padding:12px;font-size:12.5px;font-weight:800}
 .hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,transform .15s}
 .hcart:active{transform:scale(.92)}
@@ -481,13 +539,36 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <div><div class="p2p-number-info">Amount to send</div><div class="p2p-number-val mfs-amount-val" style="color:var(--bkash-text)">৳0</div></div>
       <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
     </div>
+    <div class="pay-timer-card" id="bkTimerCard">
+      <div class="pay-timer-lottie" id="bkTimerLottie">
+        <svg class="pay-timer-tick" viewBox="0 0 44 44"><circle class="pay-timer-tick-arc" cx="22" cy="22" r="18" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="26 87"/></svg>
+        <div class="pay-timer-value" id="bkCountdownText">30:00</div>
+      </div>
+      <div class="pay-timer-info">
+        <div class="pay-timer-label">Complete payment within</div>
+      </div>
+    </div>
     <div class="crypto-qr-wrap mfs-qr-wrap" id="bkashQrWrap"><div class="mfs-qr" id="bkashQr"></div></div>
     <ul class="p2p-steps">
       <li><b>1.</b> Open bKash, select "Send Money" — or scan the QR above.</li>
+      <div class="p2p-guide-img-wrap"><img src="assets/img/payment-guides/bkash-step1-send-money.webp" alt="Open bKash, tap Send Money"></div>
       <li><b>2.</b> Enter the number and exact amount shown above.</li>
       <li><b>3.</b> Enter your Transaction ID below once sent.</li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="bkTxn" type="text" placeholder="Transaction ID (e.g. 8N7A2K9XYZ)" style="margin-bottom:0"></div>
+    <div class="p2p-upload-row">
+      <input type="file" id="bkScreenshotInput" accept="image/*" style="display:none">
+      <label class="p2p-upload-box" id="bkUploadBox" for="bkScreenshotInput">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5L5 19"/></svg>
+        <div class="p2p-upload-label">Upload payment screenshot</div>
+        <div class="p2p-upload-hint">Optional — helps us verify faster</div>
+      </label>
+      <div class="p2p-upload-preview" id="bkUploadPreview">
+        <img id="bkUploadThumb" alt="">
+        <div class="p2p-upload-name" id="bkUploadName"></div>
+        <button class="p2p-upload-remove" id="bkUploadRemove" type="button" aria-label="Remove"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+    </div>
   </div>
   <div class="detail-panel rv" id="panel-nagad-internal" style="--panel-accent:var(--nagad-text)">
     <div class="detail-head"><div class="dot"></div><h3>Pay with Nagad</h3></div>
@@ -803,6 +884,34 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     <h3 id="psTitle">Payment successful!</h3>
     <p id="psText">Your order is confirmed. We'll send updates via WhatsApp.</p>
     <button class="ps-btn" id="psCloseBtn" type="button">Done</button>
+  </div>
+</div>
+
+<div class="bkash-popup-overlay" id="bkashNumOverlay">
+  <div class="bkash-popup-sheet" id="bkashNumSheet">
+    <div class="bkp-brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-7.54 8.84 262.16 95.75" class="bkp-logo-svg"><g fill="none"><path fill="#d12053" d="m223.65 62.45-53.03-8.31 7.03 31.6z"/><path fill="#e2136e" d="M223.65 62.45 183.69 6.93l-13.06 47.22z"/><path fill="#d12053" d="M169.39 53.51 127.52 0l54.83 6.55z"/><path fill="#9e1638" d="M150.32 31.15 127.07 9.24h6.12z"/><path fill="#d12053" d="m234.96 35.46-9.84 26.69-15.95-22.06z"/><path fill="#e2136e" d="m183.84 84.14 38.61-15.51 1.62-4.93z"/><path fill="#9e1638" d="m152.96 113.41 16.54-58.02 8.39 37.75z"/><path fill="#e2136e" d="m236.5 35.67-4.06 11.02 14.64-.24zM0 40.09c.71.06 1.43.19 2.19.19s1.38-.13 2.19-.19v23.47c2.31-3.93 5.22-6.52 9.5-6.52 7.74 0 11.06 7.66 11.06 14.7 0 8.43-4.5 16.5-12.39 16.5a8.7 8.7 0 0 1-7.77-4.47c-1.32 1.16-2.49 2.55-3.74 3.81h-1zm4.28 34.52c0 6.84 2.9 11.61 7.67 11.61 6.19 0 8.18-8.32 8.18-14.22 0-6.85-2.26-12.24-7.62-12.3-6.26-.05-8.23 7.36-8.23 14.92z"/><path fill="currentColor" d="m45.13 55.27-4.66 6c4.38 6.4 8.92 12.67 13.32 19.15l4.44 7v.35c-1.09-.07-2.08-.21-3-.21s-2.08.14-3.06.21a74 74 0 0 0-3.78-6.34l-12-17.75c-.27-.28-.92-.5-.92-.21v24.3c-.88-.07-1.65-.21-2.41-.21s-1.64.14-2.41.21V40.09c.77.06 1.6.21 2.41.21s1.53-.15 2.41-.21v21.52c0 .42.82.14 1.36-.42a37 37 0 0 0 2.92-3.42l13.49-17.7c.71.06 1.42.21 2.19.21s1.36-.15 2.14-.21zM81.42 82.4c0 2.48-.16 3.74 3.07 2.92v1.39a9 9 0 0 1-1.65.63c-2.85.57-5.21.06-5.65-3.67l-.49.55a10.2 10.2 0 0 1-8.12 4c-3.88 0-7.28-3.06-7.28-7.75 0-7.23 5-8.18 10.13-9.13 4.34-.82 5.82-1.2 5.82-4.25 0-4.7-2.3-7.42-6.41-7.42a6.85 6.85 0 0 0-6.52 4.37h-.6v-3.52a14.2 14.2 0 0 1 8.87-3.48c5.75 0 8.88 3.48 8.88 10.65zm-4.38-10.47-1.93.44c-3.73.82-9.32 1.45-9.32 7.24 0 4 2 6 5.36 6a6.8 6.8 0 0 0 4.44-2.44c.4-.46 1.5-1.54 1.5-2zm14.15 9.63c1.3 2.49 3.72 4.72 6.3 4.72a5.67 5.67 0 0 0 5.38-5.78c0-8.56-12.95-3-12.95-14.08 0-6.08 4-9.37 8.93-9.37 2.18-.05 4.33.52 6.2 1.64a33 33 0 0 0-1.3 4.5h-.5c-.72-2.09-2.63-4.19-4.66-4.19-2.74 0-5 1.85-5 5.28 0 8.11 12.95 3.79 12.95 13.94 0 6.79-5.26 10-10.1 10a12.7 12.7 0 0 1-6.84-2 34 34 0 0 0 1.15-4.65zm22.73-41.47c.73.06 1.44.19 2.2.19s1.38-.13 2.2-.19v23.09c1.92-3.87 4.93-6.14 8.83-6.14 6.36 0 8.83 4.36 8.83 12.36v18.37c-.83-.07-1.47-.19-2.2-.19s-1.48.13-2.2.19V70.85c0-7-1.41-10.53-6.08-10.53-4.94 0-7.18 3.56-7.18 10.15v17.3c-.82-.07-1.47-.19-2.2-.19z"/></g></svg>
+    </div>
+    <div class="bkp-merchant">
+      <div class="bkp-merchant-left">
+        <div class="bkp-merchant-icon"><img src="" id="bkpMerchantLogo" alt=""></div>
+        <div>
+          <div class="bkp-merchant-name">SuppVerse BD</div>
+          <div class="bkp-merchant-inv" id="bkpInvNo">Inv No: —</div>
+        </div>
+      </div>
+      <div class="bkp-merchant-amt" id="bkpAmount">৳0</div>
+    </div>
+    <div class="bkp-pink">
+      <div class="bkp-label">Your bKash Account Number</div>
+      <input class="bkp-input" id="bkpNumberInput" type="tel" inputmode="numeric" maxlength="11" placeholder="01XXXXXXXXX" autocomplete="off">
+      <div class="bkp-sub">Confirm and proceed, <u>terms &amp; conditions</u></div>
+    </div>
+    <div class="bkp-footer">
+      <button class="bkp-cancel" id="bkpCancel" type="button">Cancel</button>
+      <button class="bkp-confirm" id="bkpProceed" type="button" disabled>Confirm</button>
+    </div>
+    <div class="bkp-help">© 2026 SuppVerse BD · Need help? WhatsApp us</div>
   </div>
 </div>
 
@@ -1140,6 +1249,7 @@ const methodLabels = { bkash:'Pay with bKash', nagad:'Pay with Nagad', card:'Pay
 
 function selectMethod(method){
   S.method = method;
+  S.senderBkashNumber = null;
   methodCards.forEach(c => c.classList.toggle('selected', c.dataset.method === method));
   allPanels.forEach(p => p.classList.remove('show'));
 
@@ -1149,8 +1259,11 @@ function selectMethod(method){
   } else {
     panelId = `panel-${method}-${S.flow}`;
   }
-  const panel = document.getElementById(panelId);
-  if(panel) panel.classList.add('show');
+  // bKash: payment details/QR/TrxID stay hidden until sender number is collected via the popup
+  if(method !== 'bkash'){
+    const panel = document.getElementById(panelId);
+    if(panel) panel.classList.add('show');
+  }
 
   payBtn.disabled = false;
   payBtnText.textContent = methodLabels[method] || 'Continue';
@@ -1491,7 +1604,7 @@ const psText = document.getElementById('psText');
 function openOverlay(el){ el.classList.add('show'); }
 function closeOverlay(el){ el.classList.remove('show'); }
 
-payBtn.addEventListener('click', () => {
+function finalizeSubmit(){
   if(!S.method) return;
   const isP2P = (S.flow === 'proxy' && (S.method === 'bkash' || S.method === 'nagad' || S.method === 'card')) || S.method === 'crypto';
 
@@ -1512,10 +1625,145 @@ payBtn.addEventListener('click', () => {
     psText.textContent = "Your order is confirmed. We'll send updates via WhatsApp.";
   }
   openOverlay(successOverlay);
+}
+
+payBtn.addEventListener('click', () => {
+  if(!S.method) return;
+  if(S.method === 'bkash' && !S.senderBkashNumber){
+    bkpNumberInput.value = '';
+    bkpProceed.disabled = true;
+    bkpMerchantLogo.src = SV_LOGO_URI_LIGHT;
+    const totalEl = document.getElementById(S.flow === 'proxy' ? 'payTotalProxy' : 'payTotal');
+    bkpAmount.textContent = totalEl ? totalEl.textContent : '৳0';
+    if(!S.orderRef) S.orderRef = (S.flow === 'proxy' ? 'PX-' : 'SV-') + Math.floor(1000 + Math.random() * 9000);
+    bkpInvNo.textContent = 'Inv No: ' + S.orderRef;
+    openOverlay(bkashNumOverlay);
+    setTimeout(() => bkpNumberInput.focus(), 300);
+    return;
+  }
+  if(S.method === 'bkash' && S.senderBkashNumber){
+    const txnField = document.getElementById(S.flow === 'proxy' ? 'bkTxnP' : 'bkTxn');
+    if(txnField && !txnField.value.trim()){
+      txnField.focus();
+      txnField.style.borderColor = 'var(--bkash-text)';
+      setTimeout(() => { txnField.style.borderColor = ''; }, 900);
+      return;
+    }
+  }
+  finalizeSubmit();
 });
 
 document.getElementById('psCloseBtn').addEventListener('click', () => closeOverlay(successOverlay));
 document.getElementById('successOverlay').addEventListener('click', (e) => { if(e.target === successOverlay) closeOverlay(successOverlay); });
+
+/* bKash sender-number popup */
+const bkashNumOverlay = document.getElementById('bkashNumOverlay');
+const bkpNumberInput = document.getElementById('bkpNumberInput');
+const bkpProceed = document.getElementById('bkpProceed');
+const bkpCancel = document.getElementById('bkpCancel');
+const bkpMerchantLogo = document.getElementById('bkpMerchantLogo');
+const bkpAmount = document.getElementById('bkpAmount');
+const bkpInvNo = document.getElementById('bkpInvNo');
+
+bkpNumberInput.addEventListener('input', () => {
+  const v = bkpNumberInput.value.replace(/\D/g,'').slice(0,11);
+  bkpNumberInput.value = v;
+  bkpProceed.disabled = !/^01[3-9]\d{8}$/.test(v);
+});
+
+bkpProceed.addEventListener('click', () => {
+  S.senderBkashNumber = bkpNumberInput.value;
+  closeOverlay(bkashNumOverlay);
+  // Reveal payment details/QR/TrxID panel only now that the sender number is collected
+  const panelId = `panel-bkash-${S.flow}`;
+  const panel = document.getElementById(panelId);
+  if(panel) panel.classList.add('show');
+  payBtnText.textContent = "I've Sent the Payment";
+  startBkashCountdown();
+});
+
+bkpCancel.addEventListener('click', () => closeOverlay(bkashNumOverlay));
+bkashNumOverlay.addEventListener('click', (e) => { if(e.target === bkashNumOverlay) closeOverlay(bkashNumOverlay); });
+
+/* Soft 30-min payment countdown — no auto-cancel, just flags it as expired for admin/customer to see */
+let bkCountdownInterval = null;
+let bkLottieAnim = null;
+function startBkashCountdown(){
+  const card = document.getElementById('bkTimerCard');
+  const text = document.getElementById('bkCountdownText');
+  const lottieEl = document.getElementById('bkTimerLottie');
+  if(!card || !text) return;
+  const durationSec = 30 * 60;
+  const totalFrames = 352; // BKASH_COUNTDOWN_LOTTIE_DATA op (ring animation length)
+  const deadline = Date.now() + durationSec * 1000;
+  card.classList.remove('warn', 'danger');
+
+  if(lottieEl && !bkLottieAnim && window.lottie){
+    bkLottieAnim = lottie.loadAnimation({
+      container: lottieEl,
+      renderer: 'svg',
+      loop: false,
+      autoplay: false,
+      path: 'assets/lottie/countdown-pay.json'
+    });
+    // The asset's "timer %" precomp bakes its own numeric readout into the art via
+    // frame-gated shape layers — no clean API toggle for it, so force-hide that
+    // layer's rendered DOM node directly and rely on our own accurate text instead.
+    bkLottieAnim.addEventListener('DOMLoaded', () => {
+      const digitLayer = bkLottieAnim.renderer.elements[0];
+      if(digitLayer && digitLayer.layerElement){
+        digitLayer.layerElement.style.setProperty('display', 'none', 'important');
+      }
+    });
+  }
+
+  if(bkCountdownInterval) clearInterval(bkCountdownInterval);
+  const tick = () => {
+    const remaining = Math.max(0, Math.round((deadline - Date.now()) / 1000));
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    text.textContent = `${m}:${String(s).padStart(2, '0')}`;
+    card.classList.toggle('warn', remaining <= 300 && remaining > 60);
+    card.classList.toggle('danger', remaining <= 60);
+    if(bkLottieAnim){
+      const elapsedFraction = 1 - (remaining / durationSec);
+      bkLottieAnim.goToAndStop(Math.min(totalFrames, Math.round(elapsedFraction * totalFrames)), true);
+    }
+    if(remaining <= 0){
+      text.textContent = 'Expired';
+      clearInterval(bkCountdownInterval);
+    }
+  };
+  tick();
+  bkCountdownInterval = setInterval(tick, 1000);
+}
+
+/* Payment screenshot upload (bKash internal panel) */
+const bkScreenshotInput = document.getElementById('bkScreenshotInput');
+const bkUploadBox = document.getElementById('bkUploadBox');
+const bkUploadPreview = document.getElementById('bkUploadPreview');
+const bkUploadThumb = document.getElementById('bkUploadThumb');
+const bkUploadName = document.getElementById('bkUploadName');
+const bkUploadRemove = document.getElementById('bkUploadRemove');
+
+bkScreenshotInput.addEventListener('change', () => {
+  const file = bkScreenshotInput.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    bkUploadThumb.src = reader.result;
+    bkUploadName.textContent = file.name;
+    bkUploadBox.style.display = 'none';
+    bkUploadPreview.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+});
+
+bkUploadRemove.addEventListener('click', () => {
+  bkScreenshotInput.value = '';
+  bkUploadPreview.classList.remove('show');
+  bkUploadBox.style.display = 'flex';
+});
 </script>
 </body>
 </html>
