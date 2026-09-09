@@ -215,6 +215,7 @@ body.dark-mode .p2p-guide-img-wrap{border-color:rgba(255,255,255,0.14)}
 .p2p-guide-img-wrap img{display:block;width:100%;height:auto}
 .p2p-steps li{display:flex;gap:8px;font-size:13.5px;color:var(--t2);line-height:1.55;padding:6px 0}
 .p2p-steps li b{color:var(--text);flex-shrink:0}
+.p2p-hl{font-weight:700;color:var(--text)}
 
 .p2p-txn-row{margin-top:8px}
 .p2p-txn-row input{margin-bottom:0}
@@ -548,10 +549,10 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     </div>
     <div class="crypto-qr-wrap mfs-qr-wrap" id="bkashQrWrap"><div class="mfs-qr" id="bkashQr"></div></div>
     <ul class="p2p-steps">
-      <li><b>1.</b> Open bKash, select "Send Money" — or scan the QR above.</li>
+      <li><b>1.</b> <span>Open bKash, select "<span class="p2p-hl">Send Money</span>" — or scan the QR above.</span></li>
       <div class="p2p-guide-img-wrap"><img src="assets/img/payment-guides/bkash-step1-send-money.webp" alt="Open bKash, tap Send Money"></div>
-      <li><b>2.</b> Enter the number and exact amount shown above.</li>
-      <li><b>3.</b> Enter your Transaction ID below once sent.</li>
+      <li><b>2.</b> <span>Enter the same <span class="p2p-hl">bKash number</span> provided above and the <span class="p2p-hl">exact amount</span> shown. Make sure you use the same bKash number provided earlier to complete your payment.</span></li>
+      <li><b>3.</b> <span>Copy the <span class="p2p-hl">Transaction ID</span> from your bKash confirmation message, then return to this page and enter it in the Transaction ID field below.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="bkTxn" type="text" placeholder="Transaction ID (e.g. 8N7A2K9XYZ)" style="margin-bottom:0"></div>
     <div class="p2p-upload-row">
@@ -903,13 +904,13 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     <div class="bkp-pink">
       <div class="bkp-label">Your bKash Account Number</div>
       <input class="bkp-input" id="bkpNumberInput" type="tel" inputmode="numeric" maxlength="11" placeholder="01XXXXXXXXX" autocomplete="off">
-      <div class="bkp-sub">Confirm and proceed, <u>terms &amp; conditions</u></div>
+      <div class="bkp-sub">Confirm and proceed, <a href="terms-conditions.html" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">terms &amp; conditions</a></div>
     </div>
     <div class="bkp-footer">
       <button class="bkp-cancel" id="bkpCancel" type="button">Cancel</button>
       <button class="bkp-confirm" id="bkpProceed" type="button" disabled>Confirm</button>
     </div>
-    <div class="bkp-help">© 2026 SuppVerse BD · Need help? WhatsApp us</div>
+    <div class="bkp-help">© 2026 SuppVerse BD · Need help? <a href="https://wa.me/8801644232935?text=Hello%20SuppVerseBD!%20I%20need%20help%20with%20my%20payment." target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline"><span style="color:#25D366;font-weight:600">WhatsApp</span> us</a></div>
   </div>
 </div>
 
