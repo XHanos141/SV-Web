@@ -1077,7 +1077,15 @@ let SHIPPING_FREE_THRESHOLD = 6800;
   } catch(e){}
 })();
 function fmt(n){ return '৳' + Math.round(n).toLocaleString('en-US'); }
+const BUYNOW_KEY = 'sv-buynow-item';
+const IS_BUYNOW = new URLSearchParams(window.location.search).get('mode') === 'buynow';
 function readInternalCart(){
+  if(IS_BUYNOW){
+    try {
+      const item = JSON.parse(sessionStorage.getItem(BUYNOW_KEY));
+      if(item && item.length) return item;
+    } catch(e){}
+  }
   try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
   catch(e){ return []; }
 }
@@ -1635,6 +1643,7 @@ function finalizeSubmit(){
     psTitle.textContent = 'Payment successful!';
     psText.textContent = "Your order is confirmed. We'll send updates via WhatsApp.";
   }
+  if(IS_BUYNOW) sessionStorage.removeItem(BUYNOW_KEY);
   openOverlay(successOverlay);
 }
 

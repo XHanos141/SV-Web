@@ -1394,7 +1394,7 @@ function renderCard(p,i){
   var outBar = isOut ? '<div class="p-out-bar">OUT OF STOCK</div>' : '';
   var actions = isOut 
     ? '<div class="p-actions"><button class="p-wish" onclick="toggleWish(this)" aria-label="Add to wishlist"><svg class="heart-icon" width="16" height="16" style="margin-top:-1px" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wishlist</button></div>'
-    : '<div class="p-actions"><button class="p-add" data-name="' + esc(p.name) + '" onclick="event.stopPropagation();toggleCart(this)" aria-label="Add to cart">' + cartSVG + '</button><button class="p-buy" onclick="event.stopPropagation();buyNow(this)" aria-label="Buy now">Buy</button></div>';
+    : '<div class="p-actions"><button class="p-add" data-name="' + esc(p.name) + '" onclick="event.stopPropagation();toggleCart(this)" aria-label="Add to cart">' + cartSVG + '</button><button class="p-buy" data-name="' + esc(p.name) + '" onclick="event.stopPropagation();buyNow(this)" aria-label="Buy now">Buy</button></div>';
   var stockBadge = isOut ? '' : '<span class="p-badge-stock ' + stockClass + '">' + stockText + '</span>';
   var pvUrl = (PRODUCT_VIEW_PAGES[p.type] || 'product_view_general.html') + '?' + productViewParams(p);
   return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (i*0.06) + 's;cursor:pointer" onclick="window.location.href=\'' + pvUrl + '\'">' +
@@ -1441,9 +1441,28 @@ function toggleCart(btn){
   btn.classList.toggle('added');
   btn.innerHTML = isAdded ? cartSVG : checkIcon;
 }
+const BUYNOW_KEY = 'sv-buynow-item';
 function buyNow(btn){
   btn.style.transform='scale(0.94)';
   setTimeout(()=>btn.style.transform='',150);
+  const name = btn.getAttribute('data-name');
+  const product = products.find(p => p.name === name);
+  if(!product) return;
+  const item = {
+    id: slugify(product.name),
+    name: product.name,
+    variant: product.cat || '',
+    price: product.price,
+    oldPrice: product.old || null,
+    qty: 1,
+    img: null,
+    locked: false,
+    type: product.type || 'General',
+    category: product.cat || ''
+  };
+  // Buy Now is a standalone one-item checkout — does NOT touch the real cart (sv-cart-internal).
+  sessionStorage.setItem(BUYNOW_KEY, JSON.stringify([item]));
+  window.location.href = 'payment.html?mode=buynow';
 }
 
 // ─── SLIDING TAB INDICATOR ───
