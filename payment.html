@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -72,6 +72,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 main{max-width:600px;margin:0 auto;padding:16px}
 .rv{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
 .rv.in{opacity:1;transform:none}
+/* Failsafe: if JS reveal logic doesn't run for any reason, don't leave the page blank */
+.no-js .rv{opacity:1;transform:none}
 
 /* Flow tabs (demo toggle — in production this is set by which flow linked here) */
 .flow-tabs{display:flex;gap:8px;background:var(--surface2);border-radius:12px;padding:4px;margin-bottom:18px;position:relative}
@@ -167,8 +169,8 @@ body.dark-mode .mc-visa-svg path{fill:#fff}
 .detail-head h3{font-size:13px;font-weight:800}
 .detail-head h3{flex:1}
 .pay-timer-card{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.pay-timer-lottie{width:84px;height:84px;flex-shrink:0;position:relative}
-.pay-timer-tick{position:absolute;top:50%;left:50%;width:44px;height:44px;margin:-22px 0 0 -22px;animation:bk-tick-spin 1s linear infinite}
+.pay-timer-lottie{width:82px;height:82px;flex-shrink:0;position:relative}
+.pay-timer-tick{position:absolute;top:50%;left:50%;width:42px;height:42px;margin:-21px 0 0 -21px;animation:bk-tick-spin 1s linear infinite}
 .pay-timer-tick-arc{stroke:var(--t2);opacity:.5;transition:stroke .2s ease,opacity .2s ease}
 .pay-timer-card.warn .pay-timer-tick-arc{stroke:#c07a1e;opacity:.7}
 .pay-timer-card.danger .pay-timer-tick-arc{stroke:#c23b3b;opacity:.8}
@@ -918,7 +920,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
 <script src="assets/js/supabase-config.js"></script>
 <script>
 /* Theme */
-svInitHeaderAuth('headerAccountBtn');
+if(typeof svInitHeaderAuth === 'function') svInitHeaderAuth('headerAccountBtn');
 const body = document.body;
 const themeToggle = document.getElementById('themeToggle');
 let qrRendered = false; // hoisted early so applyTheme can safely reference it
@@ -1033,11 +1035,23 @@ addrChangeBtn.addEventListener('click', () => showAddressForm(loadAddress()));
   });
 });
 
-/* Reveal on scroll */
+/* Reveal on scroll — reveal anything already in/near the initial viewport immediately,
+   only animate sections that start off-screen below the fold. Fixes blank-page bug
+   where IntersectionObserver never fires on first paint in some webviews. */
 const rvObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); rvObserver.unobserve(e.target); } });
 }, {threshold:.1});
-document.querySelectorAll('.rv').forEach(el => rvObserver.observe(el));
+document.querySelectorAll('.rv').forEach(el => {
+  const r = el.getBoundingClientRect();
+  if(r.top < window.innerHeight * 1.2){
+    el.classList.add('in');
+  } else {
+    rvObserver.observe(el);
+  }
+});
+document.documentElement.classList.remove('no-js');
+/* Hard failsafe: whatever happens, nothing stays invisible past 1s */
+setTimeout(() => document.querySelectorAll('.rv:not(.in)').forEach(el => el.classList.add('in')), 1000);
 
 /* Toast */
 const toastEl = document.getElementById('toast');
@@ -1714,6 +1728,14 @@ function startBkashCountdown(){
       if(digitLayer && digitLayer.layerElement){
         digitLayer.layerElement.style.setProperty('display', 'none', 'important');
       }
+      // On slow connections the JSON can take 10-15s to fetch. Every goToAndStop()
+      // call made before this point was silently ignored (animation wasn't ready),
+      // so the ring sat at its default full-frame render, then visibly snapped to
+      // the correct frame once loading finished. Sync to the CURRENT elapsed time
+      // right here so there's a single correct paint instead of a jarring reset.
+      const remainingNow = Math.max(0, Math.round((deadline - Date.now()) / 1000));
+      const fractionNow = 1 - (remainingNow / durationSec);
+      bkLottieAnim.goToAndStop(Math.min(totalFrames, Math.round(fractionNow * totalFrames)), true);
     });
   }
 
@@ -1725,7 +1747,7 @@ function startBkashCountdown(){
     text.textContent = `${m}:${String(s).padStart(2, '0')}`;
     card.classList.toggle('warn', remaining <= 300 && remaining > 60);
     card.classList.toggle('danger', remaining <= 60);
-    if(bkLottieAnim){
+    if(bkLottieAnim && bkLottieAnim.isLoaded){
       const elapsedFraction = 1 - (remaining / durationSec);
       bkLottieAnim.goToAndStop(Math.min(totalFrames, Math.round(elapsedFraction * totalFrames)), true);
     }
