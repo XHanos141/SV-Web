@@ -1730,9 +1730,10 @@ function startBkashCountdown(){
       // the correct frame once loading finished. Sync to the CURRENT elapsed time
       // right here, and only reveal the SVG once it's on the right frame — this
       // way nothing is ever visible except the correct progress, no flash/reset.
+      // Asset's frame 0 = full/black, frame totalFrames = empty — inverted from
+      // what we want (start empty, fill up as time runs out), so map off remaining.
       const remainingNow = Math.max(0, Math.round((deadline - Date.now()) / 1000));
-      const fractionNow = 1 - (remainingNow / durationSec);
-      bkLottieAnim.goToAndStop(Math.min(totalFrames, Math.round(fractionNow * totalFrames)), true);
+      bkLottieAnim.goToAndStop(Math.max(0, Math.round((remainingNow / durationSec) * totalFrames)), true);
       lottieEl.classList.add('ready');
     });
   }
@@ -1746,8 +1747,7 @@ function startBkashCountdown(){
     card.classList.toggle('warn', remaining <= 300 && remaining > 60);
     card.classList.toggle('danger', remaining <= 60);
     if(bkLottieAnim && bkLottieAnim.isLoaded){
-      const elapsedFraction = 1 - (remaining / durationSec);
-      bkLottieAnim.goToAndStop(Math.min(totalFrames, Math.round(elapsedFraction * totalFrames)), true);
+      bkLottieAnim.goToAndStop(Math.max(0, Math.round((remaining / durationSec) * totalFrames)), true);
     }
     if(remaining <= 0){
       text.textContent = 'Expired';
