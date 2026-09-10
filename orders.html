@@ -53,6 +53,18 @@ body{
 #headerAccountBtn{width:40px;height:40px;border-radius:50%;overflow:hidden}
 .hcart-initial{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:#fff;line-height:1}
 .hcart-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+/* Shared header buttons — matches store.html / index.html / cart.html exactly */
+.theme-toggle{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:background .3s ease}
+.theme-toggle:active{transform:scale(.92)}
+.theme-toggle svg{position:absolute;width:18px;height:18px;stroke:rgba(255,255,255,.85);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.theme-toggle .icon-sun{opacity:1;transform:rotate(0) scale(1)}
+.theme-toggle .icon-moon{opacity:0;transform:rotate(90deg) scale(.5)}
+.theme-toggle.dark .icon-sun{opacity:0;transform:rotate(-90deg) scale(.5)}
+.theme-toggle.dark .icon-moon{opacity:1;transform:rotate(0) scale(1)}
+.hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.hcart:active{transform:scale(.92)}
+.hcart.is-logged-in{background:#009ddc;border-color:#009ddc}
+.hcart svg{width:18px;height:18px;stroke:rgba(255,255,255,.85);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
 .order-list{ display:flex;flex-direction:column;gap:12px;padding:14px 16px 8px; }
 
@@ -331,11 +343,20 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
     <span id="orderCount">2 orders</span>
   </div>
   <div class="s-header-actions">
-    <button class="s-header-btn" id="themeToggle" aria-label="Toggle theme">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
     </button>
-    <button class="s-header-btn" id="headerAccountBtn" onclick="window.location.href='login.html'" aria-label="Account">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <button class="hcart" id="headerAccountBtn" onclick="window.location.href='login.html'" aria-label="Account">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </button>
   </div>
 </header>
@@ -587,6 +608,8 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 const S = { theme: localStorage.getItem('sv-theme') || 'light' };
 function applyTheme(){
   document.body.classList.toggle('dark-mode', S.theme === 'dark');
+  const themeBtn = document.getElementById('themeToggle');
+  if(themeBtn) themeBtn.classList.toggle('dark', S.theme === 'dark');
   localStorage.setItem('sv-theme', S.theme);
 }
 document.getElementById('themeToggle').addEventListener('click', () => {

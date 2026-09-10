@@ -163,6 +163,34 @@ body{
   opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0deg);
 }
 .eye-toggle:active .eye-closed{stroke:var(--text2)}
+/* Animated eye (Lottie, progressive enhancement over the static SVGs above).
+   Hidden until the animation library actually loads — if it fails/blocks,
+   .eye-toggle never gets .lottie-ready and the static crossfade above (which
+   always works, no dependency) stays the only thing the user sees. */
+.eye-lottie-mount{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:24px;height:24px;opacity:0;pointer-events:none;transition:opacity .2s var(--ease);
+}
+.eye-toggle.lottie-ready .eye-lottie-mount{opacity:1}
+.eye-toggle.lottie-ready .eye-open,
+.eye-toggle.lottie-ready .eye-closed{display:none}
+.eye-lottie-mount svg{position:absolute!important;top:0!important;left:0!important;margin:0!important;width:100%!important;height:100%!important}
+/* Force color regardless of what the Lottie file bakes in — this is the
+   exact black-on-black class of bug that bit countdown-pay.json, so every
+   stroke-bearing element inside gets pinned to a theme color explicitly.
+   Resting (password hidden, closed-eye frame) = text2, a touch bolder than
+   text3 so it doesn't wash out against the input border. Revealed
+   (password visible, open-eye frame) = accent cyan. opacity:1 forced too —
+   the Lottie file bakes its own per-group opacity keyframes, which were
+   leaving the closed-eye frame slightly translucent regardless of stroke color.*/
+.eye-lottie-mount path,.eye-lottie-mount line,.eye-lottie-mount g{
+  stroke:var(--text2)!important;fill:none!important;opacity:1!important;
+}
+.eye-toggle.revealed .eye-lottie-mount path,
+.eye-toggle.revealed .eye-lottie-mount line,
+.eye-toggle.revealed .eye-lottie-mount g{
+  stroke:var(--accent)!important;
+}
 
 .field-err{
   font-size:11.5px;color:var(--red);margin-top:5px;
@@ -311,6 +339,7 @@ body{
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie_svg.min.js"></script>
 </head>
 <body>
 
@@ -361,6 +390,7 @@ body{
                 <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
                 <input type="password" placeholder="Enter password" required autocomplete="current-password" id="loginPwInput">
                 <button type="button" class="eye-toggle" onclick="togglePw('loginPwInput',this)" aria-label="Show password">
+                  <span class="eye-lottie-mount" aria-hidden="true"></span>
                   <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                   <svg class="eye-closed" viewBox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.6 18.6 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
                 </button>
@@ -419,6 +449,7 @@ body{
                 <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
                 <input type="password" placeholder="Create password" required autocomplete="new-password" id="signupPwInput" oninput="checkStrength(this.value)">
                 <button type="button" class="eye-toggle" onclick="togglePw('signupPwInput',this)" aria-label="Show password">
+                  <span class="eye-lottie-mount" aria-hidden="true"></span>
                   <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                   <svg class="eye-closed" viewBox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.6 18.6 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
                 </button>
@@ -535,6 +566,7 @@ body{
               <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               <input type="password" placeholder="At least 8 characters" required id="newPass1Input">
               <button type="button" class="eye-toggle" onclick="togglePw('newPass1Input',this)" aria-label="Show password">
+                <span class="eye-lottie-mount" aria-hidden="true"></span>
                 <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 <svg class="eye-closed" viewBox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.6 18.6 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
               </button>
@@ -547,6 +579,7 @@ body{
               <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               <input type="password" placeholder="Re-enter password" required id="newPass2Input">
               <button type="button" class="eye-toggle" onclick="togglePw('newPass2Input',this)" aria-label="Show password">
+                <span class="eye-lottie-mount" aria-hidden="true"></span>
                 <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 <svg class="eye-closed" viewBox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.6 18.6 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
               </button>
@@ -640,12 +673,54 @@ function switchTab(which){
   tryAutoSubmit();
 })();
 
+// Animated eye toggle (Lottie) — progressive enhancement over the static
+// SVG crossfade. If lottie-web is blocked/offline, eyeLotties stays empty
+// and togglePw() below just skips the animation calls — the static icons
+// (which already fully work) are the only thing that renders.
+const eyeLotties = new WeakMap();
+
+// Embedded directly (not fetched via `path:`) — a fetch() to a relative local
+// file is blocked by the browser on file:// previews and adds a race/failure
+// point in production for no benefit on an 8.6KB asset. Same JSON also lives
+// at assets/lottie/pw-eye-toggle.json in the repo for reference/reuse.
+const PW_EYE_LOTTIE_DATA = {"v":"5.7.1","fr":29.9700012207031,"ip":0,"op":17.0000006924242,"w":32,"h":32,"nm":"eye","ddd":0,"assets":[],"layers":[{"ddd":0,"ind":1,"ty":4,"nm":"eye","sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[16,16,0],"ix":2},"a":{"a":0,"k":[16,16,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0]],"o":[[0,0],[0,0]],"v":[[-1.149,-0.964],[1.149,0.964]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"tm","s":{"a":0,"k":0,"ix":1},"e":{"a":1,"k":[{"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":8,"s":[0]},{"t":16.0000006516934,"s":[100]}],"ix":2},"o":{"a":0,"k":0,"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false},{"ty":"st","c":{"a":0,"k":[0,0,0,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":2,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[29.664,21.313],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":10,"s":[0]},{"t":14.0000005702317,"s":[100]}],"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"5","np":3,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0]],"o":[[0,0],[0,0]],"v":[[0.75,1.299],[-0.75,-1.299]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"tm","s":{"a":1,"k":[{"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":8,"s":[100]},{"t":16.0000006516934,"s":[0]}],"ix":1},"e":{"a":0,"k":100,"ix":2},"o":{"a":0,"k":0,"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false},{"ty":"st","c":{"a":0,"k":[0,0,0,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":2,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[24.626,27.023],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":10,"s":[0]},{"t":14.0000005702317,"s":[100]}],"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"4","np":3,"cix":2,"bm":0,"ix":2,"mn":"ADBE Vector Group","hd":false},{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0]],"o":[[0,0],[0,0]],"v":[[16,28],[16,31]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"tm","s":{"a":0,"k":0,"ix":1},"e":{"a":1,"k":[{"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":8,"s":[0]},{"t":16.0000006516934,"s":[100]}],"ix":2},"o":{"a":0,"k":0,"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false},{"ty":"st","c":{"a":0,"k":[0,0,0,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":2,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[0,-0.188],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":10,"s":[0]},{"t":14.0000005702317,"s":[100]}],"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"3","np":3,"cix":2,"bm":0,"ix":3,"mn":"ADBE Vector Group","hd":false},{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0]],"o":[[0,0],[0,0]],"v":[[0.861,-1.229],[-0.861,1.229]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"tm","s":{"a":0,"k":0,"ix":1},"e":{"a":1,"k":[{"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":8,"s":[0]},{"t":16.0000006516934,"s":[100]}],"ix":2},"o":{"a":0,"k":0,"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false},{"ty":"st","c":{"a":0,"k":[0,0,0,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":2,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[7.378,27.023],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":10,"s":[0]},{"t":14.0000005702317,"s":[100]}],"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"2","np":3,"cix":2,"bm":0,"ix":4,"mn":"ADBE Vector Group","hd":false},{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0]],"o":[[0,0],[0,0]],"v":[[1.149,-0.964],[-1.149,0.964]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"tm","s":{"a":0,"k":0,"ix":1},"e":{"a":1,"k":[{"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":8,"s":[0]},{"t":16.0000006516934,"s":[100]}],"ix":2},"o":{"a":0,"k":0,"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false},{"ty":"st","c":{"a":0,"k":[0,0,0,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":2,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[2.337,21.313],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":10,"s":[0]},{"t":14.0000005702317,"s":[100]}],"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"1","np":3,"cix":2,"bm":0,"ix":5,"mn":"ADBE Vector Group","hd":false},{"ty":"tr","p":{"a":0,"k":[16,25.768],"ix":2},"a":{"a":0,"k":[16,25.768],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"eyelashes","np":5,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":1,"k":[{"i":{"x":0.667,"y":1},"o":{"x":0.333,"y":0},"t":0,"s":[{"i":[[0,0],[-7,0],[0,0],[7,0]],"o":[[0,0],[7,0],[0,0],[-7,0]],"v":[[-11,0],[0,-8],[11,0],[0,8]],"c":true}]},{"t":12.00000048877,"s":[{"i":[[0,0],[-7,0],[0,0],[7,0]],"o":[[0,0],[7,0],[0,0],[-7,0]],"v":[[-11,0],[0,8],[11,0],[0,8]],"c":true}]}],"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0,0,0,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":2,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[16,16],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"eyelid","np":2,"cix":2,"bm":0,"ix":2,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":17.0000006924242,"st":0,"bm":0},{"ddd":0,"ind":2,"ty":4,"nm":"lense","sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[16,16,0],"ix":2},"a":{"a":0,"k":[16,16,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"hasMask":true,"masksProperties":[{"inv":false,"mode":"a","pt":{"a":1,"k":[{"i":{"x":0.667,"y":1},"o":{"x":0.333,"y":0},"t":0,"s":[{"i":[[0,0],[0,0],[0,0],[0,0]],"o":[[0,0],[0,0],[0,0],[0,0]],"v":[[0.002,7.79],[0.003,24],[32.001,23.92],[31.878,7.75]],"c":true}]},{"t":12.00000048877,"s":[{"i":[[0,0],[0,0],[0,0],[0,0]],"o":[[0,0],[0,0],[0,0],[0,0]],"v":[[0.002,23.314],[0.003,24],[32.001,23.997],[31.878,23.312]],"c":true}]}],"ix":1},"o":{"a":0,"k":100,"ix":3},"x":{"a":0,"k":0,"ix":4},"nm":"Mask 1"}],"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[-1.657,0],[0,-1.657],[1.657,0],[0,1.657]],"o":[[1.657,0],[0,1.657],[-1.657,0],[0,-1.657]],"v":[[0,-3],[3,0],[0,3],[-3,0]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0,0,0,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":2,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":1,"k":[{"i":{"x":0.667,"y":1},"o":{"x":0.333,"y":0},"t":2,"s":[16,16],"to":[0,0.5],"ti":[0,-0.5]},{"t":12.00000048877,"s":[16,19]}],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"lense","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":17.0000006924242,"st":0,"bm":0}],"markers":[]};
+
+function initEyeLotties(){
+  if(typeof lottie === 'undefined') return; // library didn't load — fine, fallback stands
+  document.querySelectorAll('.eye-toggle').forEach(btn => {
+    const mount = btn.querySelector('.eye-lottie-mount');
+    if(!mount) return;
+    const anim = lottie.loadAnimation({
+      container: mount,
+      renderer: 'svg',
+      loop: false,
+      autoplay: false,
+      animationData: PW_EYE_LOTTIE_DATA
+    });
+    anim.addEventListener('DOMLoaded', () => {
+      // Rest state = password hidden = closed-eye frame (the JSON's last
+      // frame). Lottie renders frame 0 by default on load, which is the
+      // *open*-eye frame — wrong for the idle/hidden state, so force it.
+      anim.goToAndStop(16, true);
+      btn.classList.add('lottie-ready');
+    });
+    eyeLotties.set(btn, anim);
+  });
+}
+initEyeLotties();
+
 function togglePw(id, btn){
   const input = document.getElementById(id);
   const isPw = input.type === 'password';
   input.type = isPw ? 'text' : 'password';
   btn.classList.toggle('revealed', isPw);
   btn.setAttribute('aria-label', isPw ? 'Hide password' : 'Show password');
+
+  const anim = eyeLotties.get(btn);
+  if(anim){
+    if(isPw) anim.playSegments([16, 0], true);   // hidden -> revealed: closed eye opens (cyan)
+    else anim.playSegments([0, 16], true);        // revealed -> hidden: open eye closes (grey)
+  }
 }
 
 function checkStrength(val){
