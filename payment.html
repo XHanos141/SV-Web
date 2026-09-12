@@ -177,6 +177,11 @@ body.dark-mode .mc-visa-svg path{fill:#fff}
 .pay-timer-value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13.5px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:.2px;pointer-events:none}
 .pay-timer-card.warn .pay-timer-value{color:#c07a1e}
 .pay-timer-card.danger .pay-timer-value{color:#c23b3b}
+.lang-toggle{display:flex;align-items:center;background:var(--surface2);border:1.5px solid var(--border);border-radius:20px;padding:2px;position:relative;flex-shrink:0}
+.lang-toggle button{position:relative;z-index:1;border:none;background:transparent;font-family:var(--fd);font-size:10px;font-weight:800;letter-spacing:.02em;padding:6px 8px;border-radius:16px;color:var(--t2);cursor:pointer;transition:color .25s ease;white-space:nowrap}
+.lang-toggle button.active{color:#fff}
+.lang-toggle-thumb{position:absolute;top:2px;left:2px;bottom:2px;width:calc(50% - 2px);background:var(--cyan);border-radius:16px;transition:transform .28s cubic-bezier(.65,0,.35,1);z-index:0}
+.lang-toggle.bn .lang-toggle-thumb{transform:translateX(100%)}
 
 /* Gateway-style (internal bKash/Nagad/Card) */
 .field-label{font-size:11px;font-weight:700;color:var(--t2);margin-bottom:6px;display:block}
@@ -540,6 +545,11 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
     </div>
     <div class="pay-timer-card" id="bkTimerCard">
+      <div class="lang-toggle" id="stepsLangToggle" role="group" aria-label="Payment steps language">
+        <div class="lang-toggle-thumb"></div>
+        <button type="button" data-lang="en" class="active">EN</button>
+        <button type="button" data-lang="bn">বাং</button>
+      </div>
       <div class="pay-timer-lottie" id="bkTimerLottie">
         <div class="pay-timer-value" id="bkCountdownText">30:00</div>
       </div>
@@ -548,11 +558,11 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       </div>
     </div>
     <div class="crypto-qr-wrap mfs-qr-wrap" id="bkashQrWrap"><div class="mfs-qr" id="bkashQr"></div></div>
-    <ul class="p2p-steps">
-      <li><b>1.</b> <span>Open bKash, select "<span class="p2p-hl">Send Money</span>" — or scan the QR above.</span></li>
+    <ul class="p2p-steps" id="steps-bkash-internal">
+      <li><b>1.</b> <span class="i18n-step" data-en='Open bKash, select "<span class="p2p-hl">Send Money</span>" — or scan the QR above.' data-bn='বিকাশ অ্যাপ খুলে "<span class="p2p-hl">সেন্ড মানি</span>" নির্বাচন করুন — অথবা উপরের QR কোড স্ক্যান করুন।'>Open bKash, select "<span class="p2p-hl">Send Money</span>" — or scan the QR above.</span></li>
       <div class="p2p-guide-img-wrap"><img src="assets/img/payment-guides/bkash-step1-send-money.webp" alt="Open bKash, tap Send Money"></div>
-      <li><b>2.</b> <span>Enter the same <span class="p2p-hl">bKash number</span> provided above and the <span class="p2p-hl">exact amount</span> shown. Make sure you use the same bKash number provided earlier to complete your payment.</span></li>
-      <li><b>3.</b> <span>Copy the <span class="p2p-hl">Transaction ID</span> from your bKash confirmation message, then return to this page and enter it in the Transaction ID field below.</span></li>
+      <li><b>2.</b> <span class="i18n-step" data-en='Enter the same <span class="p2p-hl">bKash number</span> provided above and the <span class="p2p-hl">exact amount</span> shown. Make sure you use the same bKash number provided earlier to complete your payment.' data-bn='উপরে দেওয়া একই <span class="p2p-hl">বিকাশ নম্বর</span> এবং <span class="p2p-hl">সঠিক পরিমাণ</span> লিখুন। পেমেন্ট সম্পন্ন করতে অবশ্যই আগে দেওয়া বিকাশ নম্বরটি ব্যবহার করুন।'>Enter the same <span class="p2p-hl">bKash number</span> provided above and the <span class="p2p-hl">exact amount</span> shown. Make sure you use the same bKash number provided earlier to complete your payment.</span></li>
+      <li><b>3.</b> <span class="i18n-step" data-en='Copy the <span class="p2p-hl">Transaction ID</span> from your bKash confirmation message, then return to this page and enter it in the Transaction ID field below.' data-bn='আপনার বিকাশ কনফার্মেশন মেসেজ থেকে <span class="p2p-hl">ট্রানজেকশন আইডি</span> কপি করুন, তারপর এই পেজে ফিরে এসে নিচের ট্রানজেকশন আইডি ফিল্ডে তা লিখুন।'>Copy the <span class="p2p-hl">Transaction ID</span> from your bKash confirmation message, then return to this page and enter it in the Transaction ID field below.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="bkTxn" type="text" placeholder="Transaction ID (e.g. 8N7A2K9XYZ)" style="margin-bottom:0"></div>
     <div class="p2p-upload-row">
@@ -583,10 +593,10 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
     </div>
     <div class="crypto-qr-wrap mfs-qr-wrap" id="nagadQrWrap"><div class="mfs-qr" id="nagadQr"></div></div>
-    <ul class="p2p-steps">
-      <li><b>1.</b> Open Nagad, select "Send Money" — or scan the QR above.</li>
-      <li><b>2.</b> Enter the number and exact amount shown above.</li>
-      <li><b>3.</b> Enter your Transaction ID below once sent.</li>
+    <ul class="p2p-steps" id="steps-nagad-internal">
+      <li><b>1.</b> <span class="i18n-step" data-en='Open Nagad, select "Send Money" — or scan the QR above.' data-bn='নগদ অ্যাপ খুলে "সেন্ড মানি" নির্বাচন করুন — অথবা উপরের QR কোড স্ক্যান করুন।'>Open Nagad, select "Send Money" — or scan the QR above.</span></li>
+      <li><b>2.</b> <span class="i18n-step" data-en='Enter the number and exact amount shown above.' data-bn='উপরে দেখানো নম্বর ও সঠিক পরিমাণ লিখুন।'>Enter the number and exact amount shown above.</span></li>
+      <li><b>3.</b> <span class="i18n-step" data-en='Enter your Transaction ID below once sent.' data-bn='পাঠানোর পর নিচে আপনার ট্রানজেকশন আইডি লিখুন।'>Enter your Transaction ID below once sent.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="ngTxn" type="text" placeholder="Transaction ID (e.g. 8N7A2K9XYZ)" style="margin-bottom:0"></div>
   </div>
@@ -613,10 +623,10 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
     </div>
     <div class="crypto-qr-wrap mfs-qr-wrap" id="rocketQrWrap"><div class="mfs-qr" id="rocketQr"></div></div>
-    <ul class="p2p-steps">
-      <li><b>1.</b> Open Rocket, select "Send Money" — or scan the QR above.</li>
-      <li><b>2.</b> Enter the number and exact amount shown above.</li>
-      <li><b>3.</b> Enter your Transaction ID below once sent.</li>
+    <ul class="p2p-steps" id="steps-rocket-internal">
+      <li><b>1.</b> <span class="i18n-step" data-en='Open Rocket, select "Send Money" — or scan the QR above.' data-bn='রকেট অ্যাপ খুলে "সেন্ড মানি" নির্বাচন করুন — অথবা উপরের QR কোড স্ক্যান করুন।'>Open Rocket, select "Send Money" — or scan the QR above.</span></li>
+      <li><b>2.</b> <span class="i18n-step" data-en='Enter the number and exact amount shown above.' data-bn='উপরে দেখানো নম্বর ও সঠিক পরিমাণ লিখুন।'>Enter the number and exact amount shown above.</span></li>
+      <li><b>3.</b> <span class="i18n-step" data-en='Enter your Transaction ID below once sent.' data-bn='পাঠানোর পর নিচে আপনার ট্রানজেকশন আইডি লিখুন।'>Enter your Transaction ID below once sent.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="rkTxn" type="text" placeholder="Transaction ID (e.g. 8N7A2K9XYZ)" style="margin-bottom:0"></div>
   </div>
@@ -641,10 +651,10 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
     </div>
     <div class="crypto-qr-wrap mfs-qr-wrap" id="cellfinQrWrap"><div class="mfs-qr" id="cellfinQr"></div></div>
-    <ul class="p2p-steps">
-      <li><b>1.</b> Open Cellfin, select "Send Money" — or scan the QR above.</li>
-      <li><b>2.</b> Enter the number and exact amount shown above.</li>
-      <li><b>3.</b> Enter your Transaction ID below once sent.</li>
+    <ul class="p2p-steps" id="steps-cellfin-internal">
+      <li><b>1.</b> <span class="i18n-step" data-en='Open Cellfin, select "Send Money" — or scan the QR above.' data-bn='সেলফিন অ্যাপ খুলে "সেন্ড মানি" নির্বাচন করুন — অথবা উপরের QR কোড স্ক্যান করুন।'>Open Cellfin, select "Send Money" — or scan the QR above.</span></li>
+      <li><b>2.</b> <span class="i18n-step" data-en='Enter the number and exact amount shown above.' data-bn='উপরে দেখানো নম্বর ও সঠিক পরিমাণ লিখুন।'>Enter the number and exact amount shown above.</span></li>
+      <li><b>3.</b> <span class="i18n-step" data-en='Enter your Transaction ID below once sent.' data-bn='পাঠানোর পর নিচে আপনার ট্রানজেকশন আইডি লিখুন।'>Enter your Transaction ID below once sent.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="cfTxn" type="text" placeholder="Transaction ID (e.g. 8N7A2K9XYZ)" style="margin-bottom:0"></div>
   </div>
@@ -654,10 +664,10 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXX</div></div>
       <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX" data-label="bKash number">Copy</button>
     </div>
-    <ul class="p2p-steps">
-      <li><b>1.</b> Open bKash, select "Send Money."</li>
-      <li><b>2.</b> Enter the number above and the exact due amount.</li>
-      <li><b>3.</b> Enter the last 4 digits of your transaction ID below.</li>
+    <ul class="p2p-steps" id="steps-bkash-proxy">
+      <li><b>1.</b> <span class="i18n-step" data-en='Open bKash, select "Send Money."' data-bn='বিকাশ অ্যাপ খুলে "সেন্ড মানি" নির্বাচন করুন।'>Open bKash, select "Send Money."</span></li>
+      <li><b>2.</b> <span class="i18n-step" data-en='Enter the number above and the exact due amount.' data-bn='উপরের নম্বর ও সঠিক বকেয়া পরিমাণ লিখুন।'>Enter the number above and the exact due amount.</span></li>
+      <li><b>3.</b> <span class="i18n-step" data-en='Enter the last 4 digits of your transaction ID below.' data-bn='নিচে আপনার ট্রানজেকশন আইডির শেষ ৪ ডিজিট লিখুন।'>Enter the last 4 digits of your transaction ID below.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="bkTxnP" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
   </div>
@@ -667,10 +677,10 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXX</div></div>
       <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX" data-label="Nagad number">Copy</button>
     </div>
-    <ul class="p2p-steps">
-      <li><b>1.</b> Open Nagad, select "Send Money."</li>
-      <li><b>2.</b> Enter the number above and the exact due amount.</li>
-      <li><b>3.</b> Enter the last 4 digits of your transaction ID below.</li>
+    <ul class="p2p-steps" id="steps-nagad-proxy">
+      <li><b>1.</b> <span class="i18n-step" data-en='Open Nagad, select "Send Money."' data-bn='নগদ অ্যাপ খুলে "সেন্ড মানি" নির্বাচন করুন।'>Open Nagad, select "Send Money."</span></li>
+      <li><b>2.</b> <span class="i18n-step" data-en='Enter the number above and the exact due amount.' data-bn='উপরের নম্বর ও সঠিক বকেয়া পরিমাণ লিখুন।'>Enter the number above and the exact due amount.</span></li>
+      <li><b>3.</b> <span class="i18n-step" data-en='Enter the last 4 digits of your transaction ID below.' data-bn='নিচে আপনার ট্রানজেকশন আইডির শেষ ৪ ডিজিট লিখুন।'>Enter the last 4 digits of your transaction ID below.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="ngTxnP" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
   </div>
@@ -684,10 +694,10 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXXX</div></div>
       <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXXX" data-label="Rocket number">Copy</button>
     </div>
-    <ul class="p2p-steps">
-      <li><b>1.</b> Open Rocket, select "Send Money."</li>
-      <li><b>2.</b> Enter the number above and the exact due amount.</li>
-      <li><b>3.</b> Enter the last 4 digits of your transaction ID below.</li>
+    <ul class="p2p-steps" id="steps-rocket-proxy">
+      <li><b>1.</b> <span class="i18n-step" data-en='Open Rocket, select "Send Money."' data-bn='রকেট অ্যাপ খুলে "সেন্ড মানি" নির্বাচন করুন।'>Open Rocket, select "Send Money."</span></li>
+      <li><b>2.</b> <span class="i18n-step" data-en='Enter the number above and the exact due amount.' data-bn='উপরের নম্বর ও সঠিক বকেয়া পরিমাণ লিখুন।'>Enter the number above and the exact due amount.</span></li>
+      <li><b>3.</b> <span class="i18n-step" data-en='Enter the last 4 digits of your transaction ID below.' data-bn='নিচে আপনার ট্রানজেকশন আইডির শেষ ৪ ডিজিট লিখুন।'>Enter the last 4 digits of your transaction ID below.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="rkTxnP" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
   </div>
@@ -697,10 +707,10 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXX</div></div>
       <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX" data-label="Upay number">Copy</button>
     </div>
-    <ul class="p2p-steps">
-      <li><b>1.</b> Open Upay, select "Send Money."</li>
-      <li><b>2.</b> Enter the number above and the exact due amount.</li>
-      <li><b>3.</b> Enter the last 4 digits of your transaction ID below.</li>
+    <ul class="p2p-steps" id="steps-upay-proxy">
+      <li><b>1.</b> <span class="i18n-step" data-en='Open Upay, select "Send Money."' data-bn='উপায় অ্যাপ খুলে "সেন্ড মানি" নির্বাচন করুন।'>Open Upay, select "Send Money."</span></li>
+      <li><b>2.</b> <span class="i18n-step" data-en='Enter the number above and the exact due amount.' data-bn='উপরের নম্বর ও সঠিক বকেয়া পরিমাণ লিখুন।'>Enter the number above and the exact due amount.</span></li>
+      <li><b>3.</b> <span class="i18n-step" data-en='Enter the last 4 digits of your transaction ID below.' data-bn='নিচে আপনার ট্রানজেকশন আইডির শেষ ৪ ডিজিট লিখুন।'>Enter the last 4 digits of your transaction ID below.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="upTxn" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
   </div>
@@ -710,10 +720,10 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <div><div class="p2p-number-info">Send to this number</div><div class="p2p-number-val">01711-XXXXXX</div></div>
       <button class="p2p-copy-btn" type="button" data-copy="01711-XXXXXX" data-label="Cellfin number">Copy</button>
     </div>
-    <ul class="p2p-steps">
-      <li><b>1.</b> Open Cellfin, select "Send Money."</li>
-      <li><b>2.</b> Enter the number above and the exact due amount.</li>
-      <li><b>3.</b> Enter the last 4 digits of your transaction ID below.</li>
+    <ul class="p2p-steps" id="steps-cellfin-proxy">
+      <li><b>1.</b> <span class="i18n-step" data-en='Open Cellfin, select "Send Money."' data-bn='সেলফিন অ্যাপ খুলে "সেন্ড মানি" নির্বাচন করুন।'>Open Cellfin, select "Send Money."</span></li>
+      <li><b>2.</b> <span class="i18n-step" data-en='Enter the number above and the exact due amount.' data-bn='উপরের নম্বর ও সঠিক বকেয়া পরিমাণ লিখুন।'>Enter the number above and the exact due amount.</span></li>
+      <li><b>3.</b> <span class="i18n-step" data-en='Enter the last 4 digits of your transaction ID below.' data-bn='নিচে আপনার ট্রানজেকশন আইডির শেষ ৪ ডিজিট লিখুন।'>Enter the last 4 digits of your transaction ID below.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="cfTxnP" type="text" placeholder="Last 4 digits of Transaction ID" maxlength="4"></div>
   </div>
@@ -746,9 +756,9 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <div><div class="p2p-number-info">Amount to send</div><div class="p2p-number-val mfs-amount-val" style="color:var(--bank-text)">৳0</div></div>
       <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
     </div>
-    <ul class="p2p-steps">
-      <li><b>1.</b> Transfer the exact due amount to the account above via your bank app or branch.</li>
-      <li><b>2.</b> Enter your transaction/reference ID below once sent.</li>
+    <ul class="p2p-steps" id="steps-bank-internal">
+      <li><b>1.</b> <span class="i18n-step" data-en='Transfer the exact due amount to the account above via your bank app or branch.' data-bn='আপনার ব্যাংক অ্যাপ বা শাখার মাধ্যমে উপরের অ্যাকাউন্টে সঠিক বকেয়া পরিমাণ ট্রান্সফার করুন।'>Transfer the exact due amount to the account above via your bank app or branch.</span></li>
+      <li><b>2.</b> <span class="i18n-step" data-en='Enter your transaction/reference ID below once sent.' data-bn='পাঠানোর পর নিচে আপনার ট্রানজেকশন/রেফারেন্স আইডি লিখুন।'>Enter your transaction/reference ID below once sent.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="bnkTxn" type="text" placeholder="Transaction / Reference ID" style="margin-bottom:0"></div>
   </div>
@@ -781,9 +791,9 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <div><div class="p2p-number-info">Amount to send</div><div class="p2p-number-val mfs-amount-val" style="color:var(--bank-text)">৳0</div></div>
       <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
     </div>
-    <ul class="p2p-steps">
-      <li><b>1.</b> Transfer the exact due amount to the account above via your bank app or branch.</li>
-      <li><b>2.</b> Enter your transaction/reference ID below once sent.</li>
+    <ul class="p2p-steps" id="steps-bank-proxy">
+      <li><b>1.</b> <span class="i18n-step" data-en='Transfer the exact due amount to the account above via your bank app or branch.' data-bn='আপনার ব্যাংক অ্যাপ বা শাখার মাধ্যমে উপরের অ্যাকাউন্টে সঠিক বকেয়া পরিমাণ ট্রান্সফার করুন।'>Transfer the exact due amount to the account above via your bank app or branch.</span></li>
+      <li><b>2.</b> <span class="i18n-step" data-en='Enter your transaction/reference ID below once sent.' data-bn='পাঠানোর পর নিচে আপনার ট্রানজেকশন/রেফারেন্স আইডি লিখুন।'>Enter your transaction/reference ID below once sent.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="bnkTxnP" type="text" placeholder="Transaction / Reference ID" style="margin-bottom:0"></div>
   </div>
@@ -824,26 +834,25 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <p>Send <b>USDT</b> or <b>USDC</b> on the <b>BEP20 (BNB Smart Chain)</b> network only. Sending through another network may result in permanent loss of funds.</p>
     </div>
     <h3 style="font-size:13px;font-weight:800;margin-bottom:8px">How to Pay</h3>
-    <ul class="p2p-steps">
-      <li><b>1.</b> <div><b style="display:block;color:var(--text)">Open your wallet</b>Open Trust Wallet, Binance, or another crypto wallet.</div></li>
-      <li><b>2.</b> <div><b style="display:block;color:var(--text)">Send the payment</b>Send the exact amount in USDT or USDC using BEP20 (BNB Smart Chain).</div></li>
-      <li><b>3.</b> <div><b style="display:block;color:var(--text)">Copy your TXID</b>After sending, open the transaction details and copy the Transaction Hash (TXID).</div></li>
+    <ul class="p2p-steps" id="steps-crypto">
+      <li><b>1.</b> <div class="i18n-step" data-en='<b style="display:block;color:var(--text)">Open your wallet</b>Open Trust Wallet, Binance, or another crypto wallet.' data-bn='<b style="display:block;color:var(--text)">আপনার ওয়ালেট খুলুন</b>Trust Wallet, Binance অথবা অন্য কোনো ক্রিপ্টো ওয়ালেট খুলুন।'><b style="display:block;color:var(--text)">Open your wallet</b>Open Trust Wallet, Binance, or another crypto wallet.</div></li>
+      <li><b>2.</b> <div class="i18n-step" data-en='<b style="display:block;color:var(--text)">Send the payment</b>Send the exact amount in USDT or USDC using BEP20 (BNB Smart Chain).' data-bn='<b style="display:block;color:var(--text)">পেমেন্ট পাঠান</b>BEP20 (BNB Smart Chain) নেটওয়ার্ক ব্যবহার করে সঠিক পরিমাণ USDT বা USDC পাঠান।'><b style="display:block;color:var(--text)">Send the payment</b>Send the exact amount in USDT or USDC using BEP20 (BNB Smart Chain).</div></li>
+      <li><b>3.</b> <div class="i18n-step" data-en='<b style="display:block;color:var(--text)">Copy your TXID</b>After sending, open the transaction details and copy the Transaction Hash (TXID).' data-bn='<b style="display:block;color:var(--text)">TXID কপি করুন</b>পাঠানোর পর ট্রানজেকশনের বিস্তারিত খুলে ট্রানজেকশন হ্যাশ (TXID) কপি করুন।'><b style="display:block;color:var(--text)">Copy your TXID</b>After sending, open the transaction details and copy the Transaction Hash (TXID).</div></li>
       <li>
         <b>4.</b>
         <div style="flex:1">
-          <b style="display:block;color:var(--text)">Upload a screenshot (Optional)</b>
-          Upload a screenshot of your completed payment to help us verify it faster.
+          <div class="i18n-step" data-en='<b style="display:block;color:var(--text)">Upload a screenshot (Optional)</b>Upload a screenshot of your completed payment to help us verify it faster.' data-bn='<b style="display:block;color:var(--text)">স্ক্রিনশট আপলোড করুন (ঐচ্ছিক)</b>দ্রুত যাচাইয়ের জন্য আপনার সম্পন্ন পেমেন্টের স্ক্রিনশট আপলোড করুন।'><b style="display:block;color:var(--text)">Upload a screenshot (Optional)</b>Upload a screenshot of your completed payment to help us verify it faster.</div>
           <div id="screenshotDrop" style="margin-top:8px;border:1.5px dashed var(--border);border-radius:11px;padding:12px;text-align:center;cursor:pointer;background:var(--surface2)">
             <input id="cryptoScreenshot" type="file" accept="image/*" style="display:none">
-            <div id="screenshotEmpty" style="font-size:11.5px;color:var(--t2)">Tap to choose an image</div>
+            <div id="screenshotEmpty" style="font-size:11.5px;color:var(--t2)"><span class="i18n-step" data-en='Tap to choose an image' data-bn='ছবি বেছে নিতে ট্যাপ করুন'>Tap to choose an image</span></div>
             <div id="screenshotPreviewWrap" style="display:none;position:relative">
               <img id="screenshotPreview" style="max-width:100%;max-height:160px;border-radius:8px;display:block;margin:0 auto">
-              <button type="button" id="screenshotRemove" style="margin-top:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:6px 12px;font-size:11px;font-weight:700;color:var(--text)">Remove</button>
+              <button type="button" id="screenshotRemove" style="margin-top:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:6px 12px;font-size:11px;font-weight:700;color:var(--text)"><span class="i18n-step" data-en='Remove' data-bn='মুছুন'>Remove</span></button>
             </div>
           </div>
         </div>
       </li>
-      <li><b>5.</b> <div><b style="display:block;color:var(--text)">Submit your payment</b>Paste your TXID and tap "I've Sent the Payment."</div></li>
+      <li><b>5.</b> <div class="i18n-step" data-en='<b style="display:block;color:var(--text)">Submit your payment</b>Paste your TXID and tap "I&#39;ve Sent the Payment."' data-bn='<b style="display:block;color:var(--text)">পেমেন্ট সাবমিট করুন</b>আপনার TXID পেস্ট করুন এবং "I&#39;ve Sent the Payment" এ ট্যাপ করুন।'><b style="display:block;color:var(--text)">Submit your payment</b>Paste your TXID and tap "I've Sent the Payment."</div></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="cryptoTxn" type="text" placeholder="Transaction hash / TXID (0x...)" style="margin-bottom:0"></div>
   </div>
@@ -1704,6 +1713,36 @@ bkpProceed.addEventListener('click', () => {
 
 bkpCancel.addEventListener('click', () => closeOverlay(bkashNumOverlay));
 bkashNumOverlay.addEventListener('click', (e) => { if(e.target === bkashNumOverlay) closeOverlay(bkashNumOverlay); });
+
+/* Payment-steps language toggle (EN / বাংলা) — only translates the numbered
+   "how to pay" steps in each method panel; everything else on the page stays
+   in English. Swaps innerHTML on each .i18n-step node only, so interactive
+   elements (file input, drop-zone, remove button) inside the crypto steps
+   are never re-rendered and keep their listeners. */
+function applyStepsLang(lang){
+  document.querySelectorAll('.i18n-step').forEach((el) => {
+    const val = el.getAttribute('data-' + lang);
+    if(val !== null) el.innerHTML = val;
+  });
+  const toggle = document.getElementById('stepsLangToggle');
+  if(toggle){
+    toggle.classList.toggle('bn', lang === 'bn');
+    toggle.querySelectorAll('button').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+  }
+  try { localStorage.setItem('sv-steps-lang', lang); } catch(e) {}
+}
+(function initStepsLangToggle(){
+  const toggle = document.getElementById('stepsLangToggle');
+  if(!toggle) return;
+  toggle.querySelectorAll('button').forEach((btn) => {
+    btn.addEventListener('click', () => applyStepsLang(btn.dataset.lang));
+  });
+  let saved = 'en';
+  try { saved = localStorage.getItem('sv-steps-lang') || 'en'; } catch(e) {}
+  if(saved === 'bn') applyStepsLang('bn');
+})();
 
 /* Soft 30-min payment countdown — no auto-cancel, just flags it as expired for admin/customer to see */
 let bkCountdownInterval = null;
