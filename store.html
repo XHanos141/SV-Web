@@ -175,7 +175,7 @@ body{
   background:var(--surface);border:1px solid var(--border);
   border-radius:var(--radius-sm);
   display:flex;align-items:center;gap:6px;
-  padding:0 10px 0 9px;
+  padding:0 10px 0 3px;
   box-shadow:var(--shadow-sm);
   cursor:pointer;user-select:none;
   transition:border-color 0.2s var(--ease),box-shadow 0.2s var(--ease);
@@ -191,10 +191,10 @@ body{
   display:flex;align-items:center;justify-content:center;
 }
 .s-type-badge .cat-badge{
-  width:36px;height:36px;border-radius:10px;
+  width:40px;height:40px;border-radius:9px;
 }
 .s-type-badge .cat-badge svg{
-  width:20px;height:20px;
+  width:23px;height:23px;
 }
 .s-type-chevron{
   color:var(--text3);flex-shrink:0;
@@ -1584,7 +1584,7 @@ function buyNow(btn){
   if(!indicator || !track) return;
 
   var resizeTimer = null;
-  var lastW = 0, lastX = 0;
+  var lastW = -1, lastX = -1;
   var savedScroll = 0;
 
   function positionTabIndicator(animate){
@@ -1605,6 +1605,8 @@ function buyNow(btn){
   }
 
   requestAnimationFrame(function(){ positionTabIndicator(false); });
+  window.addEventListener('load', function(){ positionTabIndicator(false); });
+  setTimeout(function(){ positionTabIndicator(false); }, 300);
 
   window.addEventListener('resize', function(){
     clearTimeout(resizeTimer);
