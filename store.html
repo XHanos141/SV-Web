@@ -764,7 +764,34 @@ body.dark-mode .trending-off{
   padding:10px 14px 12px;
   position:relative;z-index:10;
 }
+.s-tabs-row{
+  display:flex;align-items:center;gap:8px;
+}
+.s-filter-btn{
+  position:relative;flex-shrink:0;
+  width:40px;height:40px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text2);cursor:pointer;
+  box-shadow:var(--shadow-sm);
+  transition:border-color 0.2s var(--ease),color 0.2s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.s-filter-btn svg{width:18px;height:18px}
+.s-filter-btn:active{opacity:0.8}
+.s-filter-btn.has-active{border-color:var(--accent);color:var(--accent)}
+.s-filter-count{
+  position:absolute;top:-5px;right:-5px;
+  min-width:16px;height:16px;padding:0 4px;
+  border-radius:8px;background:var(--accent);color:#fff;
+  font-family:var(--font-display);font-size:10px;font-weight:800;
+  display:none;align-items:center;justify-content:center;
+  box-shadow:0 0 0 2px var(--bg);
+}
+.s-filter-count.show{display:flex}
 .s-tabs-scroll{
+  flex:1;min-width:0;
   overflow-x:auto;scrollbar-width:none;
 }
 .s-tabs-scroll::-webkit-scrollbar{display:none}
@@ -875,6 +902,68 @@ body.dark-mode .s-tab{
 }
 .s-empty span{font-size:12px;font-weight:500}
 .s-tabs-wrap.is-hidden{display:none}
+
+/* ─── BRAND FILTER SHEET ─── */
+.s-sheet-backdrop{
+  position:fixed;inset:0;background:rgba(6,12,24,0.45);
+  z-index:600;opacity:0;pointer-events:none;
+  transition:opacity 0.25s ease;
+}
+.s-sheet-backdrop.show{opacity:1;pointer-events:auto}
+.s-sheet{
+  position:fixed;top:var(--nav-h);left:0;bottom:var(--bottom-nav-h);z-index:700;
+  width:max-content;min-width:200px;max-width:min(85vw,340px);
+  background:var(--surface);
+  border-radius:0 20px 20px 0;
+  padding:18px 18px;
+  box-shadow:var(--shadow-lg);
+  transform:translateX(-100%);
+  transition:transform 0.3s var(--ease);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.s-sheet.show{transform:translateX(0)}
+.s-sheet-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;flex-shrink:0;
+}
+.s-sheet-header span{
+  font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--text);
+}
+.s-sheet-close{
+  width:28px;height:28px;border-radius:8px;border:none;
+  background:var(--surface2);color:var(--text2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.s-sheet-close svg{width:14px;height:14px}
+.s-sheet-chips{
+  display:flex;flex-direction:column;gap:8px;margin-bottom:14px;
+  flex:1 1 auto;min-height:0;overflow-y:auto;
+}
+.s-sheet-chip{
+  font-family:var(--font-body);font-size:14px;font-weight:800;
+  color:var(--text);background:var(--surface2);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:12px 16px;cursor:pointer;user-select:none;
+  display:flex;align-items:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:background 0.15s,border-color 0.15s,color 0.15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.s-sheet-chip.active{
+  background:var(--accent-soft);border-color:var(--accent);color:var(--accent);
+}
+.s-sheet-actions{
+  display:flex;gap:10px;flex-shrink:0;
+}
+.s-sheet-clear,.s-sheet-apply{
+  flex:1;height:44px;border-radius:var(--radius-sm);
+  font-family:var(--font-display);font-size:13px;font-weight:800;
+  cursor:pointer;transition:opacity 0.15s;
+}
+.s-sheet-clear{background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
+.s-sheet-apply{background:var(--accent);border:none;color:#fff}
+.s-sheet-clear:active,.s-sheet-apply:active{opacity:0.8}
 
 /* ─── Animation ─── */
 @keyframes cardIn{
@@ -1160,30 +1249,52 @@ body.dark-mode .s-tab{
   </div>
 </div>
 
-<!-- TABS (Sliding Pill) -->
+<!-- TABS (Sliding Pill) + Brand Filter -->
 <div class="s-tabs-wrap">
-  <div class="s-tabs-scroll">
-    <div class="s-tabs-track" id="sTabsTrack">
-      <input class="ui-control s-tab-option" type="radio" name="category" id="cat-all" checked>
-      <label class="s-tab" for="cat-all">All</label>
+  <div class="s-tabs-row">
+    <button class="s-filter-btn" id="sFilterBtn" type="button" aria-haspopup="dialog" aria-label="Filter by brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2.1" fill="var(--surface)"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2.1" fill="var(--surface)"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2.1" fill="var(--surface)"/></svg>
+      <span class="s-filter-count" id="sFilterCount">0</span>
+    </button>
+    <div class="s-tabs-scroll">
+      <div class="s-tabs-track" id="sTabsTrack">
+        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-all" checked>
+        <label class="s-tab" for="cat-all">All</label>
 
-      <input class="ui-control s-tab-option" type="radio" name="category" id="cat-protein">
-      <label class="s-tab" for="cat-protein">Protein</label>
+        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-protein">
+        <label class="s-tab" for="cat-protein">Protein</label>
 
-      <input class="ui-control s-tab-option" type="radio" name="category" id="cat-pre">
-      <label class="s-tab" for="cat-pre">Pre-Workout</label>
+        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-pre">
+        <label class="s-tab" for="cat-pre">Pre-Workout</label>
 
-      <input class="ui-control s-tab-option" type="radio" name="category" id="cat-vitamins">
-      <label class="s-tab" for="cat-vitamins">Vitamins</label>
+        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-vitamins">
+        <label class="s-tab" for="cat-vitamins">Vitamins</label>
 
-      <input class="ui-control s-tab-option" type="radio" name="category" id="cat-creatine">
-      <label class="s-tab" for="cat-creatine">Creatine</label>
+        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-creatine">
+        <label class="s-tab" for="cat-creatine">Creatine</label>
 
-      <input class="ui-control s-tab-option" type="radio" name="category" id="cat-fat">
-      <label class="s-tab" for="cat-fat">Fat Burners</label>
+        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-fat">
+        <label class="s-tab" for="cat-fat">Fat Burners</label>
 
-      <div class="s-tab-indicator" id="sTabIndicator"></div>
+        <div class="s-tab-indicator" id="sTabIndicator"></div>
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- BRAND FILTER SHEET -->
+<div class="s-sheet-backdrop" id="sSheetBackdrop"></div>
+<div class="s-sheet" id="sBrandSheet" role="dialog" aria-modal="true" aria-label="Filter by brand">
+  <div class="s-sheet-header">
+    <span>Brand</span>
+    <button class="s-sheet-close" id="sSheetClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+  <div class="s-sheet-chips" id="sBrandChips"></div>
+  <div class="s-sheet-actions">
+    <button class="s-sheet-clear" id="sSheetClear" type="button">Clear</button>
+    <button class="s-sheet-apply" id="sSheetApply" type="button">Apply</button>
   </div>
 </div>
 
@@ -1264,14 +1375,14 @@ body.dark-mode .s-tab{
 })();
 
 const products = [
-  {name:'Optimum Nutrition Gold Standard 100% Whey Protein Isolate 2kg',type:'Supplement',cat:'Protein',price:4200,old:5600,discount:'20% OFF',rating:3.5,stock:'in',sale:true},
-  {name:'Dymatize ISO100 Hydrolyzed Whey Protein 2.2kg',type:'Supplement',cat:'Protein',price:4800,old:6000,discount:'20% OFF',rating:4.2,stock:'in',sale:false},
-  {name:'Cellucor C4 Original Pre-Workout 60 Servings',type:'Supplement',cat:'Pre-Workout',price:2200,old:2800,discount:'21% OFF',rating:4.0,stock:'low',sale:true},
-  {name:'Optimum Nutrition Micronized Creatine Monohydrate 600g',type:'Supplement',cat:'Creatine',price:1500,old:1900,discount:'21% OFF',rating:4.6,stock:'in',sale:false},
-  {name:'MuscleTech Nitro-Tech Whey Protein 1.8kg',type:'Supplement',cat:'Protein',price:3800,old:4500,discount:'15% OFF',rating:3.8,stock:'in',sale:true},
-  {name:'NOW Foods Vitamin D3 5000 IU 120 Softgels',type:'Supplement',cat:'Vitamins',price:800,old:1000,discount:'20% OFF',rating:4.5,stock:'in',sale:false},
-  {name:'EVLution Nutrition BCAA Energy 30 Servings',type:'Supplement',cat:'Pre-Workout',price:1800,old:2200,discount:'18% OFF',rating:4.1,stock:'in',sale:true},
-  {name:'MusclePharm Combat Protein Powder 2.2kg',type:'Supplement',cat:'Protein',price:3500,old:4200,discount:'17% OFF',rating:3.2,stock:'out',sale:false},
+  {name:'Optimum Nutrition Gold Standard 100% Whey Protein Isolate 2kg',type:'Supplement',cat:'Protein',brand:'Optimum Nutrition',price:4200,old:5600,discount:'20% OFF',rating:3.5,stock:'in',sale:true},
+  {name:'Dymatize ISO100 Hydrolyzed Whey Protein 2.2kg',type:'Supplement',cat:'Protein',brand:'Dymatize',price:4800,old:6000,discount:'20% OFF',rating:4.2,stock:'in',sale:false},
+  {name:'Cellucor C4 Original Pre-Workout 60 Servings',type:'Supplement',cat:'Pre-Workout',brand:'Cellucor',price:2200,old:2800,discount:'21% OFF',rating:4.0,stock:'low',sale:true},
+  {name:'Optimum Nutrition Micronized Creatine Monohydrate 600g',type:'Supplement',cat:'Creatine',brand:'Optimum Nutrition',price:1500,old:1900,discount:'21% OFF',rating:4.6,stock:'in',sale:false},
+  {name:'MuscleTech Nitro-Tech Whey Protein 1.8kg',type:'Supplement',cat:'Protein',brand:'MuscleTech',price:3800,old:4500,discount:'15% OFF',rating:3.8,stock:'in',sale:true},
+  {name:'NOW Foods Vitamin D3 5000 IU 120 Softgels',type:'Supplement',cat:'Vitamins',brand:'NOW Foods',price:800,old:1000,discount:'20% OFF',rating:4.5,stock:'in',sale:false},
+  {name:'EVLution Nutrition BCAA Energy 30 Servings',type:'Supplement',cat:'Pre-Workout',brand:'EVLution Nutrition',price:1800,old:2200,discount:'18% OFF',rating:4.1,stock:'in',sale:true},
+  {name:'MusclePharm Combat Protein Powder 2.2kg',type:'Supplement',cat:'Protein',brand:'MusclePharm',price:3500,old:4200,discount:'17% OFF',rating:3.2,stock:'out',sale:false},
   /* Cross-store demo products */
   {name:'Apple AirPods Pro 2nd Gen with MagSafe Case',type:'Gadget',cat:'Audio',price:18500,old:22000,discount:'16% OFF',rating:4.7,stock:'in',sale:true},
   {name:'Anker 737 Power Bank 24,000mAh 140W',type:'Gadget',cat:'Accessories',price:7200,old:8500,discount:'15% OFF',rating:4.4,stock:'in',sale:false},
@@ -1546,7 +1657,8 @@ function showToast(msg){
 
 /* ─── Store Controller: type + category + search (single render pipeline) ─── */
 (function(){
-  var S = { type:'Supplement', cat:'All', q:'' };
+  var S = { type:'Supplement', cat:'All', q:'', brand:[] };
+  var pendingBrand = [];
   var TYPE_META = {
     Supplement:  { cls:'cat-supplement',  icon:'#cat-icon-supplement',  vb:'0 0 512 512', hasCats:true  },
     Gadget: { cls:'cat-gadget', icon:'#cat-icon-gadget', vb:'0 0 64 64',   hasCats:false },
@@ -1584,6 +1696,7 @@ function showToast(msg){
     return products.filter(function(p){
       return p.type === S.type &&
              (S.cat === 'All' || p.cat === S.cat) &&
+             (!S.brand.length || S.brand.indexOf(p.brand) !== -1) &&
              (!q || p.name.toLowerCase().indexOf(q) !== -1);
     });
   }
@@ -1738,6 +1851,9 @@ function showToast(msg){
     searchInput.value = ''; S.q = '';
     searchClear.classList.remove('show');
     hideSuggest();
+    S.brand = []; pendingBrand = [];
+    updateFilterBadge();
+    buildBrandChips();
     var allRadio = document.getElementById('cat-all');
     if(S.cat !== 'All' && allRadio){
       S.cat = 'All';
@@ -1755,6 +1871,80 @@ function showToast(msg){
       render();
     });
   });
+
+  /* ─── Brand filter sheet ─── */
+  var filterBtn      = document.getElementById('sFilterBtn');
+  var filterCount    = document.getElementById('sFilterCount');
+  var sheetBackdrop  = document.getElementById('sSheetBackdrop');
+  var brandSheet     = document.getElementById('sBrandSheet');
+  var sheetClose     = document.getElementById('sSheetClose');
+  var brandChipsBox  = document.getElementById('sBrandChips');
+  var sheetClear     = document.getElementById('sSheetClear');
+  var sheetApply     = document.getElementById('sSheetApply');
+
+  function buildBrandChips(){
+    var brands = [];
+    products.forEach(function(p){
+      if(p.type === S.type && p.brand && brands.indexOf(p.brand) === -1) brands.push(p.brand);
+    });
+    brands.sort();
+    brandChipsBox.innerHTML = brands.map(function(b){
+      return '<div class="s-sheet-chip" data-brand="' + esc(b) + '">' + esc(b) + '</div>';
+    }).join('');
+    filterBtn.style.display = brands.length ? '' : 'none';
+  }
+
+  function syncChipsFromPending(){
+    brandChipsBox.querySelectorAll('.s-sheet-chip').forEach(function(c){
+      c.classList.toggle('active', pendingBrand.indexOf(c.dataset.brand) !== -1);
+    });
+  }
+
+  function updateFilterBadge(){
+    filterBtn.classList.toggle('has-active', S.brand.length > 0);
+    filterCount.classList.toggle('show', S.brand.length > 0);
+    filterCount.textContent = S.brand.length;
+  }
+
+  function openSheet(){
+    pendingBrand = S.brand.slice();
+    syncChipsFromPending();
+    sheetBackdrop.classList.add('show');
+    brandSheet.classList.add('show');
+  }
+  function closeSheet(){
+    sheetBackdrop.classList.remove('show');
+    brandSheet.classList.remove('show');
+  }
+
+  filterBtn.addEventListener('click', function(e){ e.stopPropagation(); openSheet(); });
+  sheetBackdrop.addEventListener('click', closeSheet);
+  sheetClose.addEventListener('click', closeSheet);
+  brandSheet.addEventListener('click', function(e){ e.stopPropagation(); });
+
+  brandChipsBox.addEventListener('click', function(e){
+    var chip = e.target.closest('.s-sheet-chip');
+    if(!chip) return;
+    var b = chip.dataset.brand;
+    var i = pendingBrand.indexOf(b);
+    if(i === -1) pendingBrand.push(b); else pendingBrand.splice(i,1);
+    syncChipsFromPending();
+  });
+
+  sheetClear.addEventListener('click', function(){
+    pendingBrand = [];
+    syncChipsFromPending();
+  });
+
+  sheetApply.addEventListener('click', function(){
+    S.brand = pendingBrand.slice();
+    updateFilterBadge();
+    closeSheet();
+    render();
+  });
+
+  buildBrandChips();
+  updateFilterBadge();
 
   render(false);
 
