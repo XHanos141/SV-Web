@@ -2526,11 +2526,10 @@ document.querySelectorAll('.rv').forEach(el => {
   }, {passive:true});
 
   /* Category badge click -> store.html filtered to that category */
-  var CATEGORY_BY_IDX = ['Supplement','Gadget','Cosmetic','Clothing','General'];
   cards.forEach(function(card){
     card.addEventListener('click', function(){
-      var idx = parseInt(card.dataset.idx, 10);
-      var cat = CATEGORY_BY_IDX[idx];
+      var label = card.querySelector('.wb-label');
+      var cat = label ? label.textContent.trim() : '';
       if(cat) window.location.href = 'store.html?cat=' + encodeURIComponent(cat);
     });
   });
