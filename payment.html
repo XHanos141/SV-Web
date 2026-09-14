@@ -168,19 +168,31 @@ body.dark-mode .mc-visa-svg path{fill:#fff}
 .coin-inline{width:14px;height:14px;display:inline-block;vertical-align:middle;margin:0 3px -2px 3px}
 .detail-head h3{font-size:13px;font-weight:800}
 .detail-head h3{flex:1}
-.pay-timer-card{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.pay-timer-lottie{width:82px;height:82px;flex-shrink:0;position:relative}
-.pay-timer-lottie svg{opacity:0;transition:opacity .25s ease}
-.pay-timer-lottie.ready svg{opacity:1}
-.pay-timer-info{flex:1;min-width:0}
-.pay-timer-label{font-size:11px;color:var(--t2);font-weight:600}
-.pay-timer-value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13.5px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:.2px;pointer-events:none}
-.pay-timer-card.warn .pay-timer-value{color:#c07a1e}
-.pay-timer-card.danger .pay-timer-value{color:#c23b3b}
-.lang-toggle{display:flex;align-items:center;background:var(--surface2);border:1.5px solid var(--border);border-radius:20px;padding:2px;position:relative;flex-shrink:0}
-.lang-toggle button{position:relative;z-index:1;border:none;background:transparent;font-family:var(--fd);font-size:10px;font-weight:800;letter-spacing:.02em;padding:6px 8px;border-radius:16px;color:var(--t2);cursor:pointer;transition:color .25s ease;white-space:nowrap}
+.pay-timer-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.pt-timer-widget{
+  --muted:#8a8f99;
+  --ring-color:#009b72;
+  --timer-color:#10233f;
+  --spinner-color:#2a2d34;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+.pt-timer-widget .ring-wrap{position:relative;width:72px;height:72px;flex-shrink:0}
+.pt-timer-widget #ring{position:absolute;top:50%;left:50%;width:72px;height:72px;transform:translate(-50%, -50%)}
+.pt-timer-widget #ring path{stroke:var(--ring-color) !important;transition:stroke 0.3s ease}
+.pt-timer-widget .readout{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:700;letter-spacing:.5px;color:var(--timer-color)}
+.pt-timer-widget .spinner{position:absolute;inset:0;transform-origin:50% 50%}
+.pt-timer-widget .label{color:var(--muted);font-size:12.5px;letter-spacing:0.01em;line-height:1.35;flex:1;min-width:0}
+.pt-timer-widget.expired .readout,.pt-timer-widget.expired .label{color:var(--muted)}
+.pt-timer-widget.expired .readout{font-size:9px;letter-spacing:0}
+body.dark-mode .pt-timer-widget{--timer-color:#f5f7fa;--spinner-color:#e4e7ec;--muted:#9aa3af}
+.lang-toggle{display:flex;align-items:center;background:var(--surface2);border:1.5px solid var(--border);border-radius:22px;padding:3px;position:relative;flex-shrink:0;cursor:pointer;box-shadow:inset 0 1px 2px rgba(0,0,0,.05);user-select:none;transition:transform .15s ease}
+.lang-toggle:active{transform:scale(.97)}
+.lang-toggle button{position:relative;z-index:1;border:none;background:transparent;font-family:var(--fd);font-size:11px;font-weight:800;letter-spacing:.02em;padding:7px 13px;border-radius:18px;color:var(--t2);cursor:pointer;transition:color .25s ease;white-space:nowrap;pointer-events:none}
 .lang-toggle button.active{color:#fff}
-.lang-toggle-thumb{position:absolute;top:2px;left:2px;bottom:2px;width:calc(50% - 2px);background:var(--cyan);border-radius:16px;transition:transform .28s cubic-bezier(.65,0,.35,1);z-index:0}
+.lang-toggle-thumb{position:absolute;top:3px;left:3px;bottom:3px;width:calc(50% - 3px);background:var(--cyan);border-radius:18px;box-shadow:0 2px 8px rgba(0,157,220,.4);transition:transform .28s cubic-bezier(.65,0,.35,1);z-index:0}
 .lang-toggle.bn .lang-toggle-thumb{transform:translateX(100%)}
 
 /* Gateway-style (internal bKash/Nagad/Card) */
@@ -214,17 +226,18 @@ body.dark-mode .pay-input{border-color:rgba(255,255,255,0.25)}
 .p2p-copy-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:7px 12px;font-size:11px;font-weight:700;color:var(--text);flex-shrink:0;transition:transform .12s ease,background .15s ease,border-color .15s ease,color .15s ease;cursor:pointer}
 .p2p-copy-btn:active{transform:scale(.92)}
 .p2p-copy-btn.copied-flash{background:var(--panel-accent, #2f9b68);border-color:var(--panel-accent, #2f9b68);color:#fff}
-.p2p-steps{list-style:none;padding:0;margin-bottom:4px}
+.p2p-steps{list-style:none;padding:0;margin-bottom:0}
 .p2p-guide-img-wrap{border:1.5px solid rgba(15,35,65,0.14);border-radius:11px;overflow:hidden;margin-bottom:10px}
 body.dark-mode .p2p-guide-img-wrap{border-color:rgba(255,255,255,0.14)}
 .p2p-guide-img-wrap img{display:block;width:100%;height:auto}
 .p2p-steps li{display:flex;gap:8px;font-size:13.5px;color:var(--t2);line-height:1.55;padding:6px 0}
+.p2p-steps li:last-child{padding-bottom:0}
 .p2p-steps li b{color:var(--text);flex-shrink:0}
 .p2p-hl{font-weight:700;color:var(--text)}
 
-.p2p-txn-row{margin-top:8px}
+.p2p-txn-row{margin-top:4px}
 .p2p-txn-row input{margin-bottom:0}
-.p2p-upload-row{margin-top:10px}
+.p2p-upload-row{margin-top:4px}
 .p2p-upload-box{border:1.5px dashed rgba(15,35,65,0.28);border-radius:11px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:border-color .15s ease,background .15s ease}
 body.dark-mode .p2p-upload-box{border-color:rgba(255,255,255,0.25)}
 .p2p-upload-box:hover{border-color:var(--panel-accent)}
@@ -293,7 +306,7 @@ body.dark-mode .due-banner{background:rgba(244,169,34,.14)}
 .pay-bar-total{flex:1;min-width:0}
 .pay-bar-total .pb-label{font-size:9.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
 .pay-bar-total .pb-val{font-size:16px;font-weight:800;color:var(--text)}
-.pay-btn{background:var(--orange);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:7px;transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
+.pay-btn{background:var(--cyan);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:7px;transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
 .pay-btn:active{transform:scale(.96)}
 .pay-btn:disabled{opacity:.5;pointer-events:none}
 .pay-btn svg{width:15px;height:15px;stroke:#fff;stroke-width:2.3;fill:none}
@@ -544,17 +557,22 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <div><div class="p2p-number-info">Amount to send</div><div class="p2p-number-val mfs-amount-val" style="color:var(--bkash-text)">৳0</div></div>
       <button class="p2p-copy-btn mfs-amount-copy" type="button" data-copy="0" data-label="Amount">Copy</button>
     </div>
-    <div class="pay-timer-card" id="bkTimerCard">
+    <div class="pay-timer-row">
+      <div class="pt-timer-widget" id="bkTimerCard">
+        <div class="ring-wrap">
+          <div id="ring"></div>
+          <svg class="spinner" id="spinner" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="120" cy="120" r="75" fill="none" stroke="var(--spinner-color)" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="57.2 414" />
+          </svg>
+          <div class="readout" id="timerText">20:00</div>
+        </div>
+        <div class="label" id="statusLabel">Complete payment before time runs out</div>
+      </div>
       <div class="lang-toggle" id="stepsLangToggle" role="group" aria-label="Payment steps language">
         <div class="lang-toggle-thumb"></div>
         <button type="button" data-lang="en" class="active">EN</button>
         <button type="button" data-lang="bn">বাং</button>
-      </div>
-      <div class="pay-timer-lottie" id="bkTimerLottie">
-        <div class="pay-timer-value" id="bkCountdownText">30:00</div>
-      </div>
-      <div class="pay-timer-info">
-        <div class="pay-timer-label">Complete payment within</div>
       </div>
     </div>
     <div class="crypto-qr-wrap mfs-qr-wrap" id="bkashQrWrap"><div class="mfs-qr" id="bkashQr"></div></div>
@@ -565,12 +583,15 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <li><b>3.</b> <span class="i18n-step" data-en='Copy the <span class="p2p-hl">Transaction ID</span> from your bKash confirmation message, then return to this page and enter it in the Transaction ID field below.' data-bn='আপনার বিকাশ কনফার্মেশন মেসেজ থেকে <span class="p2p-hl">ট্রানজেকশন আইডি</span> কপি করুন, তারপর এই পেজে ফিরে এসে নিচের ট্রানজেকশন আইডি ফিল্ডে তা লিখুন।'>Copy the <span class="p2p-hl">Transaction ID</span> from your bKash confirmation message, then return to this page and enter it in the Transaction ID field below.</span></li>
     </ul>
     <div class="p2p-txn-row"><input class="pay-input" id="bkTxn" type="text" placeholder="Transaction ID (e.g. 8N7A2K9XYZ)" style="margin-bottom:0"></div>
+    <ul class="p2p-steps" style="margin-top:2px">
+      <li><b>4.</b> <span class="i18n-step" data-en='Upload your <span class="p2p-hl">payment receipt</span> or <span class="p2p-hl">screenshot</span> to help us verify faster (optional).' data-bn='দ্রুত যাচাইয়ে সাহায্য করতে আপনার <span class="p2p-hl">পেমেন্ট রসিদ</span> বা <span class="p2p-hl">স্ক্রিনশট</span> আপলোড করুন (ঐচ্ছিক)।'>Upload your <span class="p2p-hl">payment receipt</span> or <span class="p2p-hl">screenshot</span> to help us verify faster (optional).</span></li>
+    </ul>
     <div class="p2p-upload-row">
       <input type="file" id="bkScreenshotInput" accept="image/*" style="display:none">
       <label class="p2p-upload-box" id="bkUploadBox" for="bkScreenshotInput">
         <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5L5 19"/></svg>
-        <div class="p2p-upload-label">Upload payment screenshot</div>
-        <div class="p2p-upload-hint">Optional — helps us verify faster</div>
+        <div class="p2p-upload-label">Upload payment receipt or screenshot</div>
+        <div class="p2p-upload-hint">Helps us verify faster (optional)</div>
       </label>
       <div class="p2p-upload-preview" id="bkUploadPreview">
         <img id="bkUploadThumb" alt="">
@@ -841,7 +862,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <li>
         <b>4.</b>
         <div style="flex:1">
-          <div class="i18n-step" data-en='<b style="display:block;color:var(--text)">Upload a screenshot (Optional)</b>Upload a screenshot of your completed payment to help us verify it faster.' data-bn='<b style="display:block;color:var(--text)">স্ক্রিনশট আপলোড করুন (ঐচ্ছিক)</b>দ্রুত যাচাইয়ের জন্য আপনার সম্পন্ন পেমেন্টের স্ক্রিনশট আপলোড করুন।'><b style="display:block;color:var(--text)">Upload a screenshot (Optional)</b>Upload a screenshot of your completed payment to help us verify it faster.</div>
+          <div class="i18n-step" data-en='<b style="display:block;color:var(--text)">Upload payment receipt or screenshot</b>Helps us verify faster (optional).' data-bn='<b style="display:block;color:var(--text)">পেমেন্ট রসিদ বা স্ক্রিনশট আপলোড করুন</b>দ্রুত যাচাইয়ে সাহায্য করে (ঐচ্ছিক)।'><b style="display:block;color:var(--text)">Upload payment receipt or screenshot</b>Helps us verify faster (optional).</div>
           <div id="screenshotDrop" style="margin-top:8px;border:1.5px dashed var(--border);border-radius:11px;padding:12px;text-align:center;cursor:pointer;background:var(--surface2)">
             <input id="cryptoScreenshot" type="file" accept="image/*" style="display:none">
             <div id="screenshotEmpty" style="font-size:11.5px;color:var(--t2)"><span class="i18n-step" data-en='Tap to choose an image' data-bn='ছবি বেছে নিতে ট্যাপ করুন'>Tap to choose an image</span></div>
@@ -1708,7 +1729,7 @@ bkpProceed.addEventListener('click', () => {
   const panel = document.getElementById(panelId);
   if(panel) panel.classList.add('show');
   payBtnText.textContent = "I've Sent the Payment";
-  startBkashCountdown();
+  startPaymentCountdown();
 });
 
 bkpCancel.addEventListener('click', () => closeOverlay(bkashNumOverlay));
@@ -1736,75 +1757,131 @@ function applyStepsLang(lang){
 (function initStepsLangToggle(){
   const toggle = document.getElementById('stepsLangToggle');
   if(!toggle) return;
-  toggle.querySelectorAll('button').forEach((btn) => {
-    btn.addEventListener('click', () => applyStepsLang(btn.dataset.lang));
+  toggle.addEventListener('click', (e) => {
+    const rect = toggle.getBoundingClientRect();
+    const lang = (e.clientX - rect.left) < rect.width / 2 ? 'en' : 'bn';
+    applyStepsLang(lang);
   });
   let saved = 'en';
   try { saved = localStorage.getItem('sv-steps-lang') || 'en'; } catch(e) {}
   if(saved === 'bn') applyStepsLang('bn');
 })();
 
-/* Soft 30-min payment countdown — no auto-cancel, just flags it as expired for admin/customer to see */
-let bkCountdownInterval = null;
-let bkLottieAnim = null;
-function startBkashCountdown(){
-  const card = document.getElementById('bkTimerCard');
-  const text = document.getElementById('bkCountdownText');
-  const lottieEl = document.getElementById('bkTimerLottie');
-  if(!card || !text) return;
-  const durationSec = 30 * 60;
-  const totalFrames = 352; // BKASH_COUNTDOWN_LOTTIE_DATA op (ring animation length)
-  const deadline = Date.now() + durationSec * 1000;
-  card.classList.remove('warn', 'danger');
+/* Payment countdown — exact logic from Random-code/preview (5).html.
+   Only the DOM targets for the CSS custom properties were retargeted from
+   document.documentElement/body onto #bkTimerCard, so --ring-color etc. stay
+   scoped to the widget instead of overwriting the page's global --bg (dark mode). */
+var PT_LOTTIE_DATA = {"v":"5.3.4","fr":48,"ip":0,"op":354,"w":774,"h":776,"nm":"cd10","ddd":0,"assets":[],"layers":[{"ddd":0,"ind":3,"ty":4,"nm":"\u0421\u043b\u043e\u0439 28","td":1,"sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[388,390,0],"ix":2},"a":{"a":0,"k":[0,0,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0.0,186.949],[186.949,0.0],[0.0,-186.949],[-186.949,0.0]],"o":[[0.0,-186.949],[-186.949,0.0],[0.0,186.949],[186.949,0.0]],"v":[[338.5,0.0],[0.0,-338.5],[-338.5,0.0],[0.0,338.5]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0,0,0,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":60,"ix":5},"lc":1,"lj":1,"ml":10,"ml2":{"a":0,"k":10,"ix":8},"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[0,0],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tm","s":{"a":0,"k":0,"ix":1},"e":{"a":1,"k":[{"i":{"x":[1],"y":[1]},"o":{"x":[0],"y":[0]},"n":["0p619_0p999_0p294_0p006"],"t":0,"s":[100],"e":[0]},{"t":352}],"ix":2},"o":{"a":0,"k":90,"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false}],"ip":0,"op":400,"st":0,"bm":0},{"ddd":0,"ind":4,"ty":4,"nm":"\u0421\u043b\u043e\u0439 27","tt":2,"sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[388,390,0],"ix":2},"a":{"a":0,"k":[0,0,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0.0,-186.949],[186.949,0.0],[0.0,186.949],[-186.949,0.0]],"o":[[0.0,186.949],[-186.949,0.0],[0.0,-186.949],[186.949,0.0]],"v":[[338.5,0.0],[0.0,338.5],[-338.5,0.0],[0.0,-338.5]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0,0,0,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":90,"ix":5},"lc":2,"lj":1,"ml":10,"ml2":{"a":0,"k":10,"ix":8},"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[0,0],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":400,"st":0,"bm":0}],"markers":[]};
 
-  if(lottieEl && !bkLottieAnim && window.lottie){
-    bkLottieAnim = lottie.loadAnimation({
-      container: lottieEl,
-      renderer: 'svg',
-      loop: false,
-      autoplay: false,
-      path: 'assets/lottie/countdown-pay.json'
-    });
-    // The asset's "timer %" precomp bakes its own numeric readout into the art via
-    // frame-gated shape layers — no clean API toggle for it, so force-hide that
-    // layer's rendered DOM node directly and rely on our own accurate text instead.
-    bkLottieAnim.addEventListener('DOMLoaded', () => {
-      const digitLayer = bkLottieAnim.renderer.elements[0];
-      if(digitLayer && digitLayer.layerElement){
-        digitLayer.layerElement.style.setProperty('display', 'none', 'important');
-      }
-      // On slow connections the JSON can take 10-15s to fetch. Every goToAndStop()
-      // call made before this point was silently ignored (animation wasn't ready),
-      // so the ring sat at its default full-frame render, then visibly snapped to
-      // the correct frame once loading finished. Sync to the CURRENT elapsed time
-      // right here, and only reveal the SVG once it's on the right frame — this
-      // way nothing is ever visible except the correct progress, no flash/reset.
-      // Asset's frame 0 = full/black, frame totalFrames = empty — inverted from
-      // what we want (start empty, fill up as time runs out), so map off remaining.
-      const remainingNow = Math.max(0, Math.round((deadline - Date.now()) / 1000));
-      bkLottieAnim.goToAndStop(Math.max(0, Math.round((remainingNow / durationSec) * totalFrames)), true);
-      lottieEl.classList.add('ready');
-    });
+let ptAnim = null;
+let ptStartTime = null;
+let ptTotalSeconds = 20 * 60;
+
+function ptFormatTime(totalSec){
+  const m = Math.floor(totalSec / 60);
+  const s = Math.floor(totalSec % 60);
+  return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+}
+
+const PT_COLOR_GREEN = '#009b72';
+const PT_COLOR_GOLD = '#F4A922';
+const PT_COLOR_RED = '#d95353';
+
+function ptUpdateRingColor(remaining){
+  let color = PT_COLOR_GREEN;
+  if (remaining <= 5 * 60) {
+    color = PT_COLOR_RED;
+  } else if (remaining <= 10 * 60) {
+    color = PT_COLOR_GOLD;
+  }
+  document.getElementById('bkTimerCard').style.setProperty('--ring-color', color);
+}
+
+// The ring asset's trim path uses a baked-in easing curve (cubic-bezier
+// 0.619, 0.999, 0.294, 0.006) that front-loads most of its visual change
+// into the first ~60% of its keyframe range. Feeding it a linear frame
+// makes the ring visually finish seconds before the digital clock hits
+// zero. To keep them in sync, we solve the INVERSE of that curve each
+// tick: given the linear time-progress we want displayed, find the frame
+// that — after passing back through the same easing — produces exactly
+// that linear value.
+const PT_EASE_X1 = 0.619, PT_EASE_Y1 = 0.999, PT_EASE_X2 = 0.294, PT_EASE_Y2 = 0.006;
+const PT_RING_KEYFRAME_END = 352; // last trim-path keyframe (LOTTIE_DATA layer "e" ends at t=352)
+
+function ptBezierY(t){
+  const mt = 1 - t;
+  return 3 * mt * mt * t * PT_EASE_Y1 + 3 * mt * t * t * PT_EASE_Y2 + t * t * t;
+}
+function ptBezierX(t){
+  const mt = 1 - t;
+  return 3 * mt * mt * t * PT_EASE_X1 + 3 * mt * t * t * PT_EASE_X2 + t * t * t;
+}
+function ptSolveFrameForLinearProgress(targetY){
+  let lo = 0, hi = 1;
+  for(let i = 0; i < 30; i++){
+    const mid = (lo + hi) / 2;
+    if(ptBezierY(mid) < targetY) lo = mid; else hi = mid;
+  }
+  const t = (lo + hi) / 2;
+  return ptBezierX(t) * PT_RING_KEYFRAME_END;
+}
+
+function ptTick(now){
+  if (ptStartTime === null) ptStartTime = now;
+  const elapsed = (now - ptStartTime) / 1000;
+  const progress = Math.min(1, elapsed / ptTotalSeconds);
+  const remaining = Math.max(0, ptTotalSeconds - elapsed);
+
+  const frame = ptSolveFrameForLinearProgress(progress);
+  ptAnim.goToAndStop(frame, true);
+  document.getElementById('timerText').textContent = ptFormatTime(remaining);
+  ptUpdateRingColor(remaining);
+  document.getElementById('spinner').style.transform = 'rotate(' + (elapsed * 360) + 'deg)';
+
+  if (progress < 1) {
+    requestAnimationFrame(ptTick);
+  } else {
+    ptOnComplete();
+  }
+}
+
+function ptOnComplete(){
+  document.getElementById('timerText').textContent = 'Time out';
+  document.getElementById('statusLabel').textContent = 'Time expired';
+  document.getElementById('bkTimerCard').style.setProperty('--ring-color', '#8a8f99');
+  document.getElementById('bkTimerCard').classList.add('expired');
+  document.getElementById('spinner').style.opacity = '0';
+}
+
+function startPaymentCountdown(){
+  const params = new URLSearchParams(location.search);
+  const testVal = parseInt(params.get('test'), 10);
+  ptTotalSeconds = params.has('test') && !isNaN(testVal) ? testVal : 20 * 60;
+  ptTotalSeconds = Math.max(1, ptTotalSeconds);
+  ptStartTime = null;
+
+  const card = document.getElementById('bkTimerCard');
+  card.classList.remove('expired');
+  card.style.setProperty('--ring-color', PT_COLOR_GREEN);
+  document.getElementById('spinner').style.opacity = '1';
+
+  if(typeof lottie === 'undefined'){
+    document.getElementById('statusLabel').textContent = 'Animation library failed to load';
+    return;
   }
 
-  if(bkCountdownInterval) clearInterval(bkCountdownInterval);
-  const tick = () => {
-    const remaining = Math.max(0, Math.round((deadline - Date.now()) / 1000));
-    const m = Math.floor(remaining / 60);
-    const s = remaining % 60;
-    text.textContent = `${m}:${String(s).padStart(2, '0')}`;
-    card.classList.toggle('warn', remaining <= 300 && remaining > 60);
-    card.classList.toggle('danger', remaining <= 60);
-    if(bkLottieAnim && bkLottieAnim.isLoaded){
-      bkLottieAnim.goToAndStop(Math.max(0, Math.round((remaining / durationSec) * totalFrames)), true);
-    }
-    if(remaining <= 0){
-      text.textContent = 'Expired';
-      clearInterval(bkCountdownInterval);
-    }
-  };
-  tick();
-  bkCountdownInterval = setInterval(tick, 1000);
+  if(ptAnim){ ptAnim.destroy(); }
+  ptAnim = lottie.loadAnimation({
+    container: document.getElementById('ring'),
+    renderer: 'svg',
+    loop: false,
+    autoplay: false,
+    animationData: PT_LOTTIE_DATA
+  });
+
+  ptAnim.addEventListener('DOMLoaded', function(){
+    requestAnimationFrame(ptTick);
+  });
 }
 
 /* Payment screenshot upload (bKash internal panel) */
