@@ -721,9 +721,6 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
    ================================================================ */
 svInitHeaderAuth('headerAccountBtn');
 
-const GAS_PROXY_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
-const DEMO_MODE = true;  // ← Set false after deploying GAS proxy
-
 const S = {
   theme: localStorage.getItem('sv-theme') || 'light',
   isLoggedIn: false,
@@ -827,6 +824,12 @@ rowTemplate.innerHTML = `
     <div class="link-error-msg" data-role="link-error">We don't recognize this store yet — you can still submit, we'll review manually.</div>
     <div class="link-ok-msg" data-role="link-ok">Link looks good.</div>
     <div class="qty-warning-msg" data-role="qty-warning">Please paste the product link first</div>
+    <div class="store-label-row" style="margin-top:12px">
+      <span class="sl-left">Product Name</span>
+    </div>
+    <div class="link-input-wrap">
+      <input type="text" class="link-input" data-role="product-name" placeholder="e.g. Sony WH-1000XM5 Headphones">
+    </div>
     <div class="store-label-row">
       <span class="sl-left">Select Store</span>
       <span class="sl-right">Price in USD</span>
@@ -848,34 +851,6 @@ rowTemplate.innerHTML = `
       <span class="store-optional-right">Optional</span>
     </div>
 
-    <!-- INTEGRATED DETECTED INFO -->
-    <div class="detected-info" data-role="detected-info">
-      <div class="di-skeleton" data-role="di-skeleton">
-        <div class="sk-img"></div>
-        <div class="sk-lines"><div></div><div></div><div></div></div>
-      </div>
-      <div class="di-success" data-role="di-success">
-        <img class="di-img" data-role="di-img" src="" alt="" loading="lazy">
-        <div class="di-info">
-          <div class="di-name" data-role="di-name"></div>
-          <div class="di-meta">
-            <span class="di-price" data-role="di-price"></span>
-            <span class="di-dot"></span>
-            <span class="di-store" data-role="di-store"></span>
-            <span class="di-dot"></span>
-            <span class="di-stock">In Stock</span>
-          </div>
-        </div>
-      </div>
-      <div class="di-fail" data-role="di-fail">
-        <div class="di-fail-row">
-          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <span>Could not read this page</span>
-        </div>
-        <p>We'll review it manually and quote you via WhatsApp.</p>
-      </div>
-    </div>
-
     <div class="qty-row">
       <span class="qty-label">Quantity</span>
       <div class="qty-stepper">
@@ -892,94 +867,13 @@ function addItemRow(){
   const frag = rowTemplate.content.cloneNode(true);
   const row = frag.querySelector('.item-row');
   row.dataset.id = 'item-' + itemCounter;
-  const item = { id: row.dataset.id, url:'', storeKey:'', qty:1, valid:false, storeMismatch:false, detected:null };
+  const item = { id: row.dataset.id, url:'', name:'', storeKey:'', qty:1, valid:false, storeMismatch:false };
   S.items.push(item);
   itemsWrap.appendChild(row);
   wireItemRow(row, item);
-  wireSummaryTriggers(row);
+  wireSummaryTriggers(row, item);
   updateOrderSummary();
   updateRemoveVisibility();
-}
-
-/* ─── Auto-detect fetch ─── */
-const fetchProductData = debounce(async (url, row, item) => {
-  const di        = row.querySelector('[data-role="detected-info"]');
-  const skeleton  = row.querySelector('[data-role="di-skeleton"]');
-  const success   = row.querySelector('[data-role="di-success"]');
-  const fail      = row.querySelector('[data-role="di-fail"]');
-  const imgEl     = row.querySelector('[data-role="di-img"]');
-  const nameEl    = row.querySelector('[data-role="di-name"]');
-  const priceEl   = row.querySelector('[data-role="di-price"]');
-  const storeEl   = row.querySelector('[data-role="di-store"]');
-
-  di.classList.add('show','show-skeleton');
-  di.classList.remove('show-success','show-fail');
-  item.detected = null;
-
-  let data;
-
-  if(DEMO_MODE){
-    // Simulate network delay + mock response
-    await new Promise(r => setTimeout(r, 1200));
-    const store = item.storeKey || 'other';
-    data = {
-      name: 'Sony WH-1000XM5 Wireless Noise Canceling Headphones — Black',
-      price: '348.00',
-      currency: 'USD',
-      image: 'https://m.media-amazon.com/images/I/61s0IaMcKtL._AC_SL1500_.jpg',
-      store: store,
-      error: null
-    };
-  } else {
-    if(GAS_PROXY_URL.includes('YOUR_DEPLOYMENT_ID')){
-      di.classList.remove('show-skeleton');
-      di.classList.add('show-fail');
-      item.detected = {name:null, price:null, currency:null, image:null, store:'other'};
-      return;
-    }
-    try {
-      const resp = await fetch(GAS_PROXY_URL, {
-        method: 'POST',
-        body: JSON.stringify({url}),
-        headers: {'Content-Type':'application/json'}
-      });
-      data = await resp.json();
-    } catch(e) {
-      di.classList.remove('show-skeleton');
-      di.classList.add('show-fail');
-      item.detected = {name:null, price:null, currency:null, image:null, store:'other'};
-      return;
-    }
-  }
-
-  di.classList.remove('show-skeleton');
-
-  if(data.error || !data.name){
-    di.classList.add('show-fail');
-    item.detected = {name:null, price:null, currency:null, image:null, store:data.store||'other'};
-    return;
-  }
-
-  item.detected = data;
-  if(data.image){ imgEl.src = data.image; imgEl.style.display = 'block'; }
-  else { imgEl.style.display = 'none'; }
-  nameEl.textContent = data.name;
-  const cur = data.currency || 'USD';
-  const price = data.price ? cur + ' ' + data.price : 'Price unavailable';
-  priceEl.innerHTML = price + (data.price ? ' <span class="currency">USD</span>' : '');
-  const storeLabel = STORES.find(s => s.key === (data.store||'other'))?.label || 'Other';
-  storeEl.textContent = storeLabel;
-  di.classList.add('show-success');
-
-  // Auto-fill price input if detected
-  const priceInput = row.querySelector('[data-role="price-input"]');
-  if(priceInput && data.price){ priceInput.value = data.price; }
-}, 900);
-
-function clearDetection(row, item){
-  const di = row.querySelector('[data-role="detected-info"]');
-  di.classList.remove('show','show-skeleton','show-success','show-fail');
-  item.detected = null;
 }
 
 
@@ -1074,6 +968,7 @@ function wireItemRow(row, item){
   const numEl = row.querySelector('.item-num');
   if(numEl) numEl.innerHTML = 'Product Link ' + idx + ' <span class="req">*</span>';
   const linkInput   = row.querySelector('[data-role="link"]');
+  const nameInput   = row.querySelector('[data-role="product-name"]');
   const errMsg      = row.querySelector('[data-role="link-error"]');
   const okMsg       = row.querySelector('[data-role="link-ok"]');
   const storeSelectWrap = row.querySelector('[data-role="store-select-wrap"]');
@@ -1083,6 +978,13 @@ function wireItemRow(row, item){
   const qtyPlus     = row.querySelector('[data-role="qty-plus"]');
   const removeBtn   = row.querySelector('.item-remove');
   let storeManuallySet = false;
+
+  if(nameInput){
+    nameInput.addEventListener('input', () => {
+      item.name = nameInput.value.trim();
+      updateOrderSummary();
+    });
+  }
 
   storeSelect.addEventListener('change', () => {
     storeManuallySet = true;
@@ -1101,7 +1003,6 @@ function wireItemRow(row, item){
     okMsg.classList.remove('show');
     item.valid = false;
     item.storeMismatch = false;
-    clearDetection(row, item);
 
     if(!url) return;
     if(!isValidUrl(url)){
@@ -1128,7 +1029,6 @@ function wireItemRow(row, item){
       okMsg.classList.add('show');
       item.valid = true;
       item.storeKey = detected.key;
-      fetchProductData(url, row, item);
     } else {
       const looksLikeUrl = /^https?:\/\//i.test(url);
       if(looksLikeUrl){
@@ -1242,7 +1142,7 @@ function updateOrderSummary(){
     const linkInput   = row.querySelector('[data-role="link"]');
     const qtyEl       = row.querySelector('[data-role="qty-val"]');
     const priceInput  = row.querySelector('[data-role="price-input"]');
-    const nameEl      = row.querySelector('[data-role="di-name"]');
+    const nameEl      = row.querySelector('[data-role="product-name"]');
     const storeSelect = row.querySelector('[data-role="store-select"]');
 
     const url = linkInput ? (linkInput.value || '').trim() : '';
@@ -1256,11 +1156,11 @@ function updateOrderSummary(){
     const total = qty * price;
     grand += total;
 
-    const detectedName = nameEl ? (nameEl.textContent || '').trim() : '';
+    const typedName = nameEl ? (nameEl.value || '').trim() : '';
     const storeLabel = storeSelect && storeSelect.options && storeSelect.selectedIndex > -1 && storeSelect.options[storeSelect.selectedIndex]
       ? (storeSelect.options[storeSelect.selectedIndex].text || '').trim()
       : '';
-    let name = detectedName || ('Product ' + (idx + 1));
+    let name = typedName || ('Product ' + (idx + 1));
     if(storeLabel && storeLabel !== 'Auto-detect') name += ' · ' + storeLabel;
 
     const tr = document.createElement('tr');
@@ -1284,13 +1184,16 @@ function escapeHtml(str){
 }
 
 // Wire update triggers
-function wireSummaryTriggers(row){
+function wireSummaryTriggers(row, item){
   if(!row) return;
   const priceInput = row.querySelector('[data-role="price-input"]');
   const qtyMinus = row.querySelector('[data-role="qty-minus"]');
   const qtyPlus = row.querySelector('[data-role="qty-plus"]');
   const storeSelect = row.querySelector('[data-role="store-select"]');
-  if(priceInput) priceInput.addEventListener('input', updateOrderSummary);
+  if(priceInput) priceInput.addEventListener('input', () => {
+    if(item) item.price = parseFloat(priceInput.value) || null;
+    updateOrderSummary();
+  });
   if(qtyMinus) qtyMinus.addEventListener('click', () => setTimeout(updateOrderSummary, 50));
   if(qtyPlus) qtyPlus.addEventListener('click', () => setTimeout(updateOrderSummary, 50));
   if(storeSelect) storeSelect.addEventListener('change', updateOrderSummary);
@@ -1343,13 +1246,10 @@ function buildPayload(){
     user_id: null,
     items: S.items.filter(i => i.url).map(i => ({
       url: i.url,
+      name: i.name || null,
       store: i.storeKey || 'other',
       qty: i.qty,
-      detected_name: i.detected?.name || null,
-      detected_price: i.detected?.price || null,
-      detected_currency: i.detected?.currency || null,
-      detected_image: i.detected?.image || null,
-      detected_store: i.detected?.store || null
+      price: i.price || null
     })),
     whatsapp: '+880' + normalizeWa(S.wa),
     notes: S.notes,
