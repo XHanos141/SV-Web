@@ -202,7 +202,7 @@ body{
 }
 
 .s-type-dropdown{
-  position:absolute;top:calc(100% + 8px);right:0;z-index:40;
+  position:absolute;top:calc(100% + 8px);left:0;z-index:40;
   width:210px;
   background:var(--surface);border:1px solid var(--border-strong);
   border-radius:var(--radius);
@@ -1192,14 +1192,6 @@ body.dark-mode .s-tab{
 <!-- SEARCH + TYPE FILTER -->
 <div class="s-search-wrap">
   <div class="s-search-row">
-    <div class="s-search-input-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="sSearchInput" placeholder="Search supplements, vitamins..." autocomplete="off" enterkeyhint="search">
-      <button class="s-search-clear" id="sSearchClear" aria-label="Clear search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-      </button>
-      <div class="s-suggest" id="sSuggest"><div class="s-suggest-list" id="sSuggestList"></div></div>
-    </div>
     <div class="s-type-select" id="sTypeSelect">
       <span class="s-type-badge" id="sTypeBadge">
         <span class="cat-badge cat-supplement" id="sTypeBadgeInner"><svg viewBox="0 0 512 512"><use href="#cat-icon-supplement"/></svg></span>
@@ -1239,6 +1231,14 @@ body.dark-mode .s-tab{
           </div>
         </div>
       </div>
+    </div>
+    <div class="s-search-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="sSearchInput" placeholder="Search supplements, vitamins..." autocomplete="off" enterkeyhint="search">
+      <button class="s-search-clear" id="sSearchClear" aria-label="Clear search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+      <div class="s-suggest" id="sSuggest"><div class="s-suggest-list" id="sSuggestList"></div></div>
     </div>
   </div>
 </div>
