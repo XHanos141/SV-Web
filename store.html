@@ -957,18 +957,6 @@ body.dark-mode .s-tab{
 .s-sheet-chip.active{
   background:var(--accent-soft);border-color:var(--accent);color:var(--accent);
 }
-.s-sheet-actions{
-  display:flex;gap:10px;flex-shrink:0;
-}
-.s-sheet-clear,.s-sheet-apply{
-  flex:1;height:44px;border-radius:var(--radius-sm);
-  font-family:var(--font-display);font-size:13px;font-weight:800;
-  cursor:pointer;transition:opacity 0.15s;
-}
-.s-sheet-clear{background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
-.s-sheet-apply{background:var(--accent);border:none;color:#fff}
-.s-sheet-clear:active,.s-sheet-apply:active{opacity:0.8}
-
 /* ─── Animation ─── */
 @keyframes cardIn{
   from{opacity:0;transform:translateY(16px) scale(0.96)}
@@ -1298,10 +1286,6 @@ body.dark-mode .s-tab{
     </button>
   </div>
   <div class="s-sheet-chips" id="sBrandChips"></div>
-  <div class="s-sheet-actions">
-    <button class="s-sheet-clear" id="sSheetClear" type="button">Clear</button>
-    <button class="s-sheet-apply" id="sSheetApply" type="button">Apply</button>
-  </div>
 </div>
 
 <!-- TRENDING HORIZONTAL -->
@@ -1678,7 +1662,6 @@ function showToast(msg, icon){
 /* ─── Store Controller: type + category + search (single render pipeline) ─── */
 (function(){
   var S = { type:'Supplement', cat:'All', q:'', brand:[] };
-  var pendingBrand = [];
   var TYPE_META = {
     Supplement:  { cls:'cat-supplement',  icon:'#cat-icon-supplement',  vb:'0 0 512 512', hasCats:true  },
     Gadget: { cls:'cat-gadget', icon:'#cat-icon-gadget', vb:'0 0 64 64',   hasCats:false },
@@ -1871,7 +1854,7 @@ function showToast(msg, icon){
     searchInput.value = ''; S.q = '';
     searchClear.classList.remove('show');
     hideSuggest();
-    S.brand = []; pendingBrand = [];
+    S.brand = [];
     updateFilterBadge();
     buildBrandChips();
     var allRadio = document.getElementById('cat-all');
@@ -1899,8 +1882,6 @@ function showToast(msg, icon){
   var brandSheet     = document.getElementById('sBrandSheet');
   var sheetClose     = document.getElementById('sSheetClose');
   var brandChipsBox  = document.getElementById('sBrandChips');
-  var sheetClear     = document.getElementById('sSheetClear');
-  var sheetApply     = document.getElementById('sSheetApply');
 
   function buildBrandChips(){
     var brands = [];
@@ -1912,11 +1893,12 @@ function showToast(msg, icon){
       return '<div class="s-sheet-chip" data-brand="' + esc(b) + '">' + esc(b) + '</div>';
     }).join('');
     filterBtn.style.display = brands.length ? '' : 'none';
+    syncChipsFromState();
   }
 
-  function syncChipsFromPending(){
+  function syncChipsFromState(){
     brandChipsBox.querySelectorAll('.s-sheet-chip').forEach(function(c){
-      c.classList.toggle('active', pendingBrand.indexOf(c.dataset.brand) !== -1);
+      c.classList.toggle('active', S.brand.indexOf(c.dataset.brand) !== -1);
     });
   }
 
@@ -1927,8 +1909,7 @@ function showToast(msg, icon){
   }
 
   function openSheet(){
-    pendingBrand = S.brand.slice();
-    syncChipsFromPending();
+    syncChipsFromState();
     sheetBackdrop.classList.add('show');
     brandSheet.classList.add('show');
   }
@@ -1946,20 +1927,10 @@ function showToast(msg, icon){
     var chip = e.target.closest('.s-sheet-chip');
     if(!chip) return;
     var b = chip.dataset.brand;
-    var i = pendingBrand.indexOf(b);
-    if(i === -1) pendingBrand.push(b); else pendingBrand.splice(i,1);
-    syncChipsFromPending();
-  });
-
-  sheetClear.addEventListener('click', function(){
-    pendingBrand = [];
-    syncChipsFromPending();
-  });
-
-  sheetApply.addEventListener('click', function(){
-    S.brand = pendingBrand.slice();
+    var i = S.brand.indexOf(b);
+    if(i === -1) S.brand.push(b); else S.brand.splice(i,1);
+    chip.classList.toggle('active', i === -1);
     updateFilterBadge();
-    closeSheet();
     render();
   });
 
