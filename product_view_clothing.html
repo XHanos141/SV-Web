@@ -351,7 +351,12 @@ body.dark-mode .pv-qty button.pv-qty-plus{background:linear-gradient(180deg,rgba
   font-size:14px;font-weight:800;color:var(--text);
   display:flex;align-items:center;justify-content:center;
   border-left:1px solid rgba(0,0,0,0.08);border-right:1px solid rgba(0,0,0,0.08);
-  box-sizing:border-box;
+  box-sizing:border-box;position:relative;overflow:hidden;
+}
+.qty-roll-digit{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  transition:transform .26s cubic-bezier(.4,0,.2,1),opacity .26s ease;
+  transform:translateY(0);opacity:1;will-change:transform,opacity;
 }
 body.dark-mode .pv-qty span{border-left-color:rgba(255,255,255,0.08);border-right-color:rgba(255,255,255,0.08)}
 .pv-btn-cart{
@@ -1041,9 +1046,51 @@ function shareProduct(){
   }
 }
 
+// Odometer-style roll animation for the quantity number — old value slides
+// out, new value slides in, direction matches increment/decrement. Uses a
+// logical "last value" stored on the element (not the possibly-mid-transition
+// DOM text) so rapid taps stay correct even if they interrupt an animation.
+function rollQtyNumber(el, newVal){
+  if(!el) return;
+  newVal = String(newVal);
+  var prevVal = el.dataset.qtyRollValue || el.textContent;
+  if(prevVal === newVal) return;
+  var dir = parseInt(newVal, 10) > parseInt(prevVal, 10) ? 1 : -1;
+
+  if(el._qtyRollTimeout){ clearTimeout(el._qtyRollTimeout); }
+  el.dataset.qtyRollValue = newVal;
+  el.innerHTML = '';
+
+  var leaving = document.createElement('span');
+  leaving.className = 'qty-roll-digit';
+  leaving.textContent = prevVal;
+
+  var entering = document.createElement('span');
+  entering.className = 'qty-roll-digit';
+  entering.textContent = newVal;
+  entering.style.transform = 'translateY(' + (dir > 0 ? '100%' : '-100%') + ')';
+  entering.style.opacity = '0';
+
+  el.appendChild(leaving);
+  el.appendChild(entering);
+
+  void el.offsetWidth; // force reflow so the entering start-state applies before transitioning
+
+  leaving.style.transform = 'translateY(' + (dir > 0 ? '-100%' : '100%') + ')';
+  leaving.style.opacity = '0';
+  entering.style.transform = 'translateY(0)';
+  entering.style.opacity = '1';
+
+  el._qtyRollTimeout = setTimeout(function(){
+    el.innerHTML = '';
+    el.textContent = newVal;
+    el._qtyRollTimeout = null;
+  }, 260);
+}
+
 function changeQty(delta){
   qty = Math.max(1, Math.min(10, qty + delta));
-  document.getElementById('qtyVal').textContent = qty;
+  rollQtyNumber(document.getElementById('qtyVal'), qty);
 }
 
 /* ─── Cart: shared localStorage cart with store.html ─── */
