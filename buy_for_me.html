@@ -211,7 +211,7 @@ body.dark-mode .item-row.glass-card{
 .qty-label{font-size:11px;font-weight:700;color:var(--t2);letter-spacing:.02em}
 .qty-stepper{display:inline-flex;align-items:center;background:var(--bg);border:0.8px solid rgba(242,100,48,.55);border-radius:6px;overflow:hidden}
 body.dark-mode .qty-stepper{border-color:var(--border)}
-.qty-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--surface2) 0%,var(--bg) 100%);border:none;color:var(--text);font-size:18px;font-weight:700;line-height:1;cursor:pointer;transition:transform .1s cubic-bezier(.34,1.56,.64,1),background .1s ease;-webkit-tap-highlight-color:transparent;user-select:none;position:relative;border-radius:4px}
+.qty-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--surface2) 0%,var(--bg) 100%);border:none;color:var(--text);font-size:18px;font-weight:700;line-height:1;cursor:pointer;transition:transform .1s cubic-bezier(.34,1.56,.64,1),background .1s ease;-webkit-tap-highlight-color:transparent;user-select:none;position:relative;border-radius:4px;flex:0 0 32px}
 .qty-btn[data-role="qty-minus"]{border-radius:4px 0 0 4px}
 .qty-btn[data-role="qty-plus"]{border-radius:0 4px 4px 0}
 .qty-btn::before{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,0.25);pointer-events:none}
@@ -224,7 +224,7 @@ body.dark-mode .qty-btn[data-role="qty-minus"]{background:linear-gradient(180deg
 .qty-btn[data-role="qty-plus"]{background:linear-gradient(180deg,rgba(0,155,114,0.10) 0%,rgba(0,155,114,0.04) 100%);color:var(--green)}
 body.dark-mode .qty-btn[data-role="qty-plus"]{background:linear-gradient(180deg,rgba(0,155,114,0.14) 0%,rgba(0,155,114,0.06) 100%)}
 .qty-btn[data-role="qty-plus"]:active{background:rgba(0,155,114,0.18)}
-.qty-val{width:38px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--text);background:var(--bg);border-left:0.8px solid rgba(0,0,0,0.15);border-right:0.8px solid rgba(0,0,0,0.15);position:relative;overflow:hidden}
+.qty-val{width:38px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--text);background:var(--bg);border-left:0.8px solid rgba(0,0,0,0.15);border-right:0.8px solid rgba(0,0,0,0.15);position:relative;overflow:hidden;flex:0 0 38px}
 .qty-roll-digit{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   transition:transform .26s cubic-bezier(.4,0,.2,1),opacity .26s ease;
