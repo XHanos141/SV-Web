@@ -224,11 +224,12 @@ body.dark-mode .qty-btn[data-role="qty-minus"]{background:linear-gradient(180deg
 .qty-btn[data-role="qty-plus"]{background:linear-gradient(180deg,rgba(0,155,114,0.10) 0%,rgba(0,155,114,0.04) 100%);color:var(--green)}
 body.dark-mode .qty-btn[data-role="qty-plus"]{background:linear-gradient(180deg,rgba(0,155,114,0.14) 0%,rgba(0,155,114,0.06) 100%)}
 .qty-btn[data-role="qty-plus"]:active{background:rgba(0,155,114,0.18)}
-.qty-val{width:38px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--text);background:var(--bg);border-left:0.8px solid rgba(0,0,0,0.15);border-right:0.8px solid rgba(0,0,0,0.15);position:relative;overflow:hidden;flex:0 0 38px}
+.qty-val{width:38px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--text);background:var(--bg);border-left:0.8px solid rgba(0,0,0,0.15);border-right:0.8px solid rgba(0,0,0,0.15);position:relative;overflow:hidden;flex:0 0 38px;font-variant-numeric:tabular-nums}
 .qty-roll-digit{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   transition:transform .26s cubic-bezier(.4,0,.2,1),opacity .26s ease;
   transform:translateY(0);opacity:1;will-change:transform,opacity;
+  font-variant-numeric:tabular-nums;
 }
 
 .add-item-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;background:transparent;border:1.5px dashed rgba(242,100,48,.4);border-radius:12px;padding:11px;font-size:12px;font-weight:700;color:var(--orange);margin-bottom:18px;transition:background .2s}
