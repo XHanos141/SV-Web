@@ -224,7 +224,12 @@ body.dark-mode .qty-btn[data-role="qty-minus"]{background:linear-gradient(180deg
 .qty-btn[data-role="qty-plus"]{background:linear-gradient(180deg,rgba(0,155,114,0.10) 0%,rgba(0,155,114,0.04) 100%);color:var(--green)}
 body.dark-mode .qty-btn[data-role="qty-plus"]{background:linear-gradient(180deg,rgba(0,155,114,0.14) 0%,rgba(0,155,114,0.06) 100%)}
 .qty-btn[data-role="qty-plus"]:active{background:rgba(0,155,114,0.18)}
-.qty-val{width:38px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--text);background:var(--bg);border-left:0.8px solid rgba(0,0,0,0.15);border-right:0.8px solid rgba(0,0,0,0.15)}
+.qty-val{width:38px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--text);background:var(--bg);border-left:0.8px solid rgba(0,0,0,0.15);border-right:0.8px solid rgba(0,0,0,0.15);position:relative;overflow:hidden}
+.qty-roll-digit{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  transition:transform .26s cubic-bezier(.4,0,.2,1),opacity .26s ease;
+  transform:translateY(0);opacity:1;will-change:transform,opacity;
+}
 
 .add-item-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;background:transparent;border:1.5px dashed rgba(242,100,48,.4);border-radius:12px;padding:11px;font-size:12px;font-weight:700;color:var(--orange);margin-bottom:18px;transition:background .2s}
 .add-item-btn:active{background:rgba(242,100,48,.06)}
@@ -752,6 +757,48 @@ function detectStore(url){
   if(!isValidUrl(url)) return null;
   return STORES.find(s => s.match && s.match.test(url)) || null;
 }
+// Odometer-style roll animation for the quantity number — old value slides
+// out, new value slides in, direction matches increment/decrement. Uses a
+// logical "last value" stored on the element (not the possibly-mid-transition
+// DOM text) so rapid taps stay correct even if they interrupt an animation.
+function rollQtyNumber(el, newVal){
+  if(!el) return;
+  newVal = String(newVal);
+  var prevVal = el.dataset.qtyRollValue || el.textContent;
+  if(prevVal === newVal) return;
+  var dir = parseInt(newVal, 10) > parseInt(prevVal, 10) ? 1 : -1;
+
+  if(el._qtyRollTimeout){ clearTimeout(el._qtyRollTimeout); }
+  el.dataset.qtyRollValue = newVal;
+  el.innerHTML = '';
+
+  var leaving = document.createElement('span');
+  leaving.className = 'qty-roll-digit';
+  leaving.textContent = prevVal;
+
+  var entering = document.createElement('span');
+  entering.className = 'qty-roll-digit';
+  entering.textContent = newVal;
+  entering.style.transform = 'translateY(' + (dir > 0 ? '100%' : '-100%') + ')';
+  entering.style.opacity = '0';
+
+  el.appendChild(leaving);
+  el.appendChild(entering);
+
+  void el.offsetWidth; // force reflow so the entering start-state applies before transitioning
+
+  leaving.style.transform = 'translateY(' + (dir > 0 ? '-100%' : '100%') + ')';
+  leaving.style.opacity = '0';
+  entering.style.transform = 'translateY(0)';
+  entering.style.opacity = '1';
+
+  el._qtyRollTimeout = setTimeout(function(){
+    el.innerHTML = '';
+    el.textContent = newVal;
+    el._qtyRollTimeout = null;
+  }, 260);
+}
+
 function normalizeWa(raw){ return raw.replace(/[^\d]/g, ''); }
 function isValidWa(raw){
   let digits = normalizeWa(raw);
@@ -1044,8 +1091,8 @@ function wireItemRow(row, item){
   linkInput.addEventListener('blur', validateRow);
 
   qtyMinus.addEventListener('click', () => {
-    let v = parseInt(qtyVal.textContent, 10);
-    if(v > 1){ qtyVal.textContent = --v; item.qty = v; }
+    let v = parseInt(qtyVal.dataset.qtyRollValue || qtyVal.textContent, 10);
+    if(v > 1){ --v; rollQtyNumber(qtyVal, v); item.qty = v; }
   });
   qtyPlus.addEventListener('click', () => {
     const url = linkInput.value.trim();
@@ -1056,8 +1103,8 @@ function wireItemRow(row, item){
       if(linkWrap){ linkWrap.classList.add('shake'); setTimeout(() => linkWrap.classList.remove('shake'), 600); }
       return;
     }
-    let v = parseInt(qtyVal.textContent, 10);
-    if(v < 99){ qtyVal.textContent = ++v; item.qty = v; }
+    let v = parseInt(qtyVal.dataset.qtyRollValue || qtyVal.textContent, 10);
+    if(v < 99){ ++v; rollQtyNumber(qtyVal, v); item.qty = v; }
   });
 
   linkInput.addEventListener('input', () => {
@@ -1147,7 +1194,7 @@ function updateOrderSummary(){
 
     const url = linkInput ? (linkInput.value || '').trim() : '';
 
-    let qty = qtyEl ? parseInt(qtyEl.textContent, 10) : 1;
+    let qty = qtyEl ? parseInt(qtyEl.dataset.qtyRollValue || qtyEl.textContent, 10) : 1;
     if(!Number.isFinite(qty) || qty < 1) qty = 1;
 
     let price = priceInput ? parseFloat(priceInput.value) : 0;
@@ -1301,7 +1348,7 @@ function buildReviewPopup(){
       const priceInput = row.querySelector('[data-role="price-input"]');
       const storeSelect = row.querySelector('[data-role="store-select"]');
       const url = linkInput ? linkInput.value.trim() : '';
-      const qty = qtyEl ? parseInt(qtyEl.textContent, 10) : 1;
+      const qty = qtyEl ? parseInt(qtyEl.dataset.qtyRollValue || qtyEl.textContent, 10) : 1;
       const price = priceInput ? parseFloat(priceInput.value) || 0 : 0;
       const total = qty * price;
       grand += total;
