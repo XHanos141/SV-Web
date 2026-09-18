@@ -353,13 +353,12 @@ body.dark-mode .pv-qty button.pv-qty-plus{background:linear-gradient(180deg,rgba
   display:flex;align-items:center;justify-content:center;
   border-left:1px solid rgba(0,0,0,0.08);border-right:1px solid rgba(0,0,0,0.08);
   box-sizing:border-box;position:relative;overflow:hidden;
-  flex:0 0 32px;font-variant-numeric:tabular-nums;
+  flex:0 0 32px;
 }
 .qty-roll-digit{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  transition:transform .26s cubic-bezier(.4,0,.2,1),opacity .26s ease;
-  transform:translateY(0);opacity:1;will-change:transform,opacity;
-  font-variant-numeric:tabular-nums;
+  transition:transform .26s cubic-bezier(.4,0,.2,1);
+  transform:translateY(0);will-change:transform;
 }
 body.dark-mode .pv-qty span{border-left-color:rgba(255,255,255,0.08);border-right-color:rgba(255,255,255,0.08)}
 .pv-btn-cart{
@@ -1062,6 +1061,12 @@ function rollQtyNumber(el, newVal){
   el.dataset.qtyRollValue = newVal;
   el.innerHTML = '';
 
+  // Pure slide, no opacity fade: the old and new digits never appear at
+  // partial transparency at the same time, so two different glyph shapes
+  // never visually blend together mid-transition (that blending is what
+  // reads as a horizontal wobble when digits like "1" and "2" have
+  // different shapes). The window's overflow:hidden clips whichever part
+  // of each digit is outside the box as they slide past each other.
   var leaving = document.createElement('span');
   leaving.className = 'qty-roll-digit';
   leaving.textContent = prevVal;
@@ -1070,7 +1075,6 @@ function rollQtyNumber(el, newVal){
   entering.className = 'qty-roll-digit';
   entering.textContent = newVal;
   entering.style.transform = 'translateY(' + (dir > 0 ? '100%' : '-100%') + ')';
-  entering.style.opacity = '0';
 
   el.appendChild(leaving);
   el.appendChild(entering);
@@ -1078,9 +1082,7 @@ function rollQtyNumber(el, newVal){
   void el.offsetWidth; // force reflow so the entering start-state applies before transitioning
 
   leaving.style.transform = 'translateY(' + (dir > 0 ? '-100%' : '100%') + ')';
-  leaving.style.opacity = '0';
   entering.style.transform = 'translateY(0)';
-  entering.style.opacity = '1';
 
   el._qtyRollTimeout = setTimeout(function(){
     el.innerHTML = '';
