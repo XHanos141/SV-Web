@@ -353,12 +353,13 @@ body.dark-mode .pv-qty button.pv-qty-plus{background:linear-gradient(180deg,rgba
   display:flex;align-items:center;justify-content:center;
   border-left:1px solid rgba(0,0,0,0.08);border-right:1px solid rgba(0,0,0,0.08);
   box-sizing:border-box;position:relative;overflow:hidden;
-  flex:0 0 32px;
+  flex:0 0 32px;font-variant-numeric:tabular-nums;
 }
 .qty-roll-digit{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   transition:transform .26s cubic-bezier(.4,0,.2,1),opacity .26s ease;
   transform:translateY(0);opacity:1;will-change:transform,opacity;
+  font-variant-numeric:tabular-nums;
 }
 body.dark-mode .pv-qty span{border-left-color:rgba(255,255,255,0.08);border-right-color:rgba(255,255,255,0.08)}
 .pv-btn-cart{
