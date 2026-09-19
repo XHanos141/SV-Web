@@ -350,7 +350,7 @@ body.dark-mode .pv-qty button.pv-qty-plus{background:linear-gradient(180deg,rgba
 .pv-qty span{
   width:32px;height:40px;text-align:center;font-family:var(--font-display);
   font-size:14px;font-weight:800;color:var(--text);
-  display:flex;align-items:center;justify-content:center;
+  display:block;
   border-left:1px solid rgba(0,0,0,0.08);border-right:1px solid rgba(0,0,0,0.08);
   box-sizing:border-box;position:relative;overflow:hidden;
   flex:0 0 32px;
@@ -361,6 +361,7 @@ body.dark-mode .pv-qty button.pv-qty-plus{background:linear-gradient(180deg,rgba
   display:flex;align-items:center;justify-content:center;
   transition:transform .26s cubic-bezier(.4,0,.2,1);
   transform:translateY(0);will-change:transform;
+  backface-visibility:hidden;
 }
 body.dark-mode .pv-qty span{border-left-color:rgba(255,255,255,0.08);border-right-color:rgba(255,255,255,0.08)}
 .pv-btn-cart{
@@ -1076,13 +1077,19 @@ function rollQtyNumber(el, newVal){
   var entering = document.createElement('span');
   entering.className = 'qty-roll-digit';
   entering.textContent = newVal;
+  entering.style.transition = 'none';
   entering.style.transform = 'translateY(' + (dir > 0 ? '100%' : '-100%') + ')';
+
+  leaving.style.transition = 'none';
+  leaving.style.transform = 'translateY(0)';
 
   el.appendChild(leaving);
   el.appendChild(entering);
 
   void el.offsetWidth; // force reflow so the entering start-state applies before transitioning
 
+  leaving.style.transition = '';
+  entering.style.transition = '';
   leaving.style.transform = 'translateY(' + (dir > 0 ? '-100%' : '100%') + ')';
   entering.style.transform = 'translateY(0)';
 
