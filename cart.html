@@ -389,7 +389,7 @@ body.dark-mode .summary-line.total{background-image:linear-gradient(to right, rg
 }
 .summary-products-head{
   display:grid;grid-template-columns:20px 1fr 44px 62px;gap:8px;
-  padding:0 0 6px;
+  padding:0 6px 6px 0;
   font-family:var(--font-display);font-size:9.5px;font-weight:800;
   letter-spacing:.04em;text-transform:uppercase;
   color:var(--text3);
@@ -398,7 +398,7 @@ body.dark-mode .summary-line.total{background-image:linear-gradient(to right, rg
 .summary-product-row{
   display:grid;grid-template-columns:20px 1fr 44px 62px;gap:8px;
   align-items:start;
-  padding:7px 0;font-size:11.5px;color:var(--text);
+  padding:7px 6px 7px 0;font-size:11.5px;color:var(--text);
   border-bottom:1px dashed var(--border);
 }
 .summary-product-row:last-child{border-bottom:none}
@@ -536,6 +536,10 @@ body.dark-mode .summary-line.total{background-image:linear-gradient(to right, rg
 
 <div class="summary-card glass-card-green" id="cartSummaryInternal">
   <div class="summary-title">Order Summary</div>
+  <div class="free-ship-note" id="freeShipNote">
+    <svg viewBox="0 0 24 24"><path d="M16 3H1v13h15V3z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    <span>Add <b id="freeShipRemaining">৳550</b> more for <b>free delivery</b></span>
+  </div>
   <div class="summary-products" id="summaryProductsInternal">
     <div class="summary-products-head"><span>#</span><span>Product</span><span>Unit</span><span>Cost</span></div>
     <div id="summaryProductRowsInternal"></div>
@@ -684,7 +688,9 @@ function els(flow){
     sumSubtotal: document.getElementById('sumSubtotal'+s),
     sumDiscountRow: document.getElementById('sumDiscountRow'+s),
     sumDiscount: document.getElementById('sumDiscount'+s),
-    sumTotal: document.getElementById('sumTotal'+s)
+    sumTotal: document.getElementById('sumTotal'+s),
+    freeShipNote: flow === 'internal' ? document.getElementById('freeShipNote') : null,
+    freeShipRemaining: flow === 'internal' ? document.getElementById('freeShipRemaining') : null
   };
 }
 function cardHTML(item, flow){
@@ -763,6 +769,14 @@ function renderFlow(flow){
   } else {
     e.sumDiscountRow.style.display = 'none';
   }
+  if(e.freeShipNote){
+    if(!hasItems || subtotal >= d.shipping.freeThreshold){
+      e.freeShipNote.style.display = 'none';
+    } else {
+      e.freeShipNote.style.display = '';
+      e.freeShipRemaining.textContent = fmt(d.shipping.freeThreshold - subtotal);
+    }
+  }
   wireCardEvents(flow, e);
   if(flow === currentFlow) updateBar();
 }
@@ -819,6 +833,15 @@ function updateItemQty(flow, id, newQty){
       const costEl = rowEl.querySelector('.summary-product-cost');
       if(unitEl) unitEl.textContent = item.qty;
       if(costEl) costEl.textContent = fmt(item.price * item.qty);
+    }
+  }
+  if(e.freeShipNote){
+    const hasItems = d.items.length > 0;
+    if(!hasItems || subtotal >= d.shipping.freeThreshold){
+      e.freeShipNote.style.display = 'none';
+    } else {
+      e.freeShipNote.style.display = '';
+      e.freeShipRemaining.textContent = fmt(d.shipping.freeThreshold - subtotal);
     }
   }
   if(flow === currentFlow) updateBar();
