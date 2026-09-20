@@ -907,7 +907,7 @@ section:not(.hero){content-visibility:auto;contain-intrinsic-size:auto 500px}
   <script>
   (function(){
     async function loadHeroFromCMS(){
-      if(!window.sbClient) return;
+      if(!window.sbClient && typeof sbClient === 'undefined') return;
       try{
         const { data, error } = await sbClient
           .from('site_content')
