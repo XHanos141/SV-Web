@@ -1169,45 +1169,9 @@ section:not(.hero){content-visibility:auto;contain-intrinsic-size:auto 500px}
 <section class="banner-section">
   <div class="banner-viewport">
     <div class="banner-clip">
-    <div class="banner-track" id="bannerTrack">
-      <div class="banner-card bc-green" aria-hidden="true">
-        <div class="banner-text">
-          <span class="banner-tag">Free Shipping</span>
-          <h3 class="banner-title">On Orders Over ৳2000</h3>
-          <p class="banner-sub">Anywhere across Bangladesh</p>
-        </div>
-        <div class="banner-deco"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      </div>
-      <div class="banner-card bc-purple">
-        <div class="banner-text">
-          <span class="banner-tag">Limited Time</span>
-          <h3 class="banner-title">20% Off Whey Protein</h3>
-          <p class="banner-sub">This week only, on all local stock</p>
-        </div>
-        <div class="banner-deco"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
-      </div>
-      <div class="banner-card bc-green">
-        <div class="banner-text">
-          <span class="banner-tag">Free Shipping</span>
-          <h3 class="banner-title">On Orders Over ৳2000</h3>
-          <p class="banner-sub">Anywhere across Bangladesh</p>
-        </div>
-        <div class="banner-deco"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      </div>
-      <div class="banner-card bc-purple" aria-hidden="true">
-        <div class="banner-text">
-          <span class="banner-tag">Limited Time</span>
-          <h3 class="banner-title">20% Off Whey Protein</h3>
-          <p class="banner-sub">This week only, on all local stock</p>
-        </div>
-        <div class="banner-deco"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
-      </div>
+    <div class="banner-track" id="bannerTrack"></div>
     </div>
-    </div>
-    <div class="banner-dots" id="bannerDots">
-      <span class="dot active"></span>
-      <span class="dot"></span>
-    </div>
+    <div class="banner-dots" id="bannerDots"></div>
   </div>
 </section>
 <script>
@@ -1219,13 +1183,60 @@ window.__resizeHandlers = [];
     t = setTimeout(() => window.__resizeHandlers.forEach(fn => fn()), 150);
   });
 })();
-(function(){
+(async function(){
   const track=document.getElementById('bannerTrack');
-  const viewport=track.parentElement;
+  const dotsWrap=document.getElementById('bannerDots');
+  if(!track) return;
+
+  const FALLBACK_DECO = '<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+  const COLOR_CLASS = { green:'bc-green', purple:'bc-purple' };
+
+  function bannerCardHTML(b, hidden){
+    const colorClass = COLOR_CLASS[b.color] || 'bc-green';
+    const bg = b.image_url ? ` style="background-image:linear-gradient(rgba(0,0,0,.28),rgba(0,0,0,.28)),url('${b.image_url}');background-size:cover;background-position:center"` : '';
+    return `<div class="banner-card ${colorClass}"${bg}${hidden ? ' aria-hidden="true"' : ''}>
+      <div class="banner-text">
+        <span class="banner-tag">${b.tag || ''}</span>
+        <h3 class="banner-title">${b.title || ''}</h3>
+        <p class="banner-sub">${b.sub || ''}</p>
+      </div>
+      <div class="banner-deco">${FALLBACK_DECO}</div>
+    </div>`;
+  }
+
+  let banners = [];
+  try{
+    if(typeof sbClient !== 'undefined' && sbClient){
+      const { data, error } = await sbClient
+        .from('site_content')
+        .select('content')
+        .eq('page', 'landing')
+        .eq('section', 'banners')
+        .maybeSingle();
+      if(!error && data && Array.isArray(data.content) && data.content.length){
+        banners = data.content;
+      }
+    }
+  }catch(e){
+    console.error('banner load error:', e);
+  }
+  if(!banners.length){
+    banners = [{ tag:'Free Shipping', title:'On Orders Over ৳2000', sub:'Anywhere across Bangladesh', color:'green', image_url:null }];
+  }
+
+  const realCount = banners.length;
+  if(realCount === 1){
+    track.innerHTML = bannerCardHTML(banners[0], false);
+    dotsWrap.style.display = 'none';
+    return;
+  }
+
+  const slides = [banners[banners.length-1], ...banners, banners[0]];
+  track.innerHTML = slides.map((b,i)=>bannerCardHTML(b, i===0 || i===slides.length-1)).join('');
+  dotsWrap.innerHTML = banners.map((_,i)=>`<span class="dot${i===0?' active':''}"></span>`).join('');
+
   const dots=document.querySelectorAll('#bannerDots .dot');
-  if(!track)return;
   const cards=[...track.children];
-  const realCount=dots.length;
   const lastIndex=cards.length-1;
   let index=1, timer, resumeTimer;
   let dragging=false, isHorizontal=null, startX=0, startY=0, baseTranslate=0, cardW=0;
