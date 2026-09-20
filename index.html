@@ -2039,19 +2039,19 @@ createMarquee('hdTrack', '.hotdeals-section', 28);
   <div class="testi-row rv d1">
     <div class="testi-track" id="testiTrack">
     <div class="testi-card">
-      <div class="testi-stars">
+      <div class="testi-stars" id="testiStars1">
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       </div>
-      <p class="testi-text">"Ordered Optimum Nutrition whey through proxy import. Arrived in 12 days, perfectly sealed, authentic. Saved me ৳2,000 compared to local shops."</p>
+      <p class="testi-text" id="testiText1">"Ordered Optimum Nutrition whey through proxy import. Arrived in 12 days, perfectly sealed, authentic. Saved me ৳2,000 compared to local shops."</p>
       <div class="testi-author">
-        <div class="testi-avatar">RA</div>
+        <div class="testi-avatar" id="testiAvatar1">RA</div>
         <div>
-          <div class="testi-name">Rafiq Ahmed</div>
-          <div class="testi-role">Dhaka · Verified Buyer</div>
+          <div class="testi-name" id="testiName1">Rafiq Ahmed</div>
+          <div class="testi-role" id="testiRole1">Dhaka · Verified Buyer</div>
         </div>
       </div>
     </div>
@@ -2090,19 +2090,19 @@ createMarquee('hdTrack', '.hotdeals-section', 28);
       </div>
     </div>
     <div class="testi-card" aria-hidden="true">
-      <div class="testi-stars">
+      <div class="testi-stars" id="testiStars1Dup">
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       </div>
-      <p class="testi-text">"Ordered Optimum Nutrition whey through proxy import. Arrived in 12 days, perfectly sealed, authentic. Saved me ৳2,000 compared to local shops."</p>
+      <p class="testi-text" id="testiText1Dup">"Ordered Optimum Nutrition whey through proxy import. Arrived in 12 days, perfectly sealed, authentic. Saved me ৳2,000 compared to local shops."</p>
       <div class="testi-author">
-        <div class="testi-avatar">RA</div>
+        <div class="testi-avatar" id="testiAvatar1Dup">RA</div>
         <div>
-          <div class="testi-name">Rafiq Ahmed</div>
-          <div class="testi-role">Dhaka · Verified Buyer</div>
+          <div class="testi-name" id="testiName1Dup">Rafiq Ahmed</div>
+          <div class="testi-role" id="testiRole1Dup">Dhaka · Verified Buyer</div>
         </div>
       </div>
     </div>
@@ -2145,6 +2145,61 @@ createMarquee('hdTrack', '.hotdeals-section', 28);
 </section>
 
 <script>createMarquee('testiTrack', '.testimonials-section', 32);</script>
+
+<script>
+(function(){
+  const STAR_FILLED = '<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  const STAR_EMPTY = '<svg viewBox="0 0 24 24" style="opacity:.25"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  function initials(name){
+    const parts = (name||'').trim().split(/\s+/).filter(Boolean);
+    if(!parts.length) return '?';
+    if(parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  async function loadTestimonialFromCMS(){
+    if(!window.sbClient && typeof sbClient === 'undefined') return;
+    try{
+      const { data, error } = await sbClient
+        .from('site_content')
+        .select('content')
+        .eq('page', 'landing')
+        .eq('section', 'testimonial')
+        .maybeSingle();
+      if(error || !data || !data.content) return;
+      const c = data.content;
+      ['1','1Dup'].forEach(suffix => {
+        const textEl = document.getElementById('testiText' + suffix);
+        const nameEl = document.getElementById('testiName' + suffix);
+        const roleEl = document.getElementById('testiRole' + suffix);
+        const avatarEl = document.getElementById('testiAvatar' + suffix);
+        const starsEl = document.getElementById('testiStars' + suffix);
+        if(textEl && c.text) textEl.textContent = '"' + c.text + '"';
+        if(nameEl && c.name) nameEl.textContent = c.name;
+        if(roleEl){
+          const line = (c.city ? c.city + ' · ' : '') + (c.role || '');
+          if(line){ roleEl.textContent = line; roleEl.style.display = ''; }
+          else if(c.city){ roleEl.textContent = c.city; roleEl.style.display = ''; }
+          else { roleEl.textContent = ''; roleEl.style.display = 'none'; }
+        }
+        if(avatarEl){
+          if(c.avatar_url){
+            avatarEl.innerHTML = '<img src="' + c.avatar_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+          } else if(c.name){
+            avatarEl.textContent = initials(c.name);
+          }
+        }
+        if(starsEl && c.rating){
+          const rating = Math.max(1, Math.min(5, parseInt(c.rating) || 5));
+          starsEl.innerHTML = STAR_FILLED.repeat(rating) + STAR_EMPTY.repeat(5 - rating);
+        }
+      });
+    }catch(e){
+      console.error('loadTestimonialFromCMS error:', e);
+    }
+  }
+  loadTestimonialFromCMS();
+})();
+</script>
 
 <!-- FAQ -->
 <section class="faq-section">
