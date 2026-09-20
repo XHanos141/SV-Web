@@ -300,6 +300,7 @@ body.dark-mode .banner-viewport{border-color:rgba(255,255,255,.92);box-shadow:0 
 .banner-track{display:flex;height:100%;touch-action:pan-y;transition:transform .45s cubic-bezier(.4,0,.2,1)}
 .banner-card{position:relative;width:100%;height:100%;flex-shrink:0;box-sizing:border-box;padding:18px 20px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;-webkit-user-select:none;user-select:none}
 .banner-card.bc-purple{background:linear-gradient(135deg,#6761a8 0%,#4a4480 100%);box-shadow:0 4px 18px rgba(103,97,168,.30)}
+.banner-card.bc-image-only{background:#e8e8ec;background-size:cover;background-position:center}
 .banner-card.bc-green{background:linear-gradient(135deg,#009b72 0%,#00704f 100%);box-shadow:0 4px 18px rgba(0,155,114,.30)}
 .banner-text{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .banner-tag{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
@@ -1188,20 +1189,9 @@ window.__resizeHandlers = [];
   const dotsWrap=document.getElementById('bannerDots');
   if(!track) return;
 
-  const FALLBACK_DECO = '<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
-  const COLOR_CLASS = { green:'bc-green', purple:'bc-purple' };
-
   function bannerCardHTML(b, hidden){
-    const colorClass = COLOR_CLASS[b.color] || 'bc-green';
-    const bg = b.image_url ? ` style="background-image:linear-gradient(rgba(0,0,0,.28),rgba(0,0,0,.28)),url('${b.image_url}');background-size:cover;background-position:center"` : '';
-    return `<div class="banner-card ${colorClass}"${bg}${hidden ? ' aria-hidden="true"' : ''}>
-      <div class="banner-text">
-        <span class="banner-tag">${b.tag || ''}</span>
-        <h3 class="banner-title">${b.title || ''}</h3>
-        <p class="banner-sub">${b.sub || ''}</p>
-      </div>
-      <div class="banner-deco">${FALLBACK_DECO}</div>
-    </div>`;
+    const bg = b.image_url ? ` style="background-image:url('${b.image_url}');background-size:cover;background-position:center"` : '';
+    return `<div class="banner-card bc-image-only"${bg}${hidden ? ' aria-hidden="true"' : ''}></div>`;
   }
 
   let banners = [];
@@ -1221,7 +1211,7 @@ window.__resizeHandlers = [];
     console.error('banner load error:', e);
   }
   if(!banners.length){
-    banners = [{ tag:'Free Shipping', title:'On Orders Over ৳2000', sub:'Anywhere across Bangladesh', color:'green', image_url:null }];
+    banners = [{ image_url:null }];
   }
 
   const realCount = banners.length;
