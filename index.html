@@ -1697,44 +1697,44 @@ createMarquee('hdTrack', '.hotdeals-section', 28);
         <p class="wb-sub">Everything you can shop from SuppVerseBD.</p>
       </div>
       <div class="wb-grid" id="wbGrid">
-        <div class="wb-card" data-idx="0">
+        <div class="wb-card" data-idx="0" data-category="Supplement">
           <div class="wb-float"><div class="wb-swing">
           <div class="wb-icon" style="background:linear-gradient(135deg,#009b72,#00704f)">
             <svg viewBox="0 0 512 512" style="color:#fff"><use href="#cat-icon-supplement"/></svg>
           </div>
-          <span class="wb-label">Supplement</span>
+          <span class="wb-label" id="wbLabelSupplement">Supplement</span>
           </div></div>
         </div>
-        <div class="wb-card" data-idx="1">
+        <div class="wb-card" data-idx="1" data-category="Gadget">
           <div class="wb-float"><div class="wb-swing">
           <div class="wb-icon" style="background:linear-gradient(135deg,#0EA5E9,#0284C7)">
             <svg viewBox="0 0 64 64" style="color:#fff"><use href="#cat-icon-gadget"/></svg>
           </div>
-          <span class="wb-label">Gadget</span>
+          <span class="wb-label" id="wbLabelGadget">Gadget</span>
           </div></div>
         </div>
-        <div class="wb-card" data-idx="2">
+        <div class="wb-card" data-idx="2" data-category="Clothing">
           <div class="wb-float"><div class="wb-swing">
           <div class="wb-icon" style="background:linear-gradient(135deg,#6761a8,#4a4480)">
             <svg viewBox="0 0 512 512" style="color:#fff"><use href="#cat-icon-clothing"/></svg>
           </div>
-          <span class="wb-label">Clothing</span>
+          <span class="wb-label" id="wbLabelClothing">Clothing</span>
           </div></div>
         </div>
-        <div class="wb-card" data-idx="3">
+        <div class="wb-card" data-idx="3" data-category="General">
           <div class="wb-float"><div class="wb-swing">
           <div class="wb-icon" style="background:linear-gradient(135deg,#64748B,#475569)">
             <svg viewBox="0 0 24 24" fill="none" style="color:#fff" stroke-width="1.8" stroke-linecap="round"><use href="#cat-icon-general"/></svg>
           </div>
-          <span class="wb-label">General</span>
+          <span class="wb-label" id="wbLabelGeneral">General</span>
           </div></div>
         </div>
-        <div class="wb-card" data-idx="4">
+        <div class="wb-card" data-idx="4" data-category="Cosmetic">
           <div class="wb-float"><div class="wb-swing">
           <div class="wb-icon" style="background:linear-gradient(135deg,#EC4899,#DB2777)">
             <svg viewBox="0 0 512 512" style="color:#fff"><use href="#cat-icon-cosmetic"/></svg>
           </div>
-          <span class="wb-label">Cosmetic</span>
+          <span class="wb-label" id="wbLabelCosmetic">Cosmetic</span>
           </div></div>
         </div>
         <svg class="wb-connectors" id="wbConnectors" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -2588,11 +2588,38 @@ document.querySelectorAll('.rv').forEach(el => {
   /* Category badge click -> store.html filtered to that category */
   cards.forEach(function(card){
     card.addEventListener('click', function(){
-      var label = card.querySelector('.wb-label');
-      var cat = label ? label.textContent.trim() : '';
+      var cat = card.dataset.category || '';
       if(cat) window.location.href = 'store.html?cat=' + encodeURIComponent(cat);
     });
   });
+})();
+</script>
+
+<script>
+(function(){
+  async function loadCatBadgesFromCMS(){
+    if(!window.sbClient && typeof sbClient === 'undefined') return;
+    try{
+      const { data, error } = await sbClient
+        .from('site_content')
+        .select('content')
+        .eq('page', 'landing')
+        .eq('section', 'category_badges')
+        .maybeSingle();
+      if(error || !data || !data.content) return;
+      const c = data.content;
+      const IDS = { supplement:'wbLabelSupplement', gadget:'wbLabelGadget', clothing:'wbLabelClothing', general:'wbLabelGeneral', cosmetic:'wbLabelCosmetic' };
+      Object.keys(IDS).forEach(key => {
+        if(c[key]){
+          const el = document.getElementById(IDS[key]);
+          if(el) el.textContent = c[key];
+        }
+      });
+    }catch(e){
+      console.error('loadCatBadgesFromCMS error:', e);
+    }
+  }
+  loadCatBadgesFromCMS();
 })();
 </script>
 
