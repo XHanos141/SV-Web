@@ -2118,48 +2118,9 @@ createMarquee('hdTrack', '.hotdeals-section', 28);
   <div class="faq-header rv">
     <h2 class="wb-title">Frequently Asked Questions</h2>
   </div>
-  <div class="faq-list rv d1">
+  <div class="faq-list rv d1" id="faqList">
     <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        <span class="faq-q-text">Are your products 100% authentic?</span>
-        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
-      </div>
-      <div class="faq-a"><p class="faq-a-text">Every product at SuppVerse BD is sourced from trusted brands, authorized distributors, or verified global retailers. We carefully inspect every order before shipping and never deal in counterfeit products. Whether you choose local stock or global import, you can shop with confidence knowing every order is backed by our commitment to authenticity and quality.</p></div>
-    </div>
-        <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        <span class="faq-q-text">What is a pre-order?</span>
-        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
-      </div>
-      <div class="faq-a"><p class="faq-a-text">A pre-order means you choose—we handle the rest. It lets you buy products from trusted international stores without the hassle. Simply send us the product link from your preferred retailer. Once your order is confirmed, we'll purchase the item, handle international shipping, customs clearance, and every step of the import process until it's safely delivered to your doorstep.</p></div>
-    </div>
-<div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        <span class="faq-q-text">How long does pre-order delivery take?</span>
-        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
-      </div>
-      <div class="faq-a"><p class="faq-a-text">Most pre-order items are delivered within 10–14 business days after your order is confirmed. We handle international sourcing, shipping, customs clearance, and delivery to your doorstep. You'll receive regular order updates throughout the process, so you always know the status of your order.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        <span class="faq-q-text">What payment methods do you accept?</span>
-        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
-      </div>
-      <div class="faq-a"><p class="faq-a-text">We accept bKash, Nagad, bank transfers, major debit/credit cards, and cash on delivery (COD) for eligible local stock orders. We also support cryptocurrency payments in selected cases. For pre-orders, a partial advance payment may be required before we begin the sourcing process.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        <span class="faq-q-text">Can I return a product if I'm not satisfied?</span>
-        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
-      </div>
-      <div class="faq-a"><p class="faq-a-text">Yes. Eligible local stock items may be returned according to our return policy. If your order arrives damaged, incorrect, or defective, we'll replace it or provide an appropriate solution. Since pre-order items are sourced specifically for each customer, they are generally non-returnable unless they arrive damaged or have a verified product issue.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        <span class="faq-q-text">Do you deliver outside Dhaka?</span>
-        <span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
-      </div>
-      <div class="faq-a"><p class="faq-a-text">Absolutely. We deliver nationwide across all 64 districts of Bangladesh. Local stock orders in Dhaka are typically delivered the same day or the next business day. Outside Dhaka, delivery usually takes 2–3 business days, depending on the courier and location.</p></div>
+      <div class="faq-q"><span class="faq-q-text">Loading…</span></div>
     </div>
   </div>
 </section>
@@ -2360,6 +2321,55 @@ function toggleFaq(el){
   document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
   if(!wasOpen) item.classList.add('open');
 }
+
+const SVW_SB_URL = 'https://tlkoxltugvfwxmnrthvr.supabase.co';
+const SVW_SB_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRsa294bHR1Z3Zmd3htbnJ0aHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwOTIxNTIsImV4cCI6MjEwMzY2ODE1Mn0.UMFWCIPoNJn5kAX5v9OXVkH3wmxp_dtDG7dgNQ3BK7E';
+const svwSb = window.supabase ? window.supabase.createClient(SVW_SB_URL, SVW_SB_ANON_KEY) : null;
+
+const FAQ_FALLBACK = [
+  {q:'Are your products 100% authentic?', a:'Every product at SuppVerse BD is sourced from trusted brands, authorized distributors, or verified global retailers. We carefully inspect every order before shipping and never deal in counterfeit products. Whether you choose local stock or global import, you can shop with confidence knowing every order is backed by our commitment to authenticity and quality.'},
+  {q:'What is a pre-order?', a:"A pre-order means you choose—we handle the rest. It lets you buy products from trusted international stores without the hassle. Simply send us the product link from your preferred retailer. Once your order is confirmed, we'll purchase the item, handle international shipping, customs clearance, and every step of the import process until it's safely delivered to your doorstep."},
+  {q:'How long does pre-order delivery take?', a:"Most pre-order items are delivered within 10–14 business days after your order is confirmed. We handle international sourcing, shipping, customs clearance, and delivery to your doorstep. You'll receive regular order updates throughout the process, so you always know the status of your order."},
+  {q:'What payment methods do you accept?', a:'We accept bKash, Nagad, bank transfers, major debit/credit cards, and cash on delivery (COD) for eligible local stock orders. We also support cryptocurrency payments in selected cases. For pre-orders, a partial advance payment may be required before we begin the sourcing process.'},
+  {q:"Can I return a product if I'm not satisfied?", a:"Yes. Eligible local stock items may be returned according to our return policy. If your order arrives damaged, incorrect, or defective, we'll replace it or provide an appropriate solution. Since pre-order items are sourced specifically for each customer, they are generally non-returnable unless they arrive damaged or have a verified product issue."},
+  {q:'Do you deliver outside Dhaka?', a:'Absolutely. We deliver nationwide across all 64 districts of Bangladesh. Local stock orders in Dhaka are typically delivered the same day or the next business day. Outside Dhaka, delivery usually takes 2–3 business days, depending on the courier and location.'}
+];
+
+function escFaqHtml(s){
+  return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function renderFaqList(items){
+  const el = document.getElementById('faqList');
+  if(!el) return;
+  el.innerHTML = items.map((item, i) =>
+    '<div class="faq-item">' +
+      '<div class="faq-q" onclick="toggleFaq(this)">' +
+        '<span class="faq-q-text">' + escFaqHtml(item.q) + '</span>' +
+        '<span class="faq-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>' +
+      '</div>' +
+      '<div class="faq-a"><p class="faq-a-text">' + escFaqHtml(item.a) + '</p></div>' +
+    '</div>'
+  ).join('');
+}
+async function loadFaqSection(){
+  if(!svwSb){ renderFaqList(FAQ_FALLBACK); return; }
+  try{
+    const { data, error } = await svwSb
+      .from('site_content')
+      .select('content')
+      .eq('page', 'landing')
+      .eq('section', 'faq')
+      .maybeSingle();
+    if(error || !data || !Array.isArray(data.content) || !data.content.length){
+      renderFaqList(FAQ_FALLBACK);
+      return;
+    }
+    renderFaqList(data.content);
+  } catch(e){
+    renderFaqList(FAQ_FALLBACK);
+  }
+}
+loadFaqSection();
 
 function subscribeNewsletter(){
   const email = document.getElementById('nlEmail').value;
