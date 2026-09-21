@@ -475,19 +475,6 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     <div class="pay-line"><span>Service charge</span><span>$24.60</span></div>
     <div class="pay-line discount" id="payDiscountLineProxy" style="display:none"><span>Discount</span><span id="payDiscountProxy">-৳0</span></div>
 
-    <div class="promo-row" id="promoRowProxy">
-      <input class="promo-input" id="promoInputProxy" type="text" placeholder="Promo or voucher code" autocomplete="off">
-      <button class="promo-apply-btn" id="promoApplyBtnProxy" type="button">Apply</button>
-    </div>
-    <div class="promo-error" id="promoErrorProxy">Invalid or expired code.</div>
-    <div class="promo-applied" id="promoAppliedProxy">
-      <div class="promo-applied-left">
-        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-        <span>"<b id="promoCodeLabelProxy">CODE</b>" applied</span>
-      </div>
-      <button class="promo-remove" id="promoRemoveBtnProxy" type="button">Remove</button>
-    </div>
-
     <div class="pay-line total"><span>Total Due</span><span class="amt" id="payTotalProxy">৳48,260</span></div>
     <div class="pay-tracking">Tracking ID <b>PX-4892</b></div>
   </section>
@@ -944,6 +931,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
 <script>
 /* Theme */
@@ -1141,8 +1129,7 @@ function renderInternalSummary(){
   const shipping = (items.length === 0 || subtotal >= SHIPPING_FREE_THRESHOLD) ? 0 : SHIPPING_FLAT;
   let discount = 0;
   if(PROMO.internal.applied && items.length){
-    const p = PROMO.internal.applied;
-    discount = p.type === 'percent' ? Math.round(subtotal * p.value / 100) : Math.min(p.value, subtotal);
+    discount = Math.min(PROMO.internal.applied.discount, subtotal);
   }
   const total = Math.max(0, subtotal + shipping - discount);
   document.getElementById('paySubtotal').textContent = fmt(subtotal);
@@ -1166,27 +1153,23 @@ function escHtml(str){
   return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-/* ─── Promo codes: ported from cart.html, applied at payment instead ─── */
-const PROMO = {
-  internal: { codes: { 'WELCOME10': { type:'percent', value:10, label:'10% off' }, 'SAVE200': { type:'flat', value:200, label:'৳200 off' } }, applied: null },
-  proxy: { codes: { 'PROXY5': { type:'percent', value:5, label:'5% off' }, 'FIRSTPROXY': { type:'flat', value:300, label:'৳300 off' } }, applied: null }
-};
+/* ─── Voucher codes: checked by the server (store_validate_voucher). Prices and discounts are never taken from the browser. ─── */
+const PROMO = { internal: { applied: null } };
 const PROXY_BASE_TOTAL = 48260;
 
+function cartSkuLines(){
+  const items = readInternalCart();
+  if(!items.length || items.some(i => !i.sku)) return null;
+  return items.map(i => ({ sku: i.sku, qty: (Number.isFinite(i.qty) && i.qty > 0) ? i.qty : 1 }));
+}
+function getCheckoutAddress(){
+  const a = collectAddressInput();
+  if(a.name && a.phone && a.full) return a;
+  return loadAddress() || a;
+}
+
 function renderProxySummary(){
-  let discount = 0;
-  if(PROMO.proxy.applied){
-    const p = PROMO.proxy.applied;
-    discount = p.type === 'percent' ? Math.round(PROXY_BASE_TOTAL * p.value / 100) : Math.min(p.value, PROXY_BASE_TOTAL);
-  }
-  const total = Math.max(0, PROXY_BASE_TOTAL - discount);
-  const discLine = document.getElementById('payDiscountLineProxy');
-  if(discount > 0){
-    discLine.style.display = 'flex';
-    document.getElementById('payDiscountProxy').textContent = '-' + fmt(discount);
-  } else {
-    discLine.style.display = 'none';
-  }
+  const total = PROXY_BASE_TOTAL;
   document.getElementById('payTotalProxy').textContent = fmt(total);
   TOTALS_BDT.proxy = total;
   if(S.flow === 'proxy'){
@@ -1196,37 +1179,55 @@ function renderProxySummary(){
   }
 }
 
-function wirePromo(flow, suffix, onApplied){
-  const p = PROMO[flow];
-  const input = document.getElementById('promoInput' + suffix);
-  const applyBtn = document.getElementById('promoApplyBtn' + suffix);
-  const row = document.getElementById('promoRow' + suffix);
-  const appliedEl = document.getElementById('promoApplied' + suffix);
-  const errorEl = document.getElementById('promoError' + suffix);
-  const codeLabel = document.getElementById('promoCodeLabel' + suffix);
+function wireInternalPromo(){
+  const input = document.getElementById('promoInputInternal');
+  const applyBtn = document.getElementById('promoApplyBtnInternal');
+  const row = document.getElementById('promoRowInternal');
+  const appliedEl = document.getElementById('promoAppliedInternal');
+  const errorEl = document.getElementById('promoErrorInternal');
+  const codeLabel = document.getElementById('promoCodeLabelInternal');
 
-  applyBtn.addEventListener('click', () => {
-    const code = input.value.trim().toUpperCase();
-    const match = p.codes[code];
-    if(!match){ errorEl.classList.add('show'); return; }
-    errorEl.classList.remove('show');
-    p.applied = { code, ...match };
-    row.style.display = 'none';
-    appliedEl.classList.add('show');
-    codeLabel.textContent = code;
-    onApplied();
-  });
-  appliedEl.querySelector('.promo-remove').addEventListener('click', () => {
-    p.applied = null;
+  function showError(msg){ errorEl.textContent = msg; errorEl.classList.add('show'); }
+  function clearApplied(){
+    PROMO.internal.applied = null;
     appliedEl.classList.remove('show');
     row.style.display = '';
     input.value = '';
-    onApplied();
+    renderInternalSummary();
+  }
+  window.svClearInternalPromo = clearApplied;
+
+  applyBtn.addEventListener('click', async () => {
+    const code = input.value.trim().toUpperCase();
+    if(!code) return;
+    const lines = cartSkuLines();
+    if(!lines){ showError("Vouchers can't be applied to this cart yet"); return; }
+    if(!sbClient){ showError('Could not reach the server. Please try again.'); return; }
+    applyBtn.disabled = true;
+    try {
+      const res = await sbClient.rpc('store_validate_voucher', { p_code: code, p_lines: lines, p_phone: getCheckoutAddress().phone || null });
+      if(res.error){
+        showError((res.error.code === 'P0429' || /rate_limit/.test(res.error.message || '')) ? 'Too many attempts. Please wait a few minutes.' : 'Could not check the voucher. Please try again.');
+        return;
+      }
+      const d = res.data;
+      if(!d || !d.valid){ showError((d && d.message) || 'This voucher code is not valid'); return; }
+      errorEl.classList.remove('show');
+      PROMO.internal.applied = { code: d.voucher.code, discount: Number(d.discount) || 0 };
+      row.style.display = 'none';
+      appliedEl.classList.add('show');
+      codeLabel.textContent = d.voucher.code;
+      renderInternalSummary();
+    } catch(e){
+      showError('Could not check the voucher. Please try again.');
+    } finally {
+      applyBtn.disabled = false;
+    }
   });
+  appliedEl.querySelector('.promo-remove').addEventListener('click', clearApplied);
   input.addEventListener('input', () => errorEl.classList.remove('show'));
 }
-wirePromo('internal', 'Internal', renderInternalSummary);
-wirePromo('proxy', 'Proxy', renderProxySummary);
+wireInternalPromo();
 
 /* BDT totals per flow — internal is computed live from cart; proxy stays admin-quoted (static demo for now) */
 const TOTALS_BDT = { internal: 0, proxy: 48260 };
@@ -1653,7 +1654,7 @@ const psText = document.getElementById('psText');
 function openOverlay(el){ el.classList.add('show'); }
 function closeOverlay(el){ el.classList.remove('show'); }
 
-function finalizeSubmit(){
+function finalizeSubmit(orderNumber){
   if(!S.method) return;
   const isP2P = (S.flow === 'proxy' && (S.method === 'bkash' || S.method === 'nagad' || S.method === 'card')) || S.method === 'crypto';
 
@@ -1673,8 +1674,50 @@ function finalizeSubmit(){
     psTitle.textContent = 'Payment successful!';
     psText.textContent = "Your order is confirmed. We'll send updates via WhatsApp.";
   }
+  if(orderNumber) psText.textContent = 'Order ' + orderNumber + '. ' + psText.textContent;
   if(IS_BUYNOW) sessionStorage.removeItem(BUYNOW_KEY);
   openOverlay(successOverlay);
+}
+
+const TXN_FIELD = { bkash: 'bkTxn', nagad: 'ngTxn', rocket: 'rkTxn', cellfin: 'cfTxn', bank: 'bnkTxn', crypto: 'cryptoTxn' };
+let _placing = false;
+/* Store orders are created by the server (prices, stock, shipping and voucher are decided there).
+   Carts whose items carry no SKU yet (demo catalog) and proxy quotes keep the old demo confirmation. */
+async function placeOrder(){
+  const lines = S.flow === 'internal' ? cartSkuLines() : null;
+  if(!lines){ finalizeSubmit(); return; }
+  if(_placing) return;
+  if(!sbClient){ showToast('Could not reach the server. Please try again.'); return; }
+  const a = getCheckoutAddress();
+  const txnEl = TXN_FIELD[S.method] ? document.getElementById(TXN_FIELD[S.method]) : null;
+  _placing = true;
+  payBtn.disabled = true;
+  try {
+    const res = await sbClient.rpc('create_store_order', { p: {
+      name: a.name, phone: a.phone, address: a.full, district: a.city, zip: a.zip,
+      items: lines, payment_method: S.method,
+      payment_ref: txnEl ? txnEl.value.trim() : null,
+      voucher_code: PROMO.internal.applied ? PROMO.internal.applied.code : null
+    } });
+    if(res.error){
+      showToast((res.error.code === 'P0429' || /rate_limit/.test(res.error.message || '')) ? 'Too many attempts. Please wait a few minutes.' : 'Could not place your order. Please try again.');
+      return;
+    }
+    const d = res.data;
+    if(!d || !d.ok){
+      const msg = (d && d.error) || 'Could not place your order';
+      if(PROMO.internal.applied && /voucher/i.test(msg) && typeof svClearInternalPromo === 'function') svClearInternalPromo();
+      showToast(msg);
+      return;
+    }
+    if(!IS_BUYNOW){ try { localStorage.removeItem(CART_KEY); } catch(e){} }
+    finalizeSubmit(d.order_number);
+  } catch(e){
+    showToast('Could not place your order. Please try again.');
+  } finally {
+    _placing = false;
+    payBtn.disabled = !S.method;
+  }
 }
 
 payBtn.addEventListener('click', () => {
@@ -1700,7 +1743,7 @@ payBtn.addEventListener('click', () => {
       return;
     }
   }
-  finalizeSubmit();
+  placeOrder();
 });
 
 document.getElementById('psCloseBtn').addEventListener('click', () => closeOverlay(successOverlay));
