@@ -41,8 +41,14 @@ body{
   border-bottom:1px solid rgba(0,0,0,0.5);
   height:var(--header-h);
   display:flex;align-items:center;justify-content:space-between;padding:0 16px;
+  position:relative;
 }
-.s-header h1{ font-family:var(--font-display);font-size:16px;font-weight:800;letter-spacing:-.3px;color:#fff; }
+.s-header-title{
+  position:absolute;left:0;right:0;top:0;bottom:0;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.s-header h1{ font-family:var(--font-display);font-size:16px;font-weight:800;letter-spacing:-.3px;color:#fff;text-align:center; }
 .s-header span{ font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);display:block;margin-top:-2px; }
 .s-header-actions{ display:flex;align-items:center;gap:10px; }
 .s-header-btn{
@@ -320,9 +326,8 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 </svg>
 
 <header class="s-header">
-  <div>
-    <h1>Your Orders</h1>
-    <span id="orderCount">2 orders</span>
+  <div class="s-header-title">
+    <h1>Orders</h1>
   </div>
   <div class="s-header-actions">
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
