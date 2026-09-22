@@ -1,11 +1,14 @@
 /* ===== FLOW TABS — shared segmented toggle component =====
    Used by cart.html, orders.html, payment.html.
-   Layout margin, the box border/shadow, and per-tab active colors
+   Box background is a fixed neutral tint (not var(--surface2)) so the
+   "tray" reads consistently regardless of how close a page's --surface2
+   happens to sit to its --bg. Layout margin and per-tab active colors
    are page-specific and stay in each page's own <style> block. */
 .flow-tabs{
-  display:flex;gap:8px;background:var(--surface2);border-radius:12px;
+  display:flex;gap:8px;background:rgba(10,20,40,0.045);border-radius:12px;
   padding:4px;position:relative;
 }
+body.dark-mode .flow-tabs{background:rgba(255,255,255,0.055)}
 .flow-tabs::before{
   content:'';position:absolute;top:4px;left:4px;
   width:calc(50% - 6px);height:calc(100% - 8px);
