@@ -2373,12 +2373,9 @@ async function loadFaqSection(){
 }
 loadFaqSection();
 
-const FOOTER_SOCIAL_FALLBACK_MSG = { fb: ['Facebook page coming soon','📘'], ig: ['Instagram coming soon','📷'], yt: ['YouTube channel coming soon','▶️'] };
 function handleFooterSocial(key, el){
   const url = el.dataset.url;
-  if(url){ window.open(url, '_blank', 'noopener'); return false; }
-  const [msg, icon] = FOOTER_SOCIAL_FALLBACK_MSG[key];
-  T(msg, icon);
+  if(url){ window.open(url, '_blank', 'noopener'); }
   return false;
 }
 async function loadFooterSection(){
