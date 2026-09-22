@@ -1,0 +1,25 @@
+/* ===== FLOW TABS — shared segmented toggle component =====
+   Used by cart.html, orders.html, payment.html.
+   Layout margin, the box border/shadow, and per-tab active colors
+   are page-specific and stay in each page's own <style> block. */
+.flow-tabs{
+  display:flex;gap:8px;background:var(--surface2);border-radius:12px;
+  padding:4px;position:relative;
+}
+.flow-tabs::before{
+  content:'';position:absolute;top:4px;left:4px;
+  width:calc(50% - 6px);height:calc(100% - 8px);
+  background:var(--surface);border-radius:9px;
+  box-shadow:var(--shadow-sm, var(--shadow));
+  transition:transform .32s cubic-bezier(.65,0,.35,1),box-shadow .32s ease;
+  z-index:0;
+}
+.flow-tabs.flow-proxy::before{transform:translateX(calc(100% + 8px));box-shadow:0 2px 8px rgba(242,100,48,0.22)}
+.flow-tabs:not(.flow-proxy)::before{box-shadow:0 2px 8px rgba(0,157,220,0.22)}
+.flow-tab{
+  flex:1;padding:9px;border:none;background:transparent;border-radius:9px;
+  font-size:12px;font-weight:700;color:var(--text2, var(--t2));
+  transition:color .25s ease;cursor:pointer;
+  font-family:var(--font-body, inherit);position:relative;z-index:1;
+}
+.flow-tab.active{background:transparent;color:var(--text)}

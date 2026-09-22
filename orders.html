@@ -6,6 +6,7 @@
 <meta name="description" content="Orders — SuppVerse BD">
 <title>Orders — SuppVerse BD</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<link href="/assets/css/flow-tabs.css" rel="stylesheet">
 <style>
 :root{
   --bg:#F4F7FB; --surface:#ffffff; --surface2:#F8FAFD;
@@ -125,27 +126,7 @@ body.dark-mode .oc-id.proxy{ background:rgba(242,100,48,0.14);border-color:rgba(
 .oc-status-date{ font-size:10.5px;font-weight:600;color:var(--text); }
 
 /* Flow tabs */
-.flow-tabs{
-  display:flex;gap:8px;background:var(--surface2);border-radius:12px;
-  padding:4px;margin:12px 16px 0;position:relative;
-  border:1px solid var(--border);box-shadow:var(--shadow-sm);
-}
-.flow-tabs::before{
-  content:'';position:absolute;top:4px;left:4px;
-  width:calc(50% - 6px);height:calc(100% - 8px);
-  background:var(--surface);border-radius:9px;box-shadow:var(--shadow-sm);
-  transition:transform .32s cubic-bezier(.65,0,.35,1),box-shadow .32s ease;
-  z-index:0;
-}
-.flow-tabs.flow-proxy::before{ transform:translateX(calc(100% + 8px));box-shadow:0 2px 8px rgba(242,100,48,0.22); }
-.flow-tabs:not(.flow-proxy)::before{ box-shadow:0 2px 8px rgba(10,155,220,0.22); }
-.flow-tab{
-  flex:1;padding:9px;border:none;background:transparent;border-radius:9px;
-  font-size:12px;font-weight:700;color:var(--text2);
-  transition:color .25s ease;cursor:pointer;
-  font-family:var(--font-body);position:relative;z-index:1;
-}
-.flow-tab.active{ background:transparent;color:var(--text); }
+.flow-tabs{ margin:12px 16px 0;border:1px solid var(--border);box-shadow:var(--shadow-sm); }
 #tabStoreOrders.active{ color:var(--accent); }
 #tabProxyOrders.active{ color:var(--orange); }
 
