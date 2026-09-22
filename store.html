@@ -761,7 +761,7 @@ body.dark-mode .trending-off{
   50%{transform:translateX(4px)}
 }
 
-/* ─── CATEGORY PILLS (SLIDING INDICATOR) ─── */
+/* ─── BRAND PILLS (SLIDING INDICATOR) ─── */
 .ui-control{position:absolute;opacity:0;pointer-events:none}
 
 .s-tabs-wrap{
@@ -910,7 +910,7 @@ body.dark-mode .s-tab{
 .s-empty span{font-size:12px;font-weight:500}
 .s-tabs-wrap.is-hidden{display:none}
 
-/* ─── BRAND FILTER SHEET ─── */
+/* ─── CATEGORY FILTER SHEET ─── */
 .s-sheet-backdrop{
   position:fixed;inset:0;background:rgba(6,12,24,0.45);
   z-index:600;opacity:0;pointer-events:none;
@@ -1246,44 +1246,26 @@ body.dark-mode .s-tab{
   </div>
 </div>
 
-<!-- TABS (Sliding Pill) + Brand Filter -->
-<div class="s-tabs-wrap">
+<!-- TABS (Sliding Pill - Brand) + Subcategory Filter -->
+<div class="s-tabs-wrap" id="sTabsWrap">
   <div class="s-tabs-row">
-    <button class="s-filter-btn" id="sFilterBtn" type="button" aria-haspopup="dialog" aria-label="Filter by brand">
+    <button class="s-filter-btn" id="sFilterBtn" type="button" aria-haspopup="dialog" aria-label="Filter by category">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8258 5H6.17422C5.31987 5 4.85896 6.00212 5.41496 6.65079L9.75926 11.7191C9.91461 11.9004 10 12.1312 10 12.3699V17.382C10 17.7607 10.214 18.107 10.5528 18.2764L12.5528 19.2764C13.2177 19.6088 14 19.1253 14 18.382V12.3699C14 12.1312 14.0854 11.9004 14.2407 11.7191L18.585 6.65079C19.141 6.00212 18.6801 5 17.8258 5Z"/></svg>
       <span class="s-filter-count" id="sFilterCount">0</span>
     </button>
     <div class="s-tabs-scroll">
       <div class="s-tabs-track" id="sTabsTrack">
-        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-all" checked>
-        <label class="s-tab" for="cat-all">All</label>
-
-        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-protein">
-        <label class="s-tab" for="cat-protein">Protein</label>
-
-        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-pre">
-        <label class="s-tab" for="cat-pre">Pre-Workout</label>
-
-        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-vitamins">
-        <label class="s-tab" for="cat-vitamins">Vitamins</label>
-
-        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-creatine">
-        <label class="s-tab" for="cat-creatine">Creatine</label>
-
-        <input class="ui-control s-tab-option" type="radio" name="category" id="cat-fat">
-        <label class="s-tab" for="cat-fat">Fat Burners</label>
-
         <div class="s-tab-indicator" id="sTabIndicator"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- BRAND FILTER SHEET -->
+<!-- CATEGORY FILTER SHEET -->
 <div class="s-sheet-backdrop" id="sSheetBackdrop"></div>
-<div class="s-sheet" id="sBrandSheet" role="dialog" aria-modal="true" aria-label="Filter by brand">
+<div class="s-sheet" id="sBrandSheet" role="dialog" aria-modal="true" aria-label="Filter by category">
   <div class="s-sheet-header">
-    <span>Brand</span>
+    <span>Category</span>
     <button class="s-sheet-close" id="sSheetClose" type="button" aria-label="Close">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
     </button>
@@ -1570,63 +1552,6 @@ function buyNow(btn){
   window.location.href = 'payment.html?mode=buynow';
 }
 
-// ─── SLIDING TAB INDICATOR ───
-(function(){
-  var indicator = document.getElementById('sTabIndicator');
-  var track = document.getElementById('sTabsTrack');
-  var scrollBox = document.querySelector('.s-tabs-scroll');
-  if(!indicator || !track) return;
-
-  var resizeTimer = null;
-  var lastW = -1, lastX = -1;
-  var savedScroll = 0;
-
-  function positionTabIndicator(animate){
-    var checked = document.querySelector('input[name="category"]:checked');
-    if(!checked) return;
-    var label = checked.nextElementSibling;
-    if(!label) return;
-    var trackRect = track.getBoundingClientRect();
-    var labelRect = label.getBoundingClientRect();
-    var w = Math.round(labelRect.width);
-    var x = Math.round(labelRect.left - trackRect.left);
-    if(w === lastW && x === lastX) return;
-    lastW = w; lastX = x;
-    if(!animate){ indicator.style.transition = 'none'; }
-    indicator.style.width = w + 'px';
-    indicator.style.transform = 'translate3d(' + x + 'px,0,0)';
-    if(!animate){ requestAnimationFrame(function(){ indicator.style.transition = ''; }); }
-  }
-
-  requestAnimationFrame(function(){ positionTabIndicator(false); });
-  window.addEventListener('load', function(){ positionTabIndicator(false); });
-  setTimeout(function(){ positionTabIndicator(false); }, 300);
-
-  window.addEventListener('resize', function(){
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function(){ positionTabIndicator(false); }, 100);
-  });
-
-  document.querySelectorAll('input[name="category"]').forEach(function(input){
-    input.addEventListener('change', function(){
-      if(scrollBox) { scrollBox.scrollLeft = savedScroll; }
-      positionTabIndicator(true);
-    });
-  });
-
-  var scrollTimer;
-  window.addEventListener('scroll', function(){
-    clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(function(){ positionTabIndicator(false); }, 150);
-  }, {passive:true});
-
-  document.querySelectorAll('.s-tab').forEach(function(lbl){
-    lbl.addEventListener('click', function(){
-      if(scrollBox) savedScroll = scrollBox.scrollLeft;
-    }, true);
-  });
-})();
-
 function toggleWish(btn){
   var svg = btn.querySelector('.heart-icon');
   if(!svg) return;
@@ -1664,13 +1589,13 @@ function showToast(msg, icon){
 
 /* ─── Store Controller: type + category + search (single render pipeline) ─── */
 (function(){
-  var S = { type:'Supplement', cat:'All', q:'', brand:[] };
+  var S = { type:'Supplement', cat:[], q:'', brand:'All' };
   var TYPE_META = {
-    Supplement:  { cls:'cat-supplement',  icon:'#cat-icon-supplement',  vb:'0 0 512 512', hasCats:true  },
-    Gadget: { cls:'cat-gadget', icon:'#cat-icon-gadget', vb:'0 0 64 64',   hasCats:false },
-    Cosmetic:    { cls:'cat-cosmetic',    icon:'#cat-icon-cosmetic',    vb:'0 0 512 512', hasCats:false },
-    Clothing:    { cls:'cat-clothing',    icon:'#cat-icon-clothing',    vb:'0 0 512 512', hasCats:false },
-    General:     { cls:'cat-general',     icon:'#cat-icon-general',     vb:'0 0 24 24',   hasCats:false }
+    Supplement:  { cls:'cat-supplement',  icon:'#cat-icon-supplement',  vb:'0 0 512 512' },
+    Gadget: { cls:'cat-gadget', icon:'#cat-icon-gadget', vb:'0 0 64 64' },
+    Cosmetic:    { cls:'cat-cosmetic',    icon:'#cat-icon-cosmetic',    vb:'0 0 512 512' },
+    Clothing:    { cls:'cat-clothing',    icon:'#cat-icon-clothing',    vb:'0 0 512 512' },
+    General:     { cls:'cat-general',     icon:'#cat-icon-general',     vb:'0 0 24 24'   }
   };
 
   var searchInput  = document.getElementById('sSearchInput');
@@ -1678,8 +1603,12 @@ function showToast(msg, icon){
   var typeSelect   = document.getElementById('sTypeSelect');
   var typeDropdown = document.getElementById('sTypeDropdown');
   var badgeInner   = document.getElementById('sTypeBadgeInner');
-  var tabsWrap     = document.querySelector('.s-tabs-wrap');
+  var tabsWrap     = document.getElementById('sTabsWrap');
+  var tabsTrack    = document.getElementById('sTabsTrack');
+  var tabsScroll   = document.querySelector('.s-tabs-scroll');
   if(!searchInput || !typeSelect || !badgeInner) return;
+
+  function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
 
   var totalCount = 0;
   typeDropdown.querySelectorAll('.s-type-row').forEach(function(row){
@@ -1701,8 +1630,8 @@ function showToast(msg, icon){
     var q = S.q.toLowerCase();
     return products.filter(function(p){
       return p.type === S.type &&
-             (S.cat === 'All' || p.cat === S.cat) &&
-             (!S.brand.length || S.brand.indexOf(p.brand) !== -1) &&
+             (S.brand === 'All' || p.brand === S.brand) &&
+             (!S.cat.length || S.cat.indexOf(p.cat) !== -1) &&
              (!q || p.name.toLowerCase().indexOf(q) !== -1);
     });
   }
@@ -1852,33 +1781,92 @@ function showToast(msg, icon){
     svg.setAttribute('viewBox', meta.vb);
     svg.querySelector('use').setAttribute('href', meta.icon);
     searchInput.placeholder = S.type === 'Supplement' ? 'Search supplements, vitamins...' : 'Search ' + S.type.toLowerCase() + '...';
-    tabsWrap.classList.toggle('is-hidden', !meta.hasCats);
     typeSelect.classList.remove('open');
     searchInput.value = ''; S.q = '';
     searchClear.classList.remove('show');
     hideSuggest();
-    S.brand = [];
+    S.cat = [];
+    S.brand = 'All';
     updateFilterBadge();
-    buildBrandChips();
-    var allRadio = document.getElementById('cat-all');
-    if(S.cat !== 'All' && allRadio){
-      S.cat = 'All';
-      allRadio.checked = true;
-      allRadio.dispatchEvent(new Event('change',{bubbles:true}));
-    } else {
-      render();
-    }
+    buildCategoryChips();
+    buildBrandTabs();
+    render();
   });
 
-  document.querySelectorAll('input[name="category"]').forEach(function(inp){
-    inp.addEventListener('change', function(){
-      var lbl = inp.nextElementSibling;
-      if(lbl) S.cat = lbl.textContent.trim();
-      render();
+  /* ─── Brand pills (sliding tabs) ─── */
+  var indicator = null;
+  var resizeTimer = null, scrollTimer = null, savedScroll = 0;
+
+  function positionTabIndicator(animate){
+    indicator = document.getElementById('sTabIndicator');
+    var checked = tabsTrack.querySelector('input[name="brand-tab"]:checked');
+    if(!indicator || !checked) return;
+    var label = checked.nextElementSibling;
+    if(!label) return;
+    var trackRect = tabsTrack.getBoundingClientRect();
+    var labelRect = label.getBoundingClientRect();
+    var w = Math.round(labelRect.width);
+    var x = Math.round(labelRect.left - trackRect.left);
+    if(!animate){ indicator.style.transition = 'none'; }
+    indicator.style.width = w + 'px';
+    indicator.style.transform = 'translate3d(' + x + 'px,0,0)';
+    if(!animate){ requestAnimationFrame(function(){ indicator.style.transition = ''; }); }
+  }
+
+  function bindTabEvents(){
+    tabsTrack.querySelectorAll('input[name="brand-tab"]').forEach(function(input){
+      input.addEventListener('change', function(){
+        if(tabsScroll) tabsScroll.scrollLeft = savedScroll;
+        S.brand = (input.dataset.brand === undefined) ? 'All' : input.dataset.brand;
+        positionTabIndicator(true);
+        render();
+      });
     });
-  });
+    tabsTrack.querySelectorAll('.s-tab').forEach(function(lbl){
+      lbl.addEventListener('click', function(){
+        if(tabsScroll) savedScroll = tabsScroll.scrollLeft;
+      }, true);
+    });
+  }
 
-  /* ─── Brand filter sheet ─── */
+  function buildBrandTabs(){
+    var brands = [];
+    products.forEach(function(p){
+      if(p.type === S.type && p.brand && brands.indexOf(p.brand) === -1) brands.push(p.brand);
+    });
+    brands.sort();
+    tabsWrap.classList.toggle('is-hidden', brands.length === 0);
+    if(!brands.length){
+      tabsTrack.innerHTML = '<div class="s-tab-indicator" id="sTabIndicator"></div>';
+      return;
+    }
+    if(S.brand !== 'All' && brands.indexOf(S.brand) === -1) S.brand = 'All';
+    var html = '<input class="ui-control s-tab-option" type="radio" name="brand-tab" id="brand-all"' + (S.brand === 'All' ? ' checked' : '') + '>' +
+               '<label class="s-tab" for="brand-all">All</label>';
+    brands.forEach(function(b){
+      var id = 'brand-' + slug(b);
+      html += '<input class="ui-control s-tab-option" type="radio" name="brand-tab" id="' + id + '" data-brand="' + esc(b) + '"' + (S.brand === b ? ' checked' : '') + '>' +
+              '<label class="s-tab" for="' + id + '">' + esc(b) + '</label>';
+    });
+    html += '<div class="s-tab-indicator" id="sTabIndicator"></div>';
+    tabsTrack.innerHTML = html;
+    bindTabEvents();
+    positionTabIndicator(false);
+  }
+
+  requestAnimationFrame(function(){ positionTabIndicator(false); });
+  window.addEventListener('load', function(){ positionTabIndicator(false); });
+  setTimeout(function(){ positionTabIndicator(false); }, 300);
+  window.addEventListener('resize', function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){ positionTabIndicator(false); }, 100);
+  });
+  window.addEventListener('scroll', function(){
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(function(){ positionTabIndicator(false); }, 150);
+  }, {passive:true});
+
+  /* ─── Category filter sheet ─── */
   var filterBtn      = document.getElementById('sFilterBtn');
   var filterCount    = document.getElementById('sFilterCount');
   var sheetBackdrop  = document.getElementById('sSheetBackdrop');
@@ -1886,29 +1874,30 @@ function showToast(msg, icon){
   var sheetClose     = document.getElementById('sSheetClose');
   var brandChipsBox  = document.getElementById('sBrandChips');
 
-  function buildBrandChips(){
-    var brands = [];
+  function buildCategoryChips(){
+    var cats = [];
     products.forEach(function(p){
-      if(p.type === S.type && p.brand && brands.indexOf(p.brand) === -1) brands.push(p.brand);
+      if(p.type === S.type && p.cat && cats.indexOf(p.cat) === -1) cats.push(p.cat);
     });
-    brands.sort();
-    brandChipsBox.innerHTML = brands.map(function(b){
-      return '<div class="s-sheet-chip" data-brand="' + esc(b) + '">' + esc(b) + '</div>';
+    cats.sort();
+    S.cat = S.cat.filter(function(c){ return cats.indexOf(c) !== -1; });
+    brandChipsBox.innerHTML = cats.map(function(c){
+      return '<div class="s-sheet-chip" data-cat="' + esc(c) + '">' + esc(c) + '</div>';
     }).join('');
-    filterBtn.style.display = brands.length ? '' : 'none';
+    filterBtn.style.display = cats.length ? '' : 'none';
     syncChipsFromState();
   }
 
   function syncChipsFromState(){
     brandChipsBox.querySelectorAll('.s-sheet-chip').forEach(function(c){
-      c.classList.toggle('active', S.brand.indexOf(c.dataset.brand) !== -1);
+      c.classList.toggle('active', S.cat.indexOf(c.dataset.cat) !== -1);
     });
   }
 
   function updateFilterBadge(){
-    filterBtn.classList.toggle('has-active', S.brand.length > 0);
-    filterCount.classList.toggle('show', S.brand.length > 0);
-    filterCount.textContent = S.brand.length;
+    filterBtn.classList.toggle('has-active', S.cat.length > 0);
+    filterCount.classList.toggle('show', S.cat.length > 0);
+    filterCount.textContent = S.cat.length;
   }
 
   function openSheet(){
@@ -1929,15 +1918,16 @@ function showToast(msg, icon){
   brandChipsBox.addEventListener('click', function(e){
     var chip = e.target.closest('.s-sheet-chip');
     if(!chip) return;
-    var b = chip.dataset.brand;
-    var i = S.brand.indexOf(b);
-    if(i === -1) S.brand.push(b); else S.brand.splice(i,1);
+    var c = chip.dataset.cat;
+    var i = S.cat.indexOf(c);
+    if(i === -1) S.cat.push(c); else S.cat.splice(i,1);
     chip.classList.toggle('active', i === -1);
     updateFilterBadge();
     render();
   });
 
-  buildBrandChips();
+  buildCategoryChips();
+  buildBrandTabs();
   updateFilterBadge();
 
   render(false);
