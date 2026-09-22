@@ -327,26 +327,8 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 </svg>
 
 <header class="s-header">
-  <div class="s-header-spacer"></div>
   <div class="s-header-title">
     <h1>Orders</h1>
-  </div>
-  <div class="s-header-actions">
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-      <svg class="icon-sun" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="5"/>
-        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </svg>
-      <svg class="icon-moon" viewBox="0 0 24 24">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
-    </button>
-    <button class="hcart" id="headerAccountBtn" onclick="window.location.href='login.html'" aria-label="Account">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    </button>
   </div>
 </header>
 
@@ -601,7 +583,8 @@ function applyTheme(){
   if(themeBtn) themeBtn.classList.toggle('dark', S.theme === 'dark');
   localStorage.setItem('sv-theme', S.theme);
 }
-document.getElementById('themeToggle').addEventListener('click', () => {
+const themeToggleBtn2 = document.getElementById('themeToggle');
+if(themeToggleBtn2) themeToggleBtn2.addEventListener('click', () => {
   S.theme = S.theme === 'light' ? 'dark' : 'light';
   applyTheme();
 });

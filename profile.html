@@ -426,16 +426,9 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 
 <!-- HEADER -->
 <div class="s-header">
-  <div class="s-header-spacer"></div>
   <div class="s-header-title">
     <h1>My Profile</h1>
     <span>Account &amp; settings</span>
-  </div>
-  <div class="s-header-actions">
-    <button class="s-header-btn" id="themeToggle" aria-label="Toggle theme">
-      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
   </div>
 </div>
 
@@ -745,7 +738,8 @@ function toggleTheme(){
   localStorage.setItem('sv-theme', S.theme);
   applyTheme();
 }
-document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+const themeToggleBtn = document.getElementById('themeToggle');
+if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
 applyTheme();
 
 // ===== ADDRESS MODAL =====

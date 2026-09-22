@@ -1173,23 +1173,7 @@ body.dark-mode .s-tab{
       <span class="logo-bd">BD<span style="display:inline-flex;align-items:center;margin-left:2px;gap:2px;vertical-align:middle;transform:translateY(-3px);"><span style="display:inline-flex;flex-direction:column;align-items:flex-end;gap:2px;"><span style="width:7px;height:0.5px;background:#ffffff;border-radius:1px;display:block;opacity:0.8;"></span><span style="width:9px;height:0.9px;background:#ffffff;border-radius:1px;display:block;"></span><span style="width:11px;height:1px;background:#ffffff;border-radius:1px;display:block;"></span><span style="width:9px;height:0.9px;background:#ffffff;border-radius:1px;display:block;"></span><span style="width:7px;height:0.5px;background:#ffffff;border-radius:1px;display:block;opacity:0.8;"></span></span><svg class="logo-plane" viewBox="0 0 512 512" width="14" height="14" aria-hidden="true" style="fill:#ffffff;overflow:visible;"><path d="M186.62,464H160a16,16,0,0,1-14.57-22.6l64.46-142.25L113.1,297,77.8,339.77C71.07,348.23,65.7,352,52,352H34.08a17.66,17.66,0,0,1-14.7-7.06c-2.38-3.21-4.72-8.65-2.44-16.41l19.82-71c.15-.53.33-1.06.53-1.58a.38.38,0,0,0,0-.15,14.82,14.82,0,0,1-.53-1.59L16.92,182.76c-2.15-7.61.2-12.93,2.56-16.06a16.83,16.83,0,0,1,13.6-6.7H52c10.23,0,20.16,4.59,26,12l34.57,42.05,97.32-1.44-64.44-142A16,16,0,0,1,160,48h26.91a25,25,0,0,1,19.35,9.8l125.05,152,57.77-1.52c4.23-.23,15.95-.31,18.66-.31C463,208,496,225.94,496,256c0,9.46-3.78,27-29.07,38.16-14.93,6.6-34.85,9.94-59.21,9.94-2.68,0-14.37-.08-18.66-.31l-57.76-1.54-125.36,152A25,25,0,0,1,186.62,464Z"/></svg></span></span>
     </div>
   </div>
-  <div class="header-right">
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-      <svg class="icon-sun" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="5"/>
-        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </svg>
-      <svg class="icon-moon" viewBox="0 0 24 24">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
-    </button>
-    <button class="hcart" id="headerAccountBtn" aria-label="Account" onclick="window.location.href='login.html'">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    </button>
-  </div>
+  <div class="header-right"></div>
 </header>
 
 <!-- SEARCH + TYPE FILTER -->
@@ -1343,7 +1327,8 @@ body.dark-mode .s-tab{
     localStorage.setItem('sv-theme', themeState.theme);
   }
   applyTheme();
-  document.getElementById('themeToggle').addEventListener('click', () => {
+  const themeToggleBtn3 = document.getElementById('themeToggle');
+  if(themeToggleBtn3) themeToggleBtn3.addEventListener('click', () => {
     themeState.theme = themeState.theme === 'light' ? 'dark' : 'light';
     applyTheme();
   });
