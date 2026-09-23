@@ -57,7 +57,6 @@ body{
   display:flex;align-items:center;justify-content:center;
   color:#ffffff;cursor:pointer;
 }
-.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .theme-toggle{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:background .3s ease}
 .theme-toggle:active{transform:scale(.92)}
 .theme-toggle svg{position:absolute;width:21px;height:21px;stroke:rgba(255,255,255,.75);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:all .4s cubic-bezier(.34,1.56,.64,1)}
@@ -65,7 +64,7 @@ body{
 .theme-toggle .icon-moon{opacity:0;transform:rotate(90deg) scale(.5)}
 .theme-toggle.dark .icon-sun{opacity:0;transform:rotate(-90deg) scale(.5)}
 .theme-toggle.dark .icon-moon{opacity:1;transform:rotate(0) scale(1)}
-.hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,transform .15s;cursor:pointer}
+.hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,transform .15s;cursor:pointer}
 .hcart:active{transform:scale(.92)}
 .hcart svg{width:19px;height:19px;stroke:rgba(255,255,255,.85);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .hcart.is-logged-in{background:#009ddc;border-color:#009ddc}
@@ -213,6 +212,12 @@ body.dark-mode .pv-dot.active{
   box-shadow:0 0 6px rgba(10,155,114,0.25),0 0 12px rgba(10,155,114,0.12);
   flex-shrink:0;
 }
+.pv-variant-row{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 14px}
+.pv-variant-pill{display:flex;flex-direction:column;align-items:flex-start;gap:1px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:7px 13px;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+.pv-variant-pill .pvp-label{font-size:12.5px;font-weight:800;color:var(--text)}
+.pv-variant-pill .pvp-price{font-size:10.5px;font-weight:600;color:var(--text3)}
+.pv-variant-pill.active{border-color:var(--accent);background:var(--accent-soft)}
+.pv-variant-pill.active .pvp-label{color:var(--accent)}
 .pv-price-share{
   margin-left:auto;
   margin-right:-3px;
@@ -631,23 +636,6 @@ body.dark-mode .pv-qty-val{border-left-color:rgba(255,255,255,0.08);border-right
 <!-- HEADER -->
 <header class="pv-header">
   <div class="pv-header-title">Product Details</div>
-  <div class="header-right">
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-      <svg class="icon-sun" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="5"/>
-        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </svg>
-      <svg class="icon-moon" viewBox="0 0 24 24">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
-    </button>
-    <button class="hcart" id="headerAccountBtn" aria-label="Account" onclick="window.location.href='"login.html"'">
-      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    </button>
-  </div>
 </header>
 
 <!-- IMAGE GALLERY -->
@@ -698,6 +686,7 @@ body.dark-mode .pv-qty-val{border-left-color:rgba(255,255,255,0.08);border-right
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
     </button>
   </div>
+  <div class="pv-variant-row" id="pvVariantRow" style="display:none"></div>
 
   <div class="pv-divider"></div>
 
@@ -953,6 +942,41 @@ let qty = 1;
     stockBadge.textContent = stock === 'in' ? 'In Stock' : stock === 'low' ? 'Low Stock' : 'Out of Stock';
   }
   document.title = name + ' — SuppVerse BD';
+
+  // ─── Size / Variant pills ───
+  let extraVariants = [];
+  try { extraVariants = JSON.parse(params.get('variants') || '[]'); } catch(e){ extraVariants = []; }
+  if(extraVariants.length){
+    const sizeLabel = params.get('sizeLabel') || 'Default';
+    const allSizes = [{ label: sizeLabel, price, old, discount, stock, sku: params.get('sku') || '' }, ...extraVariants];
+    const row = document.getElementById('pvVariantRow');
+    window._pvApplySize = function(idx){
+      const v = allSizes[idx];
+      if(!v) return;
+      if(priceEl && Number.isFinite(v.price)) priceEl.textContent = '৳' + Number(v.price).toLocaleString('en-US');
+      if(oldEl){
+        if(v.old && v.old > v.price){ oldEl.textContent = '৳' + Number(v.old).toLocaleString('en-US'); oldEl.style.display=''; }
+        else { oldEl.style.display = 'none'; }
+      }
+      if(discountEl){
+        if(v.discount && v.discount !== '0% OFF'){ discountEl.textContent = v.discount; discountEl.style.display=''; }
+        else { discountEl.style.display = 'none'; }
+      }
+      if(stockBadge && v.stock){
+        stockBadge.classList.remove('in','low','out');
+        stockBadge.classList.add(v.stock);
+        stockBadge.textContent = v.stock === 'in' ? 'In Stock' : v.stock === 'low' ? 'Low Stock' : 'Out of Stock';
+      }
+      row.querySelectorAll('.pv-variant-pill').forEach((el,i) => el.classList.toggle('active', i === idx));
+    };
+    row.innerHTML = allSizes.map((v, i) =>
+      '<div class="pv-variant-pill' + (i===0?' active':'') + '" onclick="_pvApplySize(' + i + ')">' +
+        '<span class="pvp-label">' + (v.label || ('Size ' + (i+1))) + '</span>' +
+        (Number.isFinite(v.price) ? '<span class="pvp-price">৳' + Number(v.price).toLocaleString('en-US') + '</span>' : '') +
+      '</div>'
+    ).join('');
+    row.style.display = 'flex';
+  }
 })();
 
 // ─── Image Gallery Carousel ───
