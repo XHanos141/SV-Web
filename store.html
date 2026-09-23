@@ -1335,14 +1335,14 @@ body.dark-mode .s-tab{
 })();
 
 const products = [
-  {name:'Optimum Nutrition Gold Standard 100% Whey Protein Isolate 2kg',type:'Supplement',cat:'Protein',brand:'Optimum Nutrition',price:4200,old:5600,discount:'20% OFF',rating:3.5,stock:'in',sale:true},
-  {name:'Dymatize ISO100 Hydrolyzed Whey Protein 2.2kg',type:'Supplement',cat:'Protein',brand:'Dymatize',price:4800,old:6000,discount:'20% OFF',rating:4.2,stock:'in',sale:false},
-  {name:'Cellucor C4 Original Pre-Workout 60 Servings',type:'Supplement',cat:'Pre-Workout',brand:'Cellucor',price:2200,old:2800,discount:'21% OFF',rating:4.0,stock:'low',sale:true},
-  {name:'Optimum Nutrition Micronized Creatine Monohydrate 600g',type:'Supplement',cat:'Creatine',brand:'Optimum Nutrition',price:1500,old:1900,discount:'21% OFF',rating:4.6,stock:'in',sale:false},
-  {name:'MuscleTech Nitro-Tech Whey Protein 1.8kg',type:'Supplement',cat:'Protein',brand:'MuscleTech',price:3800,old:4500,discount:'15% OFF',rating:3.8,stock:'in',sale:true},
-  {name:'NOW Foods Vitamin D3 5000 IU 120 Softgels',type:'Supplement',cat:'Vitamins',brand:'NOW Foods',price:800,old:1000,discount:'20% OFF',rating:4.5,stock:'in',sale:false},
-  {name:'EVLution Nutrition BCAA Energy 30 Servings',type:'Supplement',cat:'Pre-Workout',brand:'EVLution Nutrition',price:1800,old:2200,discount:'18% OFF',rating:4.1,stock:'in',sale:true},
-  {name:'MusclePharm Combat Protein Powder 2.2kg',type:'Supplement',cat:'Protein',brand:'MusclePharm',price:3500,old:4200,discount:'17% OFF',rating:3.2,stock:'out',sale:false},
+  {name:'Gold Standard 100% Whey Protein Isolate 2kg',type:'Supplement',cat:'Protein',brand:'Optimum Nutrition',price:4200,old:5600,discount:'20% OFF',rating:3.5,stock:'in',sale:true},
+  {name:'ISO100 Hydrolyzed Whey Protein 2.2kg',type:'Supplement',cat:'Protein',brand:'Dymatize',price:4800,old:6000,discount:'20% OFF',rating:4.2,stock:'in',sale:false},
+  {name:'C4 Original Pre-Workout 60 Servings',type:'Supplement',cat:'Pre-Workout',brand:'Cellucor',price:2200,old:2800,discount:'21% OFF',rating:4.0,stock:'low',sale:true},
+  {name:'Micronized Creatine Monohydrate 600g',type:'Supplement',cat:'Creatine',brand:'Optimum Nutrition',price:1500,old:1900,discount:'21% OFF',rating:4.6,stock:'in',sale:false},
+  {name:'Nitro-Tech Whey Protein 1.8kg',type:'Supplement',cat:'Protein',brand:'MuscleTech',price:3800,old:4500,discount:'15% OFF',rating:3.8,stock:'in',sale:true},
+  {name:'Vitamin D3 5000 IU 120 Softgels',type:'Supplement',cat:'Vitamins',brand:'NOW Foods',price:800,old:1000,discount:'20% OFF',rating:4.5,stock:'in',sale:false},
+  {name:'BCAA Energy 30 Servings',type:'Supplement',cat:'Pre-Workout',brand:'EVLution Nutrition',price:1800,old:2200,discount:'18% OFF',rating:4.1,stock:'in',sale:true},
+  {name:'Combat Protein Powder 2.2kg',type:'Supplement',cat:'Protein',brand:'MusclePharm',price:3500,old:4200,discount:'17% OFF',rating:3.2,stock:'out',sale:false},
   /* Cross-store demo products */
   {name:'Apple AirPods Pro 2nd Gen with MagSafe Case',type:'Gadget',cat:'Audio',price:18500,old:22000,discount:'16% OFF',rating:4.7,stock:'in',sale:true},
   {name:'Anker 737 Power Bank 24,000mAh 140W',type:'Gadget',cat:'Accessories',price:7200,old:8500,discount:'15% OFF',rating:4.4,stock:'in',sale:false},
@@ -1398,7 +1398,7 @@ function renderTrending(){
         <div class="trending-pic">${picSVG}</div>
         <div class="trending-meta">
           <div class="trending-tag">${p.cat}</div>
-          <div class="trending-title">${p.name}</div>
+          <div class="trending-title">${svTitle(p)}</div>
           <div class="trending-prices">
             <span class="trending-new">৳${p.price.toLocaleString()}</span>
             <span class="trending-old">৳${p.old.toLocaleString()}</span>
@@ -1417,6 +1417,10 @@ renderTrending();
 
 const grid = document.getElementById('grid');
 
+function svTitle(p){
+  const brand = (p.brand || '').trim();
+  return brand ? (brand + ' ' + p.name) : p.name;
+}
 function slugify(str){
   return str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,40);
 }
@@ -1472,7 +1476,7 @@ function renderCard(p,i){
     '<div class="p-img-wrap">' + gridImg + stockBadge + saleBadge + outBar + '</div>' +
     '<div class="p-body">' +
       '<div class="p-meta"><span class="p-cat">' + p.cat + '</span><span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span></div>' +
-      '<div class="p-name">' + p.name + '</div>' +
+      '<div class="p-name">' + esc(svTitle(p)) + '</div>' +
       '<div class="p-footer">' +
         '<div class="p-price-block">' +
           '<div class="p-price">৳' + p.price.toLocaleString() + '<span class="p-discount-inline">' + p.discount + '</span></div>' +
@@ -1491,6 +1495,7 @@ const PRODUCT_VIEW_PAGES = {
 };
 function productViewParams(p){
   return 'name=' + encodeURIComponent(p.name) +
+    '&brand=' + encodeURIComponent(p.brand || '') +
     '&price=' + encodeURIComponent(p.price) +
     '&old=' + encodeURIComponent(p.old) +
     '&discount=' + encodeURIComponent(p.discount) +
