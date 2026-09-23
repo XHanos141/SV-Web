@@ -57,7 +57,15 @@ body{
   display:flex;align-items:center;justify-content:center;
   pointer-events:none;
 }
-.s-header-spacer{width:86px;flex-shrink:0}
+.s-header-spacer{width:88px;flex-shrink:0}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.theme-toggle{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:background .3s ease}
+.theme-toggle:active{transform:scale(.92)}
+.theme-toggle svg{position:absolute;width:21px;height:21px;stroke:rgba(255,255,255,.75);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.theme-toggle .icon-sun{opacity:1;transform:rotate(0) scale(1)}
+.theme-toggle .icon-moon{opacity:0;transform:rotate(90deg) scale(.5)}
+.theme-toggle.dark .icon-sun{opacity:0;transform:rotate(-90deg) scale(.5)}
+.theme-toggle.dark .icon-moon{opacity:1;transform:rotate(0) scale(1)}
 .s-header h1{
   font-family:var(--font-display);font-size:19px;font-weight:800;
   letter-spacing:-0.3px;color:#fff;
@@ -475,7 +483,7 @@ body.dark-mode .summary-product-num{color:#fff}
   from{opacity:0;transform:translateY(16px) scale(0.96)}
   to{opacity:1;transform:translateY(0) scale(1)}
 }
-.hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,transform .15s}
+.hcart{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,transform .15s}
 .hcart:active{transform:scale(.92)}
 .hcart svg{width:18px;height:18px;stroke:rgba(255,255,255,.75);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .hcart.is-logged-in{background:#009ddc;border-color:#009ddc}
@@ -489,8 +497,26 @@ body.dark-mode .summary-product-num{color:#fff}
 <body>
 
 <header class="s-header">
+  <div class="s-header-spacer"></div>
   <div class="s-header-title">
     <h1>Cart</h1>
+  </div>
+  <div class="header-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+    <button class="hcart" id="headerAccountBtn" aria-label="Account" onclick="window.location.href='login.html'">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </button>
   </div>
 </header>
 
@@ -639,6 +665,7 @@ const S = { theme: localStorage.getItem('sv-theme') || 'light' };
 const themeToggle = document.getElementById('themeToggle');
 function applyTheme(){
   document.body.classList.toggle('dark-mode', S.theme === 'dark');
+  themeToggle && themeToggle.classList.toggle('dark', S.theme === 'dark');
   localStorage.setItem('sv-theme', S.theme);
 }
 themeToggle && themeToggle.addEventListener('click', () => {
