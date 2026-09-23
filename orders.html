@@ -49,6 +49,9 @@ body{
   pointer-events:none;
 }
 .s-header-spacer{width:88px;flex-shrink:0}
+.header-back{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s ease;flex-shrink:0}
+.header-back:active{transform:scale(.92)}
+.header-back svg{width:20px;height:20px;stroke:rgba(255,255,255,.9);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .s-header h1{ font-family:var(--font-display);font-size:19px;font-weight:800;letter-spacing:-.3px;color:#fff;text-align:center; }
 .s-header span{ font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);display:block;margin-top:-2px; }
@@ -328,7 +331,9 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 </svg>
 
 <header class="s-header">
-  <div class="s-header-spacer"></div>
+  <div class="header-back" onclick="window.location.href='store.html'" aria-label="Back">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  </div>
   <div class="s-header-title">
     <h1>Orders</h1>
   </div>

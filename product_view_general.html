@@ -51,12 +51,9 @@ body{
   display:flex;align-items:center;justify-content:space-between;
   padding:0 12px;
 }
-.pv-header-btn{
-  width:36px;height:36px;border-radius:10px;
-  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);
-  display:flex;align-items:center;justify-content:center;
-  color:#ffffff;cursor:pointer;
-}
+.header-back{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s ease;flex-shrink:0}
+.header-back:active{transform:scale(.92)}
+.header-back svg{width:20px;height:20px;stroke:rgba(255,255,255,.9);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .theme-toggle{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:background .3s ease}
 .theme-toggle:active{transform:scale(.92)}
@@ -630,6 +627,9 @@ body.dark-mode .pv-qty-val{border-left-color:rgba(255,255,255,0.08);border-right
 
 <!-- HEADER -->
 <header class="pv-header">
+  <div class="header-back" onclick="window.location.href='store.html'" aria-label="Back">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  </div>
   <div class="pv-header-title">Product Details</div>
   <div class="header-right">
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
@@ -644,7 +644,7 @@ body.dark-mode .pv-qty-val{border-left-color:rgba(255,255,255,0.08);border-right
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
       </svg>
     </button>
-    <button class="hcart" id="headerAccountBtn" aria-label="Account" onclick="window.location.href='"login.html"'">
+    <button class="hcart" id="headerAccountBtn" aria-label="Account" onclick="window.location.href='login.html'">
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </button>
   </div>

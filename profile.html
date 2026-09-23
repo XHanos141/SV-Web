@@ -57,6 +57,9 @@ body{
   pointer-events:none;
 }
 .s-header-spacer{width:40px;flex-shrink:0}
+.header-back{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s ease;flex-shrink:0}
+.header-back:active{transform:scale(.92)}
+.header-back svg{width:20px;height:20px;stroke:rgba(255,255,255,.9);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .theme-toggle{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:background .3s ease}
 .theme-toggle:active{transform:scale(.92)}
@@ -437,7 +440,9 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 
 <!-- HEADER -->
 <div class="s-header">
-  <div class="s-header-spacer"></div>
+  <div class="header-back" onclick="window.location.href='store.html'" aria-label="Back">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  </div>
   <div class="s-header-title">
     <h1>My Profile</h1>
     <span>Account &amp; settings</span>
