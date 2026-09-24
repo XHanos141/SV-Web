@@ -379,34 +379,6 @@ body.dark-mode .summary-line.total{border-top-color:var(--accent)}
 .summary-line.discount{color:var(--green)}
 .summary-line .free{color:var(--green);font-weight:700}
 .summary-line.discount span:last-child{color:var(--green);font-weight:700}
-.summary-products{
-  margin-bottom:10px;
-}
-.summary-products-head{
-  display:grid;grid-template-columns:20px 1fr 82px;gap:8px;
-  padding:0 6px 6px 0;
-  font-family:var(--font-display);font-size:9.5px;font-weight:900;
-  letter-spacing:.04em;text-transform:uppercase;
-  color:#000;
-  border-bottom:1px solid var(--border);
-}
-body.dark-mode .summary-products-head{color:#fff}
-.summary-product-row{
-  display:grid;grid-template-columns:20px 1fr 82px;gap:8px;
-  align-items:start;
-  padding:7px 6px 7px 0;font-size:11.5px;color:var(--text);
-  border-bottom:1px dashed var(--border);
-}
-.summary-product-row:last-child{border-bottom:none}
-.summary-product-num{color:#000;font-weight:900}
-body.dark-mode .summary-product-num{color:#fff}
-.summary-product-name{
-  min-width:0;font-weight:600;
-  overflow:hidden;text-overflow:ellipsis;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
-}
-.summary-product-qtycost{font-weight:700;text-align:right;white-space:nowrap}
-.summary-product-qtycost .qx{color:var(--text2);font-weight:600}
 .cart-empty{
   display:none;flex-direction:column;align-items:center;text-align:center;
   padding:80px 24px;
@@ -548,13 +520,22 @@ body.dark-mode .summary-product-num{color:#fff}
     <svg viewBox="0 0 24 24"><path d="M16 3H1v13h15V3z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
     <span>Add <b id="freeShipRemaining">৳550</b> more for <b>free delivery</b></span>
   </div>
-  <div class="summary-products" id="summaryProductsInternal">
-    <div class="summary-products-head"><span>#</span><span>Product</span><span style="text-align:right">Qty &times; Price</span></div>
-    <div id="summaryProductRowsInternal"></div>
+  <div class="promo-applied" id="promoAppliedInternal">
+    <div class="promo-applied-left">
+      <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+      <span>Code <b id="promoAppliedCodeInternal"></b> applied</span>
+    </div>
+    <button class="promo-remove" id="promoRemoveInternal" type="button">Remove</button>
   </div>
-  <div class="summary-line" style="display:none"><span>Subtotal</span><span id="sumSubtotalInternal">৳0</span></div>
+  <div class="promo-row" id="promoRowInternal">
+    <input class="promo-input" id="promoInputInternal" type="text" placeholder="Promo or voucher code" maxlength="20">
+    <button class="promo-apply-btn" id="promoApplyInternal" type="button">Apply</button>
+  </div>
+  <div class="promo-error" id="promoErrorInternal">Invalid or expired code</div>
+  <div class="summary-line"><span>Subtotal</span><span id="sumSubtotalInternal">৳0</span></div>
+  <div class="summary-line" id="sumSavedRowInternal" style="display:none"><span>Product savings</span><span class="save" id="sumSavedInternal">-৳0</span></div>
   <div class="summary-line discount" id="sumDiscountRowInternal" style="display:none"><span>Discount</span><span id="sumDiscountInternal">-৳0</span></div>
-  <div class="summary-line total"><span>Total</span><span class="amt" id="sumTotalInternal">৳0</span></div>
+  <div class="summary-line total"><span>Estimated Total</span><span class="amt" id="sumTotalInternal">৳0</span></div>
 </div>
 </div>
 
@@ -573,13 +554,22 @@ body.dark-mode .summary-product-num{color:#fff}
 
 <div class="summary-card glass-card-green" id="cartSummaryProxy">
   <div class="summary-title">Order Summary</div>
-  <div class="summary-products" id="summaryProductsProxy">
-    <div class="summary-products-head"><span>#</span><span>Product</span><span style="text-align:right">Qty &times; Price</span></div>
-    <div id="summaryProductRowsProxy"></div>
+  <div class="promo-applied" id="promoAppliedProxy">
+    <div class="promo-applied-left">
+      <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+      <span>Code <b id="promoAppliedCodeProxy"></b> applied</span>
+    </div>
+    <button class="promo-remove" id="promoRemoveProxy" type="button">Remove</button>
   </div>
-  <div class="summary-line" style="display:none"><span>Subtotal</span><span id="sumSubtotalProxy">৳0</span></div>
+  <div class="promo-row" id="promoRowProxy">
+    <input class="promo-input" id="promoInputProxy" type="text" placeholder="Promo or voucher code" maxlength="20">
+    <button class="promo-apply-btn" id="promoApplyProxy" type="button">Apply</button>
+  </div>
+  <div class="promo-error" id="promoErrorProxy">Invalid or expired code</div>
+  <div class="summary-line"><span>Subtotal</span><span id="sumSubtotalProxy">৳0</span></div>
+  <div class="summary-line" id="sumSavedRowProxy" style="display:none"><span>Product savings</span><span class="save" id="sumSavedProxy">-৳0</span></div>
   <div class="summary-line discount" id="sumDiscountRowProxy" style="display:none"><span>Discount</span><span id="sumDiscountProxy">-৳0</span></div>
-  <div class="summary-line total"><span>Total</span><span class="amt" id="sumTotalProxy">৳0</span></div>
+  <div class="summary-line total"><span>Estimated Total</span><span class="amt" id="sumTotalProxy">৳0</span></div>
 </div>
 </div>
 
@@ -693,14 +683,96 @@ function els(flow){
     cartList: document.getElementById('cartList'+s),
     cartEmpty: document.getElementById('cartEmpty'+s),
     cartSummary: document.getElementById('cartSummary'+s),
-    summaryProductRows: document.getElementById('summaryProductRows'+s),
     sumSubtotal: document.getElementById('sumSubtotal'+s),
+    sumSavedRow: document.getElementById('sumSavedRow'+s),
+    sumSaved: document.getElementById('sumSaved'+s),
     sumDiscountRow: document.getElementById('sumDiscountRow'+s),
     sumDiscount: document.getElementById('sumDiscount'+s),
     sumTotal: document.getElementById('sumTotal'+s),
+    promoRow: document.getElementById('promoRow'+s),
+    promoInput: document.getElementById('promoInput'+s),
+    promoApply: document.getElementById('promoApply'+s),
+    promoError: document.getElementById('promoError'+s),
+    promoApplied: document.getElementById('promoApplied'+s),
+    promoAppliedCode: document.getElementById('promoAppliedCode'+s),
+    promoRemove: document.getElementById('promoRemove'+s),
     freeShipNote: flow === 'internal' ? document.getElementById('freeShipNote') : null,
     freeShipRemaining: flow === 'internal' ? document.getElementById('freeShipRemaining') : null
   };
+}
+function computeTotals(flow){
+  const d = DATA[flow];
+  let subtotal = 0, savings = 0;
+  d.items.forEach(item => {
+    subtotal += item.price * item.qty;
+    if(item.oldPrice) savings += (item.oldPrice - item.price) * item.qty;
+  });
+  let discount = 0;
+  if(d.appliedPromo){
+    discount = d.appliedPromo.type === 'percent'
+      ? Math.round(subtotal * d.appliedPromo.value / 100)
+      : Math.min(d.appliedPromo.value, subtotal);
+  }
+  const total = Math.max(subtotal - discount, 0);
+  return { subtotal, savings, discount, total };
+}
+function updateSummary(flow){
+  const d = DATA[flow];
+  const e = els(flow);
+  const hasItems = d.items.length > 0;
+  const { subtotal, savings, discount, total } = computeTotals(flow);
+  e.sumSubtotal.textContent = fmt(subtotal);
+  e.sumTotal.textContent = fmt(total);
+  if(savings > 0){
+    e.sumSavedRow.style.display = '';
+    e.sumSaved.textContent = '-' + fmt(savings);
+  } else {
+    e.sumSavedRow.style.display = 'none';
+  }
+  if(discount > 0){
+    e.sumDiscountRow.style.display = '';
+    e.sumDiscount.textContent = '-' + fmt(discount);
+  } else {
+    e.sumDiscountRow.style.display = 'none';
+  }
+  if(e.freeShipNote){
+    if(!hasItems || subtotal >= d.shipping.freeThreshold){
+      e.freeShipNote.style.display = 'none';
+    } else {
+      e.freeShipNote.style.display = '';
+      e.freeShipRemaining.textContent = fmt(d.shipping.freeThreshold - subtotal);
+    }
+  }
+  if(flow === currentFlow) updateBar();
+}
+function applyPromo(flow){
+  const d = DATA[flow];
+  const e = els(flow);
+  if(!e.promoInput) return;
+  const code = e.promoInput.value.trim().toUpperCase();
+  e.promoError.classList.remove('show');
+  if(!code) return;
+  const promo = d.promoCodes[code];
+  if(!promo){
+    e.promoError.textContent = 'Invalid or expired code';
+    e.promoError.classList.add('show');
+    return;
+  }
+  d.appliedPromo = Object.assign({ code }, promo);
+  e.promoInput.value = '';
+  e.promoRow.style.display = 'none';
+  e.promoAppliedCode.textContent = code + ' \u2014 ' + promo.label;
+  e.promoApplied.classList.add('show');
+  updateSummary(flow);
+  showToast('Promo applied');
+}
+function removePromo(flow){
+  const d = DATA[flow];
+  const e = els(flow);
+  d.appliedPromo = null;
+  e.promoApplied.classList.remove('show');
+  e.promoRow.style.display = '';
+  updateSummary(flow);
 }
 function cardHTML(item, flow){
   const imgBlock = item.img ? `<img src="${item.img}" alt="${item.name}">` : `<svg viewBox="0 0 24 24"><path d="M20.5 7.28a1 1 0 00-.5-.86l-8-4.62a1 1 0 00-1 0l-8 4.62a1 1 0 00-.5.86v9.44a1 1 0 00.5.86l8 4.62a1 1 0 001 0l8-4.62a1 1 0 00.5-.86V7.28z"/><path d="M3.5 7.28l8.5 4.62 8.5-4.62M12 22V12"/></svg>`;
@@ -745,48 +817,16 @@ function renderFlow(flow){
   const hasItems = d.items.length > 0;
   e.cartEmpty.classList.toggle('show', !hasItems);
   e.cartSummary.style.display = hasItems ? '' : 'none';
-  let subtotal = 0;
-  let productRowsHTML = '';
   d.items.forEach((item, i) => {
-    subtotal += item.price * item.qty;
     const card = document.createElement('div');
     card.className = 'cart-card';
     card.style.animationDelay = (i * 0.08) + 's';
     card.dataset.id = item.id;
     card.innerHTML = cardHTML(item, flow);
     e.cartList.appendChild(card);
-    productRowsHTML += `<div class="summary-product-row">
-        <span class="summary-product-num">${i + 1}</span>
-        <span class="summary-product-name">${item.name}</span>
-        <span class="summary-product-qtycost"><span class="qx">${item.qty}&times;</span> ${fmt(item.price)}</span>
-      </div>`;
   });
-  if(e.summaryProductRows) e.summaryProductRows.innerHTML = productRowsHTML;
-  let discount = 0;
-  if(d.appliedPromo && hasItems){
-    discount = d.appliedPromo.type === 'percent'
-      ? Math.round(subtotal * d.appliedPromo.value / 100)
-      : Math.min(d.appliedPromo.value, subtotal);
-  }
-  const total = Math.max(subtotal - discount, 0);
-  e.sumSubtotal.textContent = fmt(subtotal);
-  e.sumTotal.textContent = fmt(total);
-  if(discount > 0){
-    e.sumDiscountRow.style.display = '';
-    e.sumDiscount.textContent = '-' + fmt(discount);
-  } else {
-    e.sumDiscountRow.style.display = 'none';
-  }
-  if(e.freeShipNote){
-    if(!hasItems || subtotal >= d.shipping.freeThreshold){
-      e.freeShipNote.style.display = 'none';
-    } else {
-      e.freeShipNote.style.display = '';
-      e.freeShipRemaining.textContent = fmt(d.shipping.freeThreshold - subtotal);
-    }
-  }
+  updateSummary(flow);
   wireCardEvents(flow, e);
-  if(flow === currentFlow) updateBar();
 }
 function updateBar(){
   const d = DATA[currentFlow];
@@ -794,14 +834,7 @@ function updateBar(){
   if(itemCount) itemCount.textContent = d.items.length + (d.items.length === 1 ? ' item' : ' items');
   checkoutBar.style.display = hasItems ? '' : 'none';
   checkoutBtn.disabled = !hasItems;
-  let subtotal = d.items.reduce((s,i) => s + i.price*i.qty, 0);
-  let discount = 0;
-  if(d.appliedPromo && hasItems){
-    discount = d.appliedPromo.type === 'percent'
-      ? Math.round(subtotal * d.appliedPromo.value / 100)
-      : Math.min(d.appliedPromo.value, subtotal);
-  }
-  const total = Math.max(subtotal - discount, 0);
+  const { total } = computeTotals(currentFlow);
   barTotal.textContent = fmt(total);
 }
 function updateItemQty(flow, id, newQty){
@@ -817,40 +850,7 @@ function updateItemQty(flow, id, newQty){
     const minusBtn = card.querySelector('.qty-minus');
     if(minusBtn) minusBtn.disabled = item.qty <= 1;
   }
-  let subtotal = 0;
-  d.items.forEach(i => subtotal += i.price * i.qty);
-  let discount = 0;
-  if(d.appliedPromo && d.items.length > 0){
-    discount = d.appliedPromo.type === 'percent'
-      ? Math.round(subtotal * d.appliedPromo.value / 100)
-      : Math.min(d.appliedPromo.value, subtotal);
-  }
-  const total = Math.max(subtotal - discount, 0);
-  e.sumSubtotal.textContent = fmt(subtotal);
-  e.sumTotal.textContent = fmt(total);
-  if(discount > 0){
-    e.sumDiscountRow.style.display = '';
-    e.sumDiscount.textContent = '-' + fmt(discount);
-  } else {
-    e.sumDiscountRow.style.display = 'none';
-  }
-  if(e.summaryProductRows){
-    const rowEl = e.summaryProductRows.children[d.items.indexOf(item)];
-    if(rowEl){
-      const qxEl = rowEl.querySelector('.qx');
-      if(qxEl) qxEl.textContent = item.qty + '\u00d7';
-    }
-  }
-  if(e.freeShipNote){
-    const hasItems = d.items.length > 0;
-    if(!hasItems || subtotal >= d.shipping.freeThreshold){
-      e.freeShipNote.style.display = 'none';
-    } else {
-      e.freeShipNote.style.display = '';
-      e.freeShipRemaining.textContent = fmt(d.shipping.freeThreshold - subtotal);
-    }
-  }
-  if(flow === currentFlow) updateBar();
+  updateSummary(flow);
   if(flow === 'internal') syncStoredCartOut();
 }
 function wireCardEvents(flow, e){
@@ -918,6 +918,14 @@ tabProxy.addEventListener('click', () => setFlow('proxy'));
 checkoutBtn.addEventListener('click', () => {
   if(DATA[currentFlow].items.length === 0) return;
   window.location.href = DATA[currentFlow].checkoutUrl;
+});
+['internal','proxy'].forEach(flow => {
+  const e = els(flow);
+  if(e.promoApply) e.promoApply.addEventListener('click', () => applyPromo(flow));
+  if(e.promoInput) e.promoInput.addEventListener('keydown', ev => {
+    if(ev.key === 'Enter'){ ev.preventDefault(); applyPromo(flow); }
+  });
+  if(e.promoRemove) e.promoRemove.addEventListener('click', () => removePromo(flow));
 });
 renderFlow('internal');
 renderFlow('proxy');
