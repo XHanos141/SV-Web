@@ -88,8 +88,24 @@ main{max-width:600px;margin:0 auto;padding:16px}
 .pay-summary-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
 .pay-summary-head svg{width:17px;height:17px;stroke:var(--orange);stroke-width:2.2;fill:none}
 .pay-summary-head h2{font-family:var(--fd);font-size:14px;font-weight:800}
-.pay-summary-head .badge-proxy{margin-left:auto;font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:20px;background:rgba(242,100,48,.10);color:var(--orange)}
-.pay-summary-head .badge-internal{margin-left:auto;font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:20px;background:rgba(0,157,220,.10);color:var(--cyan)}
+/* Order ID badge — matches the LOCKED spec on the main app's order card (app.html .order-id-badge) */
+.pay-summary-head .order-id-badge{
+  margin-left:auto;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:11px;
+  color:#0A9BDC;background:rgba(10,155,220,0.12);
+  border:1px solid rgba(10,155,220,0.38);border-radius:6px;
+  padding:3px 8px;letter-spacing:0.3px;line-height:1;
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+body.dark-mode .pay-summary-head .order-id-badge{background:rgba(10,155,220,0.18);border-color:rgba(10,155,220,0.5)}
+/* Tracking ID tag (proxy) — matches the LOCKED spec on the main app's order card (app.html .tracking-tag) */
+.pay-summary-head .tracking-tag{
+  margin-left:auto;display:inline-flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,0.55);border:1.5px dashed rgba(198,82,39,0.45);
+  border-radius:6px;padding:2px 7px;flex-shrink:0;line-height:1;
+}
+body.dark-mode .pay-summary-head .tracking-tag{background:rgba(255,255,255,0.06);border-color:rgba(251,202,185,0.4)}
+.pay-summary-head .tracking-tag .tt-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:800;color:#E15A26;letter-spacing:0.3px;line-height:1}
+body.dark-mode .pay-summary-head .tracking-tag .tt-val{color:#FF9466}
 .pay-line{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12.5px;color:var(--t2)}
 .pay-line.total{border-top:1.5px dashed rgba(0,0,0,0.16);margin-top:6px;padding-top:12px;font-size:15px;font-weight:800;color:var(--text)}
 body.dark-mode .pay-line.total{border-top-color:rgba(255,255,255,0.18)}
@@ -453,7 +469,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     <div class="pay-summary-head">
       <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <h2>Order Summary</h2>
-      <span class="badge-internal" id="orderIdBadgeInternal">SV-0000</span>
+      <span class="order-id-badge" id="orderIdBadgeInternal">SV-0000</span>
     </div>
     <div class="order-items">
       <div class="order-items-head">
@@ -486,7 +502,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     <div class="pay-summary-head">
       <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <h2>Approved Quote</h2>
-      <span class="badge-proxy" id="orderIdBadgeProxy">PX-0000</span>
+      <span class="tracking-tag"><span class="tt-val" id="orderIdBadgeProxy">PX-0000</span></span>
     </div>
     <div class="pay-line"><span>Product cost</span><span>$348.00</span></div>
     <div class="pay-line"><span>Shipping + duty</span><span>$62.40</span></div>
