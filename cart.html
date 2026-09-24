@@ -296,7 +296,6 @@ body.dark-mode #viewProxy .cart-card{border-color:rgba(255,140,90,0.42)}
 #viewProxy .free-ship-note{background:var(--orange-soft);border-color:rgba(242,100,48,0.25)}
 #viewProxy .free-ship-note svg{stroke:var(--orange)}
 body.dark-mode #viewProxy .free-ship-note{border-color:rgba(255,140,90,0.3)}
-#viewProxy .promo-input:focus{border-color:var(--orange)}
 #viewProxy .summary-line.total{border-top-color:var(--orange)}
 #viewProxy .summary-line.total .amt{color:var(--orange)}
 .free-ship-note{
@@ -311,57 +310,6 @@ body.dark-mode #viewProxy .free-ship-note{border-color:rgba(255,140,90,0.3)}
 }
 body.dark-mode .free-ship-note{border-color:rgba(45,190,245,0.3)}
 .free-ship-note b{color:var(--text)}
-.promo-row{
-  display:flex;gap:8px;margin-bottom:14px;
-}
-.promo-input{
-  flex:1;background:var(--surface2);border:1.5px solid var(--border);
-  border-radius:10px;padding:11px 12px;
-  font-size:12.5px;color:var(--text);outline:none;
-  font-family:var(--font-body);
-  text-transform:uppercase;letter-spacing:.03em;
-}
-.promo-input::placeholder{
-  text-transform:none;letter-spacing:normal;color:var(--text3);
-}
-.promo-input:focus{border-color:var(--accent)}
-.promo-apply-btn{
-  background:#009b72;color:#fff;
-  border:2px solid var(--surface);
-  border-radius:6px;padding:0 16px;
-  font-size:12px;font-weight:800;flex-shrink:0;
-  cursor:pointer;
-  box-shadow:0 2px 6px rgba(0,0,0,.18);
-  transition:transform 0.15s var(--ease),box-shadow 0.15s var(--ease),opacity 0.15s;
-}
-.promo-apply-btn:hover{
-  background:#0ab87a;
-  box-shadow:0 4px 12px rgba(0,155,114,0.35);
-  transform:translateY(-1px);
-}
-.promo-apply-btn:active{transform:scale(0.94) translateY(2px);background:#008a5e;box-shadow:0 1px 3px rgba(0,0,0,0.22);opacity:0.9}
-.promo-apply-btn:disabled{opacity:.4;pointer-events:none}
-.promo-applied{
-  display:none;align-items:center;justify-content:space-between;
-  background:var(--green-soft);border:1.5px solid rgba(10,155,114,.28);
-  border-radius:10px;padding:10px 12px;margin-bottom:14px;
-}
-.promo-applied.show{display:flex}
-.promo-applied-left{
-  display:flex;align-items:center;gap:8px;
-}
-.promo-applied-left svg{
-  width:15px;height:15px;stroke:var(--green);stroke-width:2.4;fill:none;flex-shrink:0;
-}
-.promo-applied b{color:var(--green)}
-.promo-remove{
-  background:none;border:none;color:var(--text2);
-  font-size:11px;font-weight:700;text-decoration:underline;cursor:pointer;
-}
-.promo-error{
-  font-size:10.5px;color:var(--red);margin:-10px 0 10px;display:none;
-}
-.promo-error.show{display:block}
 .summary-line{
   display:flex;justify-content:space-between;align-items:center;
   padding:4px 0;font-size:12.5px;color:var(--text);
@@ -376,9 +324,7 @@ body.dark-mode .summary-line{color:var(--text2)}
 .summary-line.total .amt{color:var(--accent);font-size:15px;font-weight:900}
 body.dark-mode .summary-line.total{border-top-color:var(--accent)}
 .summary-line .save{color:var(--green);font-weight:700}
-.summary-line.discount{color:var(--green)}
 .summary-line .free{color:var(--green);font-weight:700}
-.summary-line.discount span:last-child{color:var(--green);font-weight:700}
 .cart-empty{
   display:none;flex-direction:column;align-items:center;text-align:center;
   padding:80px 24px;
@@ -520,21 +466,8 @@ body.dark-mode .summary-line.total{border-top-color:var(--accent)}
     <svg viewBox="0 0 24 24"><path d="M16 3H1v13h15V3z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
     <span>Add <b id="freeShipRemaining">৳550</b> more for <b>free delivery</b></span>
   </div>
-  <div class="promo-applied" id="promoAppliedInternal">
-    <div class="promo-applied-left">
-      <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-      <span>Code <b id="promoAppliedCodeInternal"></b> applied</span>
-    </div>
-    <button class="promo-remove" id="promoRemoveInternal" type="button">Remove</button>
-  </div>
-  <div class="promo-row" id="promoRowInternal">
-    <input class="promo-input" id="promoInputInternal" type="text" placeholder="Promo or voucher code" maxlength="20">
-    <button class="promo-apply-btn" id="promoApplyInternal" type="button">Apply</button>
-  </div>
-  <div class="promo-error" id="promoErrorInternal">Invalid or expired code</div>
   <div class="summary-line"><span>Subtotal</span><span id="sumSubtotalInternal">৳0</span></div>
   <div class="summary-line" id="sumSavedRowInternal" style="display:none"><span>Product savings</span><span class="save" id="sumSavedInternal">-৳0</span></div>
-  <div class="summary-line discount" id="sumDiscountRowInternal" style="display:none"><span>Discount</span><span id="sumDiscountInternal">-৳0</span></div>
   <div class="summary-line total"><span>Estimated Total</span><span class="amt" id="sumTotalInternal">৳0</span></div>
 </div>
 </div>
@@ -554,21 +487,8 @@ body.dark-mode .summary-line.total{border-top-color:var(--accent)}
 
 <div class="summary-card glass-card-green" id="cartSummaryProxy">
   <div class="summary-title">Order Summary</div>
-  <div class="promo-applied" id="promoAppliedProxy">
-    <div class="promo-applied-left">
-      <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-      <span>Code <b id="promoAppliedCodeProxy"></b> applied</span>
-    </div>
-    <button class="promo-remove" id="promoRemoveProxy" type="button">Remove</button>
-  </div>
-  <div class="promo-row" id="promoRowProxy">
-    <input class="promo-input" id="promoInputProxy" type="text" placeholder="Promo or voucher code" maxlength="20">
-    <button class="promo-apply-btn" id="promoApplyProxy" type="button">Apply</button>
-  </div>
-  <div class="promo-error" id="promoErrorProxy">Invalid or expired code</div>
   <div class="summary-line"><span>Subtotal</span><span id="sumSubtotalProxy">৳0</span></div>
   <div class="summary-line" id="sumSavedRowProxy" style="display:none"><span>Product savings</span><span class="save" id="sumSavedProxy">-৳0</span></div>
-  <div class="summary-line discount" id="sumDiscountRowProxy" style="display:none"><span>Discount</span><span id="sumDiscountProxy">-৳0</span></div>
   <div class="summary-line total"><span>Estimated Total</span><span class="amt" id="sumTotalProxy">৳0</span></div>
 </div>
 </div>
@@ -596,12 +516,7 @@ const DATA = {
       { id:'mag-gly', name:'Magnesium Glycinate', variant:'120 Capsules', price:2450, oldPrice:null, qty:1, img:null, locked:false, type:'Supplement', category:'Minerals' },
       { id:'omega-3', name:'Omega-3 Fish Oil', variant:'90 Softgels', price:1900, oldPrice:2200, qty:2, img:null, locked:false, type:'Supplement', category:'Fish Oil' }
     ],
-    promoCodes: {
-      'WELCOME10': { type:'percent', value:10, label:'10% off' },
-      'SAVE200':   { type:'flat',    value:200, label:'৳200 off' }
-    },
     shipping:{ flat:120, freeThreshold:6800 },
-    appliedPromo:null,
     checkoutUrl:'payment.html?flow=internal'
   },
   proxy: {
@@ -609,12 +524,7 @@ const DATA = {
       { id:'pxq-001', name:'Optimum Nutrition Gold Standard Whey 10lb', variant:'Double Rich Chocolate', store:'Amazon', price:18500, qty:1, img:null, locked:true, type:'Supplement', category:'Protein' },
       { id:'pxq-002', name:'Ghost Legend Pre-Workout', variant:'Sour Watermelon, 30 servings', store:'eBay', price:9200, qty:2, img:null, locked:true, type:'Supplement', category:'Pre-Workout' }
     ],
-    promoCodes: {
-      'PROXY5':     { type:'percent', value:5,   label:'5% off' },
-      'FIRSTPROXY': { type:'flat',    value:300, label:'৳300 off' }
-    },
     shipping:null,
-    appliedPromo:null,
     checkoutUrl:'payment.html?flow=proxy'
   }
 };
@@ -686,16 +596,7 @@ function els(flow){
     sumSubtotal: document.getElementById('sumSubtotal'+s),
     sumSavedRow: document.getElementById('sumSavedRow'+s),
     sumSaved: document.getElementById('sumSaved'+s),
-    sumDiscountRow: document.getElementById('sumDiscountRow'+s),
-    sumDiscount: document.getElementById('sumDiscount'+s),
     sumTotal: document.getElementById('sumTotal'+s),
-    promoRow: document.getElementById('promoRow'+s),
-    promoInput: document.getElementById('promoInput'+s),
-    promoApply: document.getElementById('promoApply'+s),
-    promoError: document.getElementById('promoError'+s),
-    promoApplied: document.getElementById('promoApplied'+s),
-    promoAppliedCode: document.getElementById('promoAppliedCode'+s),
-    promoRemove: document.getElementById('promoRemove'+s),
     freeShipNote: flow === 'internal' ? document.getElementById('freeShipNote') : null,
     freeShipRemaining: flow === 'internal' ? document.getElementById('freeShipRemaining') : null
   };
@@ -707,20 +608,13 @@ function computeTotals(flow){
     subtotal += item.price * item.qty;
     if(item.oldPrice) savings += (item.oldPrice - item.price) * item.qty;
   });
-  let discount = 0;
-  if(d.appliedPromo){
-    discount = d.appliedPromo.type === 'percent'
-      ? Math.round(subtotal * d.appliedPromo.value / 100)
-      : Math.min(d.appliedPromo.value, subtotal);
-  }
-  const total = Math.max(subtotal - discount, 0);
-  return { subtotal, savings, discount, total };
+  return { subtotal, savings, total: subtotal };
 }
 function updateSummary(flow){
   const d = DATA[flow];
   const e = els(flow);
   const hasItems = d.items.length > 0;
-  const { subtotal, savings, discount, total } = computeTotals(flow);
+  const { subtotal, savings, total } = computeTotals(flow);
   e.sumSubtotal.textContent = fmt(subtotal);
   e.sumTotal.textContent = fmt(total);
   if(savings > 0){
@@ -728,12 +622,6 @@ function updateSummary(flow){
     e.sumSaved.textContent = '-' + fmt(savings);
   } else {
     e.sumSavedRow.style.display = 'none';
-  }
-  if(discount > 0){
-    e.sumDiscountRow.style.display = '';
-    e.sumDiscount.textContent = '-' + fmt(discount);
-  } else {
-    e.sumDiscountRow.style.display = 'none';
   }
   if(e.freeShipNote){
     if(!hasItems || subtotal >= d.shipping.freeThreshold){
@@ -744,35 +632,6 @@ function updateSummary(flow){
     }
   }
   if(flow === currentFlow) updateBar();
-}
-function applyPromo(flow){
-  const d = DATA[flow];
-  const e = els(flow);
-  if(!e.promoInput) return;
-  const code = e.promoInput.value.trim().toUpperCase();
-  e.promoError.classList.remove('show');
-  if(!code) return;
-  const promo = d.promoCodes[code];
-  if(!promo){
-    e.promoError.textContent = 'Invalid or expired code';
-    e.promoError.classList.add('show');
-    return;
-  }
-  d.appliedPromo = Object.assign({ code }, promo);
-  e.promoInput.value = '';
-  e.promoRow.style.display = 'none';
-  e.promoAppliedCode.textContent = code + ' \u2014 ' + promo.label;
-  e.promoApplied.classList.add('show');
-  updateSummary(flow);
-  showToast('Promo applied');
-}
-function removePromo(flow){
-  const d = DATA[flow];
-  const e = els(flow);
-  d.appliedPromo = null;
-  e.promoApplied.classList.remove('show');
-  e.promoRow.style.display = '';
-  updateSummary(flow);
 }
 function cardHTML(item, flow){
   const imgBlock = item.img ? `<img src="${item.img}" alt="${item.name}">` : `<svg viewBox="0 0 24 24"><path d="M20.5 7.28a1 1 0 00-.5-.86l-8-4.62a1 1 0 00-1 0l-8 4.62a1 1 0 00-.5.86v9.44a1 1 0 00.5.86l8 4.62a1 1 0 001 0l8-4.62a1 1 0 00.5-.86V7.28z"/><path d="M3.5 7.28l8.5 4.62 8.5-4.62M12 22V12"/></svg>`;
@@ -918,14 +777,6 @@ tabProxy.addEventListener('click', () => setFlow('proxy'));
 checkoutBtn.addEventListener('click', () => {
   if(DATA[currentFlow].items.length === 0) return;
   window.location.href = DATA[currentFlow].checkoutUrl;
-});
-['internal','proxy'].forEach(flow => {
-  const e = els(flow);
-  if(e.promoApply) e.promoApply.addEventListener('click', () => applyPromo(flow));
-  if(e.promoInput) e.promoInput.addEventListener('keydown', ev => {
-    if(ev.key === 'Enter'){ ev.preventDefault(); applyPromo(flow); }
-  });
-  if(e.promoRemove) e.promoRemove.addEventListener('click', () => removePromo(flow));
 });
 renderFlow('internal');
 renderFlow('proxy');
