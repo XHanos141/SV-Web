@@ -366,11 +366,6 @@ body.dark-mode .s-search-input-wrap svg{
   -webkit-box-orient:vertical;overflow:hidden;
   min-height:32px;
 }
-.p-variant-tag{
-  display:inline-block;font-size:8.5px;font-weight:800;color:var(--purple,#7c6ff7);
-  background:var(--purple-soft,rgba(124,111,247,.1));border:1px solid var(--purple,#7c6ff7);
-  padding:1px 5px;border-radius:999px;vertical-align:middle;
-}
 .p-footer{
   display:flex;align-items:center;justify-content:space-between;
   padding-top:2px;margin-top:0;
@@ -1357,12 +1352,7 @@ body.dark-mode .s-tab{
 })();
 
 const products = [
-  {name:'Gold Standard 100% Whey Protein Isolate 2kg',type:'Supplement',cat:'Protein',brand:'Optimum Nutrition',price:4200,old:5600,discount:'20% OFF',rating:3.5,stock:'in',sale:true,
-    sizeLabel:'2kg',sku:'ON-GSW-2KG',
-    variants:[
-      {label:'1kg',price:2400,old:3000,discount:'20% OFF',stock:'in'},
-      {label:'5lb',price:9500,old:11000,discount:'14% OFF',stock:'low'}
-    ]},
+  {name:'Gold Standard 100% Whey Protein Isolate 2kg',type:'Supplement',cat:'Protein',brand:'Optimum Nutrition',price:4200,old:5600,discount:'20% OFF',rating:3.5,stock:'in',sale:true},
   {name:'ISO100 Hydrolyzed Whey Protein 2.2kg',type:'Supplement',cat:'Protein',brand:'Dymatize',price:4800,old:6000,discount:'20% OFF',rating:4.2,stock:'in',sale:false},
   {name:'C4 Original Pre-Workout 60 Servings',type:'Supplement',cat:'Pre-Workout',brand:'Cellucor',price:2200,old:2800,discount:'21% OFF',rating:4.0,stock:'low',sale:true},
   {name:'Micronized Creatine Monohydrate 600g',type:'Supplement',cat:'Creatine',brand:'Optimum Nutrition',price:1500,old:1900,discount:'21% OFF',rating:4.6,stock:'in',sale:false},
@@ -1503,7 +1493,7 @@ function renderCard(p,i){
     '<div class="p-img-wrap">' + gridImg + stockBadge + saleBadge + outBar + '</div>' +
     '<div class="p-body">' +
       '<div class="p-meta"><span class="p-cat">' + p.cat + '</span><span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span></div>' +
-      '<div class="p-name">' + esc(svTitle(p)) + (p.variants && p.variants.length ? ' <span class="p-variant-tag">' + (p.variants.length+1) + ' sizes</span>' : '') + '</div>' +
+      '<div class="p-name">' + esc(svTitle(p)) + '</div>' +
       '<div class="p-footer">' +
         '<div class="p-price-block">' +
           '<div class="p-price">৳' + p.price.toLocaleString() + '<span class="p-discount-inline">' + p.discount + '</span></div>' +
@@ -1523,9 +1513,6 @@ const PRODUCT_VIEW_PAGES = {
 function productViewParams(p){
   return 'name=' + encodeURIComponent(p.name) +
     '&brand=' + encodeURIComponent(p.brand || '') +
-    '&sizeLabel=' + encodeURIComponent(p.sizeLabel || 'Default') +
-    '&sku=' + encodeURIComponent(p.sku || '') +
-    '&variants=' + encodeURIComponent(JSON.stringify(p.variants || [])) +
     '&price=' + encodeURIComponent(p.price) +
     '&old=' + encodeURIComponent(p.old) +
     '&discount=' + encodeURIComponent(p.discount) +
