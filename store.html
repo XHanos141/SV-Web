@@ -587,6 +587,7 @@ body.dark-mode .p-card-out .p-img-wrap{
   box-shadow:inset 0 0 0 1px rgba(0,0,0,0.04);
   align-self:flex-start;
 }
+.trending-pic img,.p-img-wrap img{width:100%;height:100%;object-fit:cover;position:relative;z-index:0;display:block}
 .trending-pic::before{
   content:'';
   position:absolute;
@@ -1351,22 +1352,7 @@ body.dark-mode .s-tab{
   });
 })();
 
-const products = [
-  {name:'Gold Standard 100% Whey Protein Isolate 2kg',type:'Supplement',cat:'Protein',brand:'Optimum Nutrition',price:4200,old:5600,discount:'20% OFF',rating:3.5,stock:'in',sale:true},
-  {name:'ISO100 Hydrolyzed Whey Protein 2.2kg',type:'Supplement',cat:'Protein',brand:'Dymatize',price:4800,old:6000,discount:'20% OFF',rating:4.2,stock:'in',sale:false},
-  {name:'C4 Original Pre-Workout 60 Servings',type:'Supplement',cat:'Pre-Workout',brand:'Cellucor',price:2200,old:2800,discount:'21% OFF',rating:4.0,stock:'low',sale:true},
-  {name:'Micronized Creatine Monohydrate 600g',type:'Supplement',cat:'Creatine',brand:'Optimum Nutrition',price:1500,old:1900,discount:'21% OFF',rating:4.6,stock:'in',sale:false},
-  {name:'Nitro-Tech Whey Protein 1.8kg',type:'Supplement',cat:'Protein',brand:'MuscleTech',price:3800,old:4500,discount:'15% OFF',rating:3.8,stock:'in',sale:true},
-  {name:'Vitamin D3 5000 IU 120 Softgels',type:'Supplement',cat:'Vitamins',brand:'NOW Foods',price:800,old:1000,discount:'20% OFF',rating:4.5,stock:'in',sale:false},
-  {name:'BCAA Energy 30 Servings',type:'Supplement',cat:'Pre-Workout',brand:'EVLution Nutrition',price:1800,old:2200,discount:'18% OFF',rating:4.1,stock:'in',sale:true},
-  {name:'Combat Protein Powder 2.2kg',type:'Supplement',cat:'Protein',brand:'MusclePharm',price:3500,old:4200,discount:'17% OFF',rating:3.2,stock:'out',sale:false},
-  /* Cross-store demo products */
-  {name:'Apple AirPods Pro 2nd Gen with MagSafe Case',type:'Gadget',cat:'Audio',price:18500,old:22000,discount:'16% OFF',rating:4.7,stock:'in',sale:true},
-  {name:'Anker 737 Power Bank 24,000mAh 140W',type:'Gadget',cat:'Accessories',price:7200,old:8500,discount:'15% OFF',rating:4.4,stock:'in',sale:false},
-  {name:'The Ordinary Niacinamide 10% + Zinc 1% 30ml',type:'Cosmetic',cat:'Serum',price:950,old:1200,discount:'21% OFF',rating:4.3,stock:'in',sale:true},
-  {name:'Nike Dri-FIT Training T-Shirt Black',type:'Clothing',cat:'Activewear',price:1800,old:2400,discount:'25% OFF',rating:4.0,stock:'in',sale:false},
-  {name:'Hydro Flask 32oz Wide Mouth Water Bottle',type:'General',cat:'Lifestyle',price:3200,old:3800,discount:'16% OFF',rating:4.5,stock:'low',sale:true},
-];
+const products = [];  // filled from Supabase (published products only)
 
 function buildStars(r){
   const full = Math.floor(r);
@@ -1388,13 +1374,7 @@ const trendingScroll = document.getElementById('trendingScroll');
 const trendingHint = document.getElementById('trendingHint');
 
 /* Curated trending mix: one from each store type */
-const trendingItems = [
-  products[0],   // Supplement
-  products[8],   // Gadget
-  products[10],  // Cosmetic
-  products[11],  // Clothing
-  products[12],  // General
-];
+let trendingItems = [];
 
 const picSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 2h8"/><path d="M9 2v6.5L4.5 15A3 3 0 0 0 7 20h10a3 3 0 0 0 2.5-5L15 8.5V2"/></svg>';
 
@@ -1408,21 +1388,25 @@ const TYPE_BADGE_META = {
 
 function renderTrending(){
   trendingScroll.innerHTML = '';
+  var tWrap = trendingScroll.closest('.trending-wrapper');
+  var tHead = tWrap ? tWrap.previousElementSibling : null;
+  var showTrending = trendingItems.length > 0;
+  if(tWrap) tWrap.style.display = showTrending ? '' : 'none';
+  if(tHead) tHead.style.display = showTrending ? '' : 'none';
   trendingItems.forEach((p,i) => {
     const meta = TYPE_BADGE_META[p.type] || TYPE_BADGE_META.General;
     trendingScroll.innerHTML += `
       <div class="trending-item" style="animation:cardIn 0.4s var(--ease) ${i*0.08}s both">
-        <div class="trending-pic">${picSVG}</div>
+        <div class="trending-pic">${p.image ? '<img src="' + esc(p.image) + '" alt="" loading="lazy">' : picSVG}</div>
         <div class="trending-meta">
           <div class="trending-tag">${p.cat}</div>
           <div class="trending-title">${svTitle(p)}</div>
           <div class="trending-prices">
             <span class="trending-new">৳${p.price.toLocaleString()}</span>
-            <span class="trending-old">৳${p.old.toLocaleString()}</span>
-            <span class="trending-off">${p.discount}</span>
+            ${p.old ? '<span class="trending-old">৳' + p.old.toLocaleString() + '</span><span class="trending-off">' + p.discount + '</span>' : ''}
           </div>
           <div class="trending-type-icon ${meta.cls}"><svg width="12" height="12" viewBox="${meta.vb}"><use href="${meta.icon}" fill="#fff" stroke="#fff"/></svg></div>
-          <button class="trending-link" onclick="event.stopPropagation();alert('Go to product detail')" aria-label="Explore product">
+          <button class="trending-link" onclick="event.stopPropagation();window.location.href='${pvHref(p)}'" aria-label="Explore product">
             Explore<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </button>
         </div>
@@ -1453,18 +1437,20 @@ function writeCart(cart){
 }
 function addToCart(product){
   const cart = readCart();
-  const id = slugify(product.name);
+  const id = product.id;
   const existing = cart.find(c => c.id === id);
   if(existing){ existing.qty += 1; }
   else {
     cart.push({
       id: id,
-      name: product.name,
+      productId: product.id,
+      sku: product.sku || '',
+      name: svTitle(product),
       variant: product.cat || '',
       price: product.price,
       oldPrice: product.old || null,
       qty: 1,
-      img: null,
+      img: product.image || null,
       locked: false,
       type: product.type || 'General',
       category: product.cat || ''
@@ -1473,31 +1459,31 @@ function addToCart(product){
   writeCart(cart);
 }
 function removeFromCart(product){
-  const id = slugify(product.name);
+  const id = product.id;
   writeCart(readCart().filter(c => c.id !== id));
 }
 
 function renderCard(p,i){
   var isOut = p.stock === 'out';
-  var gridImg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 2h8"/><path d="M9 2v6.5L4.5 15A3 3 0 0 0 7 20h10a3 3 0 0 0 2.5-5L15 8.5V2"/></svg>';
+  var gridImg = p.image ? '<img src="' + esc(p.image) + '" alt="' + esc(svTitle(p)) + '" loading="lazy">' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 2h8"/><path d="M9 2v6.5L4.5 15A3 3 0 0 0 7 20h10a3 3 0 0 0 2.5-5L15 8.5V2"/></svg>';
   var stockClass = p.stock;
   var stockText = p.stock === 'in' ? 'In Stock' : p.stock === 'low' ? 'Low Stock' : 'Out';
   var saleBadge = (!isOut && p.sale) ? '<span class="p-badge-ribbon">Sale</span>' : '';
   var outBar = isOut ? '<div class="p-out-bar">OUT OF STOCK</div>' : '';
   var actions = isOut 
     ? '<div class="p-actions"><button class="p-wish" onclick="event.stopPropagation();toggleWish(this)" aria-label="Add to wishlist"><svg class="heart-icon" width="16" height="16" style="margin-top:-1px" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wishlist</button></div>'
-    : '<div class="p-actions"><button class="p-add" data-name="' + esc(p.name) + '" onclick="event.stopPropagation();toggleCart(this)" aria-label="Add to cart">' + cartSVG + '</button><button class="p-buy" data-name="' + esc(p.name) + '" onclick="event.stopPropagation();buyNow(this)" aria-label="Buy now">Buy</button></div>';
+    : '<div class="p-actions"><button class="p-add" data-id="' + esc(p.id) + '" onclick="event.stopPropagation();toggleCart(this)" aria-label="Add to cart">' + cartSVG + '</button><button class="p-buy" data-id="' + esc(p.id) + '" onclick="event.stopPropagation();buyNow(this)" aria-label="Buy now">Buy</button></div>';
   var stockBadge = isOut ? '' : '<span class="p-badge-stock ' + stockClass + '">' + stockText + '</span>';
   var pvUrl = (PRODUCT_VIEW_PAGES[p.type] || 'product_view_general.html') + '?' + productViewParams(p);
   return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (i*0.06) + 's;cursor:pointer" onclick="window.location.href=\'' + pvUrl + '\'">' +
     '<div class="p-img-wrap">' + gridImg + stockBadge + saleBadge + outBar + '</div>' +
     '<div class="p-body">' +
-      '<div class="p-meta"><span class="p-cat">' + p.cat + '</span><span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span></div>' +
+      '<div class="p-meta"><span class="p-cat">' + esc(p.cat) + '</span>' + (p.rating > 0 ? '<span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span>' : '') + '</div>' +
       '<div class="p-name">' + esc(svTitle(p)) + '</div>' +
       '<div class="p-footer">' +
         '<div class="p-price-block">' +
-          '<div class="p-price">৳' + p.price.toLocaleString() + '<span class="p-discount-inline">' + p.discount + '</span></div>' +
-          '<div class="p-old-price">৳' + p.old.toLocaleString() + '</div>' +
+          '<div class="p-price">৳' + p.price.toLocaleString() + (p.old ? '<span class="p-discount-inline">' + p.discount + '</span>' : '') + '</div>' +
+          (p.old ? '<div class="p-old-price">৳' + p.old.toLocaleString() + '</div>' : '') +
         '</div>' + actions +
       '</div>' +
     '</div>' +
@@ -1510,11 +1496,15 @@ const PRODUCT_VIEW_PAGES = {
   'Clothing': 'product_view_clothing.html',
   'General': 'product_view_general.html'
 };
+function pvHref(p){
+  return (PRODUCT_VIEW_PAGES[p.type] || 'product_view_general.html') + '?' + productViewParams(p);
+}
 function productViewParams(p){
-  return 'name=' + encodeURIComponent(p.name) +
+  return 'pid=' + encodeURIComponent(p.id) +
+    '&name=' + encodeURIComponent(p.name) +
     '&brand=' + encodeURIComponent(p.brand || '') +
     '&price=' + encodeURIComponent(p.price) +
-    '&old=' + encodeURIComponent(p.old) +
+    '&old=' + encodeURIComponent(p.old || 0) +
     '&discount=' + encodeURIComponent(p.discount) +
     '&cat=' + encodeURIComponent(p.cat) +
     '&type=' + encodeURIComponent(p.type) +
@@ -1525,8 +1515,8 @@ function productViewParams(p){
 function toggleCart(btn){
   const isAdded = btn.classList.contains('added');
   const checkIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>';
-  const name = btn.getAttribute('data-name');
-  const product = products.find(p => p.name === name);
+  const pid = btn.getAttribute('data-id');
+  const product = products.find(p => p.id === pid);
   if(product){
     if(isAdded) removeFromCart(product);
     else addToCart(product);
@@ -1539,17 +1529,19 @@ const BUYNOW_KEY = 'sv-buynow-item';
 function buyNow(btn){
   btn.style.transform='scale(0.94)';
   setTimeout(()=>btn.style.transform='',150);
-  const name = btn.getAttribute('data-name');
-  const product = products.find(p => p.name === name);
+  const pid = btn.getAttribute('data-id');
+  const product = products.find(p => p.id === pid);
   if(!product) return;
   const item = {
-    id: slugify(product.name),
-    name: product.name,
+    id: product.id,
+    productId: product.id,
+    sku: product.sku || '',
+    name: svTitle(product),
     variant: product.cat || '',
     price: product.price,
     oldPrice: product.old || null,
     qty: 1,
-    img: null,
+    img: product.image || null,
     locked: false,
     type: product.type || 'General',
     category: product.cat || ''
@@ -1617,13 +1609,16 @@ function showToast(msg, icon){
 
   function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
 
-  var totalCount = 0;
-  typeDropdown.querySelectorAll('.s-type-row').forEach(function(row){
-    var n = products.filter(function(p){ return p.type === row.dataset.cat; }).length;
-    row.querySelector('.s-type-row-count').textContent = n;
-    totalCount += n;
-  });
-  document.getElementById('typeHeaderCount').textContent = totalCount;
+  function updateTypeCounts(){
+    var totalCount = 0;
+    typeDropdown.querySelectorAll('.s-type-row').forEach(function(row){
+      var n = products.filter(function(p){ return p.type === row.dataset.cat; }).length;
+      row.querySelector('.s-type-row-count').textContent = n;
+      totalCount += n;
+    });
+    document.getElementById('typeHeaderCount').textContent = totalCount;
+  }
+  updateTypeCounts();
 
   function emptyHTML(){
     return '<div class="s-empty">' +
@@ -1939,6 +1934,14 @@ function showToast(msg, icon){
 
   render(false);
 
+  window.svStoreRefresh = function(){
+    updateTypeCounts();
+    buildCategoryChips();
+    buildBrandTabs();
+    updateFilterBadge();
+    render(false);
+  };
+
   /* Auto-select category from URL param, e.g. store.html?cat=Cosmetic — used by landing page category badges */
   (function(){
     var params = new URLSearchParams(window.location.search);
@@ -1947,6 +1950,55 @@ function showToast(msg, icon){
     var targetRow = typeDropdown.querySelector('.s-type-row[data-cat="' + wantedCat + '"]');
     if(targetRow) targetRow.click();
   })();
+})();
+
+/* ─── Live products from Supabase (published only) ─── */
+const SV_TYPE_BY_CAT = { supplement:'Supplement', gadget:'Gadget', cosmetic:'Cosmetic', clothing:'Clothing', general:'General' };
+const SV_LOW_STOCK = 10;
+function svMapProduct(r){
+  var w = Array.isArray(r.product_web) ? r.product_web[0] : r.product_web;
+  var st = (w && w.settings) || {};
+  var imgs = (w && Array.isArray(w.web_images)) ? w.web_images : [];
+  var price = Number(r.price) || 0, old = Number(r.old_price) || 0;
+  if(old <= price) old = 0;
+  var qty = Number(r.stock_qty) || 0;
+  var type = SV_TYPE_BY_CAT[r.category] || 'General';
+  return {
+    id: r.id, sku: r.sku || '', name: r.name || '', brand: r.brand || '',
+    type: type, cat: r.subcategory || type,
+    price: price, old: old,
+    discount: old ? Math.round((old - price) / old * 100) + '% OFF' : '',
+    rating: Number(st.rating) || 0,
+    stock: qty <= 0 ? 'out' : (qty <= SV_LOW_STOCK ? 'low' : 'in'),
+    sale: !!st.sale, trending: !!st.trending,
+    image: imgs[0] || null
+  };
+}
+async function svLoadProducts(){
+  if(typeof sbClient === 'undefined' || !sbClient) throw new Error('offline');
+  var res = await sbClient.from('products')
+    .select('id,sku,name,brand,category,subcategory,price,old_price,stock_qty,product_web(web_images,settings)')
+    .eq('is_active', true).eq('archived', false).eq('is_web_published', true)
+    .order('name');
+  if(res.error) throw res.error;
+  products.length = 0;
+  (res.data || []).forEach(function(r){ products.push(svMapProduct(r)); });
+  trendingItems = products.filter(function(p){ return p.trending; }).slice(0, 8);
+  renderTrending();
+  if(window.svStoreRefresh) window.svStoreRefresh();
+}
+grid.innerHTML = '<div class="s-empty"><strong>Loading products…</strong></div>';
+svLoadProducts().catch(function(err){
+  console.error('svLoadProducts failed:', err);
+  grid.innerHTML = '<div class="s-empty"><strong>Could not load products</strong><span>Check your connection and refresh.</span></div>';
+});
+(function(){
+  var last = Date.now();
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState !== 'visible' || Date.now() - last < 60000) return;
+    last = Date.now();
+    svLoadProducts().catch(function(){});
+  });
 })();
 
 /* ─── Premium Peek Animation: tease scroll right then back ─── */
