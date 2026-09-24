@@ -126,15 +126,13 @@ body.dark-mode .draft-math-val{color:#ffffff}
 body.dark-mode .draft-math-row.shipping-row .draft-math-label{color:rgba(255,255,255,0.75)}
 .draft-math-row.shipping-row .draft-math-val{color:#1a2744}
 body.dark-mode .draft-math-row.shipping-row .draft-math-val{color:rgba(255,255,255,0.75)}
-.draft-math-row.shipping-row.free-shipping .draft-math-label{color:#d95353}
-body.dark-mode .draft-math-row.shipping-row.free-shipping .draft-math-label{color:#ff6b6b}
-.draft-math-row.shipping-row.free-shipping .draft-math-val{color:#d95353;font-weight:800;letter-spacing:0.5px;font-size:11px;text-transform:uppercase}
-body.dark-mode .draft-math-row.shipping-row.free-shipping .draft-math-val{color:#ff6b6b}
+/* Free shipping / discount are customer benefits here, so they read green (savings), not red (deduction) —
+   unlike the internal dashboard's Draft Order Card where the same rows are revenue deductions. */
+.draft-math-row.shipping-row.free-shipping .draft-math-label{color:var(--green)}
+.draft-math-row.shipping-row.free-shipping .draft-math-val{color:var(--green);font-weight:800;letter-spacing:0.5px;font-size:11px;text-transform:uppercase}
 /* Discount row */
-.draft-math-row.discount-row .draft-math-label{color:#d95353}
-body.dark-mode .draft-math-row.discount-row .draft-math-label{color:#ff6b6b}
-.draft-math-row.discount-row .draft-math-val{color:#d95353}
-body.dark-mode .draft-math-row.discount-row .draft-math-val{color:#ff6b6b}
+.draft-math-row.discount-row .draft-math-label{color:var(--green)}
+.draft-math-row.discount-row .draft-math-val{color:var(--green)}
 /* Total */
 .draft-math-total{
   display:flex;justify-content:space-between;align-items:center;
