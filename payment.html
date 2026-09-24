@@ -453,7 +453,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     <div class="pay-summary-head">
       <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <h2>Order Summary</h2>
-      <span class="badge-internal">Internal</span>
+      <span class="badge-internal" id="orderIdBadgeInternal">SV-0000</span>
     </div>
     <div class="order-items">
       <div class="order-items-head">
@@ -486,7 +486,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     <div class="pay-summary-head">
       <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <h2>Approved Quote</h2>
-      <span class="badge-proxy">Proxy</span>
+      <span class="badge-proxy" id="orderIdBadgeProxy">PX-0000</span>
     </div>
     <div class="pay-line"><span>Product cost</span><span>$348.00</span></div>
     <div class="pay-line"><span>Shipping + duty</span><span>$62.40</span></div>
@@ -1099,6 +1099,15 @@ function showToast(msg){
 /* Flow state — set from the referring page's ?flow= param (internal vs proxy) */
 const S = { flow: (new URLSearchParams(location.search).get('flow') === 'proxy') ? 'proxy' : 'internal', method: null };
 
+/* Pending order reference — single source of truth for this checkout session.
+   Generated once at load, flow-prefixed (SV- internal / PX- proxy).
+   TODO: replace with the real Supabase order ID once orders are created server-side. */
+S.orderRef = (S.flow === 'proxy' ? 'PX-' : 'SV-') + (Math.floor(Math.random() * 9000) + 1000);
+(function showOrderIdBadge(){
+  const el = document.getElementById(S.flow === 'proxy' ? 'orderIdBadgeProxy' : 'orderIdBadgeInternal');
+  if(el) el.textContent = S.orderRef;
+})();
+
 /* ─── Internal cart: read real items from localStorage (written by store.html) ─── */
 const CART_KEY = 'sv-cart-internal';
 let SHIPPING_FLAT = 120;
@@ -1490,12 +1499,6 @@ cryptoQrBtn.addEventListener('click', () => {
 
 /* MFS (bKash/Nagad) — dynamic QR: orderID|number|amount, mirrors crypto QR treatment */
 
-// Placeholder order ID until real Supabase order IDs are wired into checkout.
-function getPendingOrderId(){
-  return 'SV-' + (Math.floor(Math.random() * 900) + 1000);
-}
-const PENDING_ORDER_ID = getPendingOrderId();
-
 function updateMfsAmounts(){
   const bdt = TOTALS_BDT[S.flow] || 0;
   document.querySelectorAll('.mfs-amount-val').forEach(el => { el.textContent = '৳' + bdt.toLocaleString('en-US'); });
@@ -1517,7 +1520,7 @@ function renderMfsQr(method, force){
   el.innerHTML = '';
   el.style.position = 'relative';
   const bdt = TOTALS_BDT[S.flow] || 0;
-  const payload = [PENDING_ORDER_ID, MFS_NUMBER, bdt].join('|');
+  const payload = [S.orderRef, MFS_NUMBER, bdt].join('|');
   const accent = MFS_ACCENTS[method];
   if(window.QRCodeStyling){
     const qr = new QRCodeStyling({
@@ -1746,7 +1749,6 @@ payBtn.addEventListener('click', () => {
     bkpMerchantLogo.src = SV_LOGO_URI_LIGHT;
     const totalEl = document.getElementById(S.flow === 'proxy' ? 'payTotalProxy' : 'payTotal');
     bkpAmount.textContent = totalEl ? totalEl.textContent : '৳0';
-    if(!S.orderRef) S.orderRef = (S.flow === 'proxy' ? 'PX-' : 'SV-') + Math.floor(1000 + Math.random() * 9000);
     bkpInvNo.textContent = 'Inv No: ' + S.orderRef;
     openOverlay(bkashNumOverlay);
     setTimeout(() => bkpNumberInput.focus(), 300);
