@@ -111,7 +111,39 @@ body.dark-mode .pay-summary-head .tracking-tag .tt-val{color:#FF9466}
 .pay-line.total{border-top:1.5px dashed rgba(0,0,0,0.16);margin-top:6px;padding-top:12px;font-size:15px;font-weight:800;color:var(--text)}
 body.dark-mode .pay-line.total{border-top-color:rgba(255,255,255,0.18)}
 .pay-line.total .amt{color:var(--text)}
-.pay-line.discount span:last-child{color:var(--green)}
+/* ── Order Summary math breakdown — matches the LOCKED spec on the main app's Draft Order Card (app.html .draft-math-*) ── */
+.draft-math-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:5px 0;font-size:12.5px;font-weight:500;color:#1a2744;
+}
+body.dark-mode .draft-math-row{color:rgba(255,255,255,0.75)}
+.draft-math-label{display:flex;align-items:center;gap:6px}
+.draft-math-label svg{width:13px;height:13px;flex-shrink:0;opacity:1}
+.draft-math-val{font-weight:700;color:#001f3c}
+body.dark-mode .draft-math-val{color:#ffffff}
+/* Shipping row */
+.draft-math-row.shipping-row .draft-math-label{color:#1a2744}
+body.dark-mode .draft-math-row.shipping-row .draft-math-label{color:rgba(255,255,255,0.75)}
+.draft-math-row.shipping-row .draft-math-val{color:#1a2744}
+body.dark-mode .draft-math-row.shipping-row .draft-math-val{color:rgba(255,255,255,0.75)}
+.draft-math-row.shipping-row.free-shipping .draft-math-label{color:#d95353}
+body.dark-mode .draft-math-row.shipping-row.free-shipping .draft-math-label{color:#ff6b6b}
+.draft-math-row.shipping-row.free-shipping .draft-math-val{color:#d95353;font-weight:800;letter-spacing:0.5px;font-size:11px;text-transform:uppercase}
+body.dark-mode .draft-math-row.shipping-row.free-shipping .draft-math-val{color:#ff6b6b}
+/* Discount row */
+.draft-math-row.discount-row .draft-math-label{color:#d95353}
+body.dark-mode .draft-math-row.discount-row .draft-math-label{color:#ff6b6b}
+.draft-math-row.discount-row .draft-math-val{color:#d95353}
+body.dark-mode .draft-math-row.discount-row .draft-math-val{color:#ff6b6b}
+/* Total */
+.draft-math-total{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0 2px;margin-top:8px;
+  border-top:1.5px dashed rgba(0,0,0,0.16);
+}
+body.dark-mode .draft-math-total{border-top-color:rgba(255,255,255,0.18)}
+.draft-math-total-label{font-family:var(--fd);font-size:15px;font-weight:800;color:var(--text)}
+.draft-math-total-amt{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;color:var(--text)}
 .promo-row{display:flex;gap:8px;margin:12px 0 4px}
 .promo-input{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:12.5px;color:var(--text);outline:none;font-family:var(--font);text-transform:uppercase;letter-spacing:.03em}
 .promo-input::placeholder{text-transform:none;letter-spacing:normal;color:var(--t3)}
@@ -478,9 +510,9 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       </div>
       <div id="orderItemsInternal"></div>
     </div>
-    <div class="pay-line"><span>Subtotal</span><span id="paySubtotal">৳0</span></div>
-    <div class="pay-line"><span>Shipping</span><span id="payShipping">৳0</span></div>
-    <div class="pay-line discount" id="payDiscountLine" style="display:none"><span>Discount</span><span id="payDiscount">-৳0</span></div>
+    <div class="draft-math-row"><span class="draft-math-label">Subtotal</span><span class="draft-math-val" id="paySubtotal">৳0</span></div>
+    <div class="draft-math-row shipping-row" id="payShippingRow"><span class="draft-math-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>Shipping</span><span class="draft-math-val" id="payShipping">৳0</span></div>
+    <div class="draft-math-row discount-row" id="payDiscountLine" style="display:none"><span class="draft-math-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Discount</span><span class="draft-math-val" id="payDiscount">-৳0</span></div>
 
     <div class="promo-row" id="promoRowInternal">
       <input class="promo-input" id="promoInputInternal" type="text" placeholder="Promo or voucher code" autocomplete="off">
@@ -495,7 +527,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <button class="promo-remove" id="promoRemoveBtnInternal" type="button">Remove</button>
     </div>
 
-    <div class="pay-line total"><span>Total</span><span class="amt" id="payTotal">৳0</span></div>
+    <div class="draft-math-total"><span class="draft-math-total-label">Total</span><span class="draft-math-total-amt" id="payTotal">৳0</span></div>
   </section>
 
   <!-- Proxy flow summary -->
@@ -505,12 +537,12 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
       <h2>Approved Quote</h2>
       <span class="tracking-tag"><span class="tt-val" id="orderIdBadgeProxy">PX-0000</span></span>
     </div>
-    <div class="pay-line"><span>Product cost</span><span>$348.00</span></div>
-    <div class="pay-line"><span>Shipping + duty</span><span>$62.40</span></div>
-    <div class="pay-line"><span>Service charge</span><span>$24.60</span></div>
-    <div class="pay-line discount" id="payDiscountLineProxy" style="display:none"><span>Discount</span><span id="payDiscountProxy">-৳0</span></div>
+    <div class="draft-math-row"><span class="draft-math-label">Product cost</span><span class="draft-math-val">$348.00</span></div>
+    <div class="draft-math-row shipping-row"><span class="draft-math-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>Shipping + duty</span><span class="draft-math-val">$62.40</span></div>
+    <div class="draft-math-row"><span class="draft-math-label">Service charge</span><span class="draft-math-val">$24.60</span></div>
+    <div class="draft-math-row discount-row" id="payDiscountLineProxy" style="display:none"><span class="draft-math-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Discount</span><span class="draft-math-val" id="payDiscountProxy">-৳0</span></div>
 
-    <div class="pay-line total"><span>Total Due</span><span class="amt" id="payTotalProxy">৳48,260</span></div>
+    <div class="draft-math-total"><span class="draft-math-total-label">Total Due</span><span class="draft-math-total-amt" id="payTotalProxy">৳48,260</span></div>
     <div class="pay-tracking">Tracking ID <b>PX-4892</b></div>
   </section>
 
@@ -1178,6 +1210,7 @@ function renderInternalSummary(){
   const total = Math.max(0, subtotal + shipping - discount);
   document.getElementById('paySubtotal').textContent = fmt(subtotal);
   document.getElementById('payShipping').textContent = shipping === 0 ? 'Free' : fmt(shipping);
+  document.getElementById('payShippingRow').classList.toggle('free-shipping', shipping === 0);
   const discLine = document.getElementById('payDiscountLine');
   if(discount > 0){
     discLine.style.display = 'flex';
