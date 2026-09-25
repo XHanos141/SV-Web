@@ -1766,7 +1766,8 @@ async function placeOrder(){
       name: a.name, phone: a.phone, address: a.full, district: a.city, zip: a.zip,
       items: lines, payment_method: S.method,
       payment_ref: txnEl ? txnEl.value.trim() : null,
-      voucher_code: PROMO.internal.applied ? PROMO.internal.applied.code : null
+      voucher_code: PROMO.internal.applied ? PROMO.internal.applied.code : null,
+      sender_bkash_number: S.method === 'bkash' ? S.senderBkashNumber : null
     } });
     if(res.error){
       showToast((res.error.code === 'P0429' || /rate_limit/.test(res.error.message || '')) ? 'Too many attempts. Please wait a few minutes.' : 'Could not place your order. Please try again.');
