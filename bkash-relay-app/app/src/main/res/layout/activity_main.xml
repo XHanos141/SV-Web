@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <TextView
+            android:text="bKash Relay — SuppVerse BD"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="Replaces MacroDroid as the SMS relay input. Does not decide payment success — only forwards to the existing bkash-relay endpoint."
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Status -->
+        <TextView android:id="@+id/permissionStatus" android:textSize="14sp" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        <Button android:id="@+id/requestPermissionsButton" android:text="Grant SMS permissions" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+        <TextView android:id="@+id/batteryStatus" android:textSize="14sp" android:layout_marginTop="12dp" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        <Button android:id="@+id/requestBatteryExemptButton" android:text="Exempt from battery optimization" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+        <!-- Settings -->
+        <TextView android:text="Relay settings" android:textStyle="bold" android:layout_marginTop="20dp" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/relayUrlInput"
+            android:hint="Relay URL (e.g. https://xxxx.supabase.co/functions/v1/bkash-relay)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textUri" />
+
+        <EditText
+            android:id="@+id/relayTokenInput"
+            android:hint="X-Relay-Token (shared secret)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+
+        <Button android:id="@+id/saveSettingsButton" android:text="Save settings" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        <TextView android:id="@+id/settingsStatus" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+        <!-- Log -->
+        <TextView android:text="Recent SMS (last 20)" android:textStyle="bold" android:layout_marginTop="20dp" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/logContainer"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+</ScrollView>
