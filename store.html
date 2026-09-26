@@ -393,7 +393,7 @@ body.dark-mode .p-price{color:#ffffff;}
   line-height:1;
 }
 body.dark-mode .p-discount-inline{background:rgba(5,150,105,0.20);color:#34D399 !important;border-color:#059669;}
-.p-old-row{display:flex;align-items:center;gap:4px}
+.p-old-row{display:flex;flex-direction:column;align-items:flex-start;gap:1px}
 .p-old-price{
   font-size:12px;font-weight:600;color:var(--red);
   text-decoration:none;
@@ -1484,7 +1484,7 @@ function renderCard(p,i){
       '<div class="p-footer">' +
         '<div class="p-price-block">' +
           '<div class="p-price">৳' + p.price.toLocaleString() + '</div>' +
-          (p.old ? '<div class="p-old-row"><span class="p-old-price">৳' + p.old.toLocaleString() + '</span><span class="p-discount-inline">' + p.discount + '</span></div>' : '') +
+          (p.old ? '<div class="p-old-row"><span class="p-discount-inline">' + p.discount + '</span><span class="p-old-price">৳' + p.old.toLocaleString() + '</span></div>' : '') +
         '</div>' + actions +
       '</div>' +
     '</div>' +
