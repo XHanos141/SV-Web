@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Backups disabled in the manifest (allowBackup="false") since this
+         app holds a secret relay token — nothing to configure here. -->
+</full-backup-content>
