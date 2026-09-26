@@ -19,7 +19,6 @@
     <application
         android:allowBackup="false"
         android:label="bKash Relay (SuppVerse)"
-        android:icon="@mipmap/ic_launcher"
         android:theme="@style/Theme.BkashRelay">
 
         <activity
