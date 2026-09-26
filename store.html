@@ -371,26 +371,28 @@ body.dark-mode .s-search-input-wrap svg{
   padding-top:2px;margin-top:0;
 }
 .p-price-block{
-  display:flex;flex-direction:column;gap:1px;
+  display:flex;flex-direction:column;gap:2px;
   margin-top:2px;
 }
 .p-price{
   font-family:var(--font-display);font-size:15px;font-weight:800;
   color:#1B2A4A;line-height:1;
+  display:flex;align-items:baseline;
+  transition:font-size .15s;
 }
+.p-price-block.no-discount .p-price{font-size:19px}
 body.dark-mode .p-price{color:#ffffff;}
 .p-price .taka{
-  font-size:9px;color:var(--text3);font-weight:600;margin-left:2px;
+  font-size:10px;color:var(--text3);font-weight:600;margin-right:2px;
 }
 .p-discount-inline{
-  display:inline-flex;align-items:center;gap:2px;
+  display:inline-flex;align-items:center;
   background:#D1FAE5;color:#059669 !important;
-  font-family:var(--font-display);font-size:6.5px;font-weight:800;
-  padding:1px 4px;border-radius:3px;margin-left:5px;
+  font-family:var(--font-display);font-size:10px;font-weight:800;
+  padding:2px 6px;border-radius:5px;margin-top:2px;
   border:1px solid #10B981;
-  text-transform:uppercase;letter-spacing:0.25px;
-  vertical-align:2px;
-  line-height:1;
+  text-transform:uppercase;letter-spacing:0.2px;
+  line-height:1.3;align-self:flex-start;
 }
 body.dark-mode .p-discount-inline{background:rgba(5,150,105,0.20);color:#34D399 !important;border-color:#059669;}
 .p-old-row{display:flex;flex-direction:column;align-items:flex-start;gap:1px}
@@ -1482,7 +1484,7 @@ function renderCard(p,i){
       '<div class="p-meta"><span class="p-cat">' + esc(p.cat) + '</span>' + (p.rating > 0 ? '<span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span>' : '') + '</div>' +
       '<div class="p-name">' + esc(svTitle(p)) + '</div>' +
       '<div class="p-footer">' +
-        '<div class="p-price-block">' +
+        '<div class="p-price-block' + (p.old ? '' : ' no-discount') + '">' +
           '<div class="p-price">৳' + p.price.toLocaleString() + '</div>' +
           (p.old ? '<div class="p-old-row"><span class="p-old-price">৳' + p.old.toLocaleString() + '</span><span class="p-discount-inline">' + p.discount + '</span></div>' : '') +
         '</div>' + actions +
