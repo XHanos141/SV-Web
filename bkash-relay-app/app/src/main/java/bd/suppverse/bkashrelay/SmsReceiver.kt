@@ -17,13 +17,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
- * Server-side backstop mirrors the Edge Function's own comment: we filter to
- * bKash's sender ID here too, so unrelated SMS never even reach the parser
- * or get written to the queue.
+ * Kept as a loose secondary signal only. In practice, Android's Messages app
+ * often shows a resolved *business name* like "bKash" for the sender, but
+ * the raw originatingAddress in the SMS_RECEIVED broadcast is typically the
+ * underlying numeric shortcode instead — so this string rarely appears in
+ * the raw address. Confirmed on device: the real bKash SMS body doesn't
+ * contain the word "bKash" at all, and sender.contains(BKASH_SENDER_ID)
+ * never matched, silently dropping every real transaction.
  *
- * IMPORTANT: change this to bKash's real sender ID as it appears on Hasan's
- * device (varies by operator — often "bKash" or a numeric shortcode). Check
- * an existing bKash SMS in the Messages app to confirm the exact string.
+ * Primary filter is now: does the message structurally parse as a bKash
+ * transaction (BkashSmsParser)? That pattern ("...Fee Tk...Balance
+ * Tk...TrxID...") is specific enough that only real bKash messages match
+ * it, regardless of which shortcode sent it. This sender string is only
+ * used as a fallback so an unparseable-but-clearly-bKash message (e.g. if
+ * bKash changes their SMS wording) still gets queued for manual review
+ * instead of silently ignored.
  */
 private const val BKASH_SENDER_ID = "bKash"
 
@@ -36,7 +44,13 @@ class SmsReceiver : BroadcastReceiver() {
         val fullBody = messages.joinToString("") { it.messageBody ?: "" }
         val sender = messages.firstOrNull()?.originatingAddress ?: ""
 
-        if (!sender.contains(BKASH_SENDER_ID, ignoreCase = true)) return
+        val parsesAsBkash = BkashSmsParser.parse(fullBody) != null
+        val looksLikeBkashSender = sender.contains(BKASH_SENDER_ID, ignoreCase = true)
+
+        // Ignore anything that neither parses as a bKash transaction nor
+        // comes from a sender address that literally mentions bKash —
+        // avoids queuing random unrelated SMS (spam, OTPs, personal texts).
+        if (!parsesAsBkash && !looksLikeBkashSender) return
 
         // Do the minimum here (Room insert), then hand off to WorkManager.
         // BroadcastReceiver.onReceive has a short execution budget — no
