@@ -107,6 +107,104 @@
     hide(document.querySelector('.pv-actions'));
   }
 
+  /* ── Reviews (real data — product_reviews table, insert gated server-side by verified purchase) ── */
+  var STAR_D = 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z';
+  var VERIFIED_SVG = '<svg viewBox="0 0 24 24" fill="none"><path fill="currentColor" d="m21.5609 10.7386-1.36-1.58001c-.26-.3-.47-.86-.47-1.26v-1.7c0-1.06-.87-1.93-1.93-1.93h-1.7c-.39 0-.96-.21-1.26-.47l-1.58-1.36c-.69-.59-1.82-.59-2.52 0l-1.57004 1.37c-.3.25-.87.46-1.26.46h-1.73c-1.06 0-1.93.87-1.93 1.93v1.71c0 .39-.21.95-.46 1.25l-1.35 1.59001c-.58.69-.58 1.81 0 2.5l1.35 1.59c.25.3.46.86.46 1.25v1.71c0 1.06.87 1.93 1.93 1.93h1.73c.39 0 .96.21 1.26.47l1.58004 1.36c.69.59 1.82.59 2.52 0l1.58-1.36c.3-.26.86-.47 1.26-.47h1.7c1.06 0 1.93-.87 1.93-1.93v-1.7c0-.39.21-.96.47-1.26l1.36-1.58c.58-.69.58-1.83-.01-2.52m-5.4-.63-4.83 4.83c-.14.14-.33.22-.53.22s-.39-.08-.53-.22l-2.42004-2.42c-.29-.29-.29-.77 0-1.06s.77-.29 1.06 0l1.89004 1.89 4.3-4.30001c.29-.29.77-.29 1.06 0s.29.77 0 1.06001"/></svg>';
+
+  function starsSvg(n){
+    var out = '';
+    for(var i = 0; i < 5; i++) out += '<svg viewBox="0 0 24 24" fill="' + (i < n ? 'currentColor' : 'var(--text3)') + '"><path d="' + STAR_D + '"/></svg>';
+    return out;
+  }
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+  function initials(name){
+    var parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if(!parts.length) return '?';
+    return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+  }
+
+  function renderReviews(list){
+    var box = $('pvReviewsList'), empty = $('pvReviewsEmpty'), row = document.querySelector('.pv-rating-row');
+    if(box) box.innerHTML = list.map(function(r){
+      return '<div class="pv-review"><div class="pv-review-head"><div class="pv-review-avatar">' + initials(r.reviewer_name) +
+        '</div><div><div class="pv-review-name">' + escapeHtml(r.reviewer_name) +
+        '<span class="pv-verified-badge">' + VERIFIED_SVG + 'Verified Purchase</span></div>' +
+        '<div class="pv-review-stars">' + starsSvg(r.rating) + '</div></div></div>' +
+        '<div class="pv-review-text">' + escapeHtml(r.review_text) + '</div></div>';
+    }).join('');
+    if(empty) empty.style.display = list.length ? 'none' : '';
+    if(!list.length){ hide(row); return; }
+    var avg = list.reduce(function(a, r){ return a + r.rating; }, 0) / list.length;
+    if(row){
+      row.style.display = '';
+      var starsWrap = row.querySelector('.pv-stars');
+      if(starsWrap) starsWrap.innerHTML = starsSvg(Math.round(avg));
+      var countEl = row.querySelector('.pv-rating-count');
+      if(countEl) countEl.textContent = '(' + list.length + ' review' + (list.length === 1 ? '' : 's') + ')';
+    }
+    if($('pvRatingText')) $('pvRatingText').textContent = avg.toFixed(1);
+  }
+
+  function loadReviews(){
+    sbClient.from('product_reviews')
+      .select('reviewer_name,rating,review_text,created_at')
+      .eq('product_id', P.id).order('created_at', { ascending: false })
+      .then(function(res){ renderReviews((res && res.data) || []); })
+      .catch(function(){});
+  }
+
+  function setWriteMsg(html){
+    hide($('pvWriteReview'));
+    var m = $('pvWriteReviewMsg');
+    if(m){ m.innerHTML = html; m.style.display = ''; }
+  }
+  function showWriteForm(){
+    var wr = $('pvWriteReview');
+    if(wr) wr.style.display = '';
+    var m = $('pvWriteReviewMsg');
+    if(m) m.style.display = 'none';
+  }
+
+  function wireWriteReview(){
+    if(!sbClient.auth) return;
+    sbClient.auth.getUser().then(function(ures){
+      var user = ures && ures.data && ures.data.user;
+      if(!user){ setWriteMsg('<a href="login.html">Sign in</a> to write a review.'); return; }
+      sbClient.from('customers').select('id,full_name').eq('auth_id', user.id).maybeSingle().then(function(cres){
+        var cust = cres && cres.data;
+        if(!cust){ setWriteMsg('<a href="login.html">Sign in</a> to write a review.'); return; }
+        sbClient.from('product_reviews').select('id').eq('product_id', P.id).eq('customer_id', cust.id).maybeSingle().then(function(rres){
+          if(rres && rres.data){ setWriteMsg('You\u2019ve already reviewed this product. Thanks for your feedback!'); return; }
+          sbClient.from('order_items').select('id, orders!inner(status)').eq('product_id', P.id).eq('orders.status', 'paid').then(function(ores){
+            if(!ores || !Array.isArray(ores.data) || !ores.data.length){ setWriteMsg('Only customers who\u2019ve purchased this product can leave a review.'); return; }
+            showWriteForm();
+            window.submitReview = function(){
+              var textEl = $('reviewText');
+              var text = textEl ? textEl.value.trim() : '';
+              var filled = document.querySelectorAll('#starInput svg.filled').length;
+              if(!filled){ alert('Please select a star rating'); return; }
+              if(!text){ alert('Please write a comment'); return; }
+              sbClient.from('product_reviews').insert({
+                product_id: P.id, customer_id: cust.id,
+                reviewer_name: cust.full_name || 'Customer',
+                rating: filled, review_text: text
+              }).then(function(ires){
+                if(ires.error){ alert('Could not submit your review. Please try again.'); console.error(ires.error); return; }
+                if(textEl) textEl.value = '';
+                setWriteMsg('Thanks! Your review has been posted.');
+                loadReviews();
+              });
+            };
+          });
+        });
+      });
+    });
+  }
+
   function apply(){
     var title = (P.brand ? P.brand + ' ' : '') + P.name;
     var catLabel = P.subcategory || TYPE_BY_CAT[P.category] || '';
@@ -131,10 +229,9 @@
     if($('pvBrandText') && P.brand) $('pvBrandText').innerHTML = 'Brand: <b></b>', $('pvBrandText').querySelector('b').textContent = P.brand;
 
     // demo-only blocks that have no real data yet
-    var rating = Number(st.rating) || 0;
-    if(!rating) hide(document.querySelector('.pv-rating-row'));
-    else if($('pvRatingText')) $('pvRatingText').textContent = rating;
-    document.querySelectorAll('.pv-supplement-info, .pv-review, .pv-write-review, #reviewsSection').forEach(hide);
+    document.querySelectorAll('.pv-supplement-info').forEach(hide);
+    hide(document.querySelector('.pv-rating-row')); // re-shown by loadReviews() once real reviews exist
+    hide($('pvWriteReview')); // re-shown by wireWriteReview() once eligibility is confirmed
 
     // Potency / Capsule Count pills — single real value from supplement_details, not a fake multi-option selector
     var sd = Array.isArray(P.supplement_details) ? P.supplement_details[0] : P.supplement_details;
@@ -209,6 +306,9 @@
       writeCart(cart);
       showPvToast('Added ' + q + ' to cart');
     };
+
+    loadReviews();
+    wireWriteReview();
   }
 
   injectCss();
