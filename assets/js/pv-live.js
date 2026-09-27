@@ -135,9 +135,21 @@
     if(!rating) hide(document.querySelector('.pv-rating-row'));
     else if($('pvRatingText')) $('pvRatingText').textContent = rating;
     document.querySelectorAll('.pv-variants, .pv-supplement-info, .pv-review, .pv-write-review, #reviewsSection').forEach(hide);
-    document.querySelectorAll('.pv-spec-text').forEach(function(t){
-      if(/^\s*Expiry date/i.test(t.textContent)){ var row = t.closest('.pv-spec'); if(row) hide(row); }
-    });
+
+    // Expiry: show the soonest expiry among in-stock batches (FEFO — first-expired-first-out display rule)
+    var expiryEl = $('pvExpiryVal');
+    var expiryRow = expiryEl && expiryEl.closest('.pv-spec');
+    if(expiryEl && expiryRow){
+      hide(expiryRow); // hidden until we confirm a batch exists
+      sbClient.rpc('get_earliest_expiry', { p_product_id: P.id }).then(function(res){
+        if(res.error || !res.data) return;
+        var d = new Date(res.data + 'T00:00:00');
+        if(isNaN(d)) return;
+        var mm = String(d.getMonth() + 1).padStart(2, '0');
+        expiryEl.textContent = mm + '/' + d.getFullYear();
+        expiryRow.style.display = '';
+      });
+    }
 
     // description
     var desc = document.querySelector('.pv-desc');
