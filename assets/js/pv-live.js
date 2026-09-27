@@ -137,22 +137,25 @@
         '<div class="pv-review-text">' + escapeHtml(r.review_text) + '</div></div>';
     }).join('');
     if(empty) empty.style.display = list.length ? 'none' : '';
-    if(!list.length){ hide(row); return; }
-    var avg = list.reduce(function(a, r){ return a + r.rating; }, 0) / list.length;
+    var n = list.length;
+    var avg = n ? list.reduce(function(a, r){ return a + r.rating; }, 0) / n : 0;
     if(row){
-      row.style.display = '';
       var starsWrap = row.querySelector('.pv-stars');
       if(starsWrap) starsWrap.innerHTML = starsSvg(Math.round(avg));
       var countEl = row.querySelector('.pv-rating-count');
-      if(countEl) countEl.textContent = '(' + list.length + ' review' + (list.length === 1 ? '' : 's') + ')';
+      if(countEl) countEl.textContent = n ? '(' + n + ' review' + (n === 1 ? '' : 's') + ')' : '(No reviews yet)';
     }
-    if($('pvRatingText')) $('pvRatingText').textContent = avg.toFixed(1);
+    if($('pvRatingText')) $('pvRatingText').textContent = n ? avg.toFixed(1) : '—';
   }
 
-  function loadReviews(){
+  // Neutral placeholder shown the instant the page loads — replaces the static demo
+  // numbers synchronously so nothing fake ever has a chance to paint, even on a slow connection.
+  renderReviews([]);
+
+  function loadReviews(productId){
     sbClient.from('product_reviews')
       .select('reviewer_name,rating,review_text,created_at')
-      .eq('product_id', P.id).order('created_at', { ascending: false })
+      .eq('product_id', productId).order('created_at', { ascending: false })
       .then(function(res){ renderReviews((res && res.data) || []); })
       .catch(function(){});
   }
@@ -169,7 +172,7 @@
     if(m) m.style.display = 'none';
   }
 
-  function wireWriteReview(){
+  function wireWriteReview(productId){
     if(!sbClient.auth) return;
     sbClient.auth.getUser().then(function(ures){
       var user = ures && ures.data && ures.data.user;
@@ -177,9 +180,9 @@
       sbClient.from('customers').select('id,full_name').eq('auth_id', user.id).maybeSingle().then(function(cres){
         var cust = cres && cres.data;
         if(!cust){ setWriteMsg('<a href="login.html">Sign in</a> to write a review.'); return; }
-        sbClient.from('product_reviews').select('id').eq('product_id', P.id).eq('customer_id', cust.id).maybeSingle().then(function(rres){
+        sbClient.from('product_reviews').select('id').eq('product_id', productId).eq('customer_id', cust.id).maybeSingle().then(function(rres){
           if(rres && rres.data){ setWriteMsg('You\u2019ve already reviewed this product. Thanks for your feedback!'); return; }
-          sbClient.from('order_items').select('id, orders!inner(status)').eq('product_id', P.id).eq('orders.status', 'paid').then(function(ores){
+          sbClient.from('order_items').select('id, orders!inner(status)').eq('product_id', productId).eq('orders.status', 'paid').then(function(ores){
             if(!ores || !Array.isArray(ores.data) || !ores.data.length){ setWriteMsg('Only customers who\u2019ve purchased this product can leave a review.'); return; }
             showWriteForm();
             window.submitReview = function(){
@@ -189,14 +192,14 @@
               if(!filled){ alert('Please select a star rating'); return; }
               if(!text){ alert('Please write a comment'); return; }
               sbClient.from('product_reviews').insert({
-                product_id: P.id, customer_id: cust.id,
+                product_id: productId, customer_id: cust.id,
                 reviewer_name: cust.full_name || 'Customer',
                 rating: filled, review_text: text
               }).then(function(ires){
                 if(ires.error){ alert('Could not submit your review. Please try again.'); console.error(ires.error); return; }
                 if(textEl) textEl.value = '';
                 setWriteMsg('Thanks! Your review has been posted.');
-                loadReviews();
+                loadReviews(productId);
               });
             };
           });
@@ -204,6 +207,12 @@
       });
     });
   }
+
+  // Hide the write-review form and the potency/capsule pills synchronously, before any
+  // network round-trip, so nothing flashes blank/unwired while data is still loading.
+  hide($('pvWriteReview'));
+  hide($('potencyBox'));
+  hide($('countBox'));
 
   function apply(){
     var title = (P.brand ? P.brand + ' ' : '') + P.name;
@@ -230,19 +239,19 @@
 
     // demo-only blocks that have no real data yet
     document.querySelectorAll('.pv-supplement-info').forEach(hide);
-    hide(document.querySelector('.pv-rating-row')); // re-shown by loadReviews() once real reviews exist
-    hide($('pvWriteReview')); // re-shown by wireWriteReview() once eligibility is confirmed
 
     // Potency / Capsule Count pills — single real value from supplement_details, not a fake multi-option selector
     var sd = Array.isArray(P.supplement_details) ? P.supplement_details[0] : P.supplement_details;
     var potencyPill = $('pvPotencyPill'), countPill = $('pvCountPill');
+    var potencyBox = $('potencyBox'), countBox = $('countBox');
     if(sd && sd.potency_amount != null && potencyPill){
       potencyPill.textContent = sd.potency_amount + ' ' + (sd.potency_unit || '').toLowerCase();
-    } else hide($('potencyBox'));
+      if(potencyBox) potencyBox.style.display = '';
+    }
     if(sd && sd.capsule_count != null && countPill){
       countPill.textContent = sd.capsule_count + ' Caps';
-    } else hide($('countBox'));
-    if(!sd){ hide($('potencyBox')); hide($('countBox')); }
+      if(countBox) countBox.style.display = '';
+    }
 
     // Expiry: show the soonest expiry among in-stock batches (FEFO — first-expired-first-out display rule)
     var expiryEl = $('pvExpiryVal');
@@ -306,12 +315,11 @@
       writeCart(cart);
       showPvToast('Added ' + q + ' to cart');
     };
-
-    loadReviews();
-    wireWriteReview();
   }
 
   injectCss();
+  loadReviews(pid);
+  wireWriteReview(pid);
   sbClient.from('products')
     .select('id,sku,name,brand,category,subcategory,price,old_price,stock_qty,product_web(web_description,web_images,seo_title,seo_description,settings),supplement_details(potency_amount,potency_unit,capsule_count)')
     .eq('id', pid).eq('is_active', true).eq('archived', false).eq('is_web_published', true)
