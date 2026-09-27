@@ -134,7 +134,18 @@
     var rating = Number(st.rating) || 0;
     if(!rating) hide(document.querySelector('.pv-rating-row'));
     else if($('pvRatingText')) $('pvRatingText').textContent = rating;
-    document.querySelectorAll('.pv-variants, .pv-supplement-info, .pv-review, .pv-write-review, #reviewsSection').forEach(hide);
+    document.querySelectorAll('.pv-supplement-info, .pv-review, .pv-write-review, #reviewsSection').forEach(hide);
+
+    // Potency / Capsule Count pills — single real value from supplement_details, not a fake multi-option selector
+    var sd = Array.isArray(P.supplement_details) ? P.supplement_details[0] : P.supplement_details;
+    var potencyPill = $('pvPotencyPill'), countPill = $('pvCountPill');
+    if(sd && sd.potency_amount != null && potencyPill){
+      potencyPill.textContent = sd.potency_amount + ' ' + (sd.potency_unit || '').toLowerCase();
+    } else hide($('potencyBox'));
+    if(sd && sd.capsule_count != null && countPill){
+      countPill.textContent = sd.capsule_count + ' Caps';
+    } else hide($('countBox'));
+    if(!sd){ hide($('potencyBox')); hide($('countBox')); }
 
     // Expiry: show the soonest expiry among in-stock batches (FEFO — first-expired-first-out display rule)
     var expiryEl = $('pvExpiryVal');
@@ -202,7 +213,7 @@
 
   injectCss();
   sbClient.from('products')
-    .select('id,sku,name,brand,category,subcategory,price,old_price,stock_qty,product_web(web_description,web_images,seo_title,seo_description,settings)')
+    .select('id,sku,name,brand,category,subcategory,price,old_price,stock_qty,product_web(web_description,web_images,seo_title,seo_description,settings),supplement_details(potency_amount,potency_unit,capsule_count)')
     .eq('id', pid).eq('is_active', true).eq('archived', false).eq('is_web_published', true)
     .maybeSingle()
     .then(function(res){
