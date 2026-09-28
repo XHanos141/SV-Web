@@ -482,22 +482,22 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
 
 <main>
   <section class="hiw">
-    <p class="hiw-eyebrow rv">Global Import</p>
-    <h2 class="rv">Shop Worldwide<br>From Any International Store</h2>
+    <p class="hiw-eyebrow rv" id="bfmHeroEyebrow">Global Import</p>
+    <h2 class="rv" id="bfmHeroHeading">Shop Worldwide<br>From Any International Store</h2>
     
 
     <div class="journey rv">
       <div class="jstep">
-        <div class="jstep-badge"><span class="jstep-num">1</span><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.07 0l1.93-1.93a5 5 0 00-7.07-7.07L10.5 5.5"/><path d="M14 11a5 5 0 00-7.07 0l-1.93 1.93a5 5 0 007.07 7.07L13.5 18.5"/></svg></div><p class="jstep-label">Paste<br>Link</p>
+        <div class="jstep-badge"><span class="jstep-num">1</span><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.07 0l1.93-1.93a5 5 0 00-7.07-7.07L10.5 5.5"/><path d="M14 11a5 5 0 00-7.07 0l-1.93 1.93a5 5 0 007.07 7.07L13.5 18.5"/></svg></div><p class="jstep-label" id="bfmHeroStep1">Paste<br>Link</p>
       </div>
       <div class="jstep">
-        <div class="jstep-badge"><span class="jstep-num">2</span><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><p class="jstep-label">Get<br>Quote</p>
+        <div class="jstep-badge"><span class="jstep-num">2</span><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><p class="jstep-label" id="bfmHeroStep2">Get<br>Quote</p>
       </div>
       <div class="jstep">
-        <div class="jstep-badge"><span class="jstep-num">3</span><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><p class="jstep-label">Confirm<br>Order</p>
+        <div class="jstep-badge"><span class="jstep-num">3</span><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><p class="jstep-label" id="bfmHeroStep3">Confirm<br>Order</p>
       </div>
       <div class="jstep">
-        <div class="jstep-badge"><span class="jstep-num">4</span><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><p class="jstep-label">Delivered</p>
+        <div class="jstep-badge"><span class="jstep-num">4</span><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><p class="jstep-label" id="bfmHeroStep4">Delivered</p>
       </div>
     </div>
 
@@ -728,6 +728,31 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
    SUPPVERSE BD — Buy for Me (Auto-Detect Edition)
    ================================================================ */
 svInitHeaderAuth('headerAccountBtn');
+
+(async function loadBfmHeroFromCMS(){
+  if(!sbClient) return;
+  try{
+    const { data, error } = await sbClient.from('site_content').select('content')
+      .eq('page','buy_for_me').eq('section','hero').maybeSingle();
+    if(error || !data || !data.content) return;
+    const c = data.content;
+    const el = id => document.getElementById(id);
+    if(c.eyebrow && el('bfmHeroEyebrow')) el('bfmHeroEyebrow').textContent = c.eyebrow;
+    if((c.h1 || c.h2) && el('bfmHeroHeading')){
+      const h = el('bfmHeroHeading');
+      h.textContent = c.h1 || '';
+      if(c.h1 && c.h2) h.appendChild(document.createElement('br'));
+      h.appendChild(document.createTextNode(c.h2 || ''));
+    }
+    (c.steps || []).forEach((txt, i) => {
+      const p = el('bfmHeroStep' + (i+1));
+      if(!p || !txt) return;
+      const k = txt.indexOf(' ');
+      p.textContent = k < 0 ? txt : txt.slice(0,k);
+      if(k >= 0){ p.appendChild(document.createElement('br')); p.appendChild(document.createTextNode(txt.slice(k+1))); }
+    });
+  }catch(e){ console.error('loadBfmHeroFromCMS error:', e); }
+})();
 
 const S = {
   theme: localStorage.getItem('sv-theme') || 'light',
