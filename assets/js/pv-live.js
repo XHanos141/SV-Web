@@ -1,9 +1,10 @@
 /* Live product data for product_view_*.html — loads by ?pid=<uuid> from Supabase (published products only). */
 (function(){
+  function reveal(){ var s = document.getElementById('pvPre'); if(s && s.parentNode) s.parentNode.removeChild(s); }
   var params = new URLSearchParams(window.location.search);
   var pid = params.get('pid');
-  if(!pid) return;
-  if(typeof sbClient === 'undefined' || !sbClient) return;
+  if(!pid){ reveal(); return; }
+  if(typeof sbClient === 'undefined' || !sbClient){ reveal(); return; }
 
   var TYPE_BY_CAT = { supplement:'Supplement', gadget:'Gadget', cosmetic:'Cosmetic', clothing:'Clothing', general:'General' };
   var LOW = 10;
@@ -342,9 +343,11 @@
     .eq('id', pid).eq('is_active', true).eq('archived', false).eq('is_web_published', true)
     .maybeSingle()
     .then(function(res){
-      if(res.error){ console.error(res.error); return; }
-      if(!res.data){ unavailable(); return; }
-      P = res.data; apply();
+      if(res.error){ console.error(res.error); reveal(); return; }
+      if(!res.data){ unavailable(); reveal(); return; }
+      P = res.data;
+      try{ apply(); }catch(e){ console.error('pv-live apply failed', e); }
+      reveal();
     })
-    .catch(function(e){ console.error('pv-live failed', e); });
+    .catch(function(e){ console.error('pv-live failed', e); reveal(); });
 })();

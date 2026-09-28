@@ -622,6 +622,10 @@ body.dark-mode .pv-qty-val{border-left-color:rgba(255,255,255,0.08);border-right
 }
 
 </style>
+<script>
+/* Hide static demo content until live data loads (prevents flash of fake product) */
+if(/[?&]pid=/.test(location.search)){document.write('<style id="pvPre">body .pv-info,body .pv-actions{visibility:hidden}</style>');setTimeout(function(){var s=document.getElementById('pvPre');if(s&&s.parentNode)s.parentNode.removeChild(s)},12000)}
+</script>
 </head>
 <body>
 
@@ -1303,7 +1307,7 @@ function submitReview(){
   }catch(e){}
 })();
 </script>
-<script src="assets/js/pv-live.js?v=6"></script>
+<script src="assets/js/pv-live.js?v=7"></script>
 <script>
 (function(){
   var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
