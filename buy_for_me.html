@@ -582,14 +582,14 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
   </section>
 
     <section class="trust-badges-section rv">
-    <h3 style="text-align:center">How Pre-Order Works?</h3>
+    <h3 style="text-align:center" id="poTitle">How Pre-Order Works?</h3>
     <div class="trust-badge-card">
       <div class="trust-badge-icon">
         <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.07 0l1.93-1.93a5 5 0 00-7.07-7.07L10.5 5.5"/><path d="M14 11a5 5 0 00-7.07 0l-1.93 1.93a5 5 0 007.07 7.07L13.5 18.5"/></svg>
       </div>
       <div class="trust-badge-text">
-        <h4>Paste a Product Link 🔗</h4>
-        <p>Share a product link from your favorite store like Amazon, iHerb, Walmart, or eBay.</p>
+        <h4 id="poH1">Paste a Product Link 🔗</h4>
+        <p id="poD1">Share a product link from your favorite store like Amazon, iHerb, Walmart, or eBay.</p>
       </div>
     </div>
     <div class="trust-badge-card">
@@ -597,8 +597,8 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
         <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
       </div>
       <div class="trust-badge-text">
-        <h4>Get Your Final Price 💬</h4>
-        <p>We'll send your final quote, including the product price, shipping, taxes, and customs fees.</p>
+        <h4 id="poH2">Get Your Final Price 💬</h4>
+        <p id="poD2">We'll send your final quote, including the product price, shipping, taxes, and customs fees.</p>
       </div>
     </div>
     <div class="trust-badge-card">
@@ -606,8 +606,8 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
         <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       </div>
       <div class="trust-badge-text">
-        <h4>Approve & Pay 💳</h4>
-        <p>Review your quote, then confirm your order and make the payment.</p>
+        <h4 id="poH3">Approve & Pay 💳</h4>
+        <p id="poD3">Review your quote, then confirm your order and make the payment.</p>
       </div>
     </div>
     <div class="trust-badge-card">
@@ -615,8 +615,8 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
         <svg viewBox="0 0 24 24"><path d="M2 12h20"/><path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6"/><path d="M12 2v10"/><path d="M12 2l-4 4"/><path d="M12 2l4 4"/></svg>
       </div>
       <div class="trust-badge-text">
-        <h4>We Order It 🛒</h4>
-        <p>We buy the product directly from the original store on your behalf.</p>
+        <h4 id="poH4">We Order It 🛒</h4>
+        <p id="poD4">We buy the product directly from the original store on your behalf.</p>
       </div>
     </div>
     <div class="trust-badge-card">
@@ -624,8 +624,8 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
         <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
       </div>
       <div class="trust-badge-text">
-        <h4>Delivered to Your Door 📦</h4>
-        <p>After it arrives in Bangladesh, we deliver it safely to your address.</p>
+        <h4 id="poH5">Delivered to Your Door 📦</h4>
+        <p id="poD5">After it arrives in Bangladesh, we deliver it safely to your address.</p>
       </div>
     </div>
   </section>
@@ -787,6 +787,18 @@ const STORES = [
   { key:'other',   match:null,                                                                                   label:'Other',     color:'other' }
 ];
 
+(async function loadBfmPreorderFromCMS(){
+  try{
+    if(!sbClient) return;
+    const { data, error } = await sbClient.from('site_content').select('content')
+      .eq('page','buy_for_me').eq('section','preorder').maybeSingle();
+    const c = data && data.content;
+    if(error || !c) return;
+    const set = (id, v) => { const el = document.getElementById(id); if(el && typeof v === 'string' && v.trim()) el.textContent = v; };
+    set('poTitle', c.title);
+    (c.steps || []).slice(0,5).forEach((x, i) => { if(!x) return; set('poH' + (i+1), x.h); set('poD' + (i+1), x.d); });
+  }catch(e){ console.error('loadBfmPreorderFromCMS error:', e); }
+})();
 const FEES = { tax:8.87, svc:2.25, rate:122.5 };
 function fmtBdt(usd){ return '৳' + Math.round(usd * FEES.rate).toLocaleString('en-US'); }
 function applyFeeLabels(){
