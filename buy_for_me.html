@@ -373,7 +373,7 @@ body.dark-mode .order-summary.glass-card-green{
 .faq-q svg{width:16px;height:16px;stroke:var(--t2);stroke-width:2.2;fill:none;transition:transform .3s cubic-bezier(.4,0,.2,1);flex-shrink:0}
 .faq-item.open .faq-q svg{transform:rotate(180deg)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
-.faq-item.open .faq-a{max-height:120px}
+.faq-item.open .faq-a{max-height:600px}
 .faq-a p{font-size:11.5px;color:var(--t2);line-height:1.55;padding:0 2px 14px}
 .faq-link{color:var(--orange);font-weight:700}
 
@@ -628,6 +628,7 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
 
   <section class="faq rv">
     <h3>FAQ</h3>
+    <div id="bfmFaqList">
     <div class="faq-item">
       <button class="faq-q" type="button"><span>How long until I get a quote?</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
       <div class="faq-a"><p>Most quotes are sent via WhatsApp within 24 hours. You'll receive one final price including product cost, shipping, taxes, customs fees, and service charge.</p></div>
@@ -639,6 +640,7 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
     <div class="faq-item">
       <button class="faq-q" type="button"><span>How long does delivery take?</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
       <div class="faq-a"><p>Delivery usually takes 15–20 business days after your order is confirmed. In some cases, delays may occur due to customs clearance, international shipping, or unexpected global events. We'll keep you updated throughout the process.</p></div>
+    </div>
     </div>
   </section>
 </main>
@@ -777,13 +779,30 @@ const STORES = [
   { key:'other',   match:null,                                                                                   label:'Other',     color:'other' }
 ];
 
+window.__bfmStoresReady = (async function loadBfmStoresFromCMS(){
+  try{
+    if(!sbClient) return;
+    const req = sbClient.from('site_content').select('content').eq('page','buy_for_me').eq('section','stores').maybeSingle();
+    const { data, error } = await Promise.race([req, new Promise(r => setTimeout(() => r({error:true}), 2500))]);
+    if(error || !data || !data.content || !Array.isArray(data.content.stores) || !data.content.stores.length) return;
+    const base = {}; STORES.forEach(s => base[s.key] = s);
+    const next = data.content.stores.filter(x => x && x.key && typeof x.label === 'string' && x.label.trim()).map(x => {
+      const b = base[x.key] || { key:x.key, match:null, color:'other' };
+      return { ...b, label:x.label.trim(), enabled:x.enabled !== false };
+    });
+    if(!next.length) return;
+    STORES.length = 0;
+    next.forEach(s => STORES.push(s));
+  }catch(e){ console.error('loadBfmStoresFromCMS error:', e); }
+})();
+
 function isValidUrl(str){
   try { const u = new URL(str); return u.protocol === 'http:' || u.protocol === 'https:'; }
   catch(e){ return false; }
 }
 function detectStore(url){
   if(!isValidUrl(url)) return null;
-  return STORES.find(s => s.match && s.match.test(url)) || null;
+  return STORES.find(s => s.match && s.enabled !== false && s.match.test(url)) || null;
 }
 // Odometer-style roll animation for the quantity number — old value slides
 // out, new value slides in, direction matches increment/decrement. Uses a
@@ -969,7 +988,7 @@ function initStoreDropdown(wrap){
   const menu  = wrap.querySelector('[data-role="store-select-menu"]');
   const textEl= wrap.querySelector('[data-role="store-select-text"]');
 
-  const opts = [{key:'', label:'Auto-detect'}, ...STORES.filter(s => s.key !== 'other'), {key:'other', label:'Other'}];
+  const opts = [{key:'', label:'Auto-detect'}, ...STORES.filter(s => s.enabled !== false)];
   menu.innerHTML = opts.map(o => {
     const k = o.key === '' ? '' : o.key;
     const label = o.label || (o.key === '' ? 'Auto-detect' : o.key);
@@ -1185,7 +1204,7 @@ function updateRemoveVisibility(){
 }
 
 document.getElementById('addItemBtn').addEventListener('click', () => { addItemRow(); setTimeout(updateOrderSummary, 100); });
-addItemRow();
+window.__bfmStoresReady.then(() => addItemRow());
 
 /* ─── WhatsApp ─── */
 const waInput = document.getElementById('waInput');
@@ -1284,13 +1303,34 @@ function wireSummaryTriggers(row, item){
 }
 
 /* ─── FAQ ─── */
-document.querySelectorAll('.faq-item').forEach(item => {
-  item.querySelector('.faq-q').addEventListener('click', () => {
-    const wasOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item.open').forEach(o => o.classList.remove('open'));
-    if(!wasOpen) item.classList.add('open');
+function bindFaqItems(){
+  document.querySelectorAll('#bfmFaqList .faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(o => o.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
   });
-});
+}
+bindFaqItems();
+(async function loadBfmFaqFromCMS(){
+  try{
+    if(!sbClient) return;
+    const { data, error } = await sbClient.from('site_content').select('content')
+      .eq('page','buy_for_me').eq('section','faq').maybeSingle();
+    const list = data && data.content && data.content.faqs;
+    if(error || !Array.isArray(list) || !list.length) return;
+    const wrap = document.getElementById('bfmFaqList');
+    if(!wrap) return;
+    const esc = t => String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    wrap.innerHTML = list.filter(f => f && f.q && f.a).map(f =>
+      '<div class="faq-item"><button class="faq-q" type="button"><span>' + esc(f.q) + '</span>' +
+      '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>' +
+      '<div class="faq-a"><p>' + esc(f.a).replace(/\n/g,'<br>') + '</p></div></div>'
+    ).join('');
+    bindFaqItems();
+  }catch(e){ console.error('loadBfmFaqFromCMS error:', e); }
+})();
 
 /* ─── Submit ─── */
 const processingOverlay = document.getElementById('processingOverlay');
