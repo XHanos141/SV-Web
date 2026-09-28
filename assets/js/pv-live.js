@@ -249,7 +249,8 @@
     // Potency / Capsule Count badges — real values from supplement_details
     var suppBox = $('suppInfo');
     function showBadges(sd){
-      if(!sd || !suppBox) return;
+      if(!sd) return;
+      if(!suppBox) suppBox = document.createElement('div');
       var rows = suppBox.querySelectorAll('.pv-supplement-row');
       var hasP = sd.potency_amount != null && String(sd.potency_amount).trim() !== '';
       var hasC = sd.capsule_count != null;
@@ -258,6 +259,9 @@
       if(rows[0]) rows[0].style.display = hasP ? '' : 'none';
       if(rows[1]) rows[1].style.display = hasC ? '' : 'none';
       if(hasP || hasC) suppBox.style.display = '';
+      var pp = $('pvPotencyPill'), cp = $('pvCountPill');
+      if(hasP && pp){ pp.textContent = $('suppPotency').textContent; if($('potencyBox')) $('potencyBox').style.display = ''; }
+      if(hasC && cp){ cp.textContent = $('suppCount').textContent; if($('countBox')) $('countBox').style.display = ''; }
     }
     var sd = Array.isArray(P.supplement_details) ? P.supplement_details[0] : P.supplement_details;
     if(sd) showBadges(sd);
