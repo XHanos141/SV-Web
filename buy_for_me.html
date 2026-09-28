@@ -555,16 +555,20 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
             <td colspan="4"><div></div></td>
           </tr>
           <tr class="os-tax-row">
-            <td colspan="3">US Sales Tax (8.87%)</td>
+            <td colspan="3" id="osTaxLabel">US Sales Tax (8.87%)</td>
             <td class="os-tax-val" id="osTaxTotal">$0.00</td>
           </tr>
           <tr class="os-tax-row">
-            <td colspan="3">Service Charge (2.25%)</td>
+            <td colspan="3" id="osServiceLabel">Service Charge (2.25%)</td>
             <td class="os-tax-val" id="osServiceTotal">$0.00</td>
           </tr>
           <tr class="os-grand-row">
             <td class="os-grand-label" colspan="3">Grand Total</td>
             <td class="os-grand-val" id="osGrandTotal">$160</td>
+          </tr>
+          <tr class="os-tax-row">
+            <td colspan="3" id="osBdtLabel">In BDT</td>
+            <td class="os-tax-val" id="osGrandBdt">৳0</td>
           </tr>
         </tfoot>
       </table>
@@ -659,16 +663,20 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
     <div class="review-divider"></div>
 
     <div class="review-tax-row">
-      <span class="review-tax-label">US Sales Tax (8.87%)</span>
+      <span class="review-tax-label" id="reviewTaxLabel">US Sales Tax (8.87%)</span>
       <span class="review-tax-val" id="reviewTax">$0.00</span>
     </div>
     <div class="review-tax-row">
-      <span class="review-tax-label">Service Charge (2.25%)</span>
+      <span class="review-tax-label" id="reviewServiceLabel">Service Charge (2.25%)</span>
       <span class="review-tax-val" id="reviewService">$0.00</span>
     </div>
     <div class="review-grand">
       <span class="review-grand-label">Grand Total</span>
       <span class="review-grand-val" id="reviewGrand">$0.00</span>
+    </div>
+    <div class="review-tax-row">
+      <span class="review-tax-label" id="reviewBdtLabel">In BDT</span>
+      <span class="review-tax-val" id="reviewBdt">৳0</span>
     </div>
 
     <div class="review-divider"></div>
@@ -778,6 +786,37 @@ const STORES = [
   { key:'nike',    match:/nike\.com/i,                                                                           label:'Nike',      color:'nike' },
   { key:'other',   match:null,                                                                                   label:'Other',     color:'other' }
 ];
+
+const FEES = { tax:8.87, svc:2.25, rate:122.5 };
+function fmtBdt(usd){ return '৳' + Math.round(usd * FEES.rate).toLocaleString('en-US'); }
+function applyFeeLabels(){
+  const set = (id, txt) => { const el = document.getElementById(id); if(el) el.textContent = txt; };
+  set('osTaxLabel', 'US Sales Tax (' + FEES.tax + '%)');
+  set('osServiceLabel', 'Service Charge (' + FEES.svc + '%)');
+  set('reviewTaxLabel', 'US Sales Tax (' + FEES.tax + '%)');
+  set('reviewServiceLabel', 'Service Charge (' + FEES.svc + '%)');
+  const r = '1 USD = ৳' + FEES.rate;
+  set('osBdtLabel', 'In BDT (' + r + ')');
+  set('reviewBdtLabel', 'In BDT (' + r + ')');
+}
+(async function loadBfmFeesFromCMS(){
+  await Promise.resolve();
+  try{
+    if(sbClient){
+      const { data, error } = await sbClient.from('site_content').select('content')
+        .eq('page','buy_for_me').eq('section','fees').maybeSingle();
+      const c = data && data.content;
+      if(!error && c){
+        const ok = v => typeof v === 'number' && Number.isFinite(v) && v >= 0;
+        if(ok(c.sales_tax)) FEES.tax = c.sales_tax;
+        if(ok(c.service_charge)) FEES.svc = c.service_charge;
+        if(ok(c.usd_rate) && c.usd_rate > 0) FEES.rate = c.usd_rate;
+      }
+    }
+  }catch(e){ console.error('loadBfmFeesFromCMS error:', e); }
+  applyFeeLabels();
+  if(typeof updateOrderSummary === 'function') updateOrderSummary();
+})();
 
 window.__bfmStoresReady = (async function loadBfmStoresFromCMS(){
   try{
@@ -1270,8 +1309,8 @@ function updateOrderSummary(){
     tr.innerHTML = '<td class="os-product-name">' + escapeHtml(name) + '</td><td class="os-qty">' + qty + ' unit' + (qty > 1 ? 's' : '') + '</td><td class="os-each">$' + price.toFixed(2) + '</td><td class="os-total">$' + total.toFixed(2) + '</td>';
     tbody.appendChild(tr);
   });
-  const taxRate = 0.0887;
-  const serviceRate = 0.0225;
+  const taxRate = FEES.tax / 100;
+  const serviceRate = FEES.svc / 100;
   const tax = grand * taxRate;
   const service = grand * serviceRate;
   const grandWithTax = grand + tax + service;
@@ -1280,6 +1319,8 @@ function updateOrderSummary(){
   if(taxEl) taxEl.textContent = '$' + tax.toFixed(2);
   if(serviceEl) serviceEl.textContent = '$' + service.toFixed(2);
   if(grandEl) grandEl.textContent = '$' + grandWithTax.toFixed(2);
+  const bdtEl = document.getElementById('osGrandBdt');
+  if(bdtEl) bdtEl.textContent = fmtBdt(grandWithTax);
 }
 
 function escapeHtml(str){
@@ -1438,14 +1479,15 @@ function buildReviewPopup(){
     });
   }
 
-  const taxRate = 0.0887;
-  const serviceRate = 0.0225;
+  const taxRate = FEES.tax / 100;
+  const serviceRate = FEES.svc / 100;
   const tax = grand * taxRate;
   const service = grand * serviceRate;
   const grandWithTax = grand + tax + service;
   reviewTax.textContent = '$' + tax.toFixed(2);
   document.getElementById('reviewService').textContent = '$' + service.toFixed(2);
   reviewGrand.textContent = '$' + grandWithTax.toFixed(2);
+  document.getElementById('reviewBdt').textContent = fmtBdt(grandWithTax);
   const waVal = waInput.value.trim();
   reviewWa.textContent = waVal ? '+880 ' + normalizeWa(waVal) : '+880 1XXX-XXXXXX';
 
