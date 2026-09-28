@@ -563,12 +563,8 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
             <td class="os-tax-val" id="osServiceTotal">$0.00</td>
           </tr>
           <tr class="os-grand-row">
-            <td class="os-grand-label" colspan="3">Grand Total</td>
-            <td class="os-grand-val" id="osGrandTotal">$160</td>
-          </tr>
-          <tr class="os-tax-row">
-            <td colspan="3" id="osBdtLabel">In BDT</td>
-            <td class="os-tax-val" id="osGrandBdt">৳0</td>
+            <td class="os-grand-label" colspan="3">Total</td>
+            <td class="os-grand-val" id="osGrandTotal">৳0</td>
           </tr>
         </tfoot>
       </table>
@@ -808,7 +804,6 @@ function applyFeeLabels(){
   set('reviewTaxLabel', 'US Sales Tax (' + FEES.tax + '%)');
   set('reviewServiceLabel', 'Service Charge (' + FEES.svc + '%)');
   const r = '1 USD = ৳' + FEES.rate;
-  set('osBdtLabel', 'In BDT (' + r + ')');
   set('reviewBdtLabel', 'In BDT (' + r + ')');
 }
 (async function loadBfmFeesFromCMS(){
@@ -1330,9 +1325,7 @@ function updateOrderSummary(){
   const serviceEl = document.getElementById('osServiceTotal');
   if(taxEl) taxEl.textContent = '$' + tax.toFixed(2);
   if(serviceEl) serviceEl.textContent = '$' + service.toFixed(2);
-  if(grandEl) grandEl.textContent = '$' + grandWithTax.toFixed(2);
-  const bdtEl = document.getElementById('osGrandBdt');
-  if(bdtEl) bdtEl.textContent = fmtBdt(grandWithTax);
+  if(grandEl) grandEl.textContent = fmtBdt(grandWithTax);
 }
 
 function escapeHtml(str){
