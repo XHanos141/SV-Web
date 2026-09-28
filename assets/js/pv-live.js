@@ -248,17 +248,25 @@
     // demo-only blocks that have no real data yet
     document.querySelectorAll('.pv-supplement-info').forEach(hide);
 
-    // Potency / Capsule Count pills — single real value from supplement_details, not a fake multi-option selector
-    var sd = Array.isArray(P.supplement_details) ? P.supplement_details[0] : P.supplement_details;
+    // Potency / Capsule Count badges — real values from supplement_details
     var potencyPill = $('pvPotencyPill'), countPill = $('pvCountPill');
     var potencyBox = $('potencyBox'), countBox = $('countBox');
-    if(sd && sd.potency_amount != null && potencyPill){
-      potencyPill.textContent = sd.potency_amount + ' ' + (sd.potency_unit || '').toLowerCase();
-      if(potencyBox) potencyBox.style.display = '';
+    function showBadges(sd){
+      if(!sd) return;
+      if(sd.potency_amount != null && String(sd.potency_amount).trim() !== '' && potencyPill){
+        potencyPill.textContent = sd.potency_amount + ' ' + (sd.potency_unit || '').toLowerCase();
+        if(potencyBox) potencyBox.style.display = '';
+      }
+      if(sd.capsule_count != null && countPill){
+        countPill.textContent = sd.capsule_count + ' Caps';
+        if(countBox) countBox.style.display = '';
+      }
     }
-    if(sd && sd.capsule_count != null && countPill){
-      countPill.textContent = sd.capsule_count + ' Caps';
-      if(countBox) countBox.style.display = '';
+    var sd = Array.isArray(P.supplement_details) ? P.supplement_details[0] : P.supplement_details;
+    if(sd) showBadges(sd);
+    else if(potencyBox || countBox){
+      sbClient.from('supplement_details').select('potency_amount,potency_unit,capsule_count').eq('product_id', P.id).maybeSingle()
+        .then(function(r){ showBadges(r && r.data); }).catch(function(){});
     }
 
     // Expiry: show the soonest expiry among in-stock batches (FEFO — first-expired-first-out display rule)

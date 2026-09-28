@@ -809,41 +809,10 @@ body.dark-mode .pv-qty-val{border-left-color:rgba(255,255,255,0.08);border-right
   </p>
 
   <div class="pv-section-title" id="reviewsSection">Reviews</div>
-  <div class="pv-review">
-    <div class="pv-review-head">
-      <div class="pv-review-avatar">RH</div>
-      <div>
-        <div class="pv-review-name">Rafi H.<span class="pv-verified-badge"><svg viewBox="0 0 24 24" fill="none"><path fill="currentColor" d="m21.5609 10.7386-1.36-1.58001c-.26-.3-.47-.86-.47-1.26v-1.7c0-1.06-.87-1.93-1.93-1.93h-1.7c-.39 0-.96-.21-1.26-.47l-1.58-1.36c-.69-.59-1.82-.59-2.52 0l-1.57004 1.37c-.3.25-.87.46-1.26.46h-1.73c-1.06 0-1.93.87-1.93 1.93v1.71c0 .39-.21.95-.46 1.25l-1.35 1.59001c-.58.69-.58 1.81 0 2.5l1.35 1.59c.25.3.46.86.46 1.25v1.71c0 1.06.87 1.93 1.93 1.93h1.73c.39 0 .96.21 1.26.47l1.58004 1.36c.69.59 1.82.59 2.52 0l1.58-1.36c.3-.26.86-.47 1.26-.47h1.7c1.06 0 1.93-.87 1.93-1.93v-1.7c0-.39.21-.96.47-1.26l1.36-1.58c.58-.69.58-1.83-.01-2.52m-5.4-.63-4.83 4.83c-.14.14-.33.22-.53.22s-.39-.08-.53-.22l-2.42004-2.42c-.29-.29-.29-.77 0-1.06s.77-.29 1.06 0l1.89004 1.89 4.3-4.30001c.29-.29.77-.29 1.06 0s.29.77 0 1.06001"/></svg>Verified Purchase</span></div>
-        <div class="pv-review-stars">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-      </div>
-    </div>
-    <div class="pv-review-text">Authentic product, fast delivery. Mixes very well and the chocolate flavor is great. Will order again.</div>
-  </div>
-  <div class="pv-review">
-    <div class="pv-review-head">
-      <div class="pv-review-avatar">SK</div>
-      <div>
-        <div class="pv-review-name">Sajid K.</div>
-        <div class="pv-review-stars">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24" fill="var(--text3)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-      </div>
-    </div>
-    <div class="pv-review-text">Good quality protein. Verified genuine. Delivery was within 2 days in Dhaka.</div>
-  </div>
-
+  <div id="pvReviewsList"></div>
+  <div class="pv-review-empty" id="pvReviewsEmpty" style="display:none;color:var(--text2);font-size:13px;padding:4px 0 8px">No reviews yet — be the first to review this product.</div>
   <!-- WRITE A REVIEW -->
-  <div class="pv-write-review">
+  <div class="pv-write-review" id="pvWriteReview">
     <div class="pv-write-review-title">Write a Review</div>
     <div class="pv-star-input" id="starInput">
       <svg viewBox="0 0 24 24" fill="currentColor" data-val="1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -856,6 +825,7 @@ body.dark-mode .pv-qty-val{border-left-color:rgba(255,255,255,0.08);border-right
     <textarea class="pv-review-textarea" id="reviewText" placeholder="Share your experience with this product..."></textarea>
     <button class="pv-review-submit" onclick="submitReview()">Submit Review</button>
   </div>
+  <div class="pv-write-review-msg" id="pvWriteReviewMsg" style="display:none;color:var(--text2);font-size:13px;padding:4px 0 12px"></div>
 </div>
 
 <!-- BOTTOM ACTIONS -->
@@ -1292,18 +1262,7 @@ function scrollToReviews(){
 }
 
 function submitReview(){
-  var text = document.getElementById('reviewText').value.trim();
-  var filled = document.querySelectorAll('#starInput svg.filled').length;
-  if(!filled){
-    alert('Please select a star rating');
-    return;
-  }
-  if(!text){
-    alert('Please write a comment');
-    return;
-  }
-  alert('Thank you! Your ' + filled + '-star review has been submitted.');
-  document.getElementById('reviewText').value = '';
+  alert('Loading, please try again in a moment.');
 }
 </script>
 
@@ -1344,7 +1303,7 @@ function submitReview(){
   }catch(e){}
 })();
 </script>
-<script src="assets/js/pv-live.js?v=3"></script>
+<script src="assets/js/pv-live.js?v=4"></script>
 <script>
 (function(){
   var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
