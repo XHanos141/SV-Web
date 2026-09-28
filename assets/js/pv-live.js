@@ -221,6 +221,7 @@
   setFormLocked(true); // visible but locked until purchase eligibility is confirmed
   hide($('potencyBox'));
   hide($('countBox'));
+  hide($('suppInfo')); // fake 500mg/60Caps demo values stay hidden until real data loads
 
   function apply(){
     var title = (P.brand ? P.brand + ' ' : '') + P.name;
@@ -245,26 +246,22 @@
     }
     if($('pvBrandText') && P.brand) $('pvBrandText').innerHTML = 'Brand: <b></b>', $('pvBrandText').querySelector('b').textContent = P.brand;
 
-    // demo-only blocks that have no real data yet
-    document.querySelectorAll('.pv-supplement-info').forEach(hide);
-
     // Potency / Capsule Count badges — real values from supplement_details
-    var potencyPill = $('pvPotencyPill'), countPill = $('pvCountPill');
-    var potencyBox = $('potencyBox'), countBox = $('countBox');
+    var suppBox = $('suppInfo');
     function showBadges(sd){
-      if(!sd) return;
-      if(sd.potency_amount != null && String(sd.potency_amount).trim() !== '' && potencyPill){
-        potencyPill.textContent = sd.potency_amount + ' ' + (sd.potency_unit || '').toLowerCase();
-        if(potencyBox) potencyBox.style.display = '';
-      }
-      if(sd.capsule_count != null && countPill){
-        countPill.textContent = sd.capsule_count + ' Caps';
-        if(countBox) countBox.style.display = '';
-      }
+      if(!sd || !suppBox) return;
+      var rows = suppBox.querySelectorAll('.pv-supplement-row');
+      var hasP = sd.potency_amount != null && String(sd.potency_amount).trim() !== '';
+      var hasC = sd.capsule_count != null;
+      if(hasP && $('suppPotency')) $('suppPotency').textContent = sd.potency_amount + ' ' + (sd.potency_unit || '').toLowerCase();
+      if(hasC && $('suppCount')) $('suppCount').textContent = sd.capsule_count + ' Caps';
+      if(rows[0]) rows[0].style.display = hasP ? '' : 'none';
+      if(rows[1]) rows[1].style.display = hasC ? '' : 'none';
+      if(hasP || hasC) suppBox.style.display = '';
     }
     var sd = Array.isArray(P.supplement_details) ? P.supplement_details[0] : P.supplement_details;
     if(sd) showBadges(sd);
-    else if(potencyBox || countBox){
+    else if(suppBox){
       sbClient.from('supplement_details').select('potency_amount,potency_unit,capsule_count').eq('product_id', P.id).maybeSingle()
         .then(function(r){ showBadges(r && r.data); }).catch(function(){});
     }
