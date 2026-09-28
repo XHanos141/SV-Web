@@ -160,14 +160,22 @@
       .catch(function(){});
   }
 
+  function setFormLocked(locked){
+    var wr = $('pvWriteReview');
+    if(!wr) return;
+    wr.style.display = '';
+    wr.style.opacity = locked ? '0.55' : '';
+    wr.style.pointerEvents = locked ? 'none' : '';
+    var t = $('reviewText'); if(t) t.disabled = locked;
+    var b = wr.querySelector('.pv-review-submit'); if(b) b.disabled = locked;
+  }
   function setWriteMsg(html){
-    hide($('pvWriteReview'));
+    setFormLocked(true);
     var m = $('pvWriteReviewMsg');
     if(m){ m.innerHTML = html; m.style.display = ''; }
   }
   function showWriteForm(){
-    var wr = $('pvWriteReview');
-    if(wr) wr.style.display = '';
+    setFormLocked(false);
     var m = $('pvWriteReviewMsg');
     if(m) m.style.display = 'none';
   }
@@ -208,9 +216,9 @@
     });
   }
 
-  // Hide the write-review form and the potency/capsule pills synchronously, before any
+  // Lock the write-review form and hide the potency/capsule pills synchronously, before any
   // network round-trip, so nothing flashes blank/unwired while data is still loading.
-  hide($('pvWriteReview'));
+  setFormLocked(true); // visible but locked until purchase eligibility is confirmed
   hide($('potencyBox'));
   hide($('countBox'));
 
