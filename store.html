@@ -382,6 +382,7 @@ body.dark-mode .s-search-input-wrap svg{
   transition:font-size .15s;
 }
 .p-price-block.no-discount .p-price{font-size:17px}
+.p-price-block.no-discount{align-self:center;margin-top:0}
 body.dark-mode .p-price{color:#ffffff;}
 .p-price .taka{
   font-size:1em;margin-right:1px;
@@ -1513,7 +1514,8 @@ function productViewParams(p){
     '&cat=' + encodeURIComponent(p.cat) +
     '&type=' + encodeURIComponent(p.type) +
     '&rating=' + encodeURIComponent(p.rating) +
-    '&stock=' + encodeURIComponent(p.stock);
+    '&stock=' + encodeURIComponent(p.stock) +
+    '&_v=3';
 }
 
 function toggleCart(btn){
