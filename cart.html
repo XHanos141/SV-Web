@@ -137,6 +137,10 @@ body.dark-mode .cart-card{border-color:rgba(45,190,245,0.42)}
   position:relative;overflow:hidden;
   box-shadow:inset 0 0 0 1px rgba(0,0,0,0.04);
 }
+a.cc-img-wrap,a.cc-name-link{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
+a.cc-name-link{display:block;min-width:0}
+a.cc-name-link:active .cc-name{opacity:.7}
+a.cc-img-wrap:active{opacity:.8}
 .cc-cat{
   font-size:8.5px;font-weight:800;color:var(--text3);
   text-transform:uppercase;letter-spacing:0.04em;
@@ -585,6 +589,21 @@ const itemCount = document.getElementById('itemCount');
 const checkoutBtn = document.getElementById('checkoutBtn');
 const barTotal = document.getElementById('barTotal');
 function fmt(n){ return '৳' + n.toLocaleString('en-US'); }
+const PV_PAGES = {
+  Supplement:'product_view_supplement.html', Gadget:'product_view_gadget.html',
+  Cosmetic:'product_view_cosmetic.html', Clothing:'product_view_clothing.html',
+  General:'product_view_general.html'
+};
+function pvHref(item){
+  const pid = item.productId || item.id;
+  if(!pid) return null;
+  return (PV_PAGES[item.type] || 'product_view_general.html') + '?pid=' + encodeURIComponent(pid) +
+    '&name=' + encodeURIComponent(item.name || '') +
+    '&price=' + encodeURIComponent(item.price) +
+    '&old=' + encodeURIComponent(item.oldPrice || 0) +
+    '&cat=' + encodeURIComponent(item.category || '') +
+    '&type=' + encodeURIComponent(item.type || 'General') + '&_v=3';
+}
 function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function els(flow){
   const s = flow === 'internal' ? 'Internal' : 'Proxy';
@@ -633,6 +652,7 @@ function updateSummary(flow){
   if(flow === currentFlow) updateBar();
 }
 function cardHTML(item, flow){
+  const href = flow === 'internal' ? pvHref(item) : null;
   const imgBlock = item.img ? `<img src="${esc(item.img)}" alt="${esc(item.name)}">` : `<svg viewBox="0 0 24 24"><path d="M20.5 7.28a1 1 0 00-.5-.86l-8-4.62a1 1 0 00-1 0l-8 4.62a1 1 0 00-.5.86v9.44a1 1 0 00.5.86l8 4.62a1 1 0 001 0l8-4.62a1 1 0 00.5-.86V7.28z"/><path d="M3.5 7.28l8.5 4.62 8.5-4.62M12 22V12"/></svg>`;
   const badgeRow = flow === 'proxy'
     ? `<div class="cc-badge-row"><span class="badge-proxy">Proxy</span><span class="cc-store">via ${esc(item.store)}</span></div>`
@@ -648,14 +668,12 @@ function cardHTML(item, flow){
         <button class="qty-btn qty-plus" aria-label="Increase quantity"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       </div>`;
   return `
-    <div class="cc-img-wrap">
-      ${imgBlock}
-    </div>
+    ${href ? `<a class="cc-img-wrap" href="${esc(href)}" aria-label="View ${esc(item.name)}">${imgBlock}</a>` : `<div class="cc-img-wrap">${imgBlock}</div>`}
     <div class="cc-body">
       <div class="cc-top">
         <div style="min-width:0">
           ${flow === 'internal' ? `<div class="cc-cat">${window.SVBadges ? SVBadges.html(item.type) : ''}<span>${esc(item.category)}</span></div>` : ''}
-          <div class="cc-name">${esc(item.name)}</div>
+          ${href ? `<a class="cc-name-link" href="${esc(href)}"><div class="cc-name">${esc(item.name)}</div></a>` : `<div class="cc-name">${esc(item.name)}</div>`}
           <div class="cc-variant">${esc(item.variant)}</div>
           ${badgeRow}
         </div>
