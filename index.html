@@ -2492,26 +2492,37 @@ document.querySelectorAll('.rv').forEach(el => {
   var visible = true;
   var gridW = 1, gridH = 1; // updated in measure()
 
+  var measured = false;
+  var ICON_R = 30; // half of .wb-icon height, used for rotation-corrected string anchor
+
+  // Rest positions come from LAYOUT metrics (offsetLeft/Top), which ignore CSS transforms.
+  // getBoundingClientRect() includes the live swing/float/hover transforms, so calling it
+  // mid-animation (e.g. mobile URL-bar collapse fires 'resize') baked the current
+  // displacement into restX/restY and the thread anchored to the wrong spot until next resize.
   function measure(){
-    var gridRect = grid.getBoundingClientRect();
-    gridW = gridRect.width  || 1;
-    gridH = gridRect.height || 1;
-    var hubRect  = hub.getBoundingClientRect();
-    hubState.restX = ((hubRect.left + hubRect.width/2) - gridRect.left) / gridW * 100;
-    hubState.restY = ((hubRect.top + hubRect.height/2) - gridRect.top) / gridH * 100;
+    var w = grid.clientWidth, h = grid.clientHeight;
+    if(!w || !h) return; // hidden / not laid out yet: keep previous values
+    gridW = w; gridH = h;
+    hubState.restX = hub.offsetLeft / gridW * 100; // left:50% + translate(-50%) => centre = offsetLeft
+    hubState.restY = hub.offsetTop / gridH * 100;
     for(var i=0; i<N; i++){
-      var iconEl = cards[i].querySelector('.wb-icon');
-      var r = (iconEl || cards[i]).getBoundingClientRect();
-      state[i].restX = ((r.left + r.width/2) - gridRect.left) / gridW * 100;
-      state[i].restY = ((r.top + r.height/2) - gridRect.top) / gridH * 100;
+      var card = cards[i];
+      var iconEl = card.querySelector('.wb-icon') || card;
+      // .wb-card has a static translate(-50%,-30px): centre-x = offsetLeft, top = offsetTop - 30
+      var cx = card.offsetLeft;
+      var cy = card.offsetTop - 30 + (iconEl.offsetTop || 0) + iconEl.offsetHeight / 2;
+      ICON_R = iconEl.offsetHeight / 2 || ICON_R;
+      state[i].restX = cx / gridW * 100;
+      state[i].restY = cy / gridH * 100;
     }
+    measured = true;
   }
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(function(){ setTimeout(measure, 100); });
-  } else {
-    setTimeout(measure, 300);
-  }
+  measure();
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(measure); }
+  window.addEventListener('load', measure);
   window.addEventListener('resize', measure);
+  window.addEventListener('orientationchange', function(){ setTimeout(measure, 200); });
+  if('ResizeObserver' in window){ new ResizeObserver(measure).observe(grid); }
 
   function tick(){
     smoothVel += (scrollVel - smoothVel) * 0.22;
@@ -2565,17 +2576,21 @@ document.querySelectorAll('.rv').forEach(el => {
       var totalDy = s.dy + s.floatY;
       var dxPct = s.dx / gridW * 100;
       var dyPct = totalDy / gridH * 100;
-      var bx = s.restX + dxPct;
-      var by = s.restY + dyPct;
-
       var rot = (s.dx * p.rotScale) + (s.vx * 4);
       if(rot > 12) rot = 12;
       if(rot < -12) rot = -12;
 
+      // .wb-swing rotates about its top-centre, so the icon centre swings sideways by r*sin(rot)
+      var rad = rot * Math.PI / 180;
+      var anchDx = -ICON_R * Math.sin(rad);
+      var anchDy =  ICON_R * (Math.cos(rad) - 1);
+      var bx = s.restX + (s.dx + anchDx) / gridW * 100;
+      var by = s.restY + (totalDy + anchDy) / gridH * 100;
+
       swings[i].style.transform = 'translate(' + s.dx.toFixed(2) + 'px,' + totalDy.toFixed(2) + 'px) rotate(' + rot.toFixed(2) + 'deg)';
 
       var strPath = strPaths[i];
-      if(strPath){
+      if(strPath && measured){
         var midX = (hubX + bx) / 2;
         var midY = (hubY + by) / 2;
         var dist = Math.sqrt((bx-hubX)*(bx-hubX) + (by-hubY)*(by-hubY));
