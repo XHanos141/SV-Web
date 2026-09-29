@@ -529,12 +529,13 @@ body.dark-mode .p-card-out .p-img-wrap{
   display:flex;align-items:center;justify-content:space-around;
   padding:0 8px 8px;
 }
-/* 3D glass bar — matches index.html .hero-badge */
-.s-nav{background:linear-gradient(180deg,#ffffff 0%,#f1f3f8 100%);border-top:1px solid rgba(255,255,255,.9);border-radius:10px 10px 0 0;box-shadow:0 -4px 12px -6px rgba(30,41,59,.14),inset 0 1px 0 rgba(255,255,255,1),inset 0 -1px 2px rgba(100,116,139,.08)}
-.s-nav::before{content:"";position:absolute;top:0;left:0;right:0;height:50%;z-index:0;background:linear-gradient(180deg,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 100%);border-radius:10px 10px 0 0;pointer-events:none}
+/* Soft 3D (neumorphic) bar — same structure, depth only */
+.s-nav{background:linear-gradient(180deg,#fcfcfe 0%,#eceef3 100%);border-top:1px solid rgba(255,255,255,.95);border-radius:0;box-shadow:0 -8px 26px -6px rgba(60,72,100,.16),0 -1px 3px rgba(60,72,100,.06),inset 0 1px 0 #fff,inset 0 10px 16px -8px rgba(255,255,255,.85),inset 0 -8px 14px -8px rgba(90,104,135,.14)}
+.s-nav::before{content:none}
 .s-nav .s-nav-item{z-index:1}
-body.dark-mode .s-nav{background:linear-gradient(180deg,#26344a 0%,#1b2635 100%);border-top-color:rgba(255,255,255,.10);box-shadow:0 -4px 12px -6px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.10),inset 0 -1px 2px rgba(0,0,0,.20)}
-body.dark-mode .s-nav::before{background:linear-gradient(180deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,0) 100%)}
+.s-nav .s-nav-item.active svg{filter:drop-shadow(0 4px 5px rgba(0,157,220,.38))}
+body.dark-mode .s-nav{background:linear-gradient(180deg,#223049 0%,#182233 100%);border-top-color:rgba(255,255,255,.08);box-shadow:0 -8px 26px -6px rgba(0,0,0,.5),0 -1px 3px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.10),inset 0 10px 16px -8px rgba(255,255,255,.06),inset 0 -8px 14px -8px rgba(0,0,0,.35)}
+body.dark-mode .s-nav .s-nav-item.active svg{filter:drop-shadow(0 4px 6px rgba(0,157,220,.5))}
 .s-nav-item{
   display:flex;flex-direction:column;align-items:center;gap:3px;
   color:var(--text3);font-size:10px;font-weight:600;
