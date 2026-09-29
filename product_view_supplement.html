@@ -1030,15 +1030,12 @@ let qty = 1;
     currentX = x;
     width = gallery.offsetWidth;
     track.classList.add('dragging');
-    tapStartTime = Date.now();
-    tapMoved = false;
   }
 
   function onMove(x){
     if(!dragging) return;
     currentX = x;
     var delta = currentX - startX;
-    if(Math.abs(delta) > 10) tapMoved = true;
     track.style.transform = 'translateX(' + (-current * width + delta) + 'px)';
   }
 
@@ -1048,11 +1045,6 @@ let qty = 1;
     track.classList.remove('dragging');
     var delta = currentX - startX;
     var threshold = width * 0.18;
-    if(!tapMoved && (Date.now() - tapStartTime) < 300){
-      update(current);
-      if(typeof window.openPvZoom === 'function') window.openPvZoom();
-      return;
-    }
     if(delta > threshold && current > 0){
       update(current - 1);
     } else if(delta < -threshold && current < count - 1){
@@ -1061,7 +1053,6 @@ let qty = 1;
       update(current);
     }
   }
-  var tapStartTime = 0, tapMoved = false;
   var recentTouch = false, recentTouchTimer = null;
 
   // Touch events
@@ -1073,6 +1064,12 @@ let qty = 1;
   track.addEventListener('touchmove', function(e){ onMove(e.touches[0].clientX); }, {passive:true});
   track.addEventListener('touchend', function(e){
     onEnd();
+    recentTouchTimer = setTimeout(function(){ recentTouch = false; }, 700);
+  });
+  track.addEventListener('touchcancel', function(e){
+    dragging = false;
+    track.classList.remove('dragging');
+    update(current);
     recentTouchTimer = setTimeout(function(){ recentTouch = false; }, 700);
   });
 
@@ -1088,6 +1085,16 @@ let qty = 1;
     if(recentTouch) return;
     onEnd();
   });
+
+  // Tap-to-zoom: use the browser's native 'click' event rather than hand-rolled
+  // tap detection. Click only fires for a genuine, uncancelled tap — it is
+  // automatically suppressed by the browser after a real drag/swipe/scroll-
+  // handoff, which is exactly the distinction we need and is more reliable
+  // across devices than manually tracking touch deltas.
+  track.addEventListener('click', function(e){
+    if(typeof window.openPvZoom === 'function') window.openPvZoom();
+  });
+
 
   window.addEventListener('resize', function(){ update(current, false); });
 
