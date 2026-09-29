@@ -538,6 +538,14 @@ body.dark-mode .p-card-out .p-img-wrap{
 }
 .s-nav-item.active{color:var(--accent)}
 .s-nav-item svg{width:22px;height:22px}
+/* 3D sphere nav icons — same recipe as index .cb-ring brand bubbles */
+.s-nav .s-nav-item{padding:2px 12px;gap:2px}
+.s-nav .s-nav-item svg{width:36px;height:36px;padding:8px;box-sizing:border-box;border-radius:50%;border:1px solid rgba(255,255,255,.6);background:linear-gradient(155deg,rgba(255,255,255,.7) 0%,rgba(255,255,255,.22) 28%,rgba(255,255,255,0) 52%),radial-gradient(circle at 32% 24%,rgba(255,255,255,.9) 0,rgba(255,255,255,0) 22%),#eef2f7;box-shadow:3px 3px 7px rgba(163,177,198,.6),-3px -3px 7px rgba(255,255,255,.95),inset 0 1.5px 1.5px rgba(255,255,255,.85),inset 0 -2px 4px rgba(140,155,180,.20);transition:box-shadow .25s ease,background .25s ease,transform .2s ease}
+.s-nav .s-nav-item:active svg{transform:scale(.94)}
+.s-nav .s-nav-item.active svg{background:linear-gradient(155deg,rgba(255,255,255,.35) 0%,rgba(255,255,255,0) 50%),#e4eaf3;box-shadow:inset 3px 3px 6px rgba(163,177,198,.65),inset -3px -3px 6px rgba(255,255,255,.95),0 0 0 1px rgba(0,157,220,.18)}
+body.dark-mode .s-nav .s-nav-item svg{border-color:rgba(255,255,255,.16);background:linear-gradient(155deg,rgba(255,255,255,.20) 0%,rgba(255,255,255,.07) 28%,rgba(255,255,255,0) 52%),radial-gradient(circle at 32% 24%,rgba(255,255,255,.30) 0,rgba(255,255,255,0) 22%),#0c1729;box-shadow:3px 3px 7px rgba(0,0,0,.7),-3px -3px 7px rgba(255,255,255,.05),inset 0 1.5px 1.5px rgba(255,255,255,.10),inset 0 -2px 4px rgba(0,0,0,.35)}
+body.dark-mode .s-nav .s-nav-item.active svg{background:linear-gradient(155deg,rgba(255,255,255,.06) 0%,rgba(255,255,255,0) 50%),#08111f;box-shadow:inset 3px 3px 6px rgba(0,0,0,.75),inset -3px -3px 6px rgba(255,255,255,.06),0 0 0 1px rgba(0,157,220,.35)}
+.s-nav-badge{right:calc(50% - 30px)}
 .s-nav-badge{
   position:absolute;top:0;right:6px;
   min-width:16px;height:16px;padding:0 4px;border-radius:9px;
