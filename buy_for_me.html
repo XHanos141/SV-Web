@@ -431,13 +431,6 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
   backdrop-filter:blur(20px) saturate(1.2);
   display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;
 }
-/* Soft 3D (neumorphic) bar — same structure, depth only */
-.s-nav{background:linear-gradient(180deg,#ffffff 0%,#e8ebf2 100%);border-top:1px solid #fff;border-radius:0;box-shadow:0 -1px 0 rgba(60,75,110,.12),0 -12px 32px -4px rgba(40,55,95,.26),0 -3px 8px rgba(40,55,95,.10),inset 0 2px 0 #fff,inset 0 14px 18px -10px #fff,inset 0 -12px 16px -8px rgba(80,95,130,.24)}
-.s-nav::before{content:none}
-.s-nav .s-nav-item{z-index:1}
-.s-nav .s-nav-item.active svg{filter:drop-shadow(0 4px 5px rgba(0,157,220,.38))}
-body.dark-mode .s-nav{background:linear-gradient(180deg,#2a3a55 0%,#161f30 100%);border-top-color:rgba(255,255,255,.14);box-shadow:0 -1px 0 rgba(0,0,0,.5),0 -12px 32px -4px rgba(0,0,0,.65),0 -3px 8px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.14),inset 0 14px 18px -10px rgba(255,255,255,.10),inset 0 -12px 16px -8px rgba(0,0,0,.45)}
-body.dark-mode .s-nav .s-nav-item.active svg{filter:drop-shadow(0 4px 6px rgba(0,157,220,.5))}
 .s-nav-item{
   display:flex;flex-direction:column;align-items:center;gap:3px;
   color:var(--t3);font-size:10px;font-weight:600;cursor:pointer;
