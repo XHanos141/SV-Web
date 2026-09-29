@@ -316,23 +316,23 @@ body.dark-mode .pv-dot.active{
   background:var(--surface);
   border-top:1px solid var(--border);
   backdrop-filter:blur(20px) saturate(1.2);
-  padding:7px 16px calc(7px + env(safe-area-inset-bottom));
+  padding:5px 16px calc(5px + env(safe-area-inset-bottom));
   display:flex;align-items:center;gap:10px;
 }
 .pv-qty{
   display:flex;align-items:center;gap:0;
   background:var(--surface2);border:1px solid var(--accent);
-  border-radius:10px;overflow:hidden;
+  border-radius:9px;overflow:hidden;
   flex-shrink:0;
 }
 body.dark-mode .pv-qty{border-color:var(--accent)}
 .pv-qty button{
-  width:32px;height:34px;background:none;border:none;padding:0;margin:0;
+  width:28px;height:28px;background:none;border:none;padding:0;margin:0;
   font-family:var(--font-display);font-size:16px;font-weight:800;line-height:1;
   color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:transform .1s cubic-bezier(.34,1.56,.64,1),background .1s ease;
   -webkit-tap-highlight-color:transparent;user-select:none;
-  flex:0 0 32px;
+  flex:0 0 28px;
 }
 .pv-qty button.pv-qty-minus{
   background:linear-gradient(180deg,rgba(225,67,67,0.10) 0%,rgba(225,67,67,0.04) 100%);
@@ -347,12 +347,12 @@ body.dark-mode .pv-qty button.pv-qty-minus{background:linear-gradient(180deg,rgb
 body.dark-mode .pv-qty button.pv-qty-plus{background:linear-gradient(180deg,rgba(10,155,114,0.16) 0%,rgba(10,155,114,0.07) 100%)}
 .pv-qty button.pv-qty-plus:active{background:rgba(10,155,114,0.18);transform:scale(.88) translateY(1px)}
 .pv-qty-val{
-  width:32px;height:34px;line-height:34px;text-align:center;font-family:var(--font-display);
-  font-size:14px;font-weight:800;color:var(--text);
+  width:28px;height:28px;line-height:28px;text-align:center;font-family:var(--font-display);
+  font-size:13px;font-weight:800;color:var(--text);
   display:block;
   border-left:1px solid rgba(0,0,0,0.08);border-right:1px solid rgba(0,0,0,0.08);
   box-sizing:border-box;position:relative;overflow:hidden;
-  flex:0 0 32px;
+  flex:0 0 28px;
 }
 .qty-roll-digit{
   position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;
@@ -364,11 +364,11 @@ body.dark-mode .pv-qty button.pv-qty-plus{background:linear-gradient(180deg,rgba
 }
 body.dark-mode .pv-qty-val{border-left-color:rgba(255,255,255,0.08);border-right-color:rgba(255,255,255,0.08)}
 .pv-btn-cart{
-  flex:1;height:40px;border-radius:11px;
+  flex:1;height:32px;border-radius:10px;
   background:linear-gradient(145deg,var(--accent),#0077B3);
   border:none;
   color:#fff;font-family:var(--font-display);
-  font-size:12px;font-weight:800;letter-spacing:0.2px;
+  font-size:11px;font-weight:800;letter-spacing:0.2px;
   display:flex;align-items:center;justify-content:center;gap:5px;
   cursor:pointer;transition:all 0.2s;
   box-shadow:0 3px 10px var(--accent-glow);
@@ -385,10 +385,10 @@ body.dark-mode .pv-qty-val{border-left-color:rgba(255,255,255,0.08);border-right
 .pv-btn-cart:active{transform:scale(0.96)}
 .pv-btn-cart:active::after{opacity:1}
 .pv-btn-buy{
-  flex:1.3;height:40px;border-radius:11px;
+  flex:1.3;height:32px;border-radius:10px;
   background:linear-gradient(145deg,var(--green),#088a5e);
   color:#fff;font-family:var(--font-display);
-  font-size:13px;font-weight:800;letter-spacing:0.3px;
+  font-size:12px;font-weight:800;letter-spacing:0.3px;
   display:flex;align-items:center;justify-content:center;gap:6px;
   border:none;cursor:pointer;transition:all 0.2s;
   box-shadow:0 3px 10px rgba(10,155,114,0.22);
