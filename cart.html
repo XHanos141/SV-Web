@@ -512,18 +512,12 @@ body.dark-mode .summary-line.total{border-top-color:var(--accent)}
 svInitHeaderAuth('headerAccountBtn');
 const DATA = {
   internal: {
-    items: [
-      { id:'mag-gly', name:'Magnesium Glycinate', variant:'120 Capsules', price:2450, oldPrice:null, qty:1, img:null, locked:false, type:'Supplement', category:'Minerals' },
-      { id:'omega-3', name:'Omega-3 Fish Oil', variant:'90 Softgels', price:1900, oldPrice:2200, qty:2, img:null, locked:false, type:'Supplement', category:'Fish Oil' }
-    ],
+    items: [],
     shipping:{ flat:120, freeThreshold:6800 },
     checkoutUrl:'payment.html?flow=internal'
   },
   proxy: {
-    items: [
-      { id:'pxq-001', name:'Optimum Nutrition Gold Standard Whey 10lb', variant:'Double Rich Chocolate', store:'Amazon', price:18500, qty:1, img:null, locked:true, type:'Supplement', category:'Protein' },
-      { id:'pxq-002', name:'Ghost Legend Pre-Workout', variant:'Sour Watermelon, 30 servings', store:'eBay', price:9200, qty:2, img:null, locked:true, type:'Supplement', category:'Pre-Workout' }
-    ],
+    items: [],
     shipping:null,
     checkoutUrl:'payment.html?flow=proxy'
   }
@@ -548,17 +542,21 @@ function readStoredCart(){
   catch(e){ return []; }
 }
 function writeStoredCart(items){
-  localStorage.setItem(CART_KEY, JSON.stringify(items));
+  try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch(e){}
 }
 function syncStoredCartOut(){
-  // Persist only items that came from the store (not the 2 hardcoded demo seed items)
-  const storeIds = new Set(readStoredCart().map(i => i.id));
-  const toSave = DATA.internal.items.filter(i => storeIds.has(i.id));
-  writeStoredCart(toSave);
+  writeStoredCart(DATA.internal.items);
 }
 (function mergeStoredCart(){
-  const stored = readStoredCart();
+  const stored = Array.isArray(readStoredCart()) ? readStoredCart() : [];
   stored.forEach(item => {
+    if(!item || item.id == null || !isFinite(item.price)) return;
+    item.price = Number(item.price);
+    item.oldPrice = item.oldPrice && isFinite(item.oldPrice) ? Number(item.oldPrice) : null;
+    item.qty = Math.max(1, parseInt(item.qty, 10) || 1);
+    item.name = item.name || 'Product';
+    item.variant = item.variant || '';
+    item.category = item.category || '';
     const existing = DATA.internal.items.find(i => i.id === item.id);
     if(existing) existing.qty = item.qty;
     else DATA.internal.items.push(item);
@@ -587,6 +585,7 @@ const itemCount = document.getElementById('itemCount');
 const checkoutBtn = document.getElementById('checkoutBtn');
 const barTotal = document.getElementById('barTotal');
 function fmt(n){ return '৳' + n.toLocaleString('en-US'); }
+function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function els(flow){
   const s = flow === 'internal' ? 'Internal' : 'Proxy';
   return {
@@ -634,9 +633,9 @@ function updateSummary(flow){
   if(flow === currentFlow) updateBar();
 }
 function cardHTML(item, flow){
-  const imgBlock = item.img ? `<img src="${item.img}" alt="${item.name}">` : `<svg viewBox="0 0 24 24"><path d="M20.5 7.28a1 1 0 00-.5-.86l-8-4.62a1 1 0 00-1 0l-8 4.62a1 1 0 00-.5.86v9.44a1 1 0 00.5.86l8 4.62a1 1 0 001 0l8-4.62a1 1 0 00.5-.86V7.28z"/><path d="M3.5 7.28l8.5 4.62 8.5-4.62M12 22V12"/></svg>`;
+  const imgBlock = item.img ? `<img src="${esc(item.img)}" alt="${esc(item.name)}">` : `<svg viewBox="0 0 24 24"><path d="M20.5 7.28a1 1 0 00-.5-.86l-8-4.62a1 1 0 00-1 0l-8 4.62a1 1 0 00-.5.86v9.44a1 1 0 00.5.86l8 4.62a1 1 0 001 0l8-4.62a1 1 0 00.5-.86V7.28z"/><path d="M3.5 7.28l8.5 4.62 8.5-4.62M12 22V12"/></svg>`;
   const badgeRow = flow === 'proxy'
-    ? `<div class="cc-badge-row"><span class="badge-proxy">Proxy</span><span class="cc-store">via ${item.store}</span></div>`
+    ? `<div class="cc-badge-row"><span class="badge-proxy">Proxy</span><span class="cc-store">via ${esc(item.store)}</span></div>`
     : '';
   const priceBlock = item.oldPrice
     ? `${fmt(item.price)}<span class="cc-old-price">${fmt(item.oldPrice)}</span><span class="cc-save">Save ${fmt(item.oldPrice - item.price)}</span>`
@@ -655,9 +654,9 @@ function cardHTML(item, flow){
     <div class="cc-body">
       <div class="cc-top">
         <div style="min-width:0">
-          ${flow === 'internal' ? `<div class="cc-cat">${window.SVBadges ? SVBadges.html(item.type) : ''}<span>${item.category}</span></div>` : ''}
-          <div class="cc-name">${item.name}</div>
-          <div class="cc-variant">${item.variant}</div>
+          ${flow === 'internal' ? `<div class="cc-cat">${window.SVBadges ? SVBadges.html(item.type) : ''}<span>${esc(item.category)}</span></div>` : ''}
+          <div class="cc-name">${esc(item.name)}</div>
+          <div class="cc-variant">${esc(item.variant)}</div>
           ${badgeRow}
         </div>
         <button class="cc-remove" aria-label="Remove item"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
