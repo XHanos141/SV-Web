@@ -82,6 +82,14 @@ body.dark-mode .hero-badge{background:linear-gradient(180deg,#26344a 0%,#1b2635 
 .hero-badge::before{content:"";position:absolute;top:0;left:0;right:0;height:50%;z-index:1;background:linear-gradient(180deg,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 100%);border-radius:999px 999px 0 0;pointer-events:none}
 body.dark-mode .hero-badge::before{background:linear-gradient(180deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,0) 100%)}
 .hero-badge-text,.badge-dot{position:relative;z-index:2}
+/* Hero badge: animated conic-gradient border (pure CSS, @property) */
+@property --hb-a{syntax:"<angle>";initial-value:0deg;inherits:true}
+.hero-badge-wrap{--hb-sweep:conic-gradient(from var(--hb-a),#0ea5e9,#10b981 25%,#f5c451 50%,#10b981 75%,#0ea5e9);--hb-top:#ffffff;--hb-bot:#f1f3f8;animation:hb-spin 5s linear infinite}
+body.dark-mode .hero-badge-wrap{--hb-top:#26344a;--hb-bot:#1b2635}
+.hero-badge-wrap::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:999px;background:var(--hb-sweep);filter:blur(10px);opacity:.35;pointer-events:none}
+.hero-badge,body.dark-mode .hero-badge{border:1.5px solid transparent;background:linear-gradient(180deg,var(--hb-top) 0%,var(--hb-bot) 100%) padding-box,var(--hb-sweep) border-box}
+@keyframes hb-spin{to{--hb-a:360deg}}
+@media (prefers-reduced-motion:reduce){.hero-badge-wrap{animation:none}}
 .hero-crystal{position:absolute;inset:0;z-index:1;pointer-events:auto;background:linear-gradient(135deg,rgba(255,255,255,0.08) 0%,rgba(255,255,255,0.02) 50%,rgba(255,255,255,0.06) 100%);backdrop-filter:blur(2px) saturate(1.1);-webkit-backdrop-filter:blur(2px) saturate(1.1);border-radius:0;overflow:hidden;transition:background .15s ease}
 .hero-crystal::before{content:"";position:absolute;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.60) 0%,rgba(255,255,255,0.18) 35%,rgba(255,255,255,0) 70%);filter:blur(28px);transform:translate(calc(var(--cx, -999px) - 50%), calc(var(--cy, -999px) - 50%));pointer-events:none;opacity:0;transition:opacity .15s ease, transform .08s ease-out}
 .hero-crystal.active::before{opacity:1}
