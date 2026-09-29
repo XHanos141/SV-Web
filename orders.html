@@ -296,14 +296,6 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 }
 .s-nav-item.active{ color:var(--accent); }
 .s-nav-item svg{ width:22px;height:22px; }
-/* 3D bar — cb-ring sphere recipe (index brand bubbles) applied to the whole nav */
-.s-nav{background:#eef2f7;border-top:1px solid rgba(255,255,255,.6);box-shadow:0 -6px 14px rgba(163,177,198,.55),0 -1px 0 rgba(163,177,198,.25),inset 0 1.5px 1.5px rgba(255,255,255,.85),inset 0 -3px 6px rgba(140,155,180,.18)}
-.s-nav::before{content:'';position:absolute;top:6px;left:14px;width:90px;height:14px;border-radius:50%;background:rgba(255,255,255,.85);filter:blur(5px);pointer-events:none;z-index:0}
-.s-nav::after{content:'';position:absolute;inset:0;background:linear-gradient(155deg,rgba(255,255,255,.70) 0%,rgba(255,255,255,.22) 28%,rgba(255,255,255,0) 52%,rgba(255,255,255,0) 100%);pointer-events:none;z-index:0}
-.s-nav .s-nav-item{z-index:1}
-body.dark-mode .s-nav{background:#0c1729;border-top-color:rgba(255,255,255,.16);box-shadow:0 -6px 14px rgba(0,0,0,.6),0 -1px 0 rgba(0,0,0,.4),inset 0 1.5px 1.5px rgba(255,255,255,.10),inset 0 -3px 6px rgba(0,0,0,.35)}
-body.dark-mode .s-nav::before{background:rgba(255,255,255,.28)}
-body.dark-mode .s-nav::after{background:linear-gradient(155deg,rgba(255,255,255,.20) 0%,rgba(255,255,255,.07) 28%,rgba(255,255,255,0) 52%,rgba(255,255,255,0) 100%)}
 .s-nav-badge{
   position:absolute;top:0;right:6px;min-width:16px;height:16px;padding:0 4px;
   border-radius:9px;background:#e64848;color:#fff;font-size:9px;font-weight:700;
