@@ -84,7 +84,7 @@ body.dark-mode .hero-badge::before{background:linear-gradient(180deg,rgba(255,25
 .hero-badge-text,.badge-dot{position:relative;z-index:2}
 /* Hero badge: animated conic-gradient border (pure CSS, @property) */
 @property --hb-a{syntax:"<angle>";initial-value:0deg;inherits:true}
-.hero-badge-wrap{--hb-sweep:conic-gradient(from var(--hb-a),#0ea5e9,#10b981 25%,#f5c451 50%,#10b981 75%,#0ea5e9);--hb-top:#ffffff;--hb-bot:#f1f3f8;animation:hb-spin 5s linear infinite}
+.hero-badge-wrap{--hb-sweep:conic-gradient(from var(--hb-a),var(--cyan),var(--orange),var(--cyan));--hb-top:#ffffff;--hb-bot:#f1f3f8;animation:hb-spin 5s linear infinite}
 body.dark-mode .hero-badge-wrap{--hb-top:#26344a;--hb-bot:#1b2635}
 .hero-badge-wrap::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:999px;background:var(--hb-sweep);filter:blur(10px);opacity:.35;pointer-events:none}
 .hero-badge,body.dark-mode .hero-badge{border:1.5px solid transparent;background:linear-gradient(180deg,var(--hb-top) 0%,var(--hb-bot) 100%) padding-box,var(--hb-sweep) border-box}
