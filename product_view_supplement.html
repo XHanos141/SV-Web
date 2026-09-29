@@ -1038,7 +1038,7 @@ let qty = 1;
     if(!dragging) return;
     currentX = x;
     var delta = currentX - startX;
-    if(Math.abs(delta) > 6) tapMoved = true;
+    if(Math.abs(delta) > 10) tapMoved = true;
     track.style.transform = 'translateX(' + (-current * width + delta) + 'px)';
   }
 
@@ -1062,16 +1062,32 @@ let qty = 1;
     }
   }
   var tapStartTime = 0, tapMoved = false;
+  var recentTouch = false, recentTouchTimer = null;
 
   // Touch events
-  track.addEventListener('touchstart', function(e){ onStart(e.touches[0].clientX); }, {passive:true});
+  track.addEventListener('touchstart', function(e){
+    recentTouch = true;
+    clearTimeout(recentTouchTimer);
+    onStart(e.touches[0].clientX);
+  }, {passive:true});
   track.addEventListener('touchmove', function(e){ onMove(e.touches[0].clientX); }, {passive:true});
-  track.addEventListener('touchend', onEnd);
+  track.addEventListener('touchend', function(e){
+    onEnd();
+    recentTouchTimer = setTimeout(function(){ recentTouch = false; }, 700);
+  });
 
-  // Mouse events (desktop preview support)
-  track.addEventListener('mousedown', function(e){ onStart(e.clientX); e.preventDefault(); });
-  window.addEventListener('mousemove', function(e){ if(dragging) onMove(e.clientX); });
-  window.addEventListener('mouseup', onEnd);
+  // Mouse events (desktop preview support only — ignored right after a real touch,
+  // since mobile browsers fire synthetic compatibility mouse events after touch)
+  track.addEventListener('mousedown', function(e){
+    if(recentTouch) return;
+    onStart(e.clientX);
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', function(e){ if(dragging && !recentTouch) onMove(e.clientX); });
+  window.addEventListener('mouseup', function(e){
+    if(recentTouch) return;
+    onEnd();
+  });
 
   window.addEventListener('resize', function(){ update(current, false); });
 
