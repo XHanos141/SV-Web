@@ -164,7 +164,12 @@ body.dark-mode .pv-dot.active{
 .pv-stock.out{background:var(--red-soft);color:var(--red)}
 .pv-name{
   font-family:var(--font-display);font-size:18px;font-weight:800;
-  color:var(--text);line-height:1.3;margin-bottom:10px;
+  color:var(--text);line-height:1.3;
+  flex:1;min-width:0;
+}
+.pv-name-row{
+  display:flex;align-items:flex-start;gap:8px;
+  margin-bottom:10px;
 }
 .pv-rating-row{
   display:flex;align-items:center;gap:6px;
@@ -211,11 +216,11 @@ body.dark-mode .pv-dot.active{
   flex-shrink:0;
 }
 .pv-price-share{
-  margin-left:auto;
-  margin-right:-3px;
-  width:34px;height:34px;flex-shrink:0;
+  margin-left:0;
+  margin-top:-2px;
+  width:30px;height:30px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
-  border-radius:10px;border:none;
+  border-radius:9px;border:none;
   background:transparent;color:var(--text);
   cursor:pointer;
 }
@@ -693,15 +698,17 @@ if(/[?&]pid=/.test(location.search)){document.write('<style id="pvPre">body .pv-
   <div class="pv-cat-row" style="margin-top:2px">
     <span class="pv-cat" id="pvCat">Protein</span>
   </div>
-  <h1 class="pv-name" id="pvNameEl">Optimum Nutrition Gold Standard 100% Whey Protein Isolate 2kg</h1>
+  <div class="pv-name-row">
+    <h1 class="pv-name" id="pvNameEl">Optimum Nutrition Gold Standard 100% Whey Protein Isolate 2kg</h1>
+    <button class="pv-price-share" aria-label="Share" onclick="shareProduct()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
+  </div>
 
   <div class="pv-price-block">
     <span class="pv-price" id="pvPriceEl">৳4,200</span>
     <span class="pv-old" id="pvOldEl">৳5,600</span>
     <span class="pv-discount" id="pvDiscountEl">20% OFF</span>
-    <button class="pv-price-share" aria-label="Share" onclick="shareProduct()">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-    </button>
   </div>
 
   <div class="pv-divider"></div>
