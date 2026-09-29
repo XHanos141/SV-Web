@@ -75,7 +75,7 @@ input{font-family:inherit;outline:none;border:none;background:none}
 .hero::before{content:'';position:absolute;top:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,157,220,.1) 0%,transparent 65%);pointer-events:none}
 .hero::after{content:'';position:absolute;bottom:-60px;right:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(242,100,48,.08) 0%,transparent 65%);pointer-events:none}
 
-.hero-badge-wrap{display:inline-block;margin-bottom:12px;position:relative;z-index:1;top:-2px}.hero-badge{cursor:pointer;-webkit-tap-highlight-color:transparent;text-decoration:none;display:inline-flex;align-items:center;justify-content:flex-start;gap:7px;background:linear-gradient(180deg,#ffffff 0%,#f1f3f8 100%);border:1px solid rgba(255,255,255,0.9);border-radius:999px;padding:10px 22px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:800;letter-spacing:-.01em;color:var(--text);transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;white-space:nowrap;position:relative;overflow:hidden;box-shadow:0 18px 34px -8px rgba(30,41,59,.30),0 4px 10px rgba(30,41,59,.14),inset 0 1px 0 rgba(255,255,255,1),inset 0 -2px 4px rgba(100,116,139,.10)}.hero-badge:hover{transform:translateY(-3px);box-shadow:0 24px 40px -8px rgba(30,41,59,.34),0 4px 10px rgba(30,41,59,.16),inset 0 1px 0 rgba(255,255,255,1),inset 0 -2px 4px rgba(100,116,139,.10)}.hero-badge:active{transform:translateY(-1px) scale(.95);box-shadow:0 8px 18px -6px rgba(30,41,59,.30),inset 0 1px 0 rgba(255,255,255,1),inset 0 -2px 4px rgba(100,116,139,.14)}
+.hero-badge-wrap{display:inline-block;margin-bottom:12px;position:relative;z-index:1;top:-2px}.hero-badge{display:inline-flex;align-items:center;justify-content:flex-start;gap:7px;background:linear-gradient(180deg,#ffffff 0%,#f1f3f8 100%);border:1px solid rgba(255,255,255,0.9);border-radius:999px;padding:10px 22px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:800;letter-spacing:-.01em;color:var(--text);white-space:nowrap;position:relative;overflow:hidden;box-shadow:0 18px 34px -8px rgba(30,41,59,.30),0 4px 10px rgba(30,41,59,.14),inset 0 1px 0 rgba(255,255,255,1),inset 0 -2px 4px rgba(100,116,139,.10)}
 .hero-badge-glass{display:none}
 body.dark-mode .hero-badge{background:linear-gradient(180deg,#26344a 0%,#1b2635 100%);border-color:rgba(255,255,255,0.10);color:#ffffff;box-shadow:0 18px 34px -8px rgba(0,0,0,.55),0 4px 10px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -2px 4px rgba(0,0,0,.30)}
 .hero-badge::before{content:"";position:absolute;top:0;left:0;right:0;height:50%;z-index:1;background:linear-gradient(180deg,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 100%);border-radius:999px 999px 0 0;pointer-events:none}
@@ -886,11 +886,11 @@ section:not(.hero){content-visibility:auto;contain-intrinsic-size:auto 500px}
     <div class="hero-crystal" id="heroCrystal"></div>
     <canvas id="hero-dots"></canvas>
     <div class="hero-badge-wrap rv">
-      <a class="hero-badge" id="heroBadge" href="#services" role="button" aria-label="Scroll to highlights">
+      <div class="hero-badge" id="heroBadge">
         <div class="hero-badge-glass"></div>
         <span class="badge-dot"></span>
         <span class="hero-badge-text" id="heroBadgeText">Discover Better. Beyond Borders.</span>
-      </a>
+      </div>
     </div>
     <h1 class="hero-h1 rv d1" id="heroH1">
       <span id="heroH1Line1">Shop Globally.</span><br>
