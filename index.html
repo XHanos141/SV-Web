@@ -495,7 +495,7 @@ body.dark-mode .mcard-proxy .mcard-cta:hover {
 
 /* ===== NEWSLETTER CTA ===== */
 .newsletter-section { padding: 40px 20px; position: relative; z-index: 1; overflow: hidden; }
-.newsletter-card { max-width: 520px; margin: 0 auto; background: linear-gradient(135deg, #0f3258 0%, #002248 50%, #001532 100%); border-radius: 24px; padding: 32px 24px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,.25); }
+.newsletter-card { max-width: 520px; margin: 0 auto; background: linear-gradient(135deg, #0f3258 0%, #002248 50%, #001532 100%); border-radius: 24px; padding: 32px 16px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,.25); }
 .newsletter-card::before { content: ''; position: absolute; top: -60px; right: -60px; width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(0,157,220,.2) 0%, transparent 65%); }
 .newsletter-card::after { content: ''; position: absolute; bottom: -40px; left: -40px; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, rgba(242,100,48,.15) 0%, transparent 65%); }
 .newsletter-content { position: relative; z-index: 1; }
@@ -503,10 +503,10 @@ body.dark-mode .mcard-proxy .mcard-cta:hover {
 .newsletter-icon svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .newsletter-title { font-family: var(--fd); font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -.3px; }
 .newsletter-desc { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.65); margin-top: 6px; line-height: 1.5; }
-.newsletter-form { display: flex; gap: 8px; margin-top: 18px; max-width: 320px; margin-left: auto; margin-right: auto; }
-.newsletter-input { flex: 1; height: 44px; padding: 0 16px; border-radius: 12px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15); color: #fff; font-size: 13px; font-weight: 500; }
+.newsletter-form { display: flex; gap: 8px; margin-top: 18px; max-width: 340px; margin-left: auto; margin-right: auto; }
+.newsletter-input { flex: 1; min-width: 0; height: 44px; padding: 0 16px; border-radius: 12px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15); color: #fff; font-size: 13px; font-weight: 500; }
 .newsletter-input::placeholder { color: rgba(255,255,255,.4); }
-.newsletter-btn { height: 44px; padding: 0 20px; border-radius: 12px; background: linear-gradient(135deg, var(--cyan), #006daa); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .03em; border: none; flex-shrink: 0; transition: transform .15s, box-shadow .2s; box-shadow: 0 4px 14px rgba(0,157,220,.35); }
+.newsletter-btn { height: 44px; padding: 0 12px; border-radius: 12px; background: linear-gradient(135deg, var(--cyan), #006daa); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .03em; border: none; flex-shrink: 0; transition: transform .15s, box-shadow .2s; box-shadow: 0 4px 14px rgba(0,157,220,.35); }
 .newsletter-btn:active { transform: scale(0.95); }
 
 /* ===== FOOTER ===== */
