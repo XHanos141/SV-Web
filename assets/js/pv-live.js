@@ -77,15 +77,15 @@
       '<div class="pv-dots" id="pvDots">' + (images.length > 1 ? images.map(function(_, i){ return '<div class="pv-dot' + (i === 0 ? ' active' : '') + '"></div>'; }).join('') : '') + '</div>';
     old.parentNode.replaceChild(g, old);
     var track = $('pvGalleryTrack'), dots = g.querySelectorAll('.pv-dot');
-    var cur = 0, startX = 0, curX = 0, drag = false, w = g.offsetWidth, n = images.length;
+    var cur = 0, startX = 0, curX = 0, drag = false, moved = false, w = g.offsetWidth, n = images.length;
     function go(i, anim){
       cur = Math.max(0, Math.min(n - 1, i));
       track.style.transition = anim === false ? 'none' : '';
       track.style.transform = 'translateX(' + (-cur * w) + 'px)';
       dots.forEach(function(d, k){ d.classList.toggle('active', k === cur); });
     }
-    function down(x){ drag = true; startX = curX = x; w = g.offsetWidth; track.classList.add('dragging'); }
-    function move(x){ if(!drag) return; curX = x; track.style.transform = 'translateX(' + (-cur * w + (curX - startX)) + 'px)'; }
+    function down(x){ drag = true; moved = false; startX = curX = x; w = g.offsetWidth; track.classList.add('dragging'); }
+    function move(x){ if(!drag) return; curX = x; if(Math.abs(curX - startX) > 8) moved = true; track.style.transform = 'translateX(' + (-cur * w + (curX - startX)) + 'px)'; }
     function up(){
       if(!drag) return; drag = false; track.classList.remove('dragging');
       var d = curX - startX, th = w * 0.18;
@@ -98,6 +98,11 @@
     window.addEventListener('mousemove', function(e){ if(drag) move(e.clientX); });
     window.addEventListener('mouseup', up);
     window.addEventListener('resize', function(){ go(cur, false); });
+    track.addEventListener('click', function(){
+      if(moved) return;
+      if(typeof window.openPvZoom === 'function') window.openPvZoom();
+    });
+    if(typeof window.pvZoomRebuild === 'function') window.pvZoomRebuild();
     go(0, false);
   }
 

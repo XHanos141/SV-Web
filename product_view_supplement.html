@@ -179,7 +179,7 @@ body.dark-mode .pv-dot.active{
   overflow:hidden;
 }
 .pv-zoom-slide img,.pv-zoom-slide svg{
-  max-width:88%;max-height:88%;
+  max-width:96%;max-height:96%;width:auto;height:auto;object-fit:contain;
   transform-origin:center center;
   transition:transform 0.25s var(--ease);
   will-change:transform;
@@ -1112,24 +1112,33 @@ let qty = 1;
   var track = document.getElementById('pvZoomTrack');
   var dotsWrap = document.getElementById('pvZoomDots');
   var closeBtn = document.getElementById('pvZoomClose');
-  var mainSlides = document.querySelectorAll('#pvGalleryTrack .pv-gallery-slide');
-  var mainDots = document.querySelectorAll('#pvDots .pv-dot');
-  if(!overlay || !stage || !track || !mainSlides.length) return;
+  if(!overlay || !stage || !track) return;
 
-  // Build zoom slides + dots from the main gallery content
-  mainSlides.forEach(function(slide){
-    var zs = document.createElement('div');
-    zs.className = 'pv-zoom-slide';
-    zs.innerHTML = slide.innerHTML;
-    track.appendChild(zs);
-    var d = document.createElement('div');
-    d.className = 'pv-dot';
-    dotsWrap.appendChild(d);
-  });
-  var zoomSlides = track.querySelectorAll('.pv-zoom-slide');
-  var zoomDots = dotsWrap.querySelectorAll('.pv-dot');
-  var count = zoomSlides.length;
-  var current = 0;
+  var zoomSlides = [], zoomDots = [], count = 0, current = 0;
+
+  // Rebuild lightbox slides from the LIVE gallery (pv-live.js swaps in real product images after load)
+  window.pvZoomRebuild = function(){
+    var mainSlides = document.querySelectorAll('#pvGalleryTrack .pv-gallery-slide');
+    track.innerHTML = ''; dotsWrap.innerHTML = '';
+    mainSlides.forEach(function(slide){
+      var zs = document.createElement('div');
+      zs.className = 'pv-zoom-slide';
+      zs.innerHTML = slide.innerHTML;
+      var im = zs.querySelector('img');
+      if(im){ im.draggable = false; im.removeAttribute('width'); im.removeAttribute('height'); }
+      track.appendChild(zs);
+      if(mainSlides.length > 1){
+        var d = document.createElement('div');
+        d.className = 'pv-dot';
+        dotsWrap.appendChild(d);
+      }
+    });
+    zoomSlides = track.querySelectorAll('.pv-zoom-slide');
+    zoomDots = dotsWrap.querySelectorAll('.pv-dot');
+    count = zoomSlides.length;
+  };
+  window.pvZoomRebuild();
+  current = 0;
   var stageW = 0, stageH = 0;
 
   // per-slide zoom/pan state
@@ -1158,7 +1167,8 @@ let qty = 1;
 
   window.openPvZoom = function(){
     var activeIdx = 0;
-    mainDots.forEach(function(d, i){ if(d.classList.contains('active')) activeIdx = i; });
+    document.querySelectorAll('#pvDots .pv-dot').forEach(function(d, i){ if(d.classList.contains('active')) activeIdx = i; });
+    if(!zoomSlides.length) window.pvZoomRebuild();
     stageW = stage.offsetWidth; stageH = stage.offsetHeight;
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -1610,7 +1620,7 @@ function submitReview(){
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) svRefreshCartBadge(); });
 })();
 </script>
-<script src="assets/js/pv-live.js?v=7"></script>
+<script src="assets/js/pv-live.js?v=8"></script>
 <script>
 (function(){
   var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
