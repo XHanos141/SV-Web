@@ -886,7 +886,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     <div class="p2p-number" id="cryptoConvertCard" style="background:var(--crypto-bg);border:1.5px solid var(--crypto-bdr);flex-direction:column;align-items:stretch;gap:2px">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div class="p2p-number-info">Amount to send</div>
-        <div class="p2p-number-info" id="cryptoRateLabel">1 USDT = ৳130</div>
+        <div class="p2p-number-info" id="cryptoRateLabel">1 USDT = ৳—</div>
       </div>
       <div class="p2p-number-val" id="cryptoConvertVal" style="color:var(--crypto-text);font-size:20px">0.00 USDT</div>
       <div style="font-size:10.5px;color:var(--t3)">for <span id="cryptoConvertBdt">৳0</span> due</div>
@@ -1312,8 +1312,8 @@ const MFS_NUMBER = '01725492479';
 const MFS_ACCENTS = { bkash: '#e21966', nagad: '#e88316', rocket: '#8b3392', cellfin: '#09853e' };
 const mfsQrRendered = { bkash: false, nagad: false, rocket: false, cellfin: false };
 
-/* Admin-controlled BDT-per-USDT rate. Placeholder until wired to Supabase admin settings. */
-const EXCHANGE_RATE_BDT_PER_USDT = 130;
+/* Admin-controlled rate (site_content: buy_for_me/fees → usd_rate). USDT pegged 1:1 to USD. No hardcoded fallback. */
+let EXCHANGE_RATE_BDT_PER_USDT = 0;
 
 const cryptoConvertVal = document.getElementById('cryptoConvertVal');
 const cryptoConvertBdt = document.getElementById('cryptoConvertBdt');
@@ -1321,12 +1321,24 @@ const cryptoRateLabel = document.getElementById('cryptoRateLabel');
 
 function updateCryptoConversion(){
   const bdt = TOTALS_BDT[S.flow] || 0;
-  const usdt = bdt / EXCHANGE_RATE_BDT_PER_USDT;
-  cryptoConvertVal.textContent = usdt.toFixed(2) + ' USDT';
+  const has = EXCHANGE_RATE_BDT_PER_USDT > 0;
+  cryptoConvertVal.textContent = has ? (bdt / EXCHANGE_RATE_BDT_PER_USDT).toFixed(2) + ' USDT' : '— USDT';
   cryptoConvertBdt.textContent = '৳' + bdt.toLocaleString('en-US');
-  cryptoRateLabel.textContent = '1 USDT = ৳' + EXCHANGE_RATE_BDT_PER_USDT;
+  cryptoRateLabel.textContent = has ? '1 USDT = ৳' + EXCHANGE_RATE_BDT_PER_USDT : '1 USDT = ৳—';
 }
 updateCryptoConversion();
+(async function loadLiveRate(){
+  try{
+    if(!sbClient) return;
+    const { data, error } = await sbClient.from('site_content').select('content')
+      .eq('page','buy_for_me').eq('section','fees').maybeSingle();
+    const r = data && data.content && data.content.usd_rate;
+    if(!error && typeof r === 'number' && Number.isFinite(r) && r > 0){
+      EXCHANGE_RATE_BDT_PER_USDT = r;
+      updateCryptoConversion();
+    }
+  }catch(e){ console.error('loadLiveRate error:', e); }
+})();
 
 const tabInternal = document.getElementById('tabInternal');
 const tabProxy = document.getElementById('tabProxy');

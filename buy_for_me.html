@@ -548,23 +548,17 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
           </tr>
         </thead>
         <tbody id="osBody">
-          <tr>
-            <td class="os-product-name">Product 1</td>
-            <td class="os-qty">2 unit</td>
-            <td class="os-each">$80</td>
-            <td class="os-total">$160</td>
-          </tr>
         </tbody>
         <tfoot>
           <tr class="os-sep">
             <td colspan="4"><div></div></td>
           </tr>
           <tr class="os-tax-row">
-            <td colspan="3" id="osTaxLabel">US Sales Tax (8.87%)</td>
+            <td colspan="3" id="osTaxLabel">US Sales Tax</td>
             <td class="os-tax-val" id="osTaxTotal">$0.00</td>
           </tr>
           <tr class="os-tax-row">
-            <td colspan="3" id="osServiceLabel">Service Charge (2.25%)</td>
+            <td colspan="3" id="osServiceLabel">Service Charge</td>
             <td class="os-tax-val" id="osServiceTotal">$0.00</td>
           </tr>
           <tr class="os-grand-row">
@@ -657,7 +651,7 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
 <div class="toast" id="toast"></div>
 
 
-<!-- Demo Review Popup -->
+<!-- Review Popup -->
 <div class="review-overlay" id="reviewOverlay">
   <div class="review-sheet">
     <h3>Review Your Request</h3>
@@ -668,11 +662,11 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
     <div class="review-divider"></div>
 
     <div class="review-tax-row">
-      <span class="review-tax-label" id="reviewTaxLabel">US Sales Tax (8.87%)</span>
+      <span class="review-tax-label" id="reviewTaxLabel">US Sales Tax</span>
       <span class="review-tax-val" id="reviewTax">$0.00</span>
     </div>
     <div class="review-tax-row">
-      <span class="review-tax-label" id="reviewServiceLabel">Service Charge (2.25%)</span>
+      <span class="review-tax-label" id="reviewServiceLabel">Service Charge</span>
       <span class="review-tax-val" id="reviewService">$0.00</span>
     </div>
     <div class="review-grand">
@@ -804,10 +798,12 @@ const STORES = [
     (c.steps || []).slice(0,5).forEach((x, i) => { if(!x) return; set('poH' + (i+1), x.h); set('poD' + (i+1), x.d); });
   }catch(e){ console.error('loadBfmPreorderFromCMS error:', e); }
 })();
-const FEES = { tax:8.87, svc:2.25, rate:122.5 };
-function fmtBdt(usd){ return '৳' + Math.round(usd * FEES.rate).toLocaleString('en-US'); }
+/* Live values from admin panel (site_content: buy_for_me/fees). No hardcoded fallback. */
+const FEES = { tax:0, svc:0, rate:0, loaded:false };
+function fmtBdt(usd){ return FEES.loaded ? '৳' + Math.round(usd * FEES.rate).toLocaleString('en-US') : '—'; }
 function applyFeeLabels(){
   const set = (id, txt) => { const el = document.getElementById(id); if(el) el.textContent = txt; };
+  if(!FEES.loaded) return;
   set('osTaxLabel', 'US Sales Tax (' + FEES.tax + '%)');
   set('osServiceLabel', 'Service Charge (' + FEES.svc + '%)');
   set('reviewTaxLabel', 'US Sales Tax (' + FEES.tax + '%)');
@@ -824,9 +820,9 @@ function applyFeeLabels(){
       const c = data && data.content;
       if(!error && c){
         const ok = v => typeof v === 'number' && Number.isFinite(v) && v >= 0;
-        if(ok(c.sales_tax)) FEES.tax = c.sales_tax;
-        if(ok(c.service_charge)) FEES.svc = c.service_charge;
-        if(ok(c.usd_rate) && c.usd_rate > 0) FEES.rate = c.usd_rate;
+        if(ok(c.sales_tax) && ok(c.service_charge) && ok(c.usd_rate) && c.usd_rate > 0){
+          FEES.tax = c.sales_tax; FEES.svc = c.service_charge; FEES.rate = c.usd_rate; FEES.loaded = true;
+        }
       }
     }
   }catch(e){ console.error('loadBfmFeesFromCMS error:', e); }
@@ -1332,9 +1328,9 @@ function updateOrderSummary(){
   const grandWithTax = grand + tax + service;
   const taxEl = document.getElementById('osTaxTotal');
   const serviceEl = document.getElementById('osServiceTotal');
-  if(taxEl) taxEl.textContent = '$' + tax.toFixed(2);
-  if(serviceEl) serviceEl.textContent = '$' + service.toFixed(2);
-  if(grandEl) grandEl.textContent = '$' + grandWithTax.toFixed(2);
+  if(taxEl) taxEl.textContent = FEES.loaded ? '$' + tax.toFixed(2) : '—';
+  if(serviceEl) serviceEl.textContent = FEES.loaded ? '$' + service.toFixed(2) : '—';
+  if(grandEl) grandEl.textContent = FEES.loaded ? '$' + grandWithTax.toFixed(2) : '—';
   const bdtEl = document.getElementById('osGrandBdt');
   if(bdtEl) bdtEl.textContent = fmtBdt(grandWithTax);
 }
@@ -1460,49 +1456,32 @@ function buildReviewPopup(){
   let grand = 0;
   const rows = itemsWrap.querySelectorAll('.item-row');
 
-  // DEMO: if no items or all empty, show 4 demo products
-  if(rows.length === 0 || !Array.from(rows).some(r => r.querySelector('[data-role="link"]').value.trim())){
-    const demoProducts = [
-      { name: 'Sony WH-1000XM5 Wireless Headphones', store: 'Amazon', qty: 1, price: 348.00 },
-      { name: 'Apple AirPods Pro 2nd Gen', store: 'Best Buy', qty: 2, price: 249.00 },
-      { name: 'Samsung Galaxy Watch 6', store: 'Walmart', qty: 1, price: 299.99 },
-      { name: 'Logitech MX Master 3S', store: 'eBay', qty: 1, price: 99.99 }
-    ];
-    demoProducts.forEach(p => {
-      const div = document.createElement('div');
-      div.className = 'review-item';
-      div.innerHTML = '<div class="review-item-top"><div class="review-item-info"><div class="review-item-name">' + p.name + '</div><div class="review-item-store">' + p.store + '</div></div></div><div class="review-item-row"><span class="review-item-label">Qty: ' + p.qty + '</span><span class="review-item-val">$' + (p.price * p.qty).toFixed(2) + '</span></div>';
-      reviewItemsWrap.appendChild(div);
-      grand += p.price * p.qty;
-    });
-  } else {
-    rows.forEach((row, idx) => {
-      const linkInput = row.querySelector('[data-role="link"]');
-      const qtyEl = row.querySelector('[data-role="qty-val"]');
-      const priceInput = row.querySelector('[data-role="price-input"]');
-      const storeSelect = row.querySelector('[data-role="store-select"]');
-      const url = linkInput ? linkInput.value.trim() : '';
-      const qty = qtyEl ? parseInt(qtyEl.dataset.qtyRollValue || qtyEl.textContent, 10) : 1;
-      const price = priceInput ? parseFloat(priceInput.value) || 0 : 0;
-      const total = qty * price;
-      grand += total;
-      const storeName = storeSelect && storeSelect.value ? storeSelect.options[storeSelect.selectedIndex].text : 'Other';
-      const itemName = url ? ('Product ' + (idx + 1)) : ('Product ' + (idx + 1));
-      const itemDiv = document.createElement('div');
-      itemDiv.className = 'review-item';
-      itemDiv.innerHTML = '<div class="review-item-top"><div class="review-item-info"><div class="review-item-name">' + itemName + '</div><div class="review-item-store">' + storeName + '</div></div></div><div class="review-item-row"><span class="review-item-label">Qty: ' + qty + '</span><span class="review-item-val">$' + total.toFixed(2) + '</span></div>';
-      reviewItemsWrap.appendChild(itemDiv);
-    });
-  }
+  rows.forEach((row, idx) => {
+    const linkInput = row.querySelector('[data-role="link"]');
+    const qtyEl = row.querySelector('[data-role="qty-val"]');
+    const priceInput = row.querySelector('[data-role="price-input"]');
+    const storeSelect = row.querySelector('[data-role="store-select"]');
+    const url = linkInput ? linkInput.value.trim() : '';
+    const qty = qtyEl ? parseInt(qtyEl.dataset.qtyRollValue || qtyEl.textContent, 10) : 1;
+    const price = priceInput ? parseFloat(priceInput.value) || 0 : 0;
+    const total = qty * price;
+    grand += total;
+    const storeName = storeSelect && storeSelect.value ? storeSelect.options[storeSelect.selectedIndex].text : 'Other';
+    const itemName = url ? ('Product ' + (idx + 1)) : ('Product ' + (idx + 1));
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'review-item';
+    itemDiv.innerHTML = '<div class="review-item-top"><div class="review-item-info"><div class="review-item-name">' + itemName + '</div><div class="review-item-store">' + storeName + '</div></div></div><div class="review-item-row"><span class="review-item-label">Qty: ' + qty + '</span><span class="review-item-val">$' + total.toFixed(2) + '</span></div>';
+    reviewItemsWrap.appendChild(itemDiv);
+  });
 
   const taxRate = FEES.tax / 100;
   const serviceRate = FEES.svc / 100;
   const tax = grand * taxRate;
   const service = grand * serviceRate;
   const grandWithTax = grand + tax + service;
-  reviewTax.textContent = '$' + tax.toFixed(2);
-  document.getElementById('reviewService').textContent = '$' + service.toFixed(2);
-  reviewGrand.textContent = '$' + grandWithTax.toFixed(2);
+  reviewTax.textContent = FEES.loaded ? '$' + tax.toFixed(2) : '—';
+  document.getElementById('reviewService').textContent = FEES.loaded ? '$' + service.toFixed(2) : '—';
+  reviewGrand.textContent = FEES.loaded ? '$' + grandWithTax.toFixed(2) : '—';
   document.getElementById('reviewBdt').textContent = fmtBdt(grandWithTax);
   const waVal = waInput.value.trim();
   reviewWa.textContent = waVal ? '+880 ' + normalizeWa(waVal) : '+880 1XXX-XXXXXX';
