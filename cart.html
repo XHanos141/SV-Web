@@ -355,6 +355,7 @@ body.dark-mode .summary-line.total{border-top-color:var(--accent)}
   cursor:pointer;box-shadow:0 4px 14px rgba(242,100,48,0.25);
   transition:transform 0.2s var(--ease);
 }
+.empty-btn.store{background:var(--accent);box-shadow:0 4px 14px var(--accent-glow)}
 .empty-btn:active{transform:scale(0.96)}
 .checkout-bar{
   position:fixed;bottom:0;left:0;right:0;z-index:400;
@@ -460,8 +461,8 @@ body.dark-mode .summary-line.total{border-top-color:var(--accent)}
     <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
   </div>
   <div class="empty-title">Your cart is empty</div>
-  <div class="empty-desc">Looks like you haven't added anything yet.<br>Browse the store to find your supplements.</div>
-  <button class="empty-btn" onclick="window.location.href='store.html'">Browse Store</button>
+  <div class="empty-desc">Looks like you haven't added anything yet.</div>
+  <button class="empty-btn store" onclick="window.location.href='store.html'">Browse Store</button>
 </div>
 
 <div class="summary-card glass-card-green" id="cartSummaryInternal">
