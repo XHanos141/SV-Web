@@ -907,6 +907,12 @@ function rollQtyNumber(el, newVal){
 }
 
 function normalizeWa(raw){ return raw.replace(/[^\d]/g, ''); }
+function waLocal(raw){
+  let d = normalizeWa(raw);
+  if(d.startsWith('880')) d = d.slice(3);
+  return d.replace(/^0+/, '');
+}
+function escHtml(t){ return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function isValidWa(raw){
   let digits = normalizeWa(raw);
   // Strip country code (880) if present, e.g. 8801712345678 -> 01712345678
@@ -1428,7 +1434,7 @@ function buildPayload(){
       price: i.price || null,
       ai: !!i.ai
     })),
-    whatsapp: '+880' + normalizeWa(S.wa),
+    whatsapp: '+880' + waLocal(S.wa),
     notes: S.notes,
     contact: { channel: 'whatsapp' }
   };
@@ -1468,7 +1474,8 @@ function buildReviewPopup(){
     const total = qty * price;
     grand += total;
     const storeName = storeSelect && storeSelect.value ? storeSelect.options[storeSelect.selectedIndex].text : 'Other';
-    const itemName = url ? ('Product ' + (idx + 1)) : ('Product ' + (idx + 1));
+    const nmEl = row.querySelector('[data-role="product-name"]');
+    const itemName = escHtml((nmEl && nmEl.value.trim()) || ('Product ' + (idx + 1)));
     const itemDiv = document.createElement('div');
     itemDiv.className = 'review-item';
     itemDiv.innerHTML = '<div class="review-item-top"><div class="review-item-info"><div class="review-item-name">' + itemName + '</div><div class="review-item-store">' + storeName + '</div></div></div><div class="review-item-row"><span class="review-item-label">Qty: ' + qty + '</span><span class="review-item-val">$' + total.toFixed(2) + '</span></div>';
@@ -1485,7 +1492,7 @@ function buildReviewPopup(){
   reviewGrand.textContent = FEES.loaded ? '$' + grandWithTax.toFixed(2) : '—';
   document.getElementById('reviewBdt').textContent = fmtBdt(grandWithTax);
   const waVal = waInput.value.trim();
-  reviewWa.textContent = waVal ? '+880 ' + normalizeWa(waVal) : '+880 1XXX-XXXXXX';
+  reviewWa.textContent = waVal ? '+880 ' + waLocal(waVal) : '+880 1XXX-XXXXXX';
 
 }
 
