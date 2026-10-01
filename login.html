@@ -339,6 +339,16 @@ body{
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
+<script>
+function svReturnTarget(){
+  try{
+    var t = sessionStorage.getItem('sv-login-return');
+    sessionStorage.removeItem('sv-login-return');
+    if(t && /^[a-z0-9_\-]+\.html$/i.test(t)) return t;
+  }catch(e){}
+  return 'store.html';
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie_svg.min.js"></script>
 </head>
 <body>
@@ -897,7 +907,7 @@ async function handleSubmit(e, type){
         window.location.href = 'verify.html?email=' + encodeURIComponent(email);
         return;
       } else {
-        window.location.href = 'store.html';
+        window.location.href = svReturnTarget();
       }
     } else {
       const email = document.getElementById('loginEmailInput').value.trim();
@@ -923,7 +933,7 @@ async function handleSubmit(e, type){
 
       btn.classList.remove('loading');
       btn.disabled = false;
-      window.location.href = 'store.html';
+      window.location.href = svReturnTarget();
     }
   } catch(err){
     btn.classList.remove('loading');

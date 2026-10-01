@@ -711,7 +711,7 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
     <div class="success-content" id="successContent">
       <h3>Request sent!</h3>
       <p>We'll review your request and send a quote to your WhatsApp within 24 hours.</p>
-      <div class="tracking-code"><span class="tc-label">Tracking ID</span><span class="tc-val" id="trackingVal">—</span></div>
+      <div class="tracking-code"><span class="tc-label">Request ID</span><span class="tc-val" id="trackingVal">—</span></div>
       <div class="success-actions">
         <button class="sa-primary" id="trackBtn">Track My Request</button>
         <button class="sa-secondary" id="homeBtn">Back to Home</button>
@@ -1420,19 +1420,17 @@ function validateForm(){
 
 function buildPayload(){
   return {
-    user_id: null,
     items: S.items.filter(i => i.url).map(i => ({
       url: i.url,
       name: i.name || null,
       store: i.storeKey || 'other',
       qty: i.qty,
-      price: i.price || null
+      price: i.price || null,
+      ai: !!i.ai
     })),
     whatsapp: '+880' + normalizeWa(S.wa),
     notes: S.notes,
-    status: 'pending_quote',
-    created_at: new Date().toISOString(),
-    source: 'buy_for_me_web'
+    contact: { channel: 'whatsapp' }
   };
 }
 
@@ -1440,7 +1438,10 @@ function buildPayload(){
 
 document.getElementById('purchaseReqBtn').addEventListener('click', openReview);
 document.getElementById('lgCancelBtn').addEventListener('click', () => closeOverlay(loginGate));
-document.getElementById('lgLoginBtn').addEventListener('click', () => closeOverlay(loginGate));
+document.getElementById('lgLoginBtn').addEventListener('click', () => {
+  try{ sessionStorage.setItem('sv-login-return','buy_for_me.html'); }catch(e){}
+  window.location.href = 'login.html';
+});
 document.getElementById('homeBtn').addEventListener('click', resetProcessingSheet);
 document.getElementById('trackBtn').addEventListener('click', resetProcessingSheet);
 
@@ -1496,14 +1497,33 @@ document.getElementById('reviewSubmitBtn').addEventListener('click', () => {
 
 async function doSubmit(){
   if(S.isSubmitting) return;
-  S.isSubmitting = true;
-  const payload = buildPayload();
-  console.log('Payload:', payload);
   const sheet = document.getElementById('processingSheet');
   const badge = document.getElementById('processingBadge');
+  let session = null;
+  try{ const r = await sbClient.auth.getSession(); session = r.data && r.data.session; }catch(e){}
+  if(!session){ openOverlay(loginGate); return; }
+  S.isSubmitting = true;
   openOverlay(processingOverlay);
-  await new Promise(r => setTimeout(r, 2000 + Math.random()*500));
-  S.trackingId = 'PX-' + Math.floor(1000 + Math.random() * 9000);
+  let row = null, errMsg = '';
+  try{
+    const { data, error } = await sbClient.rpc('submit_proxy_request', { p_snapshot: buildPayload() });
+    if(error) throw error;
+    row = Array.isArray(data) ? data[0] : data;
+    if(!row || !row.request_no) throw new Error('no_row');
+  }catch(e){
+    console.error('submit_proxy_request error:', e);
+    const m = (e && e.message) || '';
+    errMsg = /rate_limited/.test(m) ? 'Too many requests. Please try again in a while.'
+           : /login_required/.test(m) ? 'Please log in to send a request.'
+           : 'Could not send your request. Please try again.';
+  }
+  if(!row){
+    S.isSubmitting = false;
+    closeOverlay(processingOverlay);
+    if(/log in/.test(errMsg)) openOverlay(loginGate); else alert(errMsg);
+    return;
+  }
+  S.trackingId = row.request_no;
   trackingVal.textContent = S.trackingId;
   badge.classList.add('done');
   document.getElementById('processingLabel').style.display = 'none';
