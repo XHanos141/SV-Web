@@ -1125,6 +1125,38 @@ function closeAllStoreDropdowns(){
   });
 }
 
+/* ---- one card per product link ---- */
+function linkKey(raw){
+  try{
+    const u = new URL(raw.trim());
+    const host = u.hostname.toLowerCase().replace(/^www\./,'');
+    const m = u.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/i);
+    if(/(^|\.)amazon\./.test(host) && m) return 'amazon:' + m[1].toUpperCase();
+    const drop = /^(utm_|ref$|ref_$|tag$|fbclid$|gclid$|rcode$|psc$|th$)/i;
+    const q = [...u.searchParams.entries()].filter(([k]) => !drop.test(k)).sort().map(([k,v]) => k+'='+v).join('&');
+    return host + u.pathname.replace(/\/+$/,'') + (q ? '?' + q : '');
+  }catch(e){ return ''; }
+}
+function recheckDuplicates(){
+  const rows = [...itemsWrap.querySelectorAll('.item-row')].filter(r => !r.classList.contains('removing'));
+  rows.forEach(r => { if(r.dataset.dup === '1'){ r.dataset.dup = ''; if(r._validate) r._validate(true); } });
+  const seen = {};
+  rows.forEach((r, idx) => {
+    const input = r.querySelector('[data-role="link"]');
+    const key = input && input.value.trim() ? linkKey(input.value) : '';
+    if(!key) return;
+    if(seen[key] === undefined){ seen[key] = idx + 1; return; }
+    const errMsg = r.querySelector('[data-role="link-error"]');
+    const okMsg  = r.querySelector('[data-role="link-ok"]');
+    input.classList.remove('ok'); input.classList.add('error');
+    okMsg.classList.remove('show');
+    errMsg.textContent = 'This link is already in Product Link ' + seen[key] + '. Increase its quantity instead of adding it again.';
+    errMsg.classList.add('show');
+    if(r._item) r._item.valid = false;
+    r.dataset.dup = '1';
+  });
+}
+
 function wireItemRow(row, item){
   const idx = Array.from(itemsWrap.children).indexOf(row) + 1;
   const numEl = row.querySelector('.item-num');
@@ -1154,7 +1186,14 @@ function wireItemRow(row, item){
     validateRow();
   });
 
-  function validateRow(){
+  function validateRow(skipDup){
+    baseValidate();
+    if(skipDup !== true) recheckDuplicates();
+  }
+  row._validate = validateRow;
+  row._item = item;
+
+  function baseValidate(){
     const url = linkInput.value.trim();
     const selectedStore = storeSelect.value;
     item.url = url;
@@ -1243,6 +1282,7 @@ function wireItemRow(row, item){
     setTimeout(() => {
       row.remove();
       S.items = S.items.filter(i => i.id !== item.id);
+      recheckDuplicates();
       updateRemoveVisibility();
       updateOrderSummary();
     }, 800);
@@ -1400,8 +1440,10 @@ const trackingVal = document.getElementById('trackingVal');
 
 function validateForm(){
   let ok = true;
+  recheckDuplicates();
   const rows = itemsWrap.querySelectorAll('.item-row');
   rows.forEach(row => {
+    if(row.dataset.dup === '1'){ ok = false; return; }
     const linkInput = row.querySelector('[data-role="link"]');
     const storeSelect = row.querySelector('[data-role="store-select"]');
     const errMsg = row.querySelector('[data-role="link-error"]');
