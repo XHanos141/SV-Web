@@ -143,6 +143,15 @@ body.dark-mode .draft-math-total{border-top-color:rgba(255,255,255,0.18)}
 .draft-math-total-label{font-family:var(--fd);font-size:15px;font-weight:800;color:var(--text)}
 .draft-math-total-amt{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;color:var(--text)}
 .promo-row{display:flex;gap:8px;margin:12px 0 4px}
+.of-banner{display:none;margin:14px 0 4px;padding:12px 14px;border-radius:14px;border:1.5px solid var(--sel-bdr);background:var(--sel-bg);font-size:13px;line-height:1.45}
+.of-banner.show{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.of-banner b{font-weight:800}
+.of-banner button{border:0;background:transparent;color:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:4px 2px;font-size:13px}
+.of-locked #addrCard,.of-locked #promoRowInternal,.of-locked #promoAppliedInternal{pointer-events:none;opacity:.6}
+.of-timer{margin:0 0 12px;padding:10px 12px;border-radius:12px;font-weight:800;font-size:13px;text-align:center;border:1.5px dashed var(--panel-accent,#009b72);color:var(--panel-accent,#009b72)}
+.of-timer.expired{color:var(--muted);border-color:var(--muted)}
+.of-expired{margin:12px 0 0;padding:12px 14px;border-radius:12px;background:var(--surface2);font-size:13px;line-height:1.5}
+.of-expired button{margin-top:10px;display:block;border:0;border-radius:10px;padding:10px 14px;font-weight:800;background:var(--sel-bdr);color:#fff;cursor:pointer;font-size:13px}
 .promo-input{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:12.5px;color:var(--text);outline:none;font-family:var(--font);text-transform:uppercase;letter-spacing:.03em}
 .promo-input::placeholder{text-transform:none;letter-spacing:normal;color:var(--t3)}
 .promo-input:focus{border-color:var(--cyan)}
@@ -552,6 +561,7 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
     </div>
   </div>
 
+  <div class="of-banner" id="ofBanner"><span>Order <b id="ofBannerNum">SV-0000</b> created. Your details are locked while you pay.</span><button type="button" id="ofEditBtn">Edit</button></div>
   <h2 class="section-label rv">Select Payment Method</h2>
   <div class="method-grid rv">
     <button class="method-card mc-bkash" data-method="bkash" type="button" aria-label="bKash">
@@ -1150,6 +1160,12 @@ const S = { flow: (new URLSearchParams(location.search).get('flow') === 'proxy')
    Generated once at load, flow-prefixed (SV- internal / PX- proxy).
    TODO: replace with the real Supabase order ID once orders are created server-side. */
 S.orderRef = (S.flow === 'proxy' ? 'PX-' : 'SV-') + (Math.floor(Math.random() * 9000) + 1000);
+/* Order-first checkout: the order is created (unpaid) when the customer starts paying, so its voucher is held
+   for the 20-minute window; the transaction ID is attached afterwards. Set ORDER_FIRST = false to restore the old flow. */
+const ORDER_FIRST = true;
+const OF_METHODS = ['bkash','nagad','rocket','cellfin','bank','crypto'];
+const OF_KEY = 'sv-unpaid-order';
+S.started = false; S.unpaid = null;
 (function showOrderIdBadge(){
   const el = document.getElementById(S.flow === 'proxy' ? 'orderIdBadgeProxy' : 'orderIdBadgeInternal');
   if(el) el.textContent = S.orderRef;
@@ -1401,6 +1417,7 @@ const methodLabels = { bkash:'Pay with bKash', nagad:'Pay with Nagad', card:'Pay
 function selectMethod(method){
   S.method = method;
   S.senderBkashNumber = null;
+  if(S.started || document.body.classList.contains('of-locked')){ S.started = false; ofClearTimer(); ofLock(false); }
   methodCards.forEach(c => c.classList.toggle('selected', c.dataset.method === method));
   allPanels.forEach(p => p.classList.remove('show'));
 
@@ -1411,7 +1428,7 @@ function selectMethod(method){
     panelId = `panel-${method}-${S.flow}`;
   }
   // bKash: payment details/QR/TrxID stay hidden until sender number is collected via the popup
-  if(method !== 'bkash'){
+  if(method !== 'bkash' && !orderFirstActive()){
     const panel = document.getElementById(panelId);
     if(panel) panel.classList.add('show');
   }
@@ -1749,9 +1766,9 @@ const psText = document.getElementById('psText');
 function openOverlay(el){ el.classList.add('show'); }
 function closeOverlay(el){ el.classList.remove('show'); }
 
-function finalizeSubmit(orderNumber){
+function finalizeSubmit(orderNumber, awaitingVerification){
   if(!S.method) return;
-  const isP2P = (S.flow === 'proxy' && (S.method === 'bkash' || S.method === 'nagad' || S.method === 'card')) || S.method === 'crypto';
+  const isP2P = !!awaitingVerification || (S.flow === 'proxy' && (S.method === 'bkash' || S.method === 'nagad' || S.method === 'card')) || S.method === 'crypto';
 
   if(isP2P){
     psIcon.classList.add('pending');
@@ -1816,8 +1833,153 @@ async function placeOrder(){
   }
 }
 
+/* ─── Order-first checkout ─── */
+let _ofTimerId = null;
+function orderFirstActive(){
+  try { return ORDER_FIRST && S.flow === 'internal' && OF_METHODS.indexOf(S.method) !== -1 && !!cartSkuLines() && typeof sbClient !== 'undefined' && !!sbClient; } catch(e){ return false; }
+}
+function ofPanel(){ return document.getElementById(S.method === 'crypto' ? 'panel-crypto' : 'panel-' + S.method + '-internal'); }
+function ofClearTimer(){
+  clearInterval(_ofTimerId); _ofTimerId = null;
+  ['ofTimer','ofExpired'].forEach(id => { const el = document.getElementById(id); if(el) el.remove(); });
+}
+function ofLock(on){
+  document.body.classList.toggle('of-locked', !!on);
+  const b = document.getElementById('ofBanner');
+  if(b) b.classList.toggle('show', !!on);
+  if(on && S.unpaid){ const n = document.getElementById('ofBannerNum'); if(n) n.textContent = S.unpaid.number; }
+}
+function ofReset(){
+  S.started = false; ofClearTimer(); ofLock(false);
+  allPanels.forEach(p => p.classList.remove('show'));
+  if(S.method) payBtnText.textContent = methodLabels[S.method] || 'Continue';
+  payBtn.disabled = !S.method;
+}
+function ofOnExpired(){
+  if(!S.started || !S.unpaid) return;
+  const t = document.getElementById('ofTimer');
+  if(t){ t.classList.add('expired'); t.textContent = 'Time expired'; }
+  const panel = ofPanel(); if(!panel || document.getElementById('ofExpired')) return;
+  const e = document.createElement('div');
+  e.id = 'ofExpired'; e.className = 'of-expired';
+  e.innerHTML = 'The payment window for order <b>' + S.unpaid.number + '</b> has ended. Already sent the money? Enter your transaction ID above and tap "I\'ve Sent the Payment". Otherwise, start a new payment.<button type="button" id="ofRestart">Start a new payment</button>';
+  panel.appendChild(e);
+  document.getElementById('ofRestart').addEventListener('click', () => { ofReset(); startOrderFirst(); });
+}
+function ofStartCountdown(){
+  ofClearTimer();
+  const params = new URLSearchParams(location.search);
+  const tv = parseInt(params.get('test'), 10);
+  const secs = Math.max(1, params.has('test') && !isNaN(tv) ? tv : 20 * 60);
+  const end = Date.now() + secs * 1000;
+  const panel = ofPanel();
+  let timerEl = null;
+  if(S.method !== 'bkash' && panel){
+    timerEl = document.createElement('div');
+    timerEl.id = 'ofTimer'; timerEl.className = 'of-timer';
+    panel.insertBefore(timerEl, panel.firstChild);
+  }
+  const fmtT = (sec) => String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+  const tick = () => {
+    const rem = Math.max(0, Math.round((end - Date.now()) / 1000));
+    if(timerEl && rem > 0) timerEl.textContent = 'Complete payment within ' + fmtT(rem);
+    if(rem <= 0){ clearInterval(_ofTimerId); _ofTimerId = null; ofOnExpired(); }
+  };
+  tick();
+  _ofTimerId = setInterval(tick, 500);
+}
+function ofApplyServerTotal(total){
+  const t = Number(total); if(!Number.isFinite(t)) return;
+  document.querySelectorAll('.mfs-amount-val').forEach(el => { el.textContent = fmt(t); });
+  document.querySelectorAll('.mfs-amount-copy').forEach(el => { el.setAttribute('data-copy', String(t)); });
+  const pv = document.getElementById('payBarVal'); if(pv) pv.textContent = fmt(t);
+  const pt = document.getElementById('payTotal'); if(pt) pt.textContent = fmt(t);
+}
+async function startOrderFirst(){
+  const lines = cartSkuLines();
+  if(!lines){ placeOrder(); return; }
+  if(_placing) return;
+  _placing = true; payBtn.disabled = true;
+  const a = getCheckoutAddress();
+  let prev = S.unpaid ? S.unpaid.id : null;
+  if(!prev){ try { prev = sessionStorage.getItem(OF_KEY); } catch(e){} }
+  try {
+    const res = await sbClient.rpc('create_store_order', { p: {
+      name: a.name, phone: a.phone, address: a.full, district: a.city, zip: a.zip,
+      items: lines, payment_method: S.method, payment_ref: null,
+      voucher_code: PROMO.internal.applied ? PROMO.internal.applied.code : null,
+      sender_bkash_number: S.method === 'bkash' ? S.senderBkashNumber : null,
+      replaces_order_id: prev || null
+    } });
+    if(res.error){
+      showToast((res.error.code === 'P0429' || /rate_limit/.test(res.error.message || '')) ? 'Too many attempts. Please wait a few minutes.' : 'Could not start your payment. Please try again.');
+      return;
+    }
+    const d = res.data;
+    if(!d || !d.ok){
+      const msg = (d && d.error) || 'Could not start your payment';
+      if(PROMO.internal.applied && /voucher|delivery is already free|minimum order|usage limit|already used|customer|reserved/i.test(msg) && typeof svClearInternalPromo === 'function') svClearInternalPromo();
+      showToast(msg);
+      return;
+    }
+    S.unpaid = { id: d.order_id, number: d.order_number, method: S.method };
+    try { sessionStorage.setItem(OF_KEY, d.order_id); } catch(e){}
+    S.started = true;
+    const badge = document.getElementById('orderIdBadgeInternal'); if(badge) badge.textContent = d.order_number;
+    bkpInvNo.textContent = 'Inv No: ' + d.order_number;
+    ofApplyServerTotal(d.total);
+    ofLock(true);
+    const panel = ofPanel(); if(panel) panel.classList.add('show');
+    payBtnText.textContent = "I've Sent the Payment";
+    if(S.method === 'bkash') startPaymentCountdown();
+    ofStartCountdown();
+  } catch(e){
+    showToast('Could not start your payment. Please try again.');
+  } finally {
+    _placing = false;
+    payBtn.disabled = !S.method;
+  }
+}
+async function submitPaymentFirst(){
+  if(_placing || !S.unpaid) return;
+  const txnEl = TXN_FIELD[S.method] ? document.getElementById(TXN_FIELD[S.method]) : null;
+  const ref = txnEl ? txnEl.value.trim() : '';
+  if(ref.length < 4){
+    if(txnEl){ txnEl.focus(); txnEl.style.borderColor = 'var(--bkash-text)'; setTimeout(() => { txnEl.style.borderColor = ''; }, 900); }
+    showToast('Please enter your transaction ID');
+    return;
+  }
+  _placing = true; payBtn.disabled = true;
+  try {
+    const res = await sbClient.rpc('submit_order_payment', { p_order_id: S.unpaid.id, p_ref: ref });
+    if(res.error){
+      showToast((res.error.code === 'P0429' || /rate_limit/.test(res.error.message || '')) ? 'Too many attempts. Please wait a few minutes.' : 'Could not submit your payment. Please try again.');
+      return;
+    }
+    const d = res.data;
+    if(!d || !d.ok){
+      const msg = (d && d.error) || 'Could not submit your payment';
+      showToast(msg);
+      if(/cancelled|not waiting/i.test(msg)){ S.unpaid = null; try { sessionStorage.removeItem(OF_KEY); } catch(e){} ofReset(); }
+      return;
+    }
+    if(!IS_BUYNOW){ try { localStorage.removeItem(CART_KEY); } catch(e){} }
+    try { sessionStorage.removeItem(OF_KEY); } catch(e){}
+    const num = d.order_number || S.unpaid.number;
+    S.unpaid = null; S.started = false; ofClearTimer(); ofLock(false);
+    finalizeSubmit(num, true);
+  } catch(e){
+    showToast('Could not submit your payment. Please try again.');
+  } finally {
+    _placing = false;
+    payBtn.disabled = !S.method;
+  }
+}
+document.getElementById('ofEditBtn').addEventListener('click', () => ofReset());
+
 payBtn.addEventListener('click', () => {
   if(!S.method) return;
+  if(S.started && orderFirstActive()){ submitPaymentFirst(); return; }
   if(S.method === 'bkash' && !S.senderBkashNumber){
     bkpNumberInput.value = '';
     bkpProceed.disabled = true;
@@ -1829,6 +1991,7 @@ payBtn.addEventListener('click', () => {
     setTimeout(() => bkpNumberInput.focus(), 300);
     return;
   }
+  if(!S.started && orderFirstActive()){ startOrderFirst(); return; }
   if(S.method === 'bkash' && S.senderBkashNumber){
     const txnField = document.getElementById(S.flow === 'proxy' ? 'bkTxnP' : 'bkTxn');
     if(txnField && !txnField.value.trim()){
@@ -1862,6 +2025,7 @@ bkpNumberInput.addEventListener('input', () => {
 bkpProceed.addEventListener('click', () => {
   S.senderBkashNumber = bkpNumberInput.value;
   closeOverlay(bkashNumOverlay);
+  if(orderFirstActive()){ startOrderFirst(); return; }
   // Reveal payment details/QR/TrxID panel only now that the sender number is collected
   const panelId = `panel-bkash-${S.flow}`;
   const panel = document.getElementById(panelId);
@@ -1989,6 +2153,7 @@ function ptOnComplete(){
   document.getElementById('bkTimerCard').style.setProperty('--ring-color', '#8a8f99');
   document.getElementById('bkTimerCard').classList.add('expired');
   document.getElementById('spinner').style.opacity = '0';
+  try { if(S.started) ofOnExpired(); } catch(e){}
 }
 
 function startPaymentCountdown(){
