@@ -1449,7 +1449,7 @@ document.getElementById('lgLoginBtn').addEventListener('click', () => {
   window.location.href = 'login.html';
 });
 document.getElementById('homeBtn').addEventListener('click', resetProcessingSheet);
-document.getElementById('trackBtn').addEventListener('click', resetProcessingSheet);
+document.getElementById('trackBtn').addEventListener('click', () => { window.location.href = 'orders.html#proxy'; });
 
 /* ─── Review Popup ─── */
 const reviewOverlay = document.getElementById('reviewOverlay');

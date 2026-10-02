@@ -135,6 +135,28 @@ body.dark-mode .oc-id.proxy{ background:rgba(242,100,48,0.14);border-color:rgba(
 .oc-status-wrap{ display:flex;flex-direction:column;align-items:flex-end;gap:3px; }
 .oc-status-date{ font-size:10.5px;font-weight:600;color:var(--text); }
 
+
+/* Buy For Me dynamic cards */
+.px-state{ text-align:center;padding:40px 16px;color:var(--text3);font-size:13px;font-weight:600; }
+.px-state a{ color:var(--orange);font-weight:800;text-decoration:none; }
+.oc-id.rq{ color:var(--orange);background:rgba(242,100,48,0.08);border:1.5px solid rgba(242,100,48,0.55); }
+body.dark-mode .oc-id.rq{ background:rgba(242,100,48,0.14);border-color:rgba(242,100,48,0.6); }
+.oc-status-pill.closed{ background:rgba(217,83,83,0.10);color:#d95353;border-color:rgba(217,83,83,0.4); }
+.px-quote{ margin:2px 0 14px;padding:14px;border-radius:14px;background:var(--orange-soft);border:1.5px solid rgba(242,100,48,0.4); }
+.px-quote-top{ display:flex;justify-content:space-between;align-items:flex-end;gap:10px; }
+.px-quote-lbl{ font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--text3); }
+.px-quote-amt{ font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--orange);line-height:1.1; }
+.px-quote-exp{ font-size:11px;font-weight:600;color:var(--text3);text-align:right; }
+.px-quote-btns{ display:flex;gap:10px;margin-top:12px; }
+.px-btn{ flex:1;padding:12px;border-radius:12px;border:none;font:800 13.5px var(--font-display);cursor:pointer; }
+.px-btn:disabled{ opacity:.6; }
+.px-btn.accept{ background:var(--green);color:#fff; }
+.px-btn.pay{ background:var(--orange);color:#fff; }
+.px-btn.decline{ background:transparent;color:#d95353;border:1.5px solid rgba(217,83,83,0.45); }
+.px-banner{ margin-bottom:14px;padding:12px 14px;border-radius:12px;font-size:12.5px;font-weight:700;background:rgba(217,83,83,0.08);color:#d95353;border:1px solid rgba(217,83,83,0.3); }
+.px-info{ margin-bottom:14px;padding:12px 14px;border-radius:12px;font-size:12.5px;font-weight:600;background:var(--surface);color:var(--text);border:1px dashed rgba(242,100,48,0.45); }
+.px-note{ margin-top:10px;font-size:12px;font-weight:600;color:var(--text);padding:10px 12px;border-radius:10px;background:var(--bg); }
+
 /* Flow tabs */
 .flow-tabs{ margin:12px 16px 0; }
 #tabStoreOrders.active{ color:var(--accent); }
@@ -470,116 +492,7 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 
 <!-- PROXY ORDERS -->
 <div id="viewProxyOrders" style="display:none">
-<div class="order-list">
-  <div class="order-card">
-
-    <div class="oc-head" onclick="this.closest('.order-card').classList.toggle('collapsed')">
-      <div class="oc-head-left">
-        <div class="oc-id-row">
-          <span class="oc-id-label">Order ID</span>
-          <div class="oc-id proxy">PX-1013</div>
-        </div>
-        <div class="oc-meta">Order created <span class="oc-meta-date">26 Aug 2026</span></div>
-      </div>
-      <div class="oc-head-right">
-        <div class="oc-status-wrap">
-          <span class="oc-status-pill paid">Paid</span>
-          <span class="oc-status-date">26 Aug 2026</span>
-        </div>
-        <svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-    </div>
-
-    <div class="oc-body">
-
-      <div class="oc-customer-wrap">
-        <div class="oc-section-label">Customer</div>
-        <div class="oc-customer-card">
-          <div class="oc-customer-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span>Tanvir Islam</span>
-          </div>
-          <div class="oc-customer-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            <span>+880 1998-221190</span>
-          </div>
-          <div class="oc-customer-row addr">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>Sector 7, Uttara, Dhaka</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="oc-subsection">
-        <div class="oc-subhead" onclick="this.closest('.oc-subsection').classList.toggle('collapsed')">
-          <div class="oc-section-label">Items &amp; Summary</div>
-          <div class="oc-subhead-right">
-            <span class="oc-subtotal-preview">৳15,600</span>
-            <svg class="oc-sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-        </div>
-        <div class="oc-subsection-content"><div>
-        <div class="oc-item-row">
-          <div class="oc-item-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.5 7.28a1 1 0 0 0-.5-.87l-7.5-4.33a1 1 0 0 0-1 0L4 6.41a1 1 0 0 0-.5.87v8.44a1 1 0 0 0 .5.87l7.5 4.33a1 1 0 0 0 1 0l7.5-4.33a1 1 0 0 0 .5-.87z"/></svg></div>
-          <div style="flex:1;min-width:0">
-            <div class="oc-item-name-row">
-              <span class="oc-cat-badge cat-supplement"><svg viewBox="0 0 512 512"><use href="#cat-icon-supplement"/></svg></span>
-              <div class="oc-item-name">Now Foods Vitamin D3 5000IU (3-pack)</div>
-            </div>
-            <div class="oc-item-sub">Amazon US</div>
-          </div>
-          <div class="oc-item-math">
-            <div class="oc-item-qtyprice">1 × ৳15,600</div>
-            <div class="oc-item-linetotal">৳15,600</div>
-          </div>
-        </div>
-        <div class="oc-math-card">
-          <div class="oc-math-row"><span>Product Cost</span><span>৳11,200</span></div>
-          <div class="oc-math-row"><span>Shipping + Duty</span><span>৳4,400</span></div>
-          <div class="oc-math-row total"><span>Total</span><span>৳15,600</span></div>
-        </div>
-        </div></div>
-      </div>
-
-      <div>
-        <div class="oc-section-label">Order Timeline</div>
-        <div class="oc-vprogress">
-          <div class="oc-vstep delivered">
-            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
-            <div class="oc-vstep-body"><div class="oc-vstep-title">Delivered</div><div class="oc-vstep-day">Est. 9 Mar 2026</div></div>
-          </div>
-          <div class="oc-vstep">
-            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
-            <div class="oc-vstep-body"><div class="oc-vstep-title">Out for Delivery</div><div class="oc-vstep-day">Est. 7 Mar 2026</div></div>
-          </div>
-          <div class="oc-vstep">
-            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
-            <div class="oc-vstep-body"><div class="oc-vstep-title">Customs Cleared</div><div class="oc-vstep-day">Est. 5 Mar 2026</div></div>
-          </div>
-          <div class="oc-vstep">
-            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
-            <div class="oc-vstep-body"><div class="oc-vstep-title">Landed in Dhaka</div><div class="oc-vstep-day">Est. 3 Mar 2026</div></div>
-          </div>
-          <div class="oc-vstep done current">
-            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
-            <div class="oc-vstep-body"><div class="oc-vstep-title">In Air</div><div class="oc-vstep-day">24 Feb 2026</div></div>
-          </div>
-          <div class="oc-vstep done">
-            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
-            <div class="oc-vstep-body"><div class="oc-vstep-title">Reached US Warehouse</div><div class="oc-vstep-day">22 Feb 2026</div></div>
-          </div>
-          <div class="oc-vstep done">
-            <div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>
-            <div class="oc-vstep-body"><div class="oc-vstep-title">Order Placed</div><div class="oc-vstep-day">20 Feb 2026</div></div>
-          </div>
-        </div>
-      </div>
-
-      <button class="oc-track-link">Need Help With This Order?</button>
-
-    </div>
-  </div>
-</div>
+<div class="order-list" id="proxyList"><div class="px-state">Loading your requests…</div></div>
 </div>
 
 <nav class="s-nav" id="svFooterNav">
@@ -680,6 +593,163 @@ tabProxy.addEventListener('click', () => {
   document.getElementById('ordersFlowTabs').classList.add('flow-proxy');
 });
 svInitHeaderAuth('headerAccountBtn');
+
+/* ===== Buy For Me orders (live) =====
+   PX_FLOW is the timeline. Not final: edit titles / order / keys here only.
+   Keys must match proxy_requests.status values. */
+const PX_FLOW = [
+  { k:'pending_quote', t:'Request sent' },
+  { k:'quoted',        t:'Quote ready' },
+  { k:'approved',      t:'Order confirmed' },
+  { k:'paid',          t:'Payment received' },
+  { k:'purchasing',    t:'Purchasing' },
+  { k:'ordered',       t:'Ordered from store' },
+  { k:'shipped_intl',  t:'Shipped to Bangladesh' },
+  { k:'arrived_bd',    t:'Arrived in Bangladesh' },
+  { k:'delivered',     t:'Delivered' }
+];
+const PX_PILL = {
+  pending_quote:['Awaiting quote','quote'], quoted:['Quote ready','quote'], approved:['Awaiting payment','quote'],
+  paid:['Paid','paid'], purchasing:['Purchasing','purchased'], ordered:['Ordered','purchased'],
+  shipped_intl:['Shipped','shipped'], arrived_bd:['In Bangladesh','shipped'], delivered:['Delivered','delivered'],
+  rejected:['Declined by us','closed'], cancelled:['Cancelled','closed'], expired:['Quote expired','closed']
+};
+const PX_CLOSED_MSG = {
+  rejected:'We could not take this request. Contact us on WhatsApp for details.',
+  cancelled:'This request was cancelled.',
+  expired:'This quote expired. Send a new request or message us to get a fresh quote.'
+};
+function pxEsc(t){ return String(t==null?'':t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function pxDate(iso){
+  const d = new Date(iso); if(isNaN(d)) return '';
+  return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getFullYear();
+}
+function pxUsd(n){ return '$'+(Number(n)||0).toFixed(2); }
+function pxBdt(n){ return '৳'+Math.round(Number(n)||0).toLocaleString('en-US'); }
+
+function pxRender(r){
+  const snap = r.product_snapshot || {};
+  const items = (snap.items || []).map(i => ({ name:i.name||'Product', store:i.store||'', qty:Math.max(1,parseInt(i.qty,10)||1), price:Number(i.price)||0 }));
+  const f = r.fee_snapshot || {};
+  const usd = items.reduce((t,i)=>t+i.qty*i.price,0);
+  const taxP = Number(f.sales_tax)||0, svcP = Number(f.service_charge)||0, rate = Number(f.usd_rate)||0;
+  const tax = usd*taxP/100, svc = usd*svcP/100;
+  const est = rate ? (usd+tax+svc)*rate : 0;
+  const quoted = r.quote_total != null;
+  const pill = PX_PILL[r.status] || [r.status,'quote'];
+  const ord = r.orders || null;
+  const isOrder = !!(ord && ord.order_number);
+  const idPill = isOrder ? '<span class="oc-id-label">Order ID</span><div class="oc-id proxy">'+pxEsc(ord.order_number)+'</div>'
+                         : '<span class="oc-id-label">Request ID</span><div class="oc-id rq">'+pxEsc(r.request_no||'RQ')+'</div>';
+  const expired = r.status==='quoted' && r.expires_at && new Date(r.expires_at) < new Date();
+  const closed = ['rejected','cancelled','expired'].includes(r.status) || expired;
+  const curIdx = PX_FLOW.findIndex(x => x.k === r.status);
+
+  const itemRows = items.map(i =>
+    '<div class="oc-item-row"><div style="flex:1;min-width:0"><div class="oc-item-name-row"><div class="oc-item-name">'+pxEsc(i.name)+'</div></div>'
+    +(i.store?'<div class="oc-item-sub">'+pxEsc(i.store)+'</div>':'')+'</div>'
+    +'<div class="oc-item-math"><div class="oc-item-qtyprice">'+i.qty+' × '+pxUsd(i.price)+'</div><div class="oc-item-linetotal">'+pxUsd(i.qty*i.price)+'</div></div></div>').join('');
+
+  let math = '<div class="oc-math-card">';
+  if(usd>0){
+    math += '<div class="oc-math-row"><span>Product cost</span><span>'+pxUsd(usd)+'</span></div>';
+    if(rate){
+      math += '<div class="oc-math-row"><span>US sales tax ('+taxP+'%)</span><span>'+pxUsd(tax)+'</span></div>'
+            + '<div class="oc-math-row"><span>Service charge ('+svcP+'%)</span><span>'+pxUsd(svc)+'</span></div>'
+            + '<div class="oc-math-row"><span>Rate</span><span>1 USD = '+pxBdt(rate)+'</span></div>';
+    }
+  }
+  if(quoted) math += '<div class="oc-math-row total"><span>Final price</span><span>'+pxBdt(r.quote_total)+'</span></div>';
+  else if(est) math += '<div class="oc-math-row total"><span>Estimate (final after quote)</span><span>'+pxBdt(est)+'</span></div>';
+  math += '</div>';
+  const preview = quoted ? pxBdt(r.quote_total) : (est ? '≈ '+pxBdt(est) : '');
+
+  let action = '';
+  if(r.status==='quoted' && !expired){
+    action = '<div class="px-quote"><div class="px-quote-top"><div><div class="px-quote-lbl">Your quote</div><div class="px-quote-amt">'+pxBdt(r.quote_total)+'</div></div>'
+      + (r.expires_at?'<div class="px-quote-exp">Valid until<br>'+pxDate(r.expires_at)+'</div>':'')+'</div>'
+      + '<div class="px-quote-btns"><button class="px-btn decline" data-act="decline" data-id="'+r.id+'">Decline</button><button class="px-btn accept" data-act="accept" data-id="'+r.id+'">Accept &amp; confirm</button></div></div>';
+  } else if(r.status==='approved' && r.order_id){
+    action = '<div class="px-quote"><div class="px-quote-top"><div><div class="px-quote-lbl">Amount to pay</div><div class="px-quote-amt">'+pxBdt(r.quote_total)+'</div></div></div>'
+      + '<div class="px-quote-btns"><button class="px-btn pay" data-act="pay" data-id="'+pxEsc(r.order_id)+'">Pay now</button></div></div>';
+  } else if(r.status==='pending_quote'){
+    action = '<div class="px-info">We are reviewing your request. We will send your quote on WhatsApp.</div>';
+  }
+  if(closed){
+    action = '<div class="px-banner">'+pxEsc(expired ? PX_CLOSED_MSG.expired : (PX_CLOSED_MSG[r.status]||''))+'</div>';
+  }
+
+  let timeline = '';
+  if(!closed){
+    const dateFor = (k) => k==='pending_quote' ? r.created_at : k==='quoted' ? r.quoted_at : (k===r.status ? r.updated_at : '');
+    timeline = '<div><div class="oc-section-label">Order Timeline</div><div class="oc-vprogress">'
+      + PX_FLOW.map((st,i)=>({st,i})).reverse().map(({st,i}) => {
+          const done = i <= curIdx, cur = i === curIdx;
+          const d = done ? dateFor(st.k) : '';
+          return '<div class="oc-vstep'+(done?' done':'')+(cur?' current':'')+(st.k==='delivered'?' delivered':'')+'">'
+            +'<div class="oc-vstep-rail"><div class="oc-vdot"></div><div class="oc-vline"></div></div>'
+            +'<div class="oc-vstep-body"><div class="oc-vstep-title">'+pxEsc(st.t)+'</div>'+(d?'<div class="oc-vstep-day">'+pxDate(d)+'</div>':'')+'</div></div>';
+        }).join('')
+      + '</div></div>';
+  }
+
+  return '<div class="order-card" data-rid="'+r.id+'">'
+    +'<div class="oc-head" onclick="this.closest(\'.order-card\').classList.toggle(\'collapsed\')">'
+      +'<div class="oc-head-left"><div class="oc-id-row">'+idPill+'</div><div class="oc-meta">Submitted <span class="oc-meta-date">'+pxDate(r.created_at)+'</span></div></div>'
+      +'<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill '+(expired?'closed':pill[1])+'">'+pxEsc(expired?'Quote expired':pill[0])+'</span></div>'
+      +'<svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div></div>'
+    +'<div class="oc-body">'+action
+      +'<div class="oc-subsection"><div class="oc-subhead" onclick="this.closest(\'.oc-subsection\').classList.toggle(\'collapsed\')"><div class="oc-section-label">Items &amp; Summary</div>'
+      +'<div class="oc-subhead-right"><span class="oc-subtotal-preview">'+preview+'</span><svg class="oc-sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div></div>'
+      +'<div class="oc-subsection-content"><div>'+itemRows+math+'</div></div></div>'
+      +(snap.notes?'<div class="px-note">'+pxEsc(snap.notes)+'</div>':'')
+      +timeline
+    +'</div></div>';
+}
+
+async function loadProxyOrders(){
+  const list = document.getElementById('proxyList');
+  if(!list) return;
+  let session = null;
+  try{ const r = await sbClient.auth.getSession(); session = r.data && r.data.session; }catch(e){}
+  if(!session){
+    list.innerHTML = '<div class="px-state">Log in to see your Buy For Me requests.<br><br><a href="login.html" id="pxLoginLink">Log in</a></div>';
+    const l = document.getElementById('pxLoginLink');
+    if(l) l.addEventListener('click', () => { try{ sessionStorage.setItem('sv-login-return','orders.html'); }catch(e){} });
+    return;
+  }
+  const { data, error } = await sbClient.from('proxy_requests')
+    .select('*, orders(order_number,status)').order('created_at', { ascending:false });
+  if(error){ console.error('proxy_requests load error:', error); list.innerHTML = '<div class="px-state">Could not load your requests. Pull down to retry.</div>'; return; }
+  if(!data || !data.length){
+    list.innerHTML = '<div class="px-state">No Buy For Me requests yet.<br><br><a href="buy_for_me.html">Send your first request</a></div>';
+    return;
+  }
+  const open = new Set([...list.querySelectorAll('.order-card:not(.collapsed)')].map(c=>c.dataset.rid));
+  list.innerHTML = data.map(pxRender).join('');
+  if(open.size) list.querySelectorAll('.order-card').forEach(c => { if(!open.has(c.dataset.rid)) c.classList.add('collapsed'); });
+}
+
+document.addEventListener('click', async function(e){
+  const b = e.target.closest && e.target.closest('.px-btn'); if(!b) return;
+  const act = b.dataset.act, id = b.dataset.id;
+  if(act==='pay'){ window.location.href = 'payment.html?order=' + encodeURIComponent(id); return; }
+  if(act==='decline' && !confirm('Decline this quote? The request will be cancelled.')) return;
+  b.disabled = true;
+  try{
+    const { error } = await sbClient.rpc('customer_respond_quote', { p_id:id, p_accept: act==='accept' });
+    if(error) throw error;
+  }catch(err){
+    console.error('customer_respond_quote error:', err);
+    alert('Could not update your request. Please try again.');
+  }
+  await loadProxyOrders();
+});
+
+if(location.hash === '#proxy') { tabProxy.click(); }
+loadProxyOrders();
+window.addEventListener('pageshow', loadProxyOrders);
+document.addEventListener('visibilitychange', function(){ if(!document.hidden) loadProxyOrders(); });
 </script>
 </body>
 </html>
