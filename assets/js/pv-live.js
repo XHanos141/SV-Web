@@ -234,7 +234,7 @@
   var G = null;
   function sdOf(r){ var s = Array.isArray(r.supplement_details) ? r.supplement_details[0] : r.supplement_details; return s || {}; }
   function potLabel(s){ return (s.potency_amount != null && String(s.potency_amount).trim() !== '') ? Number(s.potency_amount) + ' ' + String(s.potency_unit || '').toLowerCase() : ''; }
-  function cntLabel(s){ return s.capsule_count != null ? s.capsule_count + ' Caps' : ''; }
+  function cntLabel(s){ return s.capsule_count != null ? s.capsule_count + ' Capsules' : ''; }
   function variantLabel(r){ var s = sdOf(r); return [potLabel(s), cntLabel(s)].filter(Boolean).join(' \u00b7 '); }
   function renderVariantPills(){
     if(!G || G.length < 2) return;
@@ -330,7 +330,7 @@
       var hasP = sd.potency_amount != null && String(sd.potency_amount).trim() !== '';
       var hasC = sd.capsule_count != null;
       if(hasP && $('suppPotency')) $('suppPotency').textContent = sd.potency_amount + ' ' + (sd.potency_unit || '').toLowerCase();
-      if(hasC && $('suppCount')) $('suppCount').textContent = sd.capsule_count + ' Caps';
+      if(hasC && $('suppCount')) $('suppCount').textContent = sd.capsule_count + ' Capsules';
       if(rows[0]) rows[0].style.display = hasP ? '' : 'none';
       if(rows[1]) rows[1].style.display = hasC ? '' : 'none';
       if(hasP || hasC) suppBox.style.display = '';
