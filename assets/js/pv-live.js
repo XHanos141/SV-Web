@@ -351,8 +351,10 @@
       if(res.error){ console.error(res.error); reveal(); return; }
       if(!res.data){ unavailable(); reveal(); return; }
       P = res.data;
+      return (window.svApplyAvailability ? svApplyAvailability([P]) : Promise.resolve()).then(function(){
       try{ apply(); }catch(e){ console.error('pv-live apply failed', e); }
       reveal();
+      });
     })
     .catch(function(e){ console.error('pv-live failed', e); reveal(); });
 })();

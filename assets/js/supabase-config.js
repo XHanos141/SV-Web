@@ -174,3 +174,22 @@ async function svInitHeaderAuth(buttonId) {
   const customer = await svGetCurrentCustomerCached(fresh => svRenderHeaderAuth(btn, fresh));
   svRenderHeaderAuth(btn, customer);
 }
+
+
+// ---- Stock availability (stock minus units held by unpaid orders for 20 min) ----
+// Overlays product rows' stock_qty with the server-computed available quantity.
+// On any failure the rows are returned untouched (raw stock), and create_store_order still enforces the real check.
+async function svApplyAvailability(rows) {
+  try {
+    if (!sbClient || !Array.isArray(rows) || !rows.length) return rows;
+    const ids = rows.map(r => r && r.id).filter(Boolean);
+    const map = new Map();
+    for (let i = 0; i < ids.length; i += 200) {
+      const res = await sbClient.rpc('store_availability', { p_ids: ids.slice(i, i + 200) });
+      if (res.error || !Array.isArray(res.data)) return rows;
+      res.data.forEach(x => map.set(String(x.id), Number(x.available) || 0));
+    }
+    rows.forEach(r => { if (r && map.has(String(r.id))) r.stock_qty = map.get(String(r.id)); });
+  } catch (e) {}
+  return rows;
+}

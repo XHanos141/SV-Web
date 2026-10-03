@@ -853,14 +853,14 @@ async function syncStock(){
   _stockBusy = true;
   try{
     const ids = items.map(i => i.productId || i.id);
-    const r = await sbClient.from('products').select('id,stock_qty').in('id', ids);
+    const r = await sbClient.rpc('store_availability', { p_ids: ids });
     if(r.error || !Array.isArray(r.data) || !r.data.length) return;   // can't verify: leave cart untouched
     const map = new Map(r.data.map(x => [String(x.id), x]));
     const notes = [];
     let changed = false;
     items.forEach(it => {
       const row = map.get(String(it.productId || it.id));
-      const stock = row ? Math.max(0, Number(row.stock_qty) || 0) : 0;   // missing = unpublished/archived
+      const stock = row ? Math.max(0, Number(row.available) || 0) : 0;   // missing = unpublished/archived
       if(it.stock !== stock){ it.stock = stock; changed = true; }
       const lim = limitOf(it, 'internal');
       if(lim > 0 && it.qty > lim){
