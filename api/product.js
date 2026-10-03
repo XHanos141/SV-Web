@@ -1,4 +1,6 @@
 const SB = 'https://tlkoxltugvfwxmnrthvr.supabase.co';
+const SITE_URL = 'https://sv-web-sigma.vercel.app'; // change to custom domain later
+const SITE_NAME = 'SuppVerse BD';
 const KEY = 'sb_publishable_0dItRk9UZ40ZpwPqJRoOBw_6MyRFU6z';
 const PAGES = {
   supplement: 'product_view_supplement.html',
@@ -7,6 +9,59 @@ const PAGES = {
   clothing: 'product_view_clothing.html',
   general: 'product_view_general.html'
 };
+
+function esc(v) {
+  return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function one(x) { return Array.isArray(x) ? x[0] : x; }
+function specOf(sd) {
+  if (!sd) return '';
+  const pot = (sd.potency_amount != null && String(sd.potency_amount).trim() !== '')
+    ? Number(sd.potency_amount) + ' ' + String(sd.potency_unit || '').toLowerCase() : '';
+  const cnt = sd.capsule_count != null ? sd.capsule_count + ' Capsules' : '';
+  return [pot.trim(), cnt].filter(Boolean).join(' ');
+}
+function absUrl(u) {
+  if (!u) return '';
+  if (/^https?:\/\//i.test(u)) return u;
+  return SITE_URL + (u.charAt(0) === '/' ? '' : '/') + u;
+}
+function metaTags(row, prod, slug) {
+  const w = row;
+  const spec = specOf(one(prod.supplement_details));
+  const autoTitle = [prod.brand, prod.name, spec].filter(Boolean).join(' ');
+  const title = (w.seo_title && String(w.seo_title).trim()) || autoTitle;
+  const plain = String(w.web_description || '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+  const desc = (w.seo_description && String(w.seo_description).trim())
+    || (plain ? plain.slice(0, 155) : 'Buy ' + autoTitle + ' in Bangladesh from ' + SITE_NAME + '.');
+  const price = Number(prod.price) || 0;
+  const imgs = Array.isArray(w.web_images) ? w.web_images : [];
+  const img = absUrl(imgs[0]);
+  const url = SITE_URL + '/p/' + slug;
+  const shareDesc = price ? desc + ' \u2014 \u09F3' + price.toLocaleString('en-US') : desc;
+  const out = [
+    '<title>' + esc(title) + ' \u2014 ' + SITE_NAME + '</title>',
+    '<meta name="description" content="' + esc(desc) + '">',
+    '<link rel="canonical" href="' + esc(url) + '">',
+    '<meta property="og:type" content="product">',
+    '<meta property="og:site_name" content="' + SITE_NAME + '">',
+    '<meta property="og:title" content="' + esc(title) + '">',
+    '<meta property="og:description" content="' + esc(shareDesc) + '">',
+    '<meta property="og:url" content="' + esc(url) + '">',
+    '<meta name="twitter:card" content="' + (img ? 'summary_large_image' : 'summary') + '">',
+    '<meta name="twitter:title" content="' + esc(title) + '">',
+    '<meta name="twitter:description" content="' + esc(shareDesc) + '">'
+  ];
+  if (img) {
+    out.push('<meta property="og:image" content="' + esc(img) + '">');
+    out.push('<meta name="twitter:image" content="' + esc(img) + '">');
+  }
+  if (price) {
+    out.push('<meta property="product:price:amount" content="' + price + '">');
+    out.push('<meta property="product:price:currency" content="BDT">');
+  }
+  return out.join('');
+}
 
 function notFound(res) {
   res.statusCode = 404;
@@ -20,7 +75,7 @@ module.exports = async (req, res) => {
     if (!/^[a-z0-9-]{1,100}$/.test(slug)) return notFound(res);
 
     const r = await fetch(
-      SB + '/rest/v1/product_web?select=product_id,products!inner(id,category)&slug=eq.' + encodeURIComponent(slug) + '&limit=1',
+      SB + '/rest/v1/product_web?select=product_id,seo_title,seo_description,web_description,web_images,products!inner(id,category,name,brand,price,supplement_details(potency_amount,potency_unit,capsule_count))&slug=eq.' + encodeURIComponent(slug) + '&limit=1',
       { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } }
     );
     if (!r.ok) return notFound(res);
@@ -37,7 +92,8 @@ module.exports = async (req, res) => {
     if (!pr.ok) return notFound(res);
     let html = await pr.text();
 
-    const inject = '<base href="/"><script>window.__SV_PID="' + pid + '";document.write(\'<style id="pvPre">body .pv-info,body .pv-actions{visibility:hidden}</style>\');setTimeout(function(){var s=document.getElementById("pvPre");if(s&&s.parentNode)s.parentNode.removeChild(s)},12000)</script>';
+    const inject = '<base href="/">' + metaTags(row, prod, slug) + '<script>window.__SV_PID="' + pid + '";document.write(\'<style id="pvPre">body .pv-info,body .pv-actions{visibility:hidden}</style>\');setTimeout(function(){var s=document.getElementById("pvPre");if(s&&s.parentNode)s.parentNode.removeChild(s)},12000)</script>';
+    html = html.replace(/<title>[\s\S]*?<\/title>/i, '').replace(/<meta\s+name=["']description["'][^>]*>/i, '');
     html = html.replace(/<head[^>]*>/i, function (m) { return m + inject; });
 
     res.statusCode = 200;
