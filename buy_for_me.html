@@ -527,7 +527,7 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
     <div class="wa-field-wrap">
       <input type="tel" class="wa-input" id="waInput" placeholder="01XXX-XXXXXX" inputmode="numeric" autocomplete="tel" maxlength="14">
     </div>
-    <div class="wa-error-msg" id="waError">Enter a valid Bangladesh WhatsApp number (10–11 digits).</div>
+    <div class="wa-error-msg" id="waError">Enter a valid 11-digit Bangladesh number (01XXXXXXXXX).</div>
 
     <label class="field-label" for="noteInput">Anything we should know? <span class="req">*</span></label>
     <textarea class="note-input" id="noteInput" maxlength="300" placeholder="Color, size preference, delivery notes..."></textarea>
@@ -916,12 +916,8 @@ function waLocal(raw){
 }
 function escHtml(t){ return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function isValidWa(raw){
-  let digits = normalizeWa(raw);
-  // Strip country code (880) if present, e.g. 8801712345678 -> 01712345678
-  if(digits.length > 11 && digits.startsWith('880')) digits = digits.slice(3);
-  if(digits.length === 10 && !digits.startsWith('0')) digits = '0' + digits;
-  if(digits.length !== 11) return false;
-  return /^01[3-9]\d{8}$/.test(digits);
+  // Local format only: exactly 11 digits, 01[3-9]XXXXXXXX. No country code; 10 digits or 12+ digits are invalid.
+  return /^01[3-9]\d{8}$/.test(normalizeWa(raw));
 }
 
 /* ─── Theme ─── */
@@ -1309,7 +1305,14 @@ window.__bfmStoresReady.then(() => addItemRow());
 const waInput = document.getElementById('waInput');
 const waError = document.getElementById('waError');
 waInput.addEventListener('input', () => {
-  waInput.value = waInput.value.replace(/[^\d-]/g, '');
+  { // keep digits and dashes, cap at 11 digits
+    let n = 0, out = '';
+    for(const ch of waInput.value.replace(/[^\d-]/g, '')){
+      if(ch !== '-'){ if(n >= 11) continue; n++; }
+      out += ch;
+    }
+    waInput.value = out;
+  }
   S.wa = waInput.value;
   waInput.classList.remove('error','ok');
   waError.classList.remove('show');
