@@ -1524,7 +1524,7 @@ function renderCard(p,i){
     ? '<div class="p-actions"><button class="p-wish" onclick="event.stopPropagation();toggleWish(this)" aria-label="Add to wishlist"><svg class="heart-icon" width="16" height="16" style="margin-top:-1px" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wishlist</button></div>'
     : '<div class="p-actions"><button class="p-add" data-id="' + esc(p.id) + '" onclick="event.stopPropagation();toggleCart(this)" aria-label="Add to cart">' + cartSVG + '</button><button class="p-buy" data-id="' + esc(p.id) + '" onclick="event.stopPropagation();buyNow(this)" aria-label="Buy now">Buy</button></div>';
   var stockBadge = isOut ? '' : '<span class="p-badge-stock ' + stockClass + '">' + stockText + '</span>';
-  var pvUrl = (PRODUCT_VIEW_PAGES[p.type] || 'product_view_general.html') + '?' + productViewParams(p);
+  var pvUrl = pvHref(p);
   return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (i*0.06) + 's;cursor:pointer" onclick="window.location.href=\'' + pvUrl + '\'">' +
     '<div class="p-img-wrap">' + gridImg + stockBadge + saleBadge + outBar + '</div>' +
     '<div class="p-body">' +
@@ -1547,6 +1547,7 @@ const PRODUCT_VIEW_PAGES = {
   'General': 'product_view_general.html'
 };
 function pvHref(p){
+  if(p.slug) return '/p/' + p.slug;
   return (PRODUCT_VIEW_PAGES[p.type] || 'product_view_general.html') + '?' + productViewParams(p);
 }
 function productViewParams(p){
@@ -2024,7 +2025,7 @@ function svMapProduct(r){
   var qty = Number(r.stock_qty) || 0;
   var type = SV_TYPE_BY_CAT[r.category] || 'General';
   return {
-    id: r.id, sku: r.sku || '', name: r.name || '', brand: r.brand || '', spec: spec,
+    id: r.id, sku: r.sku || '', name: r.name || '', brand: r.brand || '', spec: spec, slug: (w && w.slug) || '',
     type: type, cat: r.subcategory || type,
     price: price, old: old,
     discount: old ? Math.round((old - price) / old * 100) + '% OFF' : '',
@@ -2058,7 +2059,7 @@ function svCollapseGroups(rows){
 async function svLoadProducts(){
   if(typeof sbClient === 'undefined' || !sbClient) throw new Error('offline');
   var res = await sbClient.from('products')
-    .select('id,sku,name,brand,category,subcategory,price,old_price,stock_qty,variant_group_id,product_web(web_images,settings),supplement_details(potency_amount,potency_unit,capsule_count)')
+    .select('id,sku,name,brand,category,subcategory,price,old_price,stock_qty,variant_group_id,product_web(slug,web_images,settings),supplement_details(potency_amount,potency_unit,capsule_count)')
     .eq('is_active', true).eq('archived', false).eq('is_web_published', true)
     .order('name');
   if(res.error) throw res.error;

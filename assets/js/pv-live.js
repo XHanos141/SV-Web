@@ -2,7 +2,7 @@
 (function(){
   function reveal(){ var s = document.getElementById('pvPre'); if(s && s.parentNode) s.parentNode.removeChild(s); }
   var params = new URLSearchParams(window.location.search);
-  var pid = params.get('pid');
+  var pid = params.get('pid') || window.__SV_PID;
   if(!pid){ reveal(); return; }
   if(typeof sbClient === 'undefined' || !sbClient){ reveal(); return; }
 
@@ -230,7 +230,7 @@
   hide($('countBox'));
   hide($('suppInfo')); // fake 500mg/60Caps demo values stay hidden until real data loads
 
-  var SEL = 'id,sku,name,brand,category,subcategory,price,old_price,stock_qty,variant_group_id,product_web(web_description,web_images,seo_title,seo_description,settings),supplement_details(potency_amount,potency_unit,capsule_count)';
+  var SEL = 'id,sku,name,brand,category,subcategory,price,old_price,stock_qty,variant_group_id,product_web(slug,web_description,web_images,seo_title,seo_description,settings),supplement_details(potency_amount,potency_unit,capsule_count)';
   var G = null;
   function sdOf(r){ var s = Array.isArray(r.supplement_details) ? r.supplement_details[0] : r.supplement_details; return s || {}; }
   function potLabel(s){ return (s.potency_amount != null && String(s.potency_amount).trim() !== '') ? Number(s.potency_amount) + ' ' + String(s.potency_unit || '').toLowerCase() : ''; }
@@ -269,7 +269,11 @@
   }
   function selectVariant(r){
     P = r;
-    try{ var u = new URL(location.href); u.searchParams.set('pid', r.id); history.replaceState(null, '', u.toString()); }catch(e){}
+    try{
+      var rw = Array.isArray(r.product_web) ? r.product_web[0] : r.product_web;
+      if(window.__SV_PID && rw && rw.slug){ history.replaceState(null, '', '/p/' + rw.slug); }
+      else { var u = new URL(location.href); u.searchParams.set('pid', r.id); history.replaceState(null, '', u.toString()); }
+    }catch(e){}
     qty = 1;
     var qv = $('qtyVal'); if(qv) qv.textContent = '1';
     try{ apply(); }catch(e){ console.error('pv-live variant switch failed', e); }
