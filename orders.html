@@ -728,11 +728,13 @@ async function loadStoreOrders(){
     }
     const orders = res.data.orders || [];
     if(!orders.length){
+      if(window.svOrdersBadgeSet) window.svOrdersBadgeSet([]);
       list.innerHTML = '<div class="px-state">No orders yet.<br><br><a href="store.html">Browse the store</a></div>';
       return;
     }
     const open = new Set([...list.querySelectorAll('.order-card:not(.collapsed)')].map(c => c.dataset.oid));
     list.innerHTML = orders.map(soRender).join('');
+    if(window.svOrdersBadgeSet) window.svOrdersBadgeSet(orders);
     list.querySelectorAll('.order-card').forEach(c => {
       const st = c.querySelector('.oc-status-pill').className;
       const needsAction = /unpaid|awaiting_payment/.test(st);
@@ -784,5 +786,6 @@ loadProxyOrders();
 window.addEventListener('pageshow', loadProxyOrders);
 document.addEventListener('visibilitychange', function(){ if(!document.hidden) loadProxyOrders(); });
 </script>
+<script src="assets/js/orders-badge.js"></script>
 </body>
 </html>
