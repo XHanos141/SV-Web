@@ -214,13 +214,17 @@ body.dark-mode .cc-remove{background:rgba(255,107,107,.10);border-color:rgba(255
   margin-top:0;
 }
 .cc-bottom{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-top:4px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin-top:auto;padding-top:4px;
 }
 .cc-price{
   font-family:var(--font-display);font-size:15px;font-weight:800;
   color:var(--text);line-height:1;
+  flex:1;min-width:0;
+  display:flex;flex-wrap:wrap;align-items:baseline;row-gap:4px;
 }
+.cc-price .cc-save{flex-basis:100%;margin-left:0;line-height:1.1}
+.cc-bottom .qty-stepper,.cc-bottom .qty-locked{flex-shrink:0}
 
 .qty-stepper{
   display:inline-flex;align-items:center;
