@@ -2057,7 +2057,7 @@ async function svLoadProducts(){
   if(res.error) throw res.error;
   await svApplyAvailability(res.data || []);
   products.length = 0;
-  svCollapseGroups(res.data || []).forEach(function(r){ products.push(svMapProduct(r)); });
+  (res.data || []).forEach(function(r){ products.push(svMapProduct(r)); });
   trendingItems = products.filter(function(p){ return p.trending; }).slice(0, 8);
   renderTrending();
   if(window.svStoreRefresh) window.svStoreRefresh();
