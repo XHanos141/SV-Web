@@ -330,6 +330,13 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 
 .oc-status-pill.unpaid,.oc-status-pill.awaiting_payment{ background:var(--orange-soft);color:var(--orange);border-color:rgba(242,100,48,0.4); }
 .oc-status-pill.verifying,.oc-status-pill.cod_pending{ background:var(--accent-soft);color:var(--accent);border-color:rgba(10,155,220,0.4); }
+/* Expand / collapse (store orders) */
+.so-collapse{display:grid;grid-template-rows:1fr;transition:grid-template-rows .28s ease}
+.so-inner{overflow:hidden;min-height:0}
+#storeList .order-card.collapsed .so-collapse{grid-template-rows:0fr}
+#storeList .oc-head{transition:border-color .2s ease}
+#storeList .order-card.collapsed .oc-head{border-bottom-color:transparent}
+@media (prefers-reduced-motion:reduce){.so-collapse{transition:none}}
 /* Store orders — typography matched to payment.html draft-math-* / cart summary-line spec */
 #storeList .oc-body{gap:0;padding:6px 14px 12px}
 .oc-status-pill.cancelled{background:rgba(217,83,83,0.10);color:#d95353;border-color:rgba(217,83,83,0.4)}
@@ -686,12 +693,12 @@ function soRender(o){
       +'<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill '+soEsc(o.state)+'">'+soEsc(label)+'</span></div>'
       +'<svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>'
     +'</div>'
-    +'<div class="oc-body">'
+    +'<div class="so-collapse"><div class="so-inner"><div class="oc-body">'
       +'<div class="so-items">'+items+'</div>'
       +'<div class="so-sum"><div><span>Subtotal</span><span>'+soMoney(o.subtotal)+'</span></div>'+disc+ship
       +'<div class="so-total"><span>Total</span><span>'+soMoney(o.total)+'</span></div></div>'
       +soNote(o)
-    +'</div></div>';
+    +'</div></div></div></div>';
 }
 function soTick(){
   document.querySelectorAll('#storeList [data-until]').forEach(el => {
