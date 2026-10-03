@@ -1469,7 +1469,7 @@ const grid = document.getElementById('grid');
 
 function svTitle(p){
   const brand = (p.brand || '').trim();
-  return brand ? (brand + ' ' + p.name) : p.name;
+  return (brand ? (brand + ' ' + p.name) : p.name) + (p.spec ? ' ' + p.spec : '');
 }
 function slugify(str){
   return str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,40);
@@ -2014,10 +2014,17 @@ function svMapProduct(r){
   var imgs = (w && Array.isArray(w.web_images)) ? w.web_images : [];
   var price = Number(r.price) || 0, old = Number(r.old_price) || 0;
   if(old <= price) old = 0;
+  var sd = Array.isArray(r.supplement_details) ? r.supplement_details[0] : r.supplement_details;
+  var spec = '';
+  if(sd){
+    var pa = (sd.potency_amount != null && String(sd.potency_amount).trim() !== '') ? Number(sd.potency_amount) + ' ' + String(sd.potency_unit || '').toUpperCase() : '';
+    var cc = sd.capsule_count != null ? sd.capsule_count + ' Caps' : '';
+    spec = [pa.trim(), cc].filter(Boolean).join(' ');
+  }
   var qty = Number(r.stock_qty) || 0;
   var type = SV_TYPE_BY_CAT[r.category] || 'General';
   return {
-    id: r.id, sku: r.sku || '', name: r.name || '', brand: r.brand || '',
+    id: r.id, sku: r.sku || '', name: r.name || '', brand: r.brand || '', spec: spec,
     type: type, cat: r.subcategory || type,
     price: price, old: old,
     discount: old ? Math.round((old - price) / old * 100) + '% OFF' : '',
@@ -2051,7 +2058,7 @@ function svCollapseGroups(rows){
 async function svLoadProducts(){
   if(typeof sbClient === 'undefined' || !sbClient) throw new Error('offline');
   var res = await sbClient.from('products')
-    .select('id,sku,name,brand,category,subcategory,price,old_price,stock_qty,variant_group_id,product_web(web_images,settings)')
+    .select('id,sku,name,brand,category,subcategory,price,old_price,stock_qty,variant_group_id,product_web(web_images,settings),supplement_details(potency_amount,potency_unit,capsule_count)')
     .eq('is_active', true).eq('archived', false).eq('is_web_published', true)
     .order('name');
   if(res.error) throw res.error;
