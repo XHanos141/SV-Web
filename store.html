@@ -345,6 +345,8 @@ body.dark-mode .s-search-input-wrap svg{
   display:flex;align-items:center;justify-content:space-between;
   margin-bottom:3px;
 }
+.p-opts{font-size:10px;font-weight:700;color:#7c6ff7;background:rgba(124,111,247,.12);border-radius:999px;padding:2px 8px;margin-left:6px;white-space:nowrap}
+.p-from{font-size:11px;font-weight:600;color:#8c92a1}
 .p-cat{
   font-size:8.5px;font-weight:800;color:var(--text3);
   text-transform:uppercase;letter-spacing:0.04em;
@@ -1526,11 +1528,11 @@ function renderCard(p,i){
   return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (i*0.06) + 's;cursor:pointer" onclick="window.location.href=\'' + pvUrl + '\'">' +
     '<div class="p-img-wrap">' + gridImg + stockBadge + saleBadge + outBar + '</div>' +
     '<div class="p-body">' +
-      '<div class="p-meta"><span class="p-cat">' + esc(p.cat) + '</span>' + (p.rating > 0 ? '<span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span>' : '') + '</div>' +
+      '<div class="p-meta"><span class="p-cat">' + esc(p.cat) + '</span>' + (p.groupSize > 1 ? '<span class="p-opts">' + p.groupSize + ' options</span>' : '') + (p.rating > 0 ? '<span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span>' : '') + '</div>' +
       '<div class="p-name">' + esc(svTitle(p)) + '</div>' +
       '<div class="p-footer">' +
         '<div class="p-price-block' + (p.old ? '' : ' no-discount') + '">' +
-          '<div class="p-price">৳' + p.price.toLocaleString() + '</div>' +
+          '<div class="p-price">' + (p.priceRange ? '<span class="p-from">from </span>' : '') + '৳' + p.price.toLocaleString() + '</div>' +
           (p.old ? '<div class="p-old-row"><span class="p-old-price">৳' + p.old.toLocaleString() + '</span><span class="p-discount-inline">' + p.discount + '</span></div>' : '') +
         '</div>' + actions +
       '</div>' +
@@ -1566,6 +1568,7 @@ function toggleCart(btn){
   const checkIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>';
   const pid = btn.getAttribute('data-id');
   const product = products.find(p => p.id === pid);
+  if(product && product.groupSize > 1){ window.location.href = pvHref(product); return; }
   if(product){
     if(isAdded) removeFromCart(product);
     else addToCart(product);
@@ -1581,6 +1584,7 @@ function buyNow(btn){
   const pid = btn.getAttribute('data-id');
   const product = products.find(p => p.id === pid);
   if(!product) return;
+  if(product.groupSize > 1){ window.location.href = pvHref(product); return; }
   const item = {
     id: product.id,
     productId: product.id,
@@ -2020,19 +2024,40 @@ function svMapProduct(r){
     rating: Number(st.rating) || 0,
     stock: qty <= 0 ? 'out' : (qty <= SV_LOW_STOCK ? 'low' : 'in'),
     sale: !!st.sale, trending: !!st.trending,
-    image: imgs[0] || null
+    image: imgs[0] || null,
+    groupSize: r._gn || 1, priceRange: !!r._range
   };
+}
+function svCollapseGroups(rows){
+  var groups = {}, out = [], done = {};
+  rows.forEach(function(r){ if(r.variant_group_id){ (groups[r.variant_group_id] = groups[r.variant_group_id] || []).push(r); } });
+  rows.forEach(function(r){
+    var g = r.variant_group_id;
+    if(!g || groups[g].length < 2){ out.push(r); return; }
+    if(done[g]) return;
+    done[g] = 1;
+    var all = groups[g];
+    var inStock = all.filter(function(x){ return (Number(x.stock_qty) || 0) > 0; });
+    var pool = (inStock.length ? inStock : all).slice().sort(function(a, b){ return (Number(a.price) || 0) - (Number(b.price) || 0); });
+    var rep = Object.assign({}, pool[0]);
+    var prices = (inStock.length ? inStock : all).map(function(x){ return Number(x.price) || 0; });
+    rep._gn = all.length;
+    rep._range = Math.min.apply(null, prices) !== Math.max.apply(null, prices);
+    rep.stock_qty = all.reduce(function(s, x){ return s + (Number(x.stock_qty) || 0); }, 0);
+    out.push(rep);
+  });
+  return out;
 }
 async function svLoadProducts(){
   if(typeof sbClient === 'undefined' || !sbClient) throw new Error('offline');
   var res = await sbClient.from('products')
-    .select('id,sku,name,brand,category,subcategory,price,old_price,stock_qty,product_web(web_images,settings)')
+    .select('id,sku,name,brand,category,subcategory,price,old_price,stock_qty,variant_group_id,product_web(web_images,settings)')
     .eq('is_active', true).eq('archived', false).eq('is_web_published', true)
     .order('name');
   if(res.error) throw res.error;
   await svApplyAvailability(res.data || []);
   products.length = 0;
-  (res.data || []).forEach(function(r){ products.push(svMapProduct(r)); });
+  svCollapseGroups(res.data || []).forEach(function(r){ products.push(svMapProduct(r)); });
   trendingItems = products.filter(function(p){ return p.trending; }).slice(0, 8);
   renderTrending();
   if(window.svStoreRefresh) window.svStoreRefresh();

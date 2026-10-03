@@ -62,7 +62,8 @@
       '.pv-desc ul,.pv-desc ol{margin:6px 0 10px 20px}.pv-desc p{margin:0 0 8px}' +
       '.pv-desc a{color:var(--accent);text-decoration:underline}' +
       '.pv-gone{padding:60px 20px;text-align:center;color:var(--text2);font-weight:600}' +
-      '.pv-gone a{color:var(--accent);font-weight:800}';
+      '.pv-gone a{color:var(--accent);font-weight:800}' +
+      '.pv-variant-pill{cursor:pointer}';
     document.head.appendChild(st);
   }
 
@@ -161,7 +162,7 @@
   function loadReviews(productId){
     sbClient.from('product_reviews')
       .select('reviewer_name,rating,review_text,created_at')
-      .eq('product_id', productId).order('created_at', { ascending: false })
+      [Array.isArray(productId) ? 'in' : 'eq']('product_id', productId).order('created_at', { ascending: false })
       .then(function(res){ renderReviews((res && res.data) || []); })
       .catch(function(){});
   }
@@ -229,6 +230,65 @@
   hide($('countBox'));
   hide($('suppInfo')); // fake 500mg/60Caps demo values stay hidden until real data loads
 
+  var SEL = 'id,sku,name,brand,category,subcategory,price,old_price,stock_qty,variant_group_id,product_web(web_description,web_images,seo_title,seo_description,settings),supplement_details(potency_amount,potency_unit,capsule_count)';
+  var G = null;
+  function sdOf(r){ var s = Array.isArray(r.supplement_details) ? r.supplement_details[0] : r.supplement_details; return s || {}; }
+  function potLabel(s){ return (s.potency_amount != null && String(s.potency_amount).trim() !== '') ? Number(s.potency_amount) + ' ' + String(s.potency_unit || '').toLowerCase() : ''; }
+  function cntLabel(s){ return s.capsule_count != null ? s.capsule_count + ' Caps' : ''; }
+  function variantLabel(r){ var s = sdOf(r); return [potLabel(s), cntLabel(s)].filter(Boolean).join(' \u00b7 '); }
+  function renderVariantPills(){
+    if(!G || G.length < 2) return;
+    var cur = sdOf(P);
+    function build(rowId, boxId, labelFn, curLabel, axis){
+      var row = $(rowId), box = $(boxId);
+      if(!row) return;
+      var seen = {}, vals = [];
+      G.forEach(function(r){ var l = labelFn(sdOf(r)); if(l && !seen[l]){ seen[l] = 1; vals.push(l); } });
+      if(vals.length < 2) return;
+      row.innerHTML = '';
+      vals.forEach(function(l){
+        var any = G.some(function(r){ return labelFn(sdOf(r)) === l && (Number(r.stock_qty) || 0) > 0; });
+        var d = document.createElement('div');
+        d.className = 'pv-variant-pill' + (l === curLabel ? ' selected' : '') + (any ? '' : ' out');
+        d.textContent = l;
+        d.addEventListener('click', function(){ pickBy(axis, l); });
+        row.appendChild(d);
+      });
+      if(box) box.style.display = '';
+    }
+    build('potencyRow', 'potencyBox', potLabel, potLabel(cur), 'p');
+    build('countRow', 'countBox', cntLabel, cntLabel(cur), 'c');
+  }
+  function pickBy(axis, label){
+    var cur = sdOf(P);
+    var other = axis === 'p' ? cntLabel(cur) : potLabel(cur);
+    var cands = G.filter(function(r){ var s = sdOf(r); return (axis === 'p' ? potLabel(s) : cntLabel(s)) === label; });
+    var best = cands.filter(function(r){ var s = sdOf(r); return (axis === 'p' ? cntLabel(s) : potLabel(s)) === other; })[0]
+      || cands.filter(function(r){ return (Number(r.stock_qty) || 0) > 0; })[0] || cands[0];
+    if(best && best.id !== P.id) selectVariant(best);
+  }
+  function selectVariant(r){
+    P = r;
+    try{ var u = new URL(location.href); u.searchParams.set('pid', r.id); history.replaceState(null, '', u.toString()); }catch(e){}
+    qty = 1;
+    var qv = $('qtyVal'); if(qv) qv.textContent = '1';
+    try{ apply(); }catch(e){ console.error('pv-live variant switch failed', e); }
+  }
+  function loadGroup(p){
+    if(!p || !p.variant_group_id) return Promise.resolve();
+    return sbClient.from('products').select(SEL)
+      .eq('variant_group_id', p.variant_group_id)
+      .eq('is_active', true).eq('archived', false).eq('is_web_published', true)
+      .then(function(res){
+        if(res.error || !Array.isArray(res.data) || res.data.length < 2) return;
+        return (window.svApplyAvailability ? svApplyAvailability(res.data) : Promise.resolve()).then(function(){
+          G = res.data.slice().sort(function(a, b){ return (sdOf(a).capsule_count || 0) - (sdOf(b).capsule_count || 0); });
+          P = G.filter(function(r){ return r.id === p.id; })[0] || p;
+          loadReviews(G.map(function(r){ return r.id; }));
+        });
+      }).catch(function(){});
+  }
+
   function apply(){
     var title = (P.brand ? P.brand + ' ' : '') + P.name;
     var catLabel = P.subcategory || TYPE_BY_CAT[P.category] || '';
@@ -239,6 +299,13 @@
     var w = Array.isArray(P.product_web) ? P.product_web[0] : P.product_web;
     var st = (w && w.settings) || {};
     var images = (w && Array.isArray(w.web_images)) ? w.web_images : [];
+    if(!images.length && G){
+      G.forEach(function(r){
+        if(images.length) return;
+        var rw = Array.isArray(r.product_web) ? r.product_web[0] : r.product_web;
+        if(rw && Array.isArray(rw.web_images) && rw.web_images.length) images = rw.web_images;
+      });
+    }
 
     if($('pvNameEl')) $('pvNameEl').textContent = title;
     if($('pvCat') && catLabel) $('pvCat').textContent = catLabel;
@@ -275,6 +342,7 @@
       sbClient.from('supplement_details').select('potency_amount,potency_unit,capsule_count').eq('product_id', P.id).maybeSingle()
         .then(function(r){ showBadges(r && r.data); }).catch(function(){});
     }
+    renderVariantPills();
 
     // Expiry: show the soonest expiry among in-stock batches (FEFO — first-expired-first-out display rule)
     var expiryEl = $('pvExpiryVal');
@@ -319,10 +387,14 @@
       rollQtyNumber($('qtyVal'), qty);
       if(d > 0 && qty === max && qty0 > 0 && qty0 < 10) showPvToast('Only ' + qty0 + ' in stock');
     };
+    var cartBtn = document.querySelector('.pv-btn-cart'), buyBtn = document.querySelector('.pv-btn-buy');
+    if(cartBtn && cartBtn.dataset.t0 === undefined) cartBtn.dataset.t0 = cartBtn.lastChild.textContent;
     if(stock === 'out'){
-      var cartBtn = document.querySelector('.pv-btn-cart'), buyBtn = document.querySelector('.pv-btn-buy');
       [cartBtn, buyBtn].forEach(function(b){ if(b){ b.disabled = true; b.style.opacity = '.5'; b.style.pointerEvents = 'none'; } });
       if(cartBtn) cartBtn.lastChild.textContent = ' Out of Stock';
+    } else {
+      [cartBtn, buyBtn].forEach(function(b){ if(b){ b.disabled = false; b.style.opacity = ''; b.style.pointerEvents = ''; } });
+      if(cartBtn && cartBtn.dataset.t0 !== undefined) cartBtn.lastChild.textContent = cartBtn.dataset.t0;
     }
     window.addToCart = function(){
       if(stock === 'out'){ showPvToast('Out of stock'); return; }
@@ -331,7 +403,7 @@
       var ex = cart.find(function(c){ return c.id === P.id; });
       if(ex) ex.qty = Math.min(10, ex.qty + q);
       else cart.push({
-        id: P.id, productId: P.id, sku: P.sku || '', name: title, variant: '',
+        id: P.id, productId: P.id, sku: P.sku || '', name: title, variant: (G && G.length > 1) ? variantLabel(P) : '',
         price: price, oldPrice: old || null, qty: q, img: images[0] || null, locked: false,
         type: TYPE_BY_CAT[P.category] || 'General', category: catLabel
       });
@@ -344,14 +416,14 @@
   loadReviews(pid);
   wireWriteReview(pid);
   sbClient.from('products')
-    .select('id,sku,name,brand,category,subcategory,price,old_price,stock_qty,product_web(web_description,web_images,seo_title,seo_description,settings),supplement_details(potency_amount,potency_unit,capsule_count)')
+    .select(SEL)
     .eq('id', pid).eq('is_active', true).eq('archived', false).eq('is_web_published', true)
     .maybeSingle()
     .then(function(res){
       if(res.error){ console.error(res.error); reveal(); return; }
       if(!res.data){ unavailable(); reveal(); return; }
       P = res.data;
-      return (window.svApplyAvailability ? svApplyAvailability([P]) : Promise.resolve()).then(function(){
+      return loadGroup(P).then(function(){ return (window.svApplyAvailability ? svApplyAvailability([P]) : Promise.resolve()); }).then(function(){
       try{ apply(); }catch(e){ console.error('pv-live apply failed', e); }
       reveal();
       });
