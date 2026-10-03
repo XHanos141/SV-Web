@@ -327,6 +327,19 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 .s-nav-badge.show{opacity:1;transform:scale(1)}
 .s-nav-badge-num{display:block;font:inherit;line-height:inherit;will-change:transform,opacity}
 @media (prefers-reduced-motion:reduce){.s-nav-badge{transition:opacity .01s}}
+
+.oc-status-pill.unpaid,.oc-status-pill.awaiting_payment{ background:var(--orange-soft);color:var(--orange);border-color:rgba(242,100,48,0.4); }
+.oc-status-pill.verifying,.oc-status-pill.cod_pending{ background:var(--accent-soft);color:var(--accent);border-color:rgba(10,155,220,0.4); }
+.so-items{margin:4px 0 8px}
+.so-item{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed rgba(128,128,128,.25);font-size:13px}
+.so-item span:first-child{flex:1}
+.so-sum{margin-top:8px;font-size:13px}
+.so-sum div{display:flex;justify-content:space-between;padding:3px 0}
+.so-sum .so-total{font-weight:800;font-size:15px;border-top:1px solid rgba(128,128,128,.3);margin-top:6px;padding-top:8px}
+.so-note{margin:12px 0 4px;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.5;background:var(--orange-soft);border:1px solid rgba(242,100,48,0.35)}
+.so-note.info{background:var(--accent-soft);border-color:rgba(10,155,220,0.35)}
+.so-note.bad{background:rgba(217,83,83,0.10);border-color:rgba(217,83,83,0.35)}
+.so-btn{margin-top:10px;display:block;width:100%;border:0;border-radius:12px;padding:12px;font-weight:800;font-size:13px;background:var(--accent);color:#fff;cursor:pointer}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
@@ -387,110 +400,9 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 </div>
 
 <div id="viewStoreOrders">
-<div class="order-list">
-  <div class="order-card">
-
-    <div class="oc-head" onclick="this.closest('.order-card').classList.toggle('collapsed')">
-      <div class="oc-head-left">
-        <div class="oc-id-row">
-          <span class="oc-id-label">Order ID</span>
-          <div class="oc-id store">SV-1021</div>
-        </div>
-        <div class="oc-meta">Order created <span class="oc-meta-date">24 Aug 2026</span></div>
-      </div>
-      <div class="oc-head-right">
-        <div class="oc-status-wrap">
-          <span class="oc-status-pill delivered">Delivered</span>
-          <span class="oc-status-date">27 Aug 2026</span>
-        </div>
-        <svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-    </div>
-
-    <div class="oc-body">
-
-      <div class="oc-customer-wrap">
-        <div class="oc-section-label">Customer</div>
-        <div class="oc-customer-card">
-          <div class="oc-customer-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span>Rafiq Ahmed</span>
-          </div>
-          <div class="oc-customer-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            <span>+880 1712-345678</span>
-          </div>
-          <div class="oc-customer-row addr">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>House 14, Road 7, Dhanmondi, Dhaka</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="oc-subsection">
-        <div class="oc-subhead" onclick="this.closest('.oc-subsection').classList.toggle('collapsed')">
-          <div class="oc-section-label">Items &amp; Summary</div>
-          <div class="oc-subhead-right">
-            <span class="oc-subtotal-preview">৳8,400</span>
-            <svg class="oc-sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-        </div>
-        <div class="oc-subsection-content"><div>
-        <div class="oc-item-row">
-          <div class="oc-item-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.5 7.28a1 1 0 0 0-.5-.87l-7.5-4.33a1 1 0 0 0-1 0L4 6.41a1 1 0 0 0-.5.87v8.44a1 1 0 0 0 .5.87l7.5 4.33a1 1 0 0 0 1 0l7.5-4.33a1 1 0 0 0 .5-.87z"/></svg></div>
-          <div style="flex:1;min-width:0">
-            <div class="oc-item-name-row">
-              <span class="oc-cat-badge cat-supplement"><svg viewBox="0 0 512 512"><use href="#cat-icon-supplement"/></svg></span>
-              <div class="oc-item-name">Optimum Nutrition Gold Standard 100% Whey</div>
-            </div>
-            <div class="oc-item-sub">2 lb · Chocolate</div>
-          </div>
-          <div class="oc-item-math">
-            <div class="oc-item-qtyprice">1 × ৳4,200</div>
-            <div class="oc-item-linetotal">৳4,200</div>
-          </div>
-        </div>
-        <div class="oc-item-row">
-          <div class="oc-item-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.5 7.28a1 1 0 0 0-.5-.87l-7.5-4.33a1 1 0 0 0-1 0L4 6.41a1 1 0 0 0-.5.87v8.44a1 1 0 0 0 .5.87l7.5 4.33a1 1 0 0 0 1 0l7.5-4.33a1 1 0 0 0 .5-.87z"/></svg></div>
-          <div style="flex:1;min-width:0">
-            <div class="oc-item-name-row">
-              <span class="oc-cat-badge cat-supplement"><svg viewBox="0 0 512 512"><use href="#cat-icon-supplement"/></svg></span>
-              <div class="oc-item-name">Dymatize Creatine Monohydrate</div>
-            </div>
-            <div class="oc-item-sub">300g</div>
-          </div>
-          <div class="oc-item-math">
-            <div class="oc-item-qtyprice">2 × ৳2,100</div>
-            <div class="oc-item-linetotal">৳4,200</div>
-          </div>
-        </div>
-        <div class="oc-math-card">
-          <div class="oc-math-row"><span>Subtotal</span><span>৳8,400</span></div>
-          <div class="oc-math-row"><span>Shipping</span><span>৳120</span></div>
-          <div class="oc-math-row discount"><span>Discount</span><span>−৳120</span></div>
-          <div class="oc-math-row total"><span>Total</span><span>৳8,400</span></div>
-        </div>
-        </div></div>
-      </div>
-
-      <div>
-        <div class="oc-section-label">Delivery Timeline</div>
-        <div class="oc-progress">
-          <div class="oc-step done"><div class="oc-line"></div><div class="oc-dot"></div><div class="oc-step-label">Ordered</div></div>
-          <div class="oc-step done"><div class="oc-line"></div><div class="oc-dot"></div><div class="oc-step-label">Processing</div></div>
-          <div class="oc-step done"><div class="oc-line"></div><div class="oc-dot"></div><div class="oc-step-label">Shipped</div></div>
-          <div class="oc-step done delivered"><div class="oc-line"></div><div class="oc-dot"></div><div class="oc-step-label">Delivered</div></div>
-        </div>
-      </div>
-
-      <button class="oc-track-link">Need Help With This Order?</button>
-
-    </div>
-  </div>
-</div>
+<div class="order-list" id="storeList"><div class="px-state">Loading your orders…</div></div>
 </div>
 
-<!-- PROXY ORDERS -->
 <div id="viewProxyOrders" style="display:none">
 <div class="order-list" id="proxyList"><div class="px-state">Loading your requests…</div></div>
 </div>
@@ -729,6 +641,108 @@ async function loadProxyOrders(){
   list.innerHTML = data.map(pxRender).join('');
   if(open.size) list.querySelectorAll('.order-card').forEach(c => { if(!open.has(c.dataset.rid)) c.classList.add('collapsed'); });
 }
+
+
+/* ===== Store orders (live) ===== */
+const SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', cancelled:'Cancelled' };
+function soEsc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function soMoney(n){ return '৳' + Number(n || 0).toLocaleString('en-IN'); }
+function soDate(iso){ try{ return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
+function soLeft(untilIso){
+  const ms = new Date(untilIso).getTime() - Date.now();
+  if(!(ms > 0)) return '0m';
+  const m = Math.floor(ms / 60000), h = Math.floor(m / 60);
+  return h > 0 ? h + 'h ' + (m % 60) + 'm' : m + 'm';
+}
+function soNote(o){
+  if(o.state === 'awaiting_payment') return '<div class="so-note">Waiting for your payment. '+(o.voucher_code ? 'Your voucher is held for you' : 'Please complete it')+' until <b data-until="'+soEsc(o.pay_expires_at)+'" data-fmt="clock"></b>. Go back to checkout to pay.</div>';
+  if(o.state === 'unpaid') return '<div class="so-note">Not paid yet. This order will be cancelled automatically in <b data-until="'+soEsc(o.auto_cancel_at)+'" data-fmt="left"></b>. Already sent the money? Contact us with your transaction ID.<button class="so-btn" data-act="repay" data-id="'+soEsc(o.id)+'">Pay again</button></div>';
+  if(o.state === 'verifying') return '<div class="so-note info">We received your transaction ID ('+soEsc(o.payment_ref)+') and will confirm your payment shortly.</div>';
+  if(o.state === 'cod_pending') return '<div class="so-note info">Cash on delivery. We will confirm this order with you.</div>';
+  if(o.state === 'cancelled') return '<div class="so-note bad">Cancelled: '+soEsc(o.cancel_reason || 'Cancelled')+'.'+(o.cancel_reason === 'Not paid in time' ? '<button class="so-btn" data-act="repay" data-id="'+soEsc(o.id)+'">Order again</button>' : '')+'</div>';
+  return '';
+}
+function soRender(o){
+  const label = SO_LABEL[o.state] || (o.state ? o.state.charAt(0).toUpperCase() + o.state.slice(1) : 'Order');
+  const items = (o.items || []).map(i => '<div class="so-item"><span>'+soEsc(i.name)+' <small>× '+soEsc(i.qty)+'</small></span><span>'+soMoney(Number(i.price) * Number(i.qty))+'</span></div>').join('');
+  const disc = Number(o.discount) > 0 ? '<div><span>Discount'+(o.voucher_code ? ' ('+soEsc(o.voucher_code)+')' : '')+'</span><span>-'+soMoney(o.discount)+'</span></div>' : '';
+  const ship = '<div><span>Shipping</span><span>'+(Number(o.shipping) === 0 ? 'Free' : soMoney(o.shipping))+'</span></div>';
+  return '<div class="order-card collapsed" data-oid="'+soEsc(o.id)+'">'
+    +'<div class="oc-head" onclick="this.closest(\'.order-card\').classList.toggle(\'collapsed\')">'
+      +'<div class="oc-head-left"><div class="oc-id-row"><span class="oc-id-label">Order ID</span><div class="oc-id store">'+soEsc(o.order_number)+'</div></div>'
+      +'<div class="oc-meta">Order created <span class="oc-meta-date">'+soDate(o.created_at)+'</span></div></div>'
+      +'<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill '+soEsc(o.state)+'">'+soEsc(label)+'</span></div>'
+      +'<svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>'
+    +'</div>'
+    +'<div class="oc-body">'
+      +'<div class="so-items">'+items+'</div>'
+      +'<div class="so-sum"><div><span>Subtotal</span><span>'+soMoney(o.subtotal)+'</span></div>'+disc+ship
+      +'<div class="so-total"><span>Total</span><span>'+soMoney(o.total)+'</span></div></div>'
+      +soNote(o)
+    +'</div></div>';
+}
+function soTick(){
+  document.querySelectorAll('#storeList [data-until]').forEach(el => {
+    const iso = el.getAttribute('data-until');
+    if(el.getAttribute('data-fmt') === 'clock'){ try{ el.textContent = new Date(iso).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){} }
+    else el.textContent = soLeft(iso);
+  });
+}
+let _soBusy = false;
+async function loadStoreOrders(){
+  const list = document.getElementById('storeList');
+  if(!list || _soBusy) return;
+  _soBusy = true;
+  try{
+    let session = null;
+    try{ const r = await sbClient.auth.getSession(); session = r.data && r.data.session; }catch(e){}
+    if(!session){
+      list.innerHTML = '<div class="px-state">Log in to see your orders.<br><br><a href="login.html" id="soLoginLink">Log in</a></div>';
+      const l = document.getElementById('soLoginLink');
+      if(l) l.addEventListener('click', () => { try{ sessionStorage.setItem('sv-login-return','orders.html'); }catch(e){} });
+      return;
+    }
+    const res = await sbClient.rpc('my_orders');
+    if(res.error || !res.data || !res.data.ok){
+      list.innerHTML = '<div class="px-state">Could not load your orders. Please try again.</div>';
+      return;
+    }
+    const orders = res.data.orders || [];
+    if(!orders.length){
+      list.innerHTML = '<div class="px-state">No orders yet.<br><br><a href="store.html">Browse the store</a></div>';
+      return;
+    }
+    const open = new Set([...list.querySelectorAll('.order-card:not(.collapsed)')].map(c => c.dataset.oid));
+    list.innerHTML = orders.map(soRender).join('');
+    list.querySelectorAll('.order-card').forEach(c => {
+      const st = c.querySelector('.oc-status-pill').className;
+      const needsAction = /unpaid|awaiting_payment/.test(st);
+      if(open.has(c.dataset.oid) || (needsAction && !open.size)) c.classList.remove('collapsed');
+    });
+    soTick();
+  } finally { _soBusy = false; }
+}
+document.addEventListener('click', function(e){
+  const b = e.target.closest && e.target.closest('.so-btn'); if(!b) return;
+  const id = b.dataset.id;
+  sbClient.rpc('my_orders').then(res => {
+    const o = res && res.data && res.data.orders && res.data.orders.find(x => x.id === id);
+    if(!o) return;
+    let cartNow = []; try{ cartNow = JSON.parse(localStorage.getItem('sv-cart-internal') || '[]'); }catch(e){}
+    if(cartNow.length && !confirm('Your cart will be replaced with the items from order ' + o.order_number + '. Continue?')) return;
+    const cart = (o.items || []).map(i => ({ sku:i.sku, name:i.name, price:Number(i.price), qty:Number(i.qty) }));
+    try{
+      localStorage.setItem('sv-cart-internal', JSON.stringify(cart));
+      sessionStorage.setItem('sv-unpaid-order', o.id);
+    }catch(e){}
+    location.href = 'payment.html';
+  });
+});
+loadStoreOrders();
+setInterval(soTick, 30000);
+setInterval(() => { if(!document.hidden) loadStoreOrders(); }, 60000);
+window.addEventListener('pageshow', e => { if(e.persisted) loadStoreOrders(); });
+document.addEventListener('visibilitychange', () => { if(!document.hidden) loadStoreOrders(); });
 
 document.addEventListener('click', async function(e){
   const b = e.target.closest && e.target.closest('.px-btn'); if(!b) return;
