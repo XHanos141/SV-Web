@@ -291,7 +291,7 @@
 
   function apply(){
     var title = (P.brand ? P.brand + ' ' : '') + P.name;
-    var sdT = sdOf(P), specT = [potLabel(sdT).toUpperCase(), cntLabel(sdT)].filter(Boolean).join(' ');
+    var sdT = sdOf(P), specT = [potLabel(sdT), cntLabel(sdT)].filter(Boolean).join(' ');
     if(specT) title += ' ' + specT;
     var catLabel = P.subcategory || TYPE_BY_CAT[P.category] || '';
     var qty0 = Number(P.stock_qty) || 0;
