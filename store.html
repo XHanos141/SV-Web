@@ -1528,11 +1528,11 @@ function renderCard(p,i){
   return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (i*0.06) + 's;cursor:pointer" onclick="window.location.href=\'' + pvUrl + '\'">' +
     '<div class="p-img-wrap">' + gridImg + stockBadge + saleBadge + outBar + '</div>' +
     '<div class="p-body">' +
-      '<div class="p-meta"><span class="p-cat">' + esc(p.cat) + '</span>' + (p.groupSize > 1 ? '<span class="p-opts">' + p.groupSize + ' options</span>' : '') + (p.rating > 0 ? '<span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span>' : '') + '</div>' +
+      '<div class="p-meta"><span class="p-cat">' + esc(p.cat) + '</span>' + (p.rating > 0 ? '<span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span>' : '') + '</div>' +
       '<div class="p-name">' + esc(svTitle(p)) + '</div>' +
       '<div class="p-footer">' +
         '<div class="p-price-block' + (p.old ? '' : ' no-discount') + '">' +
-          '<div class="p-price">' + (p.priceRange ? '<span class="p-from">from </span>' : '') + '৳' + p.price.toLocaleString() + '</div>' +
+          '<div class="p-price">' + '৳' + p.price.toLocaleString() + '</div>' +
           (p.old ? '<div class="p-old-row"><span class="p-old-price">৳' + p.old.toLocaleString() + '</span><span class="p-discount-inline">' + p.discount + '</span></div>' : '') +
         '</div>' + actions +
       '</div>' +
