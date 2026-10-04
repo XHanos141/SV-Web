@@ -420,17 +420,21 @@
     }
     window.addToCart = function(){
       if(stock === 'out'){ showPvToast('Out of stock'); return; }
-      var q = Math.min(qty, Math.max(1, Math.min(10, qty0)));
+      var cap = Math.max(1, Math.min(10, qty0));
+      var q = Math.min(qty, cap);
       var cart = readCart();
       var ex = cart.find(function(c){ return c.id === P.id; });
-      if(ex) ex.qty = Math.min(10, ex.qty + q);
+      var have = ex ? (Number(ex.qty) || 0) : 0;
+      if(have >= cap){ showPvToast(qty0 < 10 ? 'Only ' + qty0 + ' in stock, already in your cart' : 'Max ' + cap + ' per order, already in your cart'); return; }
+      if(have + q > cap){ q = cap - have; showPvToast('Only ' + cap + ' available, added ' + q); }
+      else showPvToast('Added ' + q + ' to cart');
+      if(ex) ex.qty = have + q;
       else cart.push({
         id: P.id, productId: P.id, sku: P.sku || '', name: cartTitle, baseName: baseTitle, spec: specT, variant: specT ? '' : ((G && G.length > 1) ? variantLabel(P) : ''),
         price: price, oldPrice: old || null, qty: q, img: images[0] || null, locked: false,
         type: TYPE_BY_CAT[P.category] || 'General', category: catLabel
       });
       writeCart(cart);
-      showPvToast('Added ' + q + ' to cart');
     };
   }
 
