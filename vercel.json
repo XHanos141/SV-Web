@@ -33,5 +33,23 @@
       "source": "/p/:slug",
       "destination": "/api/product?slug=:slug"
     }
-  ]
+  ],
+  "images": {
+    "sizes": [
+      640,
+      800,
+      1200
+    ],
+    "qualities": [
+      70
+    ],
+    "minimumCacheTTL": 86400,
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "tlkoxltugvfwxmnrthvr.supabase.co",
+        "pathname": "/storage/v1/object/public/**"
+      }
+    ]
+  }
 }

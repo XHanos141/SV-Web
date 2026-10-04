@@ -26,6 +26,11 @@ function absUrl(u) {
   if (/^https?:\/\//i.test(u)) return u;
   return SITE_URL + (u.charAt(0) === '/' ? '' : '/') + u;
 }
+function shareImg(u) {
+  const a = absUrl(u);
+  if (!a || a.indexOf(SB + '/storage/v1/object/public/') !== 0) return a;
+  return SITE_URL + '/_vercel/image?url=' + encodeURIComponent(a) + '&w=800&q=70';
+}
 function metaTags(row, prod, slug) {
   const w = row;
   const spec = specOf(one(prod.supplement_details));
@@ -36,7 +41,7 @@ function metaTags(row, prod, slug) {
     || (plain ? plain.slice(0, 155) : 'Buy ' + autoTitle + ' in Bangladesh from ' + SITE_NAME + '.');
   const price = Number(prod.price) || 0;
   const imgs = Array.isArray(w.web_images) ? w.web_images : [];
-  const img = absUrl(imgs[0]);
+  const img = shareImg(imgs[0]);
   const url = SITE_URL + '/p/' + slug;
   const shareDesc = price ? desc + ' \u2014 \u09F3' + price.toLocaleString('en-US') : desc;
   const out = [
