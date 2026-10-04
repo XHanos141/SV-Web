@@ -1,4 +1,4 @@
-const { SITE_URL, SITE_NAME, SB, KEY } = require('./_site');
+const { SITE_URL, SITE_NAME, SB, KEY, SHARE_IMAGE } = require('./_site');
 const PAGES = {
   supplement: 'product_view_supplement.html',
   gadget: 'product_view_gadget.html',
@@ -38,7 +38,7 @@ function metaTags(row, prod, slug) {
     || (plain ? plain.slice(0, 155) : 'Buy ' + autoTitle + ' in Bangladesh from ' + SITE_NAME + '.');
   const price = Number(prod.price) || 0;
   const imgs = Array.isArray(w.web_images) ? w.web_images : [];
-  const img = shareImg(imgs[0]);
+  const img = shareImg(imgs[0]) || (SITE_URL + SHARE_IMAGE);
   const url = SITE_URL + '/p/' + slug;
   const shareDesc = price ? desc + ' \u2014 \u09F3' + price.toLocaleString('en-US') : desc;
   const out = [
