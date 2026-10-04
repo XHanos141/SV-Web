@@ -359,6 +359,30 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 .so-note.bad{background:rgba(217,83,83,0.10);border-color:rgba(217,83,83,0.35)}
 .so-btn{margin-top:8px;display:block;width:100%;border:0;border-radius:var(--radius-sm);padding:9px 12px;font-family:var(--font-display);font-weight:800;font-size:12.5px;letter-spacing:.2px;background:var(--accent);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s ease}
 .so-btn:active{transform:scale(.98)}
+
+/* ===== Store order cards v2 (approved design) — scoped to .so-v2 so the old live card is untouched ===== */
+#storeList .so-v2 .oc-body{ gap:14px;padding:14px; }
+#storeList .so-v2 .so-note{ margin-top:0; }
+#storeList .so-v2 .so-note.ok{ background:var(--green-soft);border-color:rgba(10,155,114,0.35); }
+#storeList .so-v2 .oc-item-sub{ margin-left:0; }
+#storeList .so-v2 .oc-item-qtyprice{ margin-top:2px; }
+#storeList .so-v2 .oc-item-linetotal{ margin-top:0; }
+#storeList .so-v2 .oc-math-row.trx span:last-child{ font-weight:800;letter-spacing:.3px; }
+#storeList .so-v2 .oc-status-pill{ border-radius:999px;padding:3px 10px; }
+#storeList .so-v2 .oc-status-pill.paid,
+#storeList .so-v2 .oc-status-pill.processing,
+#storeList .so-v2 .oc-status-pill.shipped{ background:var(--accent-soft);color:var(--accent);border-color:rgba(10,155,220,0.4); }
+#storeList .so-v2 .oc-status-pill.delivered{ background:var(--green-soft);color:var(--green);border-color:rgba(10,155,114,0.4); }
+#storeList .so-v2 .oc-status-date .tm{ color:var(--yellow);font-weight:800; }
+#storeList .so-v2 .oc-step.current .oc-line{ background:var(--accent); }
+#storeList .so-v2 .oc-actions{ display:flex;flex-direction:column;gap:8px; }
+#storeList .so-v2 .oc-actions-row{ display:flex;gap:8px; }
+#storeList .so-v2 .oc-action{ display:flex;align-items:center;justify-content:center;width:100%;background:var(--accent);color:#fff;border:1.5px solid var(--accent);border-radius:var(--radius-sm);padding:10px;font-family:var(--font-display);font-size:12.5px;font-weight:800;cursor:pointer; }
+#storeList .so-v2 .oc-actions-row .oc-action{ flex:1;min-width:0;padding:10px 6px; }
+#storeList .so-v2 .oc-action:active{ transform:scale(.98); }
+#storeList .so-v2 .oc-action.danger{ background:#d95353;border-color:#d95353; }
+#storeList .so-v2 .oc-track-link{ background:transparent;color:var(--accent);border:1.5px solid var(--accent);box-shadow:none;padding:10px; }
+.so-demo-label{ font-size:11px;font-weight:700;color:var(--text3);padding:10px 4px 0;letter-spacing:.3px;text-transform:uppercase; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
@@ -663,7 +687,9 @@ async function loadProxyOrders(){
 
 
 /* ===== Store orders (live) ===== */
-const SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', cancelled:'Cancelled' };
+/* TEMP: true = show every sample state with the new card design (design review). Set to false to load real orders via my_orders. */
+const SO_DEMO = true;
+const SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
 function soEsc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function soMoney(n){ return '৳' + Number(n || 0).toLocaleString('en-IN'); }
 function soDate(iso){ try{ return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
@@ -700,6 +726,135 @@ function soRender(o){
       +soNote(o)
     +'</div></div></div></div>';
 }
+
+/* ===== Store order card v2 renderer (approved design). Fed by demo data now, by my_orders later. ===== */
+const SO_ICO = {
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>',
+  chev:'<svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  subchev:'<svg class="oc-sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'
+};
+const SO_TIMELINE = { paid:0, processing:1, shipped:2, delivered:3 };
+function soTimeline(state){
+  const idx = SO_TIMELINE[state]; if(idx === undefined) return '';
+  const names = ['Ordered','Processing','Shipped','Delivered'];
+  return '<div><div class="oc-section-label">Delivery Timeline</div><div class="oc-progress">'
+    + names.map((n,i) => '<div class="oc-step'+(i<=idx?' done':'')+(i===idx && state!=='delivered'?' current':'')+(i===3?' delivered':'')+'"><div class="oc-line"></div><div class="oc-dot"></div><div class="oc-step-label">'+n+'</div></div>').join('')
+    + '</div></div>';
+}
+function soStatusLine(o){
+  switch(o.state){
+    case 'awaiting_payment': return 'Pay within <b class="tm" data-until="'+soEsc(o.pay_expires_at)+'" data-fmt="left"></b>';
+    case 'unpaid': return 'Cancels in <b class="tm" data-until="'+soEsc(o.auto_cancel_at)+'" data-fmt="left"></b>';
+    case 'verifying': return 'Confirming shortly';
+    case 'cod_pending': return 'Awaiting confirmation';
+    case 'paid': return 'Paid ' + soDate(o.paid_at);
+    case 'processing': return 'Preparing your order';
+    case 'shipped': return 'Shipped ' + soDate(o.shipped_at);
+    case 'delivered': return 'Delivered ' + soDate(o.delivered_at);
+    case 'cancelled': return 'Cancelled ' + soDate(o.cancelled_at || o.created_at);
+  }
+  return '';
+}
+function soNoteV2(o){
+  switch(o.state){
+    case 'awaiting_payment': return '<div class="so-note">Waiting for your payment. '+(o.voucher_code ? 'Your voucher is held for you' : 'Please complete it')+' until <b data-until="'+soEsc(o.pay_expires_at)+'" data-fmt="clock"></b>. Go back to checkout to pay.</div>';
+    case 'unpaid': return '<div class="so-note">Not paid yet. This order will be cancelled automatically in <b data-until="'+soEsc(o.auto_cancel_at)+'" data-fmt="left"></b>. Already sent the money? Contact us with your transaction ID.</div>';
+    case 'verifying': return '<div class="so-note info">We received your transaction ID ('+soEsc(o.payment_ref)+') and will confirm your payment shortly.</div>';
+    case 'cod_pending': return '<div class="so-note info">Cash on delivery. We will confirm this order with you.</div>';
+    case 'paid': return '<div class="so-note ok">Payment received. We are getting your order ready.</div>';
+    case 'processing': return '<div class="so-note info">Your order is being packed. We will hand it to the courier soon.</div>';
+    case 'shipped': return '<div class="so-note info">Your order is with the courier and on its way to you.</div>';
+    case 'delivered': return '<div class="so-note ok">Your order was delivered. Thank you for shopping with us. If anything is wrong, tap Need Help below.</div>';
+    case 'cancelled': return '<div class="so-note bad">Cancelled: '+soEsc(o.cancel_reason || 'Cancelled')+'.</div>';
+  }
+  return '';
+}
+function soPaymentV2(o){
+  const row = (k,v,c) => '<div class="oc-math-row'+(c?' '+c:'')+'"><span>'+k+'</span><span>'+v+'</span></div>';
+  let rows = '';
+  if(o.state === 'verifying') rows = row('Method', soEsc(o.payment_method||'')) + row('Transaction ID', soEsc(o.payment_ref||''), 'trx') + row('Status', 'Verifying');
+  else if(o.state === 'cod_pending') rows = row('Method', 'Cash on delivery') + row('Pay on delivery', soMoney(o.total));
+  else if(o.state === 'paid') rows = row('Method', soEsc(o.payment_method||'')) + row('Transaction ID', soEsc(o.payment_ref||''), 'trx') + row('Paid on', soDate(o.paid_at));
+  else return '';
+  return '<div><div class="oc-section-label">Payment</div><div class="oc-math-card" style="margin-top:0">'+rows+'</div></div>';
+}
+function soActionsV2(o){
+  const id = soEsc(o.id), A = (label, act, cls) => '<button class="oc-action'+(cls?' '+cls:'')+'" data-act="'+act+'" data-id="'+id+'">'+label+'</button>';
+  let btns = '';
+  if(o.state === 'awaiting_payment') btns = A('Pay now','paynow');
+  else if(o.state === 'unpaid') btns = A('Pay again','repay');
+  else if(o.state === 'cod_pending') btns = A('Cancel order','cancel','danger');
+  else if(o.state === 'paid') btns = A('Download invoice','invoice');
+  else if(o.state === 'delivered') btns = '<div class="oc-actions-row">'+A('Order again','reorder')+A('Download invoice','invoice')+'</div>';
+  else if(o.state === 'cancelled' && o.cancel_reason === 'Not paid in time') btns = A('Order again','repay');
+  const bottomNote = ['awaiting_payment','unpaid','cod_pending','cancelled'].includes(o.state) ? soNoteV2(o) : '';
+  return '<div class="oc-actions">'+bottomNote+btns+'<button class="oc-track-link" data-act="help" data-id="'+id+'">Need Help With This Order?</button></div>';
+}
+function soItemsV2(o){
+  const items = o.items || [];
+  const rows = items.map(i => {
+    const qty = Number(i.qty) || 1, line = Number(i.price) * qty;
+    return '<div class="oc-item-row"><div class="oc-item-img">'+SO_ICO.box+'</div><div style="flex:1;min-width:0"><div class="oc-item-name-row"><div class="oc-item-name">'+soEsc(i.name)+'</div></div>'
+      + (i.variant ? '<div class="oc-item-sub">'+soEsc(i.variant)+'</div>' : '') + '</div>'
+      + '<div class="oc-item-math"><div class="oc-item-linetotal">'+soMoney(line)+'</div>'+(qty > 1 ? '<div class="oc-item-qtyprice">'+qty+' × '+soMoney(i.price)+'</div>' : '')+'</div></div>';
+  }).join('');
+  const disc = Number(o.discount) > 0 ? '<div class="oc-math-row discount"><span>Discount'+(o.voucher_code ? ' ('+soEsc(o.voucher_code)+')' : '')+'</span><span>−'+soMoney(o.discount)+'</span></div>' : '';
+  const ship = '<div class="oc-math-row"><span>Shipping</span><span>'+(Number(o.shipping) === 0 ? 'Free' : soMoney(o.shipping))+'</span></div>';
+  const math = '<div class="oc-math-card"><div class="oc-math-row"><span>Subtotal</span><span>'+soMoney(o.subtotal)+'</span></div>'+ship+disc+'<div class="oc-math-row total"><span>Total</span><span>'+soMoney(o.total)+'</span></div></div>';
+  const prev = items.length + ' item' + (items.length === 1 ? '' : 's') + ' · ' + soMoney(o.total);
+  return '<div class="oc-subsection"><div class="oc-subhead" onclick="this.closest(\'.oc-subsection\').classList.toggle(\'collapsed\')"><div class="oc-section-label">Items &amp; Summary</div><div class="oc-subhead-right"><span class="oc-subtotal-preview">'+prev+'</span>'+SO_ICO.subchev+'</div></div>'
+    + '<div class="oc-subsection-content"><div>'+rows+math+'</div></div></div>';
+}
+function soCustomerV2(o){
+  const c = o.customer || {};
+  return '<div class="oc-customer-wrap"><div class="oc-section-label">Customer</div><div class="oc-customer-card">'
+    + '<div class="oc-customer-row">'+SO_ICO.user+'<span>'+soEsc(c.name)+'</span></div>'
+    + '<div class="oc-customer-row">'+SO_ICO.phone+'<span>'+soEsc(c.phone)+'</span></div>'
+    + '<div class="oc-customer-row addr">'+SO_ICO.pin+'<span>'+soEsc(c.address)+'</span></div></div></div>';
+}
+function soRenderV2(o, opts){
+  opts = opts || {};
+  const label = SO_LABEL[o.state] || 'Order';
+  const topNote = ['verifying','paid','processing','shipped','delivered'].includes(o.state) ? soNoteV2(o) : '';
+  const body = topNote
+    + (o.state === 'cancelled' ? '' : soCustomerV2(o))
+    + soItemsV2(o) + soTimeline(o.state) + soPaymentV2(o) + soActionsV2(o);
+  return (opts.label ? '<div class="so-demo-label">'+soEsc(opts.label)+'</div>' : '')
+    + '<div class="order-card so-v2'+(opts.collapsed ? ' collapsed' : '')+'" data-oid="'+soEsc(o.id)+'">'
+    + '<div class="oc-head" onclick="this.closest(\'.order-card\').classList.toggle(\'collapsed\')">'
+    + '<div class="oc-head-left"><div class="oc-id-row"><span class="oc-id-label">Order ID</span><div class="oc-id store">'+soEsc(o.order_number)+'</div></div>'
+    + '<div class="oc-meta">Order created <span class="oc-meta-date">'+soDate(o.created_at)+'</span></div></div>'
+    + '<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill '+soEsc(o.state)+'">'+soEsc(label)+'</span><span class="oc-status-date">'+soStatusLine(o)+'</span></div>'+SO_ICO.chev+'</div></div>'
+    + '<div class="so-collapse"><div class="so-inner"><div class="oc-body">'+body+'</div></div></div></div>';
+}
+/* Sample orders — one per state, used while SO_DEMO is true */
+function soDemoOrders(){
+  const now = Date.now(), iso = ms => new Date(ms).toISOString(), day = 86400000;
+  const cust = { name:'Rafiq Ahmed', phone:'+880 1712-345678', address:'House 14, Road 7, Dhanmondi, Dhaka' };
+  const items = [ { name:'Optimum Nutrition Gold Standard 100% Whey', variant:'2 lb · Chocolate', qty:1, price:4200 }, { name:'Dymatize Creatine Monohydrate', variant:'300g', qty:2, price:2100 } ];
+  const base = { customer:cust, items:items, subtotal:8400, shipping:120, discount:120, voucher_code:'FREESHIP', total:8400, payment_method:'bKash', payment_ref:'DIQ3WOW6UJ' };
+  const mk = (state, num, daysAgo, extra) => Object.assign({}, base, { id:'demo-'+num, order_number:num, state:state, created_at:iso(now - daysAgo*day) }, extra || {});
+  return [
+    mk('awaiting_payment','SV-1036',0,{ pay_expires_at:iso(now + 18*60000) }),
+    mk('unpaid','SV-1029',0,{ auto_cancel_at:iso(now + (4*60+59)*60000) }),
+    mk('verifying','SV-1034',8),
+    mk('cod_pending','SV-1033',1,{ payment_method:'Cash on delivery', payment_ref:'' }),
+    mk('paid','SV-1031',14,{ paid_at:iso(now - 13*day) }),
+    mk('processing','SV-1038',6,{ paid_at:iso(now - 6*day) }),
+    mk('shipped','SV-1032',10,{ paid_at:iso(now - 10*day), shipped_at:iso(now - 8*day) }),
+    mk('delivered','SV-1027',19,{ paid_at:iso(now - 19*day), delivered_at:iso(now - 15*day) }),
+    mk('cancelled','SV-1035',4,{ cancel_reason:'Not paid in time', cancelled_at:iso(now - 4*day) })
+  ];
+}
+function renderStoreDemo(){
+  const list = document.getElementById('storeList'); if(!list) return;
+  if(list.querySelector('.so-v2')) return; // render once so expand/collapse state is kept
+  list.innerHTML = soDemoOrders().map((o,i) => soRenderV2(o, { label:(i+1)+' · '+SO_LABEL[o.state] })).join('');
+  soTick();
+}
 function soTick(){
   document.querySelectorAll('#storeList [data-until]').forEach(el => {
     const iso = el.getAttribute('data-until');
@@ -709,6 +864,7 @@ function soTick(){
 }
 let _soBusy = false;
 async function loadStoreOrders(){
+  if(SO_DEMO){ renderStoreDemo(); return; }
   const list = document.getElementById('storeList');
   if(!list || _soBusy) return;
   _soBusy = true;
@@ -744,7 +900,8 @@ async function loadStoreOrders(){
   } finally { _soBusy = false; }
 }
 document.addEventListener('click', function(e){
-  const b = e.target.closest && e.target.closest('.so-btn'); if(!b) return;
+  if(SO_DEMO) return;
+  const b = e.target.closest && e.target.closest('.so-btn, .oc-action[data-act="repay"]'); if(!b) return;
   const id = b.dataset.id;
   sbClient.rpc('my_orders').then(res => {
     const o = res && res.data && res.data.orders && res.data.orders.find(x => x.id === id);
