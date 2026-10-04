@@ -70,13 +70,21 @@
   function buildGallery(images){
     var old = $('pvGallery');
     if(!old || !images.length) return;
+    var key = images.join('|');
+    if(old.getAttribute('data-imgkey') === key) return;
+    var h0 = old.offsetHeight;
     var g = old.cloneNode(false);               // fresh node, no listeners
+    g.setAttribute('data-imgkey', key);
+    if(h0 > 60){ g.style.minHeight = h0 + 'px'; }
     g.innerHTML =
       '<div class="pv-gallery-track" id="pvGalleryTrack">' +
         images.map(function(u){ return '<div class="pv-gallery-slide"><img src="' + u.replace(/"/g, '&quot;') + '" alt="" draggable="false"></div>'; }).join('') +
       '</div>' +
       '<div class="pv-dots" id="pvDots">' + (images.length > 1 ? images.map(function(_, i){ return '<div class="pv-dot' + (i === 0 ? ' active' : '') + '"></div>'; }).join('') : '') + '</div>';
     old.parentNode.replaceChild(g, old);
+    var im0 = g.querySelector('img');
+    function relax(){ g.style.minHeight = ''; }
+    if(im0){ if(im0.complete) relax(); else { im0.addEventListener('load', relax); im0.addEventListener('error', relax); } } else relax();
     var track = $('pvGalleryTrack'), dots = g.querySelectorAll('.pv-dot');
     var cur = 0, startX = 0, curX = 0, drag = false, moved = false, w = g.offsetWidth, n = images.length;
     function go(i, anim){
@@ -355,15 +363,22 @@
     var expiryEl = $('pvExpiryVal');
     var expiryRow = expiryEl && expiryEl.closest('.pv-spec');
     if(expiryEl && expiryRow){
-      hide(expiryRow); // hidden until we confirm a batch exists
-      sbClient.rpc('get_earliest_expiry', { p_product_id: P.id }).then(function(res){
-        if(res.error || !res.data) return;
-        var d = new Date(res.data + 'T00:00:00');
-        if(isNaN(d)) return;
-        var mm = String(d.getMonth() + 1).padStart(2, '0');
-        expiryEl.textContent = mm + '/' + d.getFullYear();
-        expiryRow.style.display = '';
-      });
+      var pidNow = P.id;
+      window.__pvExp = window.__pvExp || {};
+      function showExp(txt){ if(P.id !== pidNow) return; if(txt){ expiryEl.textContent = txt; expiryRow.style.display = ''; } else hide(expiryRow); }
+      if(pidNow in window.__pvExp) showExp(window.__pvExp[pidNow]);
+      else if(expiryRow.style.display === 'none' || !expiryEl.textContent.trim()) hide(expiryRow);
+      if(!(pidNow in window.__pvExp)){
+        sbClient.rpc('get_earliest_expiry', { p_product_id: pidNow }).then(function(res){
+          var txt = '';
+          if(!res.error && res.data){
+            var d = new Date(res.data + 'T00:00:00');
+            if(!isNaN(d)) txt = String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+          }
+          window.__pvExp[pidNow] = txt;
+          showExp(txt);
+        });
+      }
     }
 
     // description
