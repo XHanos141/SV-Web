@@ -369,6 +369,13 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 /* ===== Store order cards v2 (approved design) — scoped to .so-v2 so the old live card is untouched ===== */
 #storeList .so-v2 .oc-body{ gap:14px;padding:14px; }
 #storeList .so-v2 .so-note{ margin-top:0; }
+#storeList .so-v2 .so-note{ display:flex;align-items:flex-start;gap:9px; }
+#storeList .so-v2 .so-note .so-nt{ flex:1;min-width:0; }
+#storeList .so-v2 .so-note .so-ni{ flex-shrink:0;width:18px;height:18px;margin-top:1px;display:flex;color:var(--orange); }
+#storeList .so-v2 .so-note .so-ni svg{ width:18px;height:18px; }
+#storeList .so-v2 .so-note.info .so-ni{ color:var(--accent); }
+#storeList .so-v2 .so-note.ok .so-ni{ color:var(--green); }
+#storeList .so-v2 .so-note.bad .so-ni{ color:#d95353; }
 #storeList .so-v2 .so-note.ok{ background:var(--green-soft);border-color:rgba(10,155,114,0.35); }
 #storeList .so-v2 .oc-item-sub{ margin-left:0; }
 #storeList .so-v2 .oc-item-qtyprice{ margin-top:2px; }
@@ -769,7 +776,7 @@ function soStatusLine(o){
   }
   return '';
 }
-function soNoteV2(o){
+function soNoteRaw(o){
   switch(o.state){
     case 'awaiting_payment': return '<div class="so-note">Waiting for your payment. '+(o.voucher_code ? 'Your voucher is held for you' : 'Please complete it')+' until <b data-until="'+soEsc(o.pay_expires_at)+'" data-fmt="clock"></b>. Go back to checkout to pay.</div>';
     case 'unpaid': return '<div class="so-note">Not paid yet. This order will be cancelled automatically in <b data-until="'+soEsc(o.auto_cancel_at)+'" data-fmt="left"></b>. Already sent the money? Contact us with your transaction ID.</div>';
@@ -782,6 +789,17 @@ function soNoteV2(o){
     case 'cancelled': return '<div class="so-note bad">Cancelled: '+soEsc(o.cancel_reason || 'Cancelled')+'.</div>';
   }
   return '';
+}
+const SO_NI = {
+  info:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z"/></svg>',
+  warn:'<svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><g transform="translate(32,42.666667)"><path d="M246.312928,5.62892705 C252.927596,9.40873724 258.409564,14.8907053 262.189374,21.5053731 L444.667042,340.84129 C456.358134,361.300701 449.250007,387.363834 428.790595,399.054926 C422.34376,402.738832 415.04715,404.676552 407.622001,404.676552 L42.6666667,404.676552 C19.1025173,404.676552 7.10542736e-15,385.574034 7.10542736e-15,362.009885 C7.10542736e-15,354.584736 1.93772021,347.288125 5.62162594,340.84129 L188.099293,21.5053731 C199.790385,1.04596203 225.853517,-6.06216498 246.312928,5.62892705 Z M224,272 C208.761905,272 197.333333,283.264 197.333333,298.282667 C197.333333,313.984 208.415584,325.248 224,325.248 C239.238095,325.248 250.666667,313.984 250.666667,298.624 C250.666667,283.264 239.238095,272 224,272 Z M245.333333,106.666667 L202.666667,106.666667 L202.666667,234.666667 L245.333333,234.666667 L245.333333,106.666667 Z"/></g></svg>'
+};
+/* Note box with icon: info icon for info/ok notes, warning icon for orange (action needed) and red (cancelled) notes */
+function soNoteV2(o){
+  const raw = soNoteRaw(o); if(!raw) return '';
+  const m = raw.match(/^<div class="so-note( [a-z]+)?">([\s\S]*)<\/div>$/); if(!m) return raw;
+  const cls = m[1] || '', icon = (cls === ' info' || cls === ' ok') ? SO_NI.info : SO_NI.warn;
+  return '<div class="so-note'+cls+'"><span class="so-ni">'+icon+'</span><div class="so-nt">'+m[2]+'</div></div>';
 }
 function soPaymentV2(o){
   const row = (k,v,c) => '<div class="oc-math-row'+(c?' '+c:'')+'"><span>'+k+'</span><span>'+v+'</span></div>';
