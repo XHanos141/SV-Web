@@ -888,7 +888,7 @@ function soItemsV2(o){
   const disc = Number(o.discount) > 0 ? '<div class="oc-math-row discount"><span>'+SO_ICO.tag+'Discount'+(o.voucher_code ? ' ('+soEsc(o.voucher_code)+')' : '')+'</span><span>−'+soMoney(o.discount)+'</span></div>' : '';
   const free = Number(o.shipping) === 0;
   const ship = '<div class="oc-math-row ship'+(free ? ' free' : '')+'"><span>'+SO_ICO.truck+'Shipping</span><span>'+(free ? 'Free' : soMoney(o.shipping))+'</span></div>';
-  const math = '<div class="oc-math-card"><div class="oc-math-row"><span>Subtotal</span><span>'+soMoney(o.subtotal)+'</span></div>'+ship+disc+'<div class="oc-math-row total"><span>Total</span><span>'+soMoney(o.total)+'</span></div></div>';
+  const math = '<div class="oc-math-card"><div class="oc-math-row"><span>Subtotal</span><span>'+soMoney(o.subtotal)+'</span></div>'+disc+ship+'<div class="oc-math-row total"><span>Total</span><span>'+soMoney(o.total)+'</span></div></div>';
   const prev = items.length + ' item' + (items.length === 1 ? '' : 's') + ' · ' + soMoney(o.total);
   return '<div class="oc-subsection"><div class="oc-subhead" onclick="this.closest(\'.oc-subsection\').classList.toggle(\'collapsed\')"><div class="oc-section-label">Items &amp; Summary</div><div class="oc-subhead-right"><span class="oc-subtotal-preview">'+prev+'</span>'+SO_ICO.subchev+'</div></div>'
     + '<div class="oc-subsection-content"><div>'+rows+math+'</div></div></div>';
