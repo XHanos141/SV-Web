@@ -424,11 +424,9 @@
       var q = Math.min(qty, cap);
       var cart = readCart();
       var ex = cart.find(function(c){ return c.id === P.id; });
-      var have = ex ? (Number(ex.qty) || 0) : 0;
-      if(have >= cap){ showPvToast(qty0 < 10 ? 'Only ' + qty0 + ' in stock, already in your cart' : 'Max ' + cap + ' per order, already in your cart'); return; }
-      if(have + q > cap){ q = cap - have; showPvToast('Only ' + cap + ' available, added ' + q); }
-      else showPvToast('Added ' + q + ' to cart');
-      if(ex) ex.qty = have + q;
+      if(ex && Number(ex.qty) === q){ showPvToast('Already in cart (' + q + ')'); return; }
+      showPvToast(ex ? 'Cart updated to ' + q : 'Added ' + q + ' to cart');
+      if(ex) ex.qty = q;
       else cart.push({
         id: P.id, productId: P.id, sku: P.sku || '', name: cartTitle, baseName: baseTitle, spec: specT, variant: specT ? '' : ((G && G.length > 1) ? variantLabel(P) : ''),
         price: price, oldPrice: old || null, qty: q, img: images[0] || null, locked: false,
