@@ -1489,9 +1489,10 @@ renderTrending();
 
 const grid = document.getElementById('grid');
 
-function svTitle(p){
+function svTitle(p, plain){
   const brand = (p.brand || '').trim();
-  return (brand ? (brand + ' ' + p.name) : p.name) + (p.spec ? ' ' + p.spec : '');
+  const spec = p.spec ? (plain ? p.spec.split(' \u00b7 ').join(' ') : p.spec) : '';
+  return (brand ? (brand + ' ' + p.name) : p.name) + (spec ? ' ' + spec : '');
 }
 function slugify(str){
   return str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,40);
@@ -1517,7 +1518,7 @@ function addToCart(product){
       id: id,
       productId: product.id,
       sku: product.sku || '',
-      name: svTitle(product),
+      name: svTitle(product, true),
       variant: product.cat || '',
       price: product.price,
       oldPrice: product.old || null,
@@ -1612,7 +1613,7 @@ function buyNow(btn){
     id: product.id,
     productId: product.id,
     sku: product.sku || '',
-    name: svTitle(product),
+    name: svTitle(product, true),
     variant: product.cat || '',
     price: product.price,
     oldPrice: product.old || null,
@@ -2042,7 +2043,7 @@ function svMapProduct(r){
   if(sd){
     var pa = (sd.potency_amount != null && String(sd.potency_amount).trim() !== '') ? Number(sd.potency_amount) + ' ' + String(sd.potency_unit || '').toLowerCase() : '';
     var cc = sd.capsule_count != null ? sd.capsule_count + ' Capsules' : '';
-    spec = [pa.trim(), cc].filter(Boolean).join(' ');
+    spec = [pa.trim(), cc].filter(Boolean).join(' \u00b7 ');
   }
   var qty = Number(r.stock_qty) || 0;
   var type = SV_TYPE_BY_CAT[r.category] || 'General';

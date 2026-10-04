@@ -16,7 +16,7 @@ function specOf(sd) {
   const pot = (sd.potency_amount != null && String(sd.potency_amount).trim() !== '')
     ? Number(sd.potency_amount) + ' ' + String(sd.potency_unit || '').toLowerCase() : '';
   const cnt = sd.capsule_count != null ? sd.capsule_count + ' Capsules' : '';
-  return [pot.trim(), cnt].filter(Boolean).join(' ');
+  return [pot.trim(), cnt].filter(Boolean).join(' \u00b7 ');
 }
 function absUrl(u) {
   if (!u) return '';
