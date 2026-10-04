@@ -738,7 +738,7 @@ async function loadProxyOrders(){
 
 /* ===== Store orders (live) ===== */
 /* TEMP: true = show every sample state with the new card design (design review). Set to false to load real orders via my_orders. */
-const SO_DEMO = true;
+const SO_DEMO = false;
 const SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
 function soEsc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function soMoney(n){ return '৳' + Number(n || 0).toLocaleString('en-IN'); }
@@ -974,7 +974,7 @@ async function loadStoreOrders(){
       return;
     }
     const open = new Set([...list.querySelectorAll('.order-card:not(.collapsed)')].map(c => c.dataset.oid));
-    list.innerHTML = orders.map(soRender).join('');
+    list.innerHTML = orders.map(o => soRenderV2(o, { collapsed:true })).join('');
     if(window.svOrdersBadgeSet) window.svOrdersBadgeSet(orders);
     list.querySelectorAll('.order-card').forEach(c => {
       const st = c.querySelector('.oc-status-pill').className;
@@ -986,7 +986,7 @@ async function loadStoreOrders(){
 }
 document.addEventListener('click', function(e){
   if(SO_DEMO) return;
-  const b = e.target.closest && e.target.closest('.so-btn, .oc-action[data-act="repay"]'); if(!b) return;
+  const b = e.target.closest && e.target.closest('.so-btn, .oc-action[data-act="repay"], .oc-action[data-act="paynow"]'); if(!b) return;
   const id = b.dataset.id;
   sbClient.rpc('my_orders').then(res => {
     const o = res && res.data && res.data.orders && res.data.orders.find(x => x.id === id);
