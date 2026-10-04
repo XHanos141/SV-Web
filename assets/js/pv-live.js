@@ -295,7 +295,7 @@
 
   function apply(){
     var title = (P.brand ? P.brand + ' ' : '') + P.name;
-    var sdT = sdOf(P), specParts = [potLabel(sdT), cntLabel(sdT)].filter(Boolean), specT = specParts.join(' \u00b7 ');
+    var sdT = sdOf(P), specParts = [potLabel(sdT), cntLabel(sdT)].filter(Boolean), specT = specParts.join(' \u2022 ');
     var cartTitle = title + (specParts.length ? ' ' + specParts.join(' ') : '');
     if(specT) title += ' ' + specT;
     var catLabel = P.subcategory || TYPE_BY_CAT[P.category] || '';
