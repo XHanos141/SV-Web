@@ -423,6 +423,7 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 #storeList .so-v2 .oc-math-row.ship.free > span:first-child{ color:var(--green); }
 #storeList .so-v2 .oc-math-row.ship.free > span:last-child{ color:var(--green);font-weight:800;letter-spacing:.5px;font-size:11px;text-transform:uppercase; }
 #storeList .so-v2 .oc-math-row.discount > span:first-child{ color:var(--green); }
+#storeList .so-v2 .oc-paycard .oc-math-row > span:first-child{ color:var(--text);font-weight:700; }
 #storeList .so-v2 .oc-actions{ display:flex;flex-direction:column;gap:8px; }
 #storeList .so-v2 .oc-actions-row{ display:flex;gap:8px; }
 #storeList .so-v2 .oc-action{ display:flex;align-items:center;justify-content:center;width:100%;background:var(--accent);color:#fff;border:1.5px solid var(--accent);border-radius:var(--radius-sm);padding:10px;font-family:var(--font-display);font-size:12.5px;font-weight:800;cursor:pointer; }
@@ -853,7 +854,7 @@ function soPaymentV2(o){
   else if(o.state === 'cod_pending') rows = row('Method', 'Cash on delivery') + row('Pay on delivery', soMoney(o.total));
   else if(o.state === 'paid') rows = row('Method', soMethodHtml(o.payment_method)) + row('Transaction ID', soTrxHtml(o.payment_ref), 'trx') + row('Status', '<span class="oc-stv green">Paid</span>');
   else return '';
-  return '<div><div class="oc-section-label">Payment</div><div class="oc-math-card" style="margin-top:0">'+rows+'</div></div>';
+  return '<div><div class="oc-section-label">Payment</div><div class="oc-math-card oc-paycard" style="margin-top:0">'+rows+'</div></div>';
 }
 /* Copy transaction ID */
 document.addEventListener('click', function(e){
