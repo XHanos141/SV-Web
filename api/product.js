@@ -1,7 +1,4 @@
-const SB = 'https://tlkoxltugvfwxmnrthvr.supabase.co';
-const SITE_URL = 'https://sv-web-sigma.vercel.app'; // change to custom domain later
-const SITE_NAME = 'SuppVerse BD';
-const KEY = 'sb_publishable_0dItRk9UZ40ZpwPqJRoOBw_6MyRFU6z';
+const { SITE_URL, SITE_NAME, SB, KEY } = require('./_site');
 const PAGES = {
   supplement: 'product_view_supplement.html',
   gadget: 'product_view_gadget.html',
