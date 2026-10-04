@@ -414,6 +414,15 @@ body.dark-mode #storeList .so-v2{ --bkash-text:#ff5c96; --nagad-text:#ffab4a; --
 body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,255,255,.07); }
 #storeList .so-v2 .oc-ci svg{ width:14px;height:14px;stroke:var(--accent);stroke-width:2.3;fill:none;stroke-linecap:butt; }
 #storeList .so-v2 .oc-ci.solid svg{ fill:var(--accent);stroke:none; }
+/* Shipping / Discount rows: icon + solid label colour (same as payment page) */
+#storeList .so-v2 .oc-math-row.ship > span:first-child,
+#storeList .so-v2 .oc-math-row.discount > span:first-child{ display:flex;align-items:center;gap:6px;font-weight:700; }
+#storeList .so-v2 .oc-math-row.ship > span:first-child svg,
+#storeList .so-v2 .oc-math-row.discount > span:first-child svg{ width:13px;height:13px;flex-shrink:0; }
+#storeList .so-v2 .oc-math-row.ship > span:first-child{ color:var(--text); }
+#storeList .so-v2 .oc-math-row.ship.free > span:first-child{ color:var(--green); }
+#storeList .so-v2 .oc-math-row.ship.free > span:last-child{ color:var(--green);font-weight:800;letter-spacing:.5px;font-size:11px;text-transform:uppercase; }
+#storeList .so-v2 .oc-math-row.discount > span:first-child{ color:var(--green); }
 #storeList .so-v2 .oc-actions{ display:flex;flex-direction:column;gap:8px; }
 #storeList .so-v2 .oc-actions-row{ display:flex;gap:8px; }
 #storeList .so-v2 .oc-action{ display:flex;align-items:center;justify-content:center;width:100%;background:var(--accent);color:#fff;border:1.5px solid var(--accent);border-radius:var(--radius-sm);padding:10px;font-family:var(--font-display);font-size:12.5px;font-weight:800;cursor:pointer; }
@@ -776,6 +785,8 @@ const SO_ICO = {
   chev:'<svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
   subchev:'<svg class="oc-sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'
 };
+SO_ICO.truck = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>';
+SO_ICO.tag = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>';
 const SO_TIMELINE = { paid:0, processing:1, shipped:2, delivered:3 };
 function soTimeline(state){
   const idx = SO_TIMELINE[state]; if(idx === undefined) return '';
@@ -872,8 +883,9 @@ function soItemsV2(o){
       + (i.variant ? '<div class="oc-item-sub">'+soEsc(i.variant)+'</div>' : '') + '</div>'
       + '<div class="oc-item-math"><div class="oc-item-linetotal">'+soMoney(line)+'</div>'+(qty > 1 ? '<div class="oc-item-qtyprice">'+qty+' × '+soMoney(i.price)+'</div>' : '')+'</div></div>';
   }).join('');
-  const disc = Number(o.discount) > 0 ? '<div class="oc-math-row discount"><span>Discount'+(o.voucher_code ? ' ('+soEsc(o.voucher_code)+')' : '')+'</span><span>−'+soMoney(o.discount)+'</span></div>' : '';
-  const ship = '<div class="oc-math-row"><span>Shipping</span><span>'+(Number(o.shipping) === 0 ? 'Free' : soMoney(o.shipping))+'</span></div>';
+  const disc = Number(o.discount) > 0 ? '<div class="oc-math-row discount"><span>'+SO_ICO.tag+'Discount'+(o.voucher_code ? ' ('+soEsc(o.voucher_code)+')' : '')+'</span><span>−'+soMoney(o.discount)+'</span></div>' : '';
+  const free = Number(o.shipping) === 0;
+  const ship = '<div class="oc-math-row ship'+(free ? ' free' : '')+'"><span>'+SO_ICO.truck+'Shipping</span><span>'+(free ? 'Free' : soMoney(o.shipping))+'</span></div>';
   const math = '<div class="oc-math-card"><div class="oc-math-row"><span>Subtotal</span><span>'+soMoney(o.subtotal)+'</span></div>'+ship+disc+'<div class="oc-math-row total"><span>Total</span><span>'+soMoney(o.total)+'</span></div></div>';
   const prev = items.length + ' item' + (items.length === 1 ? '' : 's') + ' · ' + soMoney(o.total);
   return '<div class="oc-subsection"><div class="oc-subhead" onclick="this.closest(\'.oc-subsection\').classList.toggle(\'collapsed\')"><div class="oc-section-label">Items &amp; Summary</div><div class="oc-subhead-right"><span class="oc-subtotal-preview">'+prev+'</span>'+SO_ICO.subchev+'</div></div>'
