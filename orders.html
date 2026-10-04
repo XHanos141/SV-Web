@@ -702,6 +702,7 @@ const SO_DEMO = true;
 const SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
 function soEsc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function soMoney(n){ return '৳' + Number(n || 0).toLocaleString('en-IN'); }
+function soDateTime(iso){ try{ const d = new Date(iso); return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) + ', ' + d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); }catch(e){ return ''; } }
 function soDate(iso){ try{ return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
 function soLeft(untilIso){
   const ms = new Date(untilIso).getTime() - Date.now();
@@ -758,13 +759,13 @@ function soStatusLine(o){
   switch(o.state){
     case 'awaiting_payment': return 'Pay within <b class="tm" data-until="'+soEsc(o.pay_expires_at)+'" data-fmt="left"></b>';
     case 'unpaid': return 'Cancels in <b class="tm" data-until="'+soEsc(o.auto_cancel_at)+'" data-fmt="left"></b>';
-    case 'verifying': return 'Confirming shortly';
-    case 'cod_pending': return 'Awaiting confirmation';
-    case 'paid': return 'Paid ' + soDate(o.paid_at);
-    case 'processing': return 'Preparing your order';
-    case 'shipped': return 'Shipped ' + soDate(o.shipped_at);
-    case 'delivered': return 'Delivered ' + soDate(o.delivered_at);
-    case 'cancelled': return 'Cancelled ' + soDate(o.cancelled_at || o.created_at);
+    case 'verifying': return soDateTime(o.payment_submitted_at || o.created_at);
+    case 'cod_pending': return soDateTime(o.created_at);
+    case 'paid': return soDateTime(o.paid_at);
+    case 'processing': return soDateTime(o.processing_at);
+    case 'shipped': return soDateTime(o.shipped_at);
+    case 'delivered': return soDateTime(o.delivered_at);
+    case 'cancelled': return soDateTime(o.cancelled_at || o.created_at);
   }
   return '';
 }
@@ -850,10 +851,10 @@ function soDemoOrders(){
   return [
     mk('awaiting_payment','SV-1036',0,{ pay_expires_at:iso(now + 18*60000) }),
     mk('unpaid','SV-1029',0,{ auto_cancel_at:iso(now + (4*60+59)*60000) }),
-    mk('verifying','SV-1034',8),
+    mk('verifying','SV-1034',8,{ payment_submitted_at:iso(now - 8*day + 95*60000) }),
     mk('cod_pending','SV-1033',1,{ payment_method:'Cash on delivery', payment_ref:'' }),
     mk('paid','SV-1031',14,{ paid_at:iso(now - 13*day) }),
-    mk('processing','SV-1038',6,{ paid_at:iso(now - 6*day) }),
+    mk('processing','SV-1038',6,{ paid_at:iso(now - 6*day), processing_at:iso(now - 6*day + 40*60000) }),
     mk('shipped','SV-1032',10,{ paid_at:iso(now - 10*day), shipped_at:iso(now - 8*day) }),
     mk('delivered','SV-1027',19,{ paid_at:iso(now - 19*day), delivered_at:iso(now - 15*day) }),
     mk('cancelled','SV-1035',4,{ cancel_reason:'Not paid in time', cancelled_at:iso(now - 4*day) })
