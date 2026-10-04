@@ -60,6 +60,36 @@ function metaTags(row, prod, slug) {
     out.push('<meta property="product:price:amount" content="' + price + '">');
     out.push('<meta property="product:price:currency" content="BDT">');
   }
+  const product = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: title,
+    description: desc,
+    sku: prod.sku || undefined,
+    brand: prod.brand ? { '@type': 'Brand', name: prod.brand } : undefined,
+    image: imgs.length ? imgs.map(absUrl) : undefined,
+    url: url,
+    offers: price ? {
+      '@type': 'Offer',
+      url: url,
+      priceCurrency: 'BDT',
+      price: String(price),
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: (Number(prod.stock_qty) > 0) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      seller: { '@type': 'Organization', name: SITE_NAME }
+    } : undefined
+  };
+  const crumbs = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Store', item: SITE_URL + '/store.html' },
+      { '@type': 'ListItem', position: 2, name: title, item: url }
+    ]
+  };
+  [product, crumbs].forEach(function (o) {
+    out.push('<script type="application/ld+json">' + JSON.stringify(o).replace(/</g, '\\u003c') + '</script>');
+  });
   return out.join('');
 }
 
@@ -75,7 +105,7 @@ module.exports = async (req, res) => {
     if (!/^[a-z0-9-]{1,100}$/.test(slug)) return notFound(res);
 
     const r = await fetch(
-      SB + '/rest/v1/product_web?select=product_id,seo_title,seo_description,web_description,web_images,products!inner(id,category,name,brand,price,supplement_details(potency_amount,potency_unit,capsule_count))&slug=eq.' + encodeURIComponent(slug) + '&limit=1',
+      SB + '/rest/v1/product_web?select=product_id,seo_title,seo_description,web_description,web_images,products!inner(id,category,name,brand,sku,price,stock_qty,supplement_details(potency_amount,potency_unit,capsule_count))&slug=eq.' + encodeURIComponent(slug) + '&limit=1',
       { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } }
     );
     if (!r.ok) return notFound(res);
