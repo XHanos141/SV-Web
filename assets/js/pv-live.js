@@ -296,7 +296,7 @@
   function apply(){
     var title = (P.brand ? P.brand + ' ' : '') + P.name;
     var sdT = sdOf(P), specParts = [potLabel(sdT), cntLabel(sdT)].filter(Boolean), specT = specParts.join(' \u2022 ');
-    var cartTitle = title + (specParts.length ? ' ' + specParts.join(' ') : '');
+    var baseTitle = title, cartTitle = title + (specParts.length ? ' ' + specParts.join(' ') : '');
     if(specT) title += ' ' + specT;
     var catLabel = P.subcategory || TYPE_BY_CAT[P.category] || '';
     var qty0 = Number(P.stock_qty) || 0;
@@ -410,7 +410,7 @@
       var ex = cart.find(function(c){ return c.id === P.id; });
       if(ex) ex.qty = Math.min(10, ex.qty + q);
       else cart.push({
-        id: P.id, productId: P.id, sku: P.sku || '', name: cartTitle, variant: specT ? '' : ((G && G.length > 1) ? variantLabel(P) : ''),
+        id: P.id, productId: P.id, sku: P.sku || '', name: cartTitle, baseName: baseTitle, spec: specT, variant: specT ? '' : ((G && G.length > 1) ? variantLabel(P) : ''),
         price: price, oldPrice: old || null, qty: q, img: images[0] || null, locked: false,
         type: TYPE_BY_CAT[P.category] || 'General', category: catLabel
       });
