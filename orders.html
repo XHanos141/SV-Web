@@ -380,6 +380,28 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 #storeList .so-v2 .oc-item-sub{ margin-left:0; }
 #storeList .so-v2 .oc-item-qtyprice{ margin-top:2px; }
 #storeList .so-v2 .oc-item-linetotal{ margin-top:0; }
+/* Payment block: method brand colours (from payment.html), copy button, status colours */
+#storeList .so-v2{ --bkash-text:#e21966; --nagad-text:#e88316; --crypto-text:#c9860c; --rocket-text:#8b3392; --upay-text:#0555a4; --cellfin-text:#09853e; }
+body.dark-mode #storeList .so-v2{ --bkash-text:#ff5c96; --nagad-text:#ffab4a; --crypto-text:#ffab4a; --rocket-text:#c471cd; --upay-text:#5b9bdb; --cellfin-text:#3fcf85; }
+#storeList .so-v2 .oc-pm{ font-weight:800;color:var(--text); }
+#storeList .so-v2 .oc-pm.pm-bkash{ color:var(--bkash-text); }
+#storeList .so-v2 .oc-pm.pm-nagad{ color:var(--nagad-text); }
+#storeList .so-v2 .oc-pm.pm-crypto{ color:var(--crypto-text); }
+#storeList .so-v2 .oc-pm.pm-rocket{ color:var(--rocket-text); }
+#storeList .so-v2 .oc-pm.pm-upay{ color:var(--upay-text); }
+#storeList .so-v2 .oc-pm.pm-cellfin{ color:var(--cellfin-text); }
+#storeList .so-v2 .oc-trxwrap{ display:inline-flex;align-items:center;gap:8px; }
+#storeList .so-v2 .oc-trxv{ font-size:12px;font-weight:800;letter-spacing:.3px;color:var(--text); }
+#storeList .so-v2 .oc-copy{ width:24px;height:24px;border:none;border-radius:7px;background:var(--accent-soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;flex-shrink:0; }
+#storeList .so-v2 .oc-copy svg{ width:13px;height:13px; }
+#storeList .so-v2 .oc-copy .ic-done{ display:none; }
+#storeList .so-v2 .oc-copy.copied{ background:var(--green-soft);color:var(--green); }
+#storeList .so-v2 .oc-copy.copied .ic-copy{ display:none; }
+#storeList .so-v2 .oc-copy.copied .ic-done{ display:block; }
+#storeList .so-v2 .oc-copy:active{ transform:scale(.92); }
+#storeList .so-v2 .oc-stv{ font-weight:800; }
+#storeList .so-v2 .oc-stv.cyan{ color:var(--accent); }
+#storeList .so-v2 .oc-stv.green{ color:var(--green); }
 #storeList .so-v2 .oc-math-row.trx span:last-child{ font-weight:800;letter-spacing:.3px; }
 #storeList .so-v2 .oc-status-pill{ border-radius:999px;padding:3px 10px; }
 #storeList .so-v2 .oc-status-pill.paid,
@@ -801,15 +823,35 @@ function soNoteV2(o){
   const cls = m[1] || '', icon = (cls === ' info' || cls === ' ok') ? SO_NI.info : SO_NI.warn;
   return '<div class="so-note'+cls+'"><span class="so-ni">'+icon+'</span><div class="so-nt">'+m[2]+'</div></div>';
 }
+const SO_PM = { bkash:'bKash', nagad:'Nagad', upay:'Upay', rocket:'Rocket', cellfin:'Cellfin', crypto:'Crypto' };
+function soMethodHtml(m){
+  const key = String(m || '').toLowerCase().replace(/[^a-z]/g, '');
+  const label = SO_PM[key] || m || '';
+  return '<span class="oc-pm'+(SO_PM[key] ? ' pm-'+key : '')+'">'+soEsc(label)+'</span>';
+}
+function soTrxHtml(ref){
+  const v = soEsc(ref || '');
+  return '<span class="oc-trxwrap"><span class="oc-trxv">'+v+'</span><button type="button" class="oc-copy" data-copy="'+v+'" aria-label="Copy transaction ID">'
+    + '<svg class="ic-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'
+    + '<svg class="ic-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button></span>';
+}
 function soPaymentV2(o){
   const row = (k,v,c) => '<div class="oc-math-row'+(c?' '+c:'')+'"><span>'+k+'</span><span>'+v+'</span></div>';
   let rows = '';
-  if(o.state === 'verifying') rows = row('Method', soEsc(o.payment_method||'')) + row('Transaction ID', soEsc(o.payment_ref||''), 'trx') + row('Status', 'Verifying');
+  if(o.state === 'verifying') rows = row('Method', soMethodHtml(o.payment_method)) + row('Transaction ID', soTrxHtml(o.payment_ref), 'trx') + row('Status', '<span class="oc-stv cyan">Verifying</span>');
   else if(o.state === 'cod_pending') rows = row('Method', 'Cash on delivery') + row('Pay on delivery', soMoney(o.total));
-  else if(o.state === 'paid') rows = row('Method', soEsc(o.payment_method||'')) + row('Transaction ID', soEsc(o.payment_ref||''), 'trx') + row('Paid on', soDate(o.paid_at));
+  else if(o.state === 'paid') rows = row('Method', soMethodHtml(o.payment_method)) + row('Transaction ID', soTrxHtml(o.payment_ref), 'trx') + row('Status', '<span class="oc-stv green">Paid</span>');
   else return '';
   return '<div><div class="oc-section-label">Payment</div><div class="oc-math-card" style="margin-top:0">'+rows+'</div></div>';
 }
+/* Copy transaction ID */
+document.addEventListener('click', function(e){
+  const b = e.target.closest && e.target.closest('.oc-copy'); if(!b) return;
+  const txt = b.getAttribute('data-copy') || '';
+  const done = () => { b.classList.add('copied'); clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove('copied'), 1600); };
+  const fallback = () => { try{ const ta = document.createElement('textarea'); ta.value = txt; ta.style.cssText = 'position:fixed;opacity:0;top:0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); done(); }catch(_){} };
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, fallback); else fallback();
+});
 function soActionsV2(o){
   const id = soEsc(o.id), A = (label, act, cls) => '<button class="oc-action'+(cls?' '+cls:'')+'" data-act="'+act+'" data-id="'+id+'">'+label+'</button>';
   let btns = '';
