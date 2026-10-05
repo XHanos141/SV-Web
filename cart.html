@@ -742,7 +742,7 @@ function cardHTML(item, flow){
           ${flow === 'internal' ? `<div class="cc-cat">${window.SVBadges ? SVBadges.html(item.type) : ''}<span>${esc(item.category)}</span>${stockNoteHTML(item, flow)}</div>` : ''}
           ${href ? `<a class="cc-name-link" href="${esc(href)}"><div class="cc-name">${esc(item.baseName || item.name)}</div></a>` : `<div class="cc-name">${esc(item.baseName || item.name)}</div>`}
           ${item.spec ? `<div class="cc-spec">${esc(item.spec)}</div>` : ''}
-          <div class="cc-variant">${esc(item.variant)}</div>
+          ${flow !== 'internal' && item.variant ? `<div class="cc-variant">${esc(item.variant)}</div>` : ''}
           ${badgeRow}
         </div>
         <button class="cc-remove" aria-label="Remove item"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
