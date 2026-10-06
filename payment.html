@@ -408,9 +408,9 @@ body.dark-mode .pay-success-sheet p{color:rgba(255,255,255,.55)}
 .pay-success-overlay.show .ps-oid,.pay-success-overlay.show .pay-success-sheet h3,.pay-success-overlay.show .pay-success-sheet p{opacity:1;transform:translateY(0)}
 .pay-success-sheet .ps-btn{position:relative;z-index:2;opacity:0;transform:translateY(8px);transition:opacity .4s ease .95s,transform .4s ease .95s}
 .pay-success-overlay.show .ps-btn{opacity:1;transform:translateY(0)}
-.pay-success-sheet a.ps-btn{display:block;text-decoration:none;text-align:center;box-sizing:border-box}
-.pay-success-sheet .ps-btn-ghost{margin-top:8px;background:transparent;color:#6b7280;font-weight:700}
-body.dark-mode .pay-success-sheet .ps-btn-ghost{color:rgba(255,255,255,.6)}
+.pay-success-sheet a.ps-btn{background:var(--cyan);display:block;text-decoration:none;text-align:center;box-sizing:border-box}
+.pay-success-sheet .ps-btn-ghost{margin-top:8px;background:transparent;color:var(--green);font-weight:700}
+body.dark-mode .pay-success-sheet .ps-btn-ghost{color:#34d399}
 /* bKash sender-number popup — mirrors bKash PGW's own account-number entry screen */
 .bkash-popup-overlay{position:fixed;inset:0;background:rgba(6,10,20,.6);z-index:970;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:20px}
 .bkash-popup-overlay.show{opacity:1;pointer-events:auto}
