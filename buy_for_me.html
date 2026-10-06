@@ -137,7 +137,7 @@ main{max-width:600px;margin:0 auto;padding:0 16px}
 .price-input-wrap input::placeholder{color:var(--t3);font-weight:500}
 body.dark-mode .price-input-wrap{background:var(--bg);border-color:var(--border)}
 
-.item-row{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:8px 12px 10px;margin-bottom:10px;position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s ease,height .35s ease .4s,margin .35s ease .4s,padding .35s ease .4s,border-width .35s ease .4s;transform-origin:center;overflow:hidden}body.dark-mode .item-row{background:var(--surface2);border-color:var(--border)}
+.item-row{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:6px 12px 10px;margin-bottom:10px;position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s ease,height .35s ease .4s,margin .35s ease .4s,padding .35s ease .4s,border-width .35s ease .4s;transform-origin:center;overflow:hidden}body.dark-mode .item-row{background:var(--surface2);border-color:var(--border)}
 .item-row.removing{transform:translateX(100%);opacity:0}
 .item-row.removing.collapsed{height:0;padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0;border-width:0}
 
@@ -155,7 +155,7 @@ body.dark-mode .item-row.glass-card{
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
 }
-.item-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.item-num{font-size:11px;font-weight:800;color:var(--text);letter-spacing:.02em;padding-left:5px}
+.item-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}.item-num{font-size:11px;font-weight:800;color:var(--text);letter-spacing:.02em;padding-left:5px}
 .item-remove{width:26px;height:26px;border-radius:8px;background:var(--err-soft);border:1.5px solid rgba(229,72,77,.55);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}.item-remove svg{stroke:var(--err)}body.dark-mode .item-remove{background:rgba(255,107,107,.10);border-color:rgba(255,107,107,.55)}body.dark-mode .item-remove svg{stroke:var(--err)}
 .item-remove svg{width:13px;height:13px;stroke-width:2.3;fill:none;stroke-linecap:round}
 .item-remove:active{transform:scale(.92)}
@@ -192,12 +192,10 @@ body.dark-mode .item-row.glass-card{
 .store-opt:hover,.store-opt.is-active{background:var(--surface2)}
 .store-opt.is-selected{color:var(--orange)}
 
-.link-error-msg{font-size:10px;color:var(--err);font-weight:600;margin:6px 0 0;display:none}
-.link-error-msg.show{display:block}
-.link-ok-msg{font-size:10px;color:var(--green);font-weight:600;margin:6px 0 0;display:none}
-.link-ok-msg.show{display:block}
-.qty-warning-msg{font-size:10px;color:var(--err);font-weight:600;margin:6px 0 0;display:none}
-.qty-warning-msg.show{display:block}
+.link-error-msg,.link-ok-msg,.qty-warning-msg{font-size:10px;font-weight:600;line-height:1.35;margin:0;padding:0 5px;max-height:0;opacity:0;overflow:hidden;transform:translateY(-3px);pointer-events:none;transition:max-height .25s ease,opacity .2s ease,transform .25s ease,margin .25s ease}
+.link-error-msg,.qty-warning-msg{color:var(--err)}
+.link-ok-msg{color:var(--green)}
+.link-error-msg.show,.link-ok-msg.show,.qty-warning-msg.show{max-height:64px;opacity:1;transform:none;margin:0 0 4px;pointer-events:auto}
 
 /* ─── Detected info area (integrated into card) ─── */
 .detected-info{margin-top:8px;border-radius:10px;overflow:hidden;transition:all .3s ease;max-height:0;opacity:0}
@@ -1013,7 +1011,7 @@ rowTemplate.innerHTML = `
     <div class="link-error-msg" data-role="link-error">We don't recognize this store yet — you can still submit, we'll review manually.</div>
     <div class="link-ok-msg" data-role="link-ok">Link looks good.</div>
     <div class="qty-warning-msg" data-role="qty-warning">Please paste the product link first</div>
-    <div class="store-label-row" style="margin-top:8px">
+    <div class="store-label-row" style="margin-top:4px">
       <span class="sl-left">Product Name</span>
     </div>
     <div class="link-input-wrap">
