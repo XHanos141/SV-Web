@@ -123,22 +123,21 @@ main{max-width:600px;margin:0 auto;padding:0 16px}
 .field-label .req,.item-num .req{color:var(--orange)}
 
 /* ===== Item Row (the product card) ===== */
-.store-label-row{display:flex;gap:8px;margin-top:8px;margin-bottom:4px}
+.store-label-row{display:flex;gap:6px;margin-top:6px;margin-bottom:3px}
 .store-label-row .sl-left{flex:1 1 50%;font-size:11px;font-weight:800;color:var(--text);padding-left:5px}
 .store-label-row .sl-right{flex:1 1 50%;font-size:11px;font-weight:800;color:var(--text);padding-left:5px}
-.store-optional-row{display:flex;gap:10px;margin-top:4px}
-.store-optional-left,.store-optional-right{flex:1 1 50%;font-size:10px;color:var(--t3);padding-left:5px}
+.opt-tag{font-style:normal;font-size:9px;font-weight:600;letter-spacing:.02em;color:var(--t3);background:rgba(154,165,180,.14);padding:1px 6px;border-radius:999px;margin-left:4px;vertical-align:1px}
 .store-row{display:flex;align-items:center;gap:6px;margin-top:3px;margin-bottom:4px}
 .store-row .store-select-wrap{flex:1 1 50%;min-width:0}
 .store-row .store-select-wrap::after{right:13px}
-.price-input-wrap{flex:1 1 50%;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;min-width:0;height:40px;transition:border-color .2s}
+.price-input-wrap{flex:1 1 50%;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;min-width:0;height:38px;transition:border-color .2s}
 .price-input-wrap:focus-within{border-color:var(--orange)}
 .price-input-wrap .price-label{padding:0 8px 0 12px;font-size:13px;font-weight:800;color:var(--green);flex-shrink:0}
 .price-input-wrap input{flex:1;border:none;background:transparent;padding:0 10px 0 0;font-size:13px;font-weight:700;color:var(--text);min-width:0;outline:none;height:100%;-webkit-appearance:none;appearance:none}
 .price-input-wrap input::placeholder{color:var(--t3);font-weight:500}
 body.dark-mode .price-input-wrap{background:var(--bg);border-color:var(--border)}
 
-.item-row{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:10px 14px 12px;margin-bottom:12px;position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s ease,height .35s ease .4s,margin .35s ease .4s,padding .35s ease .4s,border-width .35s ease .4s;transform-origin:center;overflow:hidden}body.dark-mode .item-row{background:var(--surface2);border-color:var(--border)}
+.item-row{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:8px 12px 10px;margin-bottom:10px;position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s ease,height .35s ease .4s,margin .35s ease .4s,padding .35s ease .4s,border-width .35s ease .4s;transform-origin:center;overflow:hidden}body.dark-mode .item-row{background:var(--surface2);border-color:var(--border)}
 .item-row.removing{transform:translateX(100%);opacity:0}
 .item-row.removing.collapsed{height:0;padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0;border-width:0}
 
@@ -156,7 +155,7 @@ body.dark-mode .item-row.glass-card{
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
 }
-.item-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.item-num{font-size:11px;font-weight:800;color:var(--text);letter-spacing:.02em;padding-left:5px}
+.item-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.item-num{font-size:11px;font-weight:800;color:var(--text);letter-spacing:.02em;padding-left:5px}
 .item-remove{width:26px;height:26px;border-radius:8px;background:var(--err-soft);border:1.5px solid rgba(229,72,77,.55);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}.item-remove svg{stroke:var(--err)}body.dark-mode .item-remove{background:rgba(255,107,107,.10);border-color:rgba(255,107,107,.55)}body.dark-mode .item-remove svg{stroke:var(--err)}
 .item-remove svg{width:13px;height:13px;stroke-width:2.3;fill:none;stroke-linecap:round}
 .item-remove:active{transform:scale(.92)}
@@ -164,7 +163,7 @@ body.dark-mode .item-row.glass-card{
 
 .link-input-wrap.shake{animation:shake .6s cubic-bezier(.36,.07,.19,.97) both;border-color:var(--orange)}
 @keyframes shake{10%,90%{transform:translate3d(-1px,0,0)}20%,80%{transform:translate3d(2px,0,0)}30%,50%,70%{transform:translate3d(-3px,0,0)}40%,60%{transform:translate3d(3px,0,0)}}
-.link-input-wrap{width:100%;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;min-width:0;height:48px;transition:border-color .2s;margin-bottom:6px}
+.link-input-wrap{width:100%;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;min-width:0;height:42px;transition:border-color .2s;margin-bottom:4px}
 .link-input-wrap:focus-within{border-color:var(--orange)}
 .link-input-wrap .link-icon{padding:0 8px 0 12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .link-input-wrap .link-icon svg{width:18px;height:18px;stroke:var(--t3);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
@@ -176,7 +175,7 @@ body.dark-mode .item-row.glass-card{
 .link-input.error{border-color:var(--err);background:var(--err-soft)}
 
 
-.store-select-wrap{position:relative;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:visible;height:40px;transition:border-color .2s}
+.store-select-wrap{position:relative;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:visible;height:38px;transition:border-color .2s}
 .store-select-wrap:focus-within{border-color:var(--orange)}
 .store-select{all:unset;box-sizing:border-box;display:flex;align-items:center;width:100%;height:100%;padding:0 34px 0 12px;font-family:inherit;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer}
 .store-select:focus-visible{color:var(--text)}
@@ -237,7 +236,7 @@ body.dark-mode .item-row.glass-card{
 .di-fail p{font-size:10.5px;color:var(--t3);font-weight:500;margin:0}
 
 /* Quantity */
-.qty-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:0.7px solid var(--border)}
+.qty-row{display:flex;align-items:center;justify-content:space-between;margin-top:6px;padding-top:6px;border-top:0.7px solid var(--border)}
 .qty-label{font-size:11px;font-weight:700;color:var(--t2);letter-spacing:.02em}
 .qty-stepper{display:inline-flex;align-items:center;background:var(--bg);border:0.8px solid rgba(242,100,48,.55);border-radius:6px;overflow:hidden}
 body.dark-mode .qty-stepper{border-color:var(--border)}
@@ -264,7 +263,7 @@ body.dark-mode .qty-btn[data-role="qty-plus"]{background:linear-gradient(180deg,
   backface-visibility:hidden;
 }
 
-.add-item-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;background:transparent;border:1.5px dashed rgba(242,100,48,.4);border-radius:12px;padding:11px;font-size:12px;font-weight:700;color:var(--orange);margin-bottom:18px;transition:background .2s}
+.add-item-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;background:transparent;border:1.5px dashed rgba(242,100,48,.4);border-radius:12px;padding:9px;font-size:12px;font-weight:700;color:var(--orange);margin-bottom:14px;transition:background .2s}
 .add-item-btn:active{background:rgba(242,100,48,.06)}
 .add-item-btn svg{width:14px;height:14px;stroke:var(--orange);stroke-width:2.4;fill:none}
 
@@ -1014,15 +1013,15 @@ rowTemplate.innerHTML = `
     <div class="link-error-msg" data-role="link-error">We don't recognize this store yet — you can still submit, we'll review manually.</div>
     <div class="link-ok-msg" data-role="link-ok">Link looks good.</div>
     <div class="qty-warning-msg" data-role="qty-warning">Please paste the product link first</div>
-    <div class="store-label-row" style="margin-top:12px">
+    <div class="store-label-row" style="margin-top:8px">
       <span class="sl-left">Product Name</span>
     </div>
     <div class="link-input-wrap">
       <input type="text" class="link-input" data-role="product-name" placeholder="e.g. Sony WH-1000XM5 Headphones">
     </div>
     <div class="store-label-row">
-      <span class="sl-left">Select Store</span>
-      <span class="sl-right">Price in USD</span>
+      <span class="sl-left">Select Store <em class="opt-tag">Optional</em></span>
+      <span class="sl-right">Price in USD <em class="opt-tag">Optional</em></span>
     </div>
     <div class="store-row">
       <div class="store-select-wrap" data-role="store-select-wrap">
@@ -1035,10 +1034,6 @@ rowTemplate.innerHTML = `
         <span class="price-label">$</span>
         <input type="number" data-role="price-input" placeholder="0.00" step="0.01" min="0">
       </div>
-    </div>
-    <div class="store-optional-row">
-      <span class="store-optional-left">Optional</span>
-      <span class="store-optional-right">Optional</span>
     </div>
 
     <div class="qty-row">
