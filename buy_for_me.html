@@ -91,6 +91,13 @@ input,textarea{font-family:inherit}
 main{max-width:600px;margin:0 auto;padding:0 16px}
 
 /* ===== How it works ===== */
+/* ===== HERO (full-bleed, flow-field behind existing content) ===== */
+.bfm-hero{position:relative;width:100%;overflow:hidden;isolation:isolate;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+#bfmFlow{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 16%,#000 80%,transparent 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000 16%,#000 80%,transparent 100%)}
+.bfm-hero-inner{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:0 16px}
+
 .hiw{padding:29px 0 15px}
 .hiw-eyebrow{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;text-align:center;margin-top:-4px}
 .hiw h2{font-family:var(--fd);font-size:22px;font-weight:800;letter-spacing:-.4px;line-height:1.2;margin-bottom:6px;text-align:center;margin-top:3px}
@@ -510,7 +517,9 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
   </div>
 </header>
 
-<main>
+<section class="bfm-hero" id="bfmHero">
+  <canvas id="bfmFlow" aria-hidden="true"></canvas>
+  <div class="bfm-hero-inner">
   <section class="hiw">
     <p class="hiw-eyebrow rv" id="bfmHeroEyebrow">Global Import</p>
     <h2 class="rv" id="bfmHeroHeading">Shop Worldwide<br>From Any International Store</h2>
@@ -530,10 +539,11 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
         <div class="jstep-badge"><span class="jstep-num">4</span><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><p class="jstep-label" id="bfmHeroStep4">Delivered</p>
       </div>
     </div>
-
-    
   </section>
+  </div>
+</section>
 
+<main>
   <section class="form-card rv">
     <h3>What do you want us to get?</h3>
     <p class="fc-sub">Paste a link. We'll read the product name, price, and store automatically.</p>
@@ -1714,6 +1724,186 @@ var __svBadgeLast = 0;
   window.addEventListener('pageshow', svRefreshCartBadge);
   window.addEventListener('storage', function(e){ if(!e.key || e.key === 'sv-cart-internal') svRefreshCartBadge(); });
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) svRefreshCartBadge(); });
+</script>
+<script>
+'use strict';
+/* ── Flow-field hero ── */
+(function(){
+  var hero=document.getElementById('bfmHero'),cv=document.getElementById('bfmFlow'),ctx=cv.getContext('2d');
+  if(!ctx)return;
+
+  /* seeded simplex noise (2D) */
+  var Noise=(function(){
+    var perm=new Uint8Array(256),p=new Uint8Array(512),i,s=1337;
+    for(i=0;i<256;i++)perm[i]=i;
+    for(i=255;i>0;i--){s=(s*16807)%2147483647;var j=s%(i+1),t=perm[i];perm[i]=perm[j];perm[j]=t;}
+    for(i=0;i<512;i++)p[i]=perm[i&255];
+    var F=.5*(Math.sqrt(3)-1),G=(3-Math.sqrt(3))/6,G2=[[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
+    return{n2:function(x,y){
+      var sk=(x+y)*F,i=Math.floor(x+sk),j=Math.floor(y+sk),t=(i+j)*G,x0=x-(i-t),y0=y-(j-t),
+          i1=x0>y0?1:0,j1=x0>y0?0:1,x1=x0-i1+G,y1=y0-j1+G,x2=x0-1+2*G,y2=y0-1+2*G,ii=i&255,jj=j&255,n=0,t0,t1,t2,g;
+      t0=.5-x0*x0-y0*y0;if(t0>0){t0*=t0;g=G2[p[ii+p[jj]]&7];n+=t0*t0*(g[0]*x0+g[1]*y0);}
+      t1=.5-x1*x1-y1*y1;if(t1>0){t1*=t1;g=G2[p[ii+i1+p[jj+j1]]&7];n+=t1*t1*(g[0]*x1+g[1]*y1);}
+      t2=.5-x2*x2-y2*y2;if(t2>0){t2*=t2;g=G2[p[ii+1+p[jj+1]]&7];n+=t2*t2*(g[0]*x2+g[1]*y2);}
+      return 70*n;}};
+  })();
+
+  /* config tuned for a ~392x230 strip */
+  var CFG={
+    density:1/1000, maxParticles:130,
+    noiseScale:.0045, timeScale:.00018, curlAmp:.12, steer:.07, fadeFrames:28,
+    speedMin:1.3, speedMax:2.4, flowDir:0,
+    mouseRadius:80, mouseForce:2.2,
+    tailLen:9, glow:1, headR:1.2, tailW:.9,
+    shockLife:720, shockMaxR:110, shockBand:26, shockForce:6.5, shockSwirl:.35
+  };
+  var alphaMul=.9;   /* tail opacity: .9 day / 1 night */
+  var W=0,H=0,parts=[],mouse={x:0,y:0,on:false},raf=0,visible=true,running=false,shocks=[],last=0;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* even coverage: respawns pick the emptiest of a few random spots (8x5 occupancy grid) */
+  var GX=8,GY=5,cells=new Int16Array(GX*GY),capCells=99;
+  function cellOf(x,y){return Math.min(GY-1,Math.max(0,(y/H*GY)|0))*GX+Math.min(GX-1,Math.max(0,(x/W*GX)|0));}
+  function recount(){cells.fill(0);for(var i=0;i<parts.length;i++)cells[cellOf(parts[i].x,parts[i].y)]++;capCells=Math.max(4,Math.ceil(parts.length/(GX*GY)*2.2));}
+  function pickSpot(windward){
+    var bx=0,by=0,bc=1e9;
+    for(var k=0;k<6;k++){var x=windward?2:Math.random()*W,y=Math.random()*H,c=cells[cellOf(x,y)];if(c<bc){bc=c;bx=x;by=y;}}
+    cells[cellOf(bx,by)]++;return[bx,by];
+  }
+
+  function P(orange){this.orange=orange;this.respawn(false);this.life=Math.random()*this.maxLife*.8;}
+  P.prototype.respawn=function(windward){   /* windward: re-enter from the left edge */
+    var L=CFG.tailLen;
+    var sp=pickSpot(windward);this.x=sp[0];this.y=sp[1];
+    this.tx=new Array(L).fill(this.x);this.ty=new Array(L).fill(this.y);
+    this.vx=0;this.vy=0;
+    this.speed=CFG.speedMin+Math.random()*(CFG.speedMax-CFG.speedMin);
+    this.life=0;this.maxLife=220+Math.random()*420;
+  };
+  P.prototype.step=function(t,dt){
+    /* curl noise = divergence-free field (streams never converge) + steady left→right wind; velocity eases toward it */
+    var px=this.x*CFG.noiseScale,py=this.y*CFG.noiseScale+t*CFG.timeScale,e=.02;
+    var cx=(Noise.n2(px,py+e)-Noise.n2(px,py-e))/(2*e),cy=-(Noise.n2(px+e,py)-Noise.n2(px-e,py))/(2*e);
+    var hx=Math.cos(CFG.flowDir)+cx*CFG.curlAmp,hy=Math.sin(CFG.flowDir)+cy*CFG.curlAmp,hm=Math.hypot(hx,hy)||1;
+    var tx=hx/hm*this.speed,ty=hy/hm*this.speed;   /* constant speed along the heading: no fast jets, no dead zones */
+    var kk=1-Math.pow(1-CFG.steer,dt);
+    this.vx+=(tx-this.vx)*kk;
+    this.vy+=(ty-this.vy)*kk;
+    if(mouse.on){
+      var dx=this.x-mouse.x,dy=this.y-mouse.y,d2=dx*dx+dy*dy,r=CFG.mouseRadius;
+      if(d2<r*r){var d=Math.sqrt(d2)||1,f=(1-d/r)*CFG.mouseForce*dt;this.vx+=dx/d*f;this.vy+=dy/d*f;}
+    }
+    for(var q=0;q<shocks.length;q++){
+      var sk=shocks[q],sx=this.x-sk.x,sy=this.y-sk.y,sd=Math.sqrt(sx*sx+sy*sy)||1,ring=sk.r,off=Math.abs(sd-ring);
+      if(off<CFG.shockBand){
+        var sf=(1-off/CFG.shockBand)*CFG.shockForce*(1-sk.age/CFG.shockLife)*dt;
+        this.vx+=sx/sd*sf-sy/sd*sf*CFG.shockSwirl;
+        this.vy+=sy/sd*sf+sx/sd*sf*CFG.shockSwirl;
+      }
+    }
+    this.x+=this.vx*dt;this.y+=this.vy*dt;
+    this.tx.push(this.x);this.tx.shift();this.ty.push(this.y);this.ty.shift();
+    this.life+=dt;
+    var out=this.x<-24||this.x>W+24||this.y<-24||this.y>H+24;
+    if(out||this.life>this.maxLife)this.respawn(out);
+    else if(this.maxLife-this.life>CFG.fadeFrames&&cells[cellOf(this.x,this.y)]>capCells&&Math.random()<.03*dt)
+      this.maxLife=this.life+CFG.fadeFrames;   /* crowded cell: fade out here, reappear in an emptier spot */
+  };
+  /* ── Landing-hero bead look (glossy sphere, lit top-left) in site cyan + orange ── */
+  var PAL={
+    light:{c:{hi:'#c4f0ff',base:'#12b0f2',sh:'#0090cc',edge:'#006fa3',tail:'0,157,220'},
+           o:{hi:'#ffdcc6',base:'#ff7a45',sh:'#ee5a24',edge:'#c2430f',tail:'242,100,48'}},
+    dark: {c:{hi:'#d2f5ff',base:'#3cc3ff',sh:'#1aa6e6',edge:'#0f80b8',tail:'31,179,240'},
+           o:{hi:'#ffe6d6',base:'#ff8f5e',sh:'#ff6a32',edge:'#d44c18',tail:'255,122,69'}}
+  };
+  var pal=PAL.light,spr={};
+  function makeSprite(c){           /* same gradient + specular as the landing drawBead(), pre-rendered once */
+    var S=64,cv2=document.createElement('canvas');cv2.width=cv2.height=S;
+    var x=cv2.getContext('2d'),r=S/2-2;x.translate(S/2,S/2);
+    var g=x.createRadialGradient(-r*.3,-r*.3,r*.1,0,0,r);
+    g.addColorStop(0,c.hi);g.addColorStop(.3,c.base);g.addColorStop(.8,c.sh);g.addColorStop(1,c.edge);
+    x.beginPath();x.arc(0,0,r,0,6.2832);x.fillStyle=g;x.fill();
+    x.beginPath();x.ellipse(-r*.25,-r*.3,r*.22,r*.15,-.4,0,6.2832);x.fillStyle='rgba(255,255,255,.85)';x.fill();
+    x.beginPath();x.arc(r*.35,r*.4,r*.08,0,6.2832);x.fillStyle='rgba(255,255,255,.25)';x.fill();
+    return cv2;
+  }
+  function buildSprites(dark){pal=dark?PAL.dark:PAL.light;spr={c:makeSprite(pal.c),o:makeSprite(pal.o)};}
+
+  P.prototype.draw=function(){
+    var key=this.orange?'o':'c',col=pal[key].tail,L=CFG.tailLen;
+    var fd=Math.max(0,Math.min(1,this.life/CFG.fadeFrames,(this.maxLife-this.life)/CFG.fadeFrames));
+    ctx.lineCap='round';
+    for(var i=0;i<L;i++){
+      var k=i/L,x1=i===L-1?this.x:this.tx[i+1],y1=i===L-1?this.y:this.ty[i+1];
+      ctx.strokeStyle='rgba('+col+','+(Math.pow(k,2.2)*CFG.glow*alphaMul*fd)+')';
+      ctx.lineWidth=CFG.tailW*(.3+.7*k);
+      ctx.beginPath();ctx.moveTo(this.tx[i],this.ty[i]);ctx.lineTo(x1,y1);ctx.stroke();
+    }
+    var d=CFG.headR*2*(32/30);       /* sprite has a 2px margin */
+    ctx.globalAlpha=fd;ctx.drawImage(spr[key],this.x-d/2,this.y-d/2,d,d);ctx.globalAlpha=1;
+  };
+
+  function resize(){
+    var DPR=Math.min(window.devicePixelRatio||1,2);
+    var r=hero.getBoundingClientRect();W=r.width;H=r.height;
+    cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    var n=Math.min(Math.floor(W*H*CFG.density),CFG.maxParticles);
+    parts=[];for(var i=0;i<n;i++)parts.push(new P((i%18)<11));   /* exact 11:7 → 55 orange / 35 cyan at 90 total */
+    if(reduce)renderStatic();
+  }
+  function paint(now,dt){
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    ctx.clearRect(0,0,W,H);   /* transparent: page bg shows through */
+    recount();
+    for(var q=shocks.length-1;q>=0;q--){
+      var sk=shocks[q];sk.age+=dt*16.667;
+      var u=sk.age/CFG.shockLife;
+      if(u>=1){shocks.splice(q,1);continue;}
+      sk.r=CFG.shockMaxR*(1-Math.pow(1-u,3));   /* ease-out expansion */
+    }
+    for(var i=0;i<parts.length;i++){parts[i].step(now,dt);parts[i].draw();}
+    /* thin fading ripple ring (crisp, no blur) */
+    for(var j=0;j<shocks.length;j++){
+      var k=shocks[j],a=(1-k.age/CFG.shockLife);
+      ctx.strokeStyle='rgba('+pal.o.tail+','+(a*a*.6)+')';
+      ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(k.x,k.y,k.r,0,6.2832);ctx.stroke();
+    }
+  }
+  function frame(now){
+    if(!running)return;
+    var dt=last?Math.min((now-last)/16.667,2.5):1;last=now;   /* frame-rate independent = smooth on 60/90/120Hz */
+    paint(now,dt);raf=requestAnimationFrame(frame);
+  }
+  function renderStatic(){for(var i=0;i<90;i++){recount();for(var j=0;j<parts.length;j++)parts[j].step(i*16,1);}paint(1500,0);}
+  function start(){if(reduce||running||!visible||document.hidden)return;running=true;last=0;raf=requestAnimationFrame(frame);}
+  function stop(){running=false;cancelAnimationFrame(raf);}
+
+  /* follow site theme */
+  function syncTheme(){var dk=document.body.classList.contains('dark-mode');alphaMul=dk?1:.9;buildSprites(dk);if(reduce)renderStatic();}
+  new MutationObserver(syncTheme).observe(document.body,{attributes:true,attributeFilter:['class']});
+  syncTheme();
+
+  /* pointer interaction (touch keeps vertical scroll via passive listeners) */
+  hero.addEventListener('pointermove',function(e){var r=cv.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;mouse.on=true;},{passive:true});
+  hero.addEventListener('pointerleave',function(){mouse.on=false;});
+  hero.addEventListener('pointerdown',function(e){
+    if(reduce)return;
+    var r=cv.getBoundingClientRect();
+    shocks.push({x:e.clientX-r.left,y:e.clientY-r.top,age:0,r:0});
+    if(shocks.length>4)shocks.shift();
+  },{passive:true});
+  hero.addEventListener('pointerup',function(){mouse.on=false;});
+  hero.addEventListener('pointercancel',function(){mouse.on=false;});
+
+  /* perf: pause offscreen / hidden tab */
+  new IntersectionObserver(function(es){visible=es[0].isIntersecting;visible?start():stop();},{threshold:0}).observe(hero);
+  document.addEventListener('visibilitychange',function(){document.hidden?stop():start();});
+  if('ResizeObserver' in window){var rt;new ResizeObserver(function(){clearTimeout(rt);rt=setTimeout(resize,120);}).observe(hero);}
+  else window.addEventListener('resize',function(){resize();});
+
+  resize();start();
+})();
 </script>
 <script src="assets/js/orders-badge.js"></script>
 </body>
