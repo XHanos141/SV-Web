@@ -226,6 +226,8 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
   display:flex;align-items:center;justify-content:center;
 }
 .oc-item-img svg{ width:24px;height:24px;color:var(--text3);opacity:.3; }
+.oc-item-img{ overflow:hidden; }
+.oc-item-img img{ width:100%;height:100%;object-fit:cover;display:block; }
 .oc-item-name-row{ display:flex;align-items:center;gap:6px; }
 .oc-cat-badge{
   width:16px;height:16px;border-radius:5px;flex-shrink:0;
@@ -881,7 +883,7 @@ function soItemsV2(o){
   const items = o.items || [];
   const rows = items.map(i => {
     const qty = Number(i.qty) || 1, line = Number(i.price) * qty;
-    return '<div class="oc-item-row"><div class="oc-item-img">'+SO_ICO.box+'</div><div style="flex:1;min-width:0"><div class="oc-item-name-row"><div class="oc-item-name">'+soEsc(i.name)+'</div></div>'
+    return '<div class="oc-item-row"><div class="oc-item-img">'+(i.image ? '<img src="'+soEsc(i.image)+'" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{innerHTML:SO_ICO.box}).firstChild)">' : SO_ICO.box)+'</div><div style="flex:1;min-width:0"><div class="oc-item-name-row"><div class="oc-item-name">'+soEsc(i.name)+'</div></div>'
       + (i.variant ? '<div class="oc-item-sub">'+soEsc(i.variant)+'</div>' : '') + '</div>'
       + '<div class="oc-item-math"><div class="oc-item-linetotal">'+soMoney(line)+'</div>'+(qty > 1 ? '<div class="oc-item-qtyprice">'+qty+' × '+soMoney(i.price)+'</div>' : '')+'</div></div>';
   }).join('');
@@ -993,7 +995,7 @@ document.addEventListener('click', function(e){
     if(!o) return;
     let cartNow = []; try{ cartNow = JSON.parse(localStorage.getItem('sv-cart-internal') || '[]'); }catch(e){}
     if(cartNow.length && !confirm('Your cart will be replaced with the items from order ' + o.order_number + '. Continue?')) return;
-    const cart = (o.items || []).map(i => ({ sku:i.sku, name:i.name, price:Number(i.price), qty:Number(i.qty) }));
+    const cart = (o.items || []).map(i => ({ sku:i.sku, name:i.name, price:Number(i.price), qty:Number(i.qty), img:i.image || null }));
     try{
       localStorage.setItem('sv-cart-internal', JSON.stringify(cart));
       sessionStorage.setItem('sv-unpaid-order', o.id);
