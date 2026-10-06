@@ -386,15 +386,28 @@ body.dark-mode .due-banner{background:rgba(244,169,34,.14)}
 /* Success overlay reused pattern */
 .pay-success-overlay{position:fixed;inset:0;background:rgba(6,10,20,.5);z-index:960;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:24px}
 .pay-success-overlay.show{opacity:1;pointer-events:auto}
-.pay-success-sheet{width:min(300px,80vw);background:var(--surface);border-radius:22px;box-shadow:0 8px 10px rgba(15,35,65,0.1),0 30px 45px rgba(15,35,65,0.18),0 50px 70px rgba(15,35,65,0.08);padding:28px 22px;text-align:center;transform:scale(.85);opacity:0;transition:transform .35s cubic-bezier(.16,1,.3,1),opacity .3s ease}
-body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0,0,0,0.3),0 30px 45px rgba(0,0,0,0.45),0 50px 70px rgba(0,0,0,0.2)}
-.pay-success-overlay.show .pay-success-sheet{transform:scale(1);opacity:1}
-.ps-icon{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#12b17e,#009b72);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 22px rgba(0,155,114,.35)}
-.ps-icon.pending{background:linear-gradient(135deg,#f4a922,#c9860c);box-shadow:0 8px 22px rgba(244,169,34,.35)}
-.ps-icon svg{width:28px;height:28px;stroke:#fff;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.pay-success-sheet h3{font-family:var(--fd);font-size:17px;font-weight:800;margin-bottom:6px}
-.pay-success-sheet p{font-size:11.5px;color:var(--t2);line-height:1.5;margin-bottom:16px}
-
+.pay-success-overlay.show{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.pay-success-sheet{position:relative;overflow:hidden;width:min(88vw,340px);background:#fff;border:1px solid #e5e7eb;border-radius:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,.12);padding:32px 28px 26px;text-align:center;transform:scale(.85) translateY(20px);opacity:0;transition:transform .6s cubic-bezier(.16,1,.3,1),opacity .5s ease}
+body.dark-mode .pay-success-sheet{background:#1b2738;border-color:rgba(255,255,255,.1);box-shadow:0 25px 50px -12px rgba(0,0,0,.5)}
+.pay-success-overlay.show .pay-success-sheet{transform:scale(1) translateY(0);opacity:1}
+.ps-confetti{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.ps-icon-wrap{position:relative;width:72px;height:72px;margin:0 auto 20px;z-index:2}
+.ps-icon-wrap::before{content:'';position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.15) 0%,transparent 70%);opacity:0;transform:scale(.5);transition:all .5s cubic-bezier(.16,1,.3,1) .3s}
+.pay-success-overlay.show .ps-icon-wrap::before{opacity:1;transform:scale(1.3)}
+.ps-icon{position:relative;z-index:2;width:72px;height:72px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;transform:scale(0);transition:transform .5s cubic-bezier(.34,1.56,.64,1) .2s;box-shadow:0 8px 32px rgba(34,197,94,.25)}
+.pay-success-overlay.show .ps-icon{transform:scale(1)}
+.ps-icon.pending{background:linear-gradient(135deg,#f4a922,#c9860c);box-shadow:0 8px 32px rgba(244,169,34,.3)}
+.ps-icon svg{width:34px;height:34px;stroke:#fff;stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:48;stroke-dashoffset:48;transition:stroke-dashoffset .6s ease .6s}
+.pay-success-overlay.show .ps-icon svg{stroke-dashoffset:0}
+.pay-success-sheet h3{position:relative;z-index:2;font-family:var(--fd);font-size:19px;font-weight:800;letter-spacing:-.02em;margin-bottom:12px;color:#111827;opacity:0;transform:translateY(12px);transition:all .5s ease .5s}
+body.dark-mode .pay-success-sheet h3{color:#fff}
+.pay-success-sheet p{position:relative;z-index:2;font-size:13px;color:#6b7280;line-height:1.5;margin-bottom:20px;opacity:0;transform:translateY(10px);transition:all .5s ease .65s}
+body.dark-mode .pay-success-sheet p{color:rgba(255,255,255,.55)}
+.ps-oid{position:relative;z-index:2;display:none;margin:0 auto 12px;padding:2px 10px;border-radius:6px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#7c3aed;font-family:'Courier New',monospace;font-size:13px;font-weight:700;letter-spacing:.02em;opacity:0;transition:opacity .5s ease .55s}
+.ps-oid.on{display:inline-block}
+.pay-success-overlay.show .ps-oid,.pay-success-overlay.show .pay-success-sheet h3,.pay-success-overlay.show .pay-success-sheet p{opacity:1;transform:translateY(0)}
+.pay-success-sheet .ps-btn{position:relative;z-index:2;opacity:0;transform:translateY(8px);transition:opacity .4s ease .95s,transform .4s ease .95s}
+.pay-success-overlay.show .ps-btn{opacity:1;transform:translateY(0)}
 /* bKash sender-number popup — mirrors bKash PGW's own account-number entry screen */
 .bkash-popup-overlay{position:fixed;inset:0;background:rgba(6,10,20,.6);z-index:970;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:20px}
 .bkash-popup-overlay.show{opacity:1;pointer-events:auto}
@@ -978,8 +991,10 @@ body.dark-mode .pay-success-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(
 
 <div class="pay-success-overlay" id="successOverlay">
   <div class="pay-success-sheet" id="successSheet">
-    <div class="ps-icon" id="psIcon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <canvas class="ps-confetti" id="psConfetti"></canvas>
+    <div class="ps-icon-wrap"><div class="ps-icon" id="psIcon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
     <h3 id="psTitle">Payment successful!</h3>
+    <div class="ps-oid" id="psOid"></div>
     <p id="psText">Your order is confirmed. We'll send updates via WhatsApp.</p>
     <button class="ps-btn" id="psCloseBtn" type="button">Done</button>
   </div>
@@ -1776,7 +1791,52 @@ const psTitle = document.getElementById('psTitle');
 const psText = document.getElementById('psText');
 
 function openOverlay(el){ el.classList.add('show'); }
-function closeOverlay(el){ el.classList.remove('show'); }
+function closeOverlay(el){ el.classList.remove('show'); if(el===successOverlay && window._psStop) window._psStop(); }
+
+/* Order-confirmed confetti (same engine as admin payment-success popup) */
+(function(){
+  const COLORS=['#22c55e','#10b981','#34d399','#6ee7b7','#f59e0b','#fbbf24','#fcd34d','#3b82f6','#06b6d4','#60a5fa','#ec4899','#f43f5e','#8b5cf6','#a78bfa'];
+  const SHAPES=['triangle','rectangle','capsule'];
+  let cv,cx,anim=null,parts=[],raining=false,last=0,rainT=0,timer=null;
+  function resize(){ if(!cv) return; const d=Math.min(window.devicePixelRatio||1,2),r=cv.getBoundingClientRect(); cv.width=r.width*d; cv.height=r.height*d; cx.setTransform(d,0,0,d,0,0); }
+  function P(x,y,type){
+    this.x=x; this.y=y; this.type=type;
+    this.color=COLORS[Math.floor(Math.random()*COLORS.length)];
+    this.shape=SHAPES[Math.floor(Math.random()*SHAPES.length)];
+    this.rot=Math.random()*Math.PI*2; this.rs=(Math.random()-.5)*3;
+    this.wob=Math.random()*Math.PI*2; this.ws=Math.random()*2+1;
+    if(this.shape==='triangle') this.size=Math.random()*5+4;
+    else if(this.shape==='rectangle'){ this.w=Math.random()*6+4; this.h=this.w*(Math.random()*.6+.3); }
+    else { this.w=Math.random()*7+5; this.h=this.w*(Math.random()*.35+.25); this.r=Math.min(this.w,this.h)/2; }
+    if(type==='blast'){ const a=Math.random()*Math.PI*2,sp=Math.random()*180+120; this.vx=Math.cos(a)*sp; this.vy=Math.sin(a)*sp-80; this.g=220; this.drag=.985; this.life=1; this.decay=Math.random()*.25+.18; }
+    else { this.vx=(Math.random()-.5)*25; this.vy=Math.random()*50+35; this.g=22; this.drag=.999; this.life=1; this.decay=0; }
+  }
+  P.prototype.update=function(dt){ this.vx*=Math.pow(this.drag,dt*60); this.vy+=this.g*dt; this.x+=this.vx*dt; this.y+=this.vy*dt; this.rot+=this.rs*dt; this.wob+=this.ws*dt; if(this.type==='rain') this.x+=Math.sin(this.wob)*15*dt; if(this.type==='blast') this.life-=this.decay*dt; };
+  P.prototype.draw=function(){
+    cx.save(); cx.translate(this.x,this.y); cx.rotate(this.rot);
+    cx.globalAlpha=this.type==='blast'?Math.max(0,this.life):1; cx.fillStyle=this.color; cx.beginPath();
+    if(this.shape==='triangle'){ const s=this.size; cx.moveTo(0,-s); cx.lineTo(s*.866,s*.5); cx.lineTo(-s*.866,s*.5); cx.closePath(); }
+    else if(this.shape==='rectangle'){ cx.rect(-this.w/2,-this.h/2,this.w,this.h); }
+    else { const r=this.r,hw=this.w/2,hh=this.h/2; cx.moveTo(-hw+r,-hh); cx.lineTo(hw-r,-hh); cx.arc(hw-r,0,r,-Math.PI/2,Math.PI/2); cx.lineTo(-hw+r,hh); cx.arc(-hw+r,0,r,Math.PI/2,-Math.PI/2); cx.closePath(); }
+    cx.fill(); cx.restore();
+  };
+  P.prototype.dead=function(w,h){ return this.type==='blast'?this.life<=0:(this.y>h+15||this.x<-20||this.x>w+20); };
+  function loop(ts){
+    const dt=Math.min((ts-last)/1000,.05); last=ts; const r=cv.getBoundingClientRect();
+    cx.clearRect(0,0,r.width,r.height);
+    if(raining){ rainT+=dt; if(rainT>.06){ rainT=0; parts.push(new P(Math.random()*r.width,-8,'rain')); } }
+    parts=parts.filter(p=>{ p.update(dt); p.draw(); return !p.dead(r.width,r.height); });
+    anim=(parts.length||raining)?requestAnimationFrame(loop):null;
+  }
+  function start(){
+    cv=document.getElementById('psConfetti'); cx=cv.getContext('2d'); resize();
+    parts=[]; raining=true; rainT=0; last=performance.now();
+    const r=cv.getBoundingClientRect(); for(let i=0;i<70;i++) parts.push(new P(r.width/2,r.height*.18,'blast'));
+    if(!anim) anim=requestAnimationFrame(loop);
+  }
+  window._psConfettiStart=function(){ clearTimeout(timer); timer=setTimeout(start,280); };
+  window._psStop=function(){ clearTimeout(timer); raining=false; };
+})();
 
 function finalizeSubmit(orderNumber, awaitingVerification){
   if(!S.method) return;
@@ -1798,9 +1858,12 @@ function finalizeSubmit(orderNumber, awaitingVerification){
     psTitle.textContent = 'Payment successful!';
     psText.textContent = "Your order is confirmed. We'll send updates via WhatsApp.";
   }
-  if(orderNumber) psText.textContent = 'Order ' + orderNumber + '. ' + psText.textContent;
+  const psOid = document.getElementById('psOid');
+  psOid.textContent = orderNumber || '';
+  psOid.classList.toggle('on', !!orderNumber);
   if(IS_BUYNOW) sessionStorage.removeItem(BUYNOW_KEY);
   openOverlay(successOverlay);
+  if(!isP2P && window._psConfettiStart) window._psConfettiStart();
 }
 
 const TXN_FIELD = { bkash: 'bkTxn', nagad: 'ngTxn', rocket: 'rkTxn', cellfin: 'cfTxn', bank: 'bnkTxn', crypto: 'cryptoTxn' };
