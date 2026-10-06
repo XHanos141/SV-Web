@@ -483,6 +483,32 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
 .hcart.is-logged-in{background:#009ddc;border-color:#009ddc}
 .hcart-initial{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:#fff;line-height:1}
 .hcart-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+
+/* ===== Motion system (smooth transitions) ===== */
+:root{--ease:cubic-bezier(.4,0,.2,1);--spring:cubic-bezier(.34,1.56,.64,1)}
+.link-input-wrap,.price-input-wrap,.store-select-wrap,.wa-input,.note-input,.link-input{transition:border-color .22s var(--ease),background-color .22s var(--ease),box-shadow .22s var(--ease),transform .22s var(--ease)}
+.link-input-wrap:focus-within,.price-input-wrap:focus-within,.store-select-wrap:focus-within,.store-select-wrap.open,.wa-input:focus,.note-input:focus{box-shadow:0 0 0 3px rgba(242,100,48,.14)}
+.wa-input.error,.note-input.error,.link-input.error{box-shadow:0 0 0 3px var(--err-soft)}
+.wa-input.ok{box-shadow:0 0 0 3px rgba(0,155,114,.12)}
+.wa-error-msg{display:block;max-height:0;opacity:0;overflow:hidden;margin-top:0;transform:translateY(-3px);transition:max-height .25s var(--ease),opacity .2s ease,transform .25s var(--ease),margin .25s var(--ease)}
+.wa-error-msg.show{max-height:40px;opacity:1;transform:none;margin-top:4px}
+.add-item-btn,.purchase-req-btn,.sa-primary,.sa-secondary,.lg-login,.lg-cancel,.review-actions button{transition:transform .2s var(--spring),background-color .2s ease,box-shadow .25s ease,border-color .2s ease,opacity .2s ease}
+.add-item-btn:active,.sa-primary:active,.sa-secondary:active,.lg-login:active{transform:scale(.97)}
+.item-remove{transition:transform .2s var(--spring),background-color .2s ease}
+.store-select-menu{display:block;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-6px) scale(.98);transform-origin:top center;transition:opacity .16s ease,transform .2s var(--ease),visibility 0s linear .2s}
+.store-select-menu.open{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition-delay:0s}
+.store-opt{transition:background-color .15s ease,color .15s ease,padding-left .15s var(--ease)}
+.store-opt:active{background:var(--surface2)}
+.item-row.row-in{animation:rowIn .4s var(--ease) both}
+@keyframes rowIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.login-gate .lg-card{transform:translateY(10px) scale(.95);transition:transform .32s var(--ease)}
+.login-gate.show .lg-card{transform:none}
+.faq-q span,.faq-q svg{transition:color .2s ease,transform .3s var(--ease)}
+.faq-item.open .faq-q span{color:var(--orange)}
+.faq-a p{opacity:0;transform:translateY(-4px);transition:opacity .25s ease .05s,transform .25s var(--ease) .05s}
+.faq-item.open .faq-a p{opacity:1;transform:none}
+.s-nav-item{transition:color .2s ease,transform .2s var(--spring)}
+.s-nav-item:active{transform:scale(.93)}
 </style>
 <base target="_blank">
 </head>
@@ -1053,6 +1079,7 @@ function addItemRow(){
   const item = { id: row.dataset.id, url:'', name:'', storeKey:'', qty:1, valid:false, storeMismatch:false };
   S.items.push(item);
   itemsWrap.appendChild(row);
+  if(itemCounter > 1){ row.classList.add('row-in'); row.addEventListener('animationend', function(e){ if(e.target === row) row.classList.remove('row-in'); }); }
   wireItemRow(row, item);
   wireSummaryTriggers(row, item);
   updateOrderSummary();
