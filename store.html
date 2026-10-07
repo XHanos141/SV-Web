@@ -1712,12 +1712,16 @@ function showToast(msg, icon){
 
   function filtered(){
     var q = S.q.toLowerCase();
-    return products.filter(function(p){
+    var list = products.filter(function(p){
       return p.type === S.type &&
              (S.brand === 'All' || p.brand === S.brand) &&
              (!S.cat.length || S.cat.indexOf(p.cat) !== -1) &&
              (!q || p.name.toLowerCase().indexOf(q) !== -1);
     });
+    /* Rule: with no explicit sort applied, out-of-stock products always sit at the very bottom (original order kept within each group). */
+    var avail = [], oos = [];
+    list.forEach(function(p){ (p.stock === 'out' ? oos : avail).push(p); });
+    return avail.concat(oos);
   }
 
   function paint(list, animateIn){
