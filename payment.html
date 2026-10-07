@@ -1857,8 +1857,8 @@ function finalizeSubmit(orderNumber, awaitingVerification){
   } else if(S.method === 'cod'){
     psIcon.classList.remove('pending');
     psIcon.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
-    psTitle.textContent = 'Order confirmed!';
-    psText.textContent = "Pay in cash when it arrives. We'll send delivery updates via WhatsApp.";
+    psTitle.textContent = 'Order placed!';
+    psText.textContent = "Keep cash ready for delivery. We'll confirm your order on WhatsApp and update you until it arrives.";
   } else {
     psIcon.classList.remove('pending');
     psIcon.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
