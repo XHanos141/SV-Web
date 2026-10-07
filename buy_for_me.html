@@ -119,6 +119,7 @@ main{max-width:600px;margin:0 auto;padding:0 16px}
 .form-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:18px 16px 20px;box-shadow:var(--shadow);margin-bottom:22px}
 .form-card h3{font-family:var(--fd);font-size:15px;font-weight:800;margin-top:7px;margin-bottom:2px}
 .form-card .fc-sub{font-size:11px;color:var(--t2);margin-bottom:16px}
+.form-card .ai-slot{width:56px;height:56px;margin:-4px 0 12px -6px}
 .field-label{font-size:11px;font-weight:800;color:var(--text);margin-top:7px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .field-label .req,.item-num .req{color:var(--orange)}
 
@@ -569,7 +570,7 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
 <main>
   <section class="form-card rv">
     <h3>What do you want us to get?</h3>
-    <p class="fc-sub">Paste a link. We'll read the product name, price, and store automatically.</p>
+    <div class="ai-slot" id="aiSlot" aria-hidden="true"></div>
 
     <div id="itemsWrap"></div>
 
@@ -1926,5 +1927,10 @@ var __svBadgeLast = 0;
 })();
 </script>
 <script src="assets/js/orders-badge.js"></script>
+<script src="assets/js/sv-ai-bot.js"></script>
+<script>
+/* AI bot — shared component (assets/js/sv-ai-bot.js). States: idle | reading | found | failed. Wire later: window.svBot.setState(...) */
+window.svBot = SVBot.mount(document.getElementById('aiSlot'), { size: 56 });
+</script>
 </body>
 </html>
