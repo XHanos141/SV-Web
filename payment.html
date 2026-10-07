@@ -171,7 +171,10 @@ body.dark-mode .draft-math-total{border-top-color:rgba(255,255,255,0.18)}
 .promo-applied-left{display:flex;align-items:center;gap:8px}
 .promo-applied-left svg{width:15px;height:15px;stroke:var(--green);stroke-width:2.4;fill:none;flex-shrink:0}
 .promo-applied b{color:var(--green)}
-.promo-remove{background:none;border:none;color:var(--t2);font-size:11px;font-weight:700;text-decoration:underline;cursor:pointer}
+.promo-remove{background:none;border:none;color:#C62828;font-size:11px;font-weight:700;text-decoration:none;cursor:pointer;padding:8px 4px;transition:color .15s ease}
+.promo-remove:hover,.promo-remove:focus-visible{color:#A31515;text-decoration:underline;text-underline-offset:3px}
+body.dark-mode .promo-remove{color:#FF7A7A}
+body.dark-mode .promo-remove:hover,body.dark-mode .promo-remove:focus-visible{color:#FF9A9A}
 .promo-error{font-size:10.5px;color:#E14343;margin:6px 0 4px;display:none}
 .promo-error.show{display:block}
 .pay-tracking{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px dashed var(--border);border-radius:9px;padding:5px 10px;font-size:10.5px;color:var(--t3);margin-top:8px}
