@@ -119,7 +119,16 @@ main{max-width:600px;margin:0 auto;padding:0 16px}
 .form-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:18px 16px 20px;box-shadow:var(--shadow);margin-bottom:22px}
 .form-card h3{font-family:var(--fd);font-size:15px;font-weight:800;margin-top:7px;margin-bottom:2px}
 .form-card .fc-sub{font-size:11px;color:var(--t2);margin-bottom:16px}
-.form-card .ai-slot{width:56px;height:56px;margin:-4px 0 12px -6px}
+.form-card .momo-row{display:flex;align-items:center;gap:8px;margin:-4px 0 12px}
+.form-card .ai-slot{width:56px;height:56px;margin:0 0 0 -6px;flex:none}
+.momo-bubble{--mb:#2476f0;--ms:rgba(36,118,240,.30);position:relative;flex:1;min-width:0;background-color:var(--mb);border-radius:14px;padding:9px 12px;font-size:11.5px;font-weight:700;line-height:1.4;color:#fff;box-sizing:border-box;transform-origin:left center;box-shadow:0 4px 14px var(--ms);transition:height .32s cubic-bezier(.4,0,.2,1),background-color .35s ease,box-shadow .35s ease}
+.momo-bubble::before{content:"";position:absolute;left:-4px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:2px;background-color:var(--mb);transform:rotate(45deg);transition:background-color .35s ease}
+.momo-bubble.pop{animation:momoPop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes momoPop{0%{transform:scale(.95)}100%{transform:scale(1)}}
+.momo-bubble b{color:#fff;font-weight:800}
+.momo-txt{display:block;transition:opacity .2s ease,transform .2s ease}
+.momo-txt.swap{opacity:0;transform:translateY(5px)}
+@media (prefers-reduced-motion:reduce){.momo-bubble,.momo-bubble::before,.momo-txt{transition:none}.momo-bubble.pop{animation:none}}
 .field-label{font-size:11px;font-weight:800;color:var(--text);margin-top:7px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .field-label .req,.item-num .req{color:var(--orange)}
 
@@ -570,7 +579,10 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
 <main>
   <section class="form-card rv">
     <h3>What do you want us to get?</h3>
-    <div class="ai-slot" id="aiSlot" aria-hidden="true"></div>
+    <div class="momo-row">
+      <div class="ai-slot" id="aiSlot" aria-hidden="true"></div>
+      <div class="momo-bubble" data-state="idle" aria-live="polite"><span class="momo-txt" id="momoTxt">Hey there 👋 I'm <b>Momo</b>. Drop a product link and I'll fill in the rest.</span></div>
+    </div>
 
     <div id="itemsWrap"></div>
 
@@ -1931,6 +1943,36 @@ var __svBadgeLast = 0;
 <script>
 /* AI bot — shared component (assets/js/sv-ai-bot.js). States: idle | reading | found | failed. Wire later: window.svBot.setState(...) */
 window.svBot = SVBot.mount(document.getElementById('aiSlot'), { size: 56 });
+/* Momo captions — follow the bot state; bubble height + text cross-fade smoothly */
+(function(){
+  var txt=document.getElementById('momoTxt'),bub=txt.parentNode,cur='idle',t1=0,t2=0;
+  var say={
+    idle:"Hey there 👋 I'm <b>Momo</b>. Drop a product link and I'll fill in the rest.",
+    reading:"I'm checking the link and pulling out the product details for you.",
+    found:"Gotcha! 🎉 Here are the product details from your link.",
+    failed:"Oops! I couldn't pull the product details from that link. Try checking the link."
+  };
+  function measure(html){
+    var c=bub.cloneNode(true),ct=c.querySelector('.momo-txt');
+    c.removeAttribute('aria-live'); ct.removeAttribute('id'); ct.className='momo-txt'; ct.innerHTML=html;
+    c.style.cssText='position:absolute;visibility:hidden;pointer-events:none;flex:none;transition:none;height:auto;width:'+bub.offsetWidth+'px';
+    bub.parentNode.appendChild(c); var h=c.offsetHeight; bub.parentNode.removeChild(c); return h;
+  }
+  var base=window.svBot.setState.bind(window.svBot);
+  window.svBot.setState=function(s){
+    base(s);
+    if(!say[s]||s===cur) return;
+    cur=s; clearTimeout(t1); clearTimeout(t2);
+    bub.setAttribute('data-state',s);
+    bub.classList.remove('pop'); void bub.offsetWidth; bub.classList.add('pop');
+    if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){ txt.innerHTML=say[s]; return; }
+    var h0=bub.offsetHeight,h1=measure(say[s]);
+    bub.style.height=h0+'px'; void bub.offsetHeight; bub.style.height=h1+'px';
+    txt.classList.add('swap');
+    t1=setTimeout(function(){ txt.innerHTML=say[s]; txt.classList.remove('swap'); },170);
+    t2=setTimeout(function(){ bub.style.height=''; },380);
+  };
+})();
 </script>
 </body>
 </html>
