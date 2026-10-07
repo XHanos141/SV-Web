@@ -2098,7 +2098,8 @@ async function svLoadProducts(){
   await svApplyAvailability(res.data || []);
   products.length = 0;
   (res.data || []).forEach(function(r){ products.push(svMapProduct(r)); });
-  trendingItems = products.filter(function(p){ return p.trending; }).slice(0, 8);
+  /* Rule: out-of-stock products are never shown in Trending Now. The admin 'trending' flag is left untouched, so the product auto-returns when back in stock, until an admin removes it manually. */
+  trendingItems = products.filter(function(p){ return p.trending && p.stock !== 'out'; }).slice(0, 8);
   renderTrending();
   if(window.svStoreRefresh) window.svStoreRefresh();
 }
