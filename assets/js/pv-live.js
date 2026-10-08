@@ -454,3 +454,29 @@
     })
     .catch(function(e){ console.error('pv-live failed', e); reveal(); });
 })();
+
+/* Zoom lightbox: slides start on the 1200px gallery file (already cached); the 2000px
+   original is fetched only once the lightbox opens — active slide first, then the rest. */
+(function(){
+  var ov = document.getElementById('pvZoomOverlay');
+  if(!ov || !window.MutationObserver || !window.svImg) return;
+  function upgrade(){
+    var imgs = Array.prototype.slice.call(ov.querySelectorAll('.pv-zoom-slide img'));
+    var dots = ov.querySelectorAll('.pv-zoom-dots .pv-dot'), act = 0;
+    for(var i = 0; i < dots.length; i++){ if(dots[i].classList.contains('active')){ act = i; break; } }
+    var order = imgs.filter(function(_, k){ return k === act; }).concat(imgs.filter(function(_, k){ return k !== act; }));
+    (function next(){
+      var im = order.shift();
+      if(!im) return;
+      var cur = im.getAttribute('src') || '', hi = window.svImg(cur, 2000);
+      if(hi === cur || im.getAttribute('data-hi')) return next();
+      im.setAttribute('data-hi', '1');
+      var pre = new Image();
+      pre.onload = function(){ im.src = hi; next(); };
+      pre.onerror = next;                  // no 2000px file: keep the 1200px one
+      pre.src = hi;
+    })();
+  }
+  new MutationObserver(function(){ if(ov.classList.contains('open')) upgrade(); })
+    .observe(ov, { attributes: true, attributeFilter: ['class'] });
+})();

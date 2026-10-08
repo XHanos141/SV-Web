@@ -438,6 +438,7 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
+<script src="assets/js/sv-img.js"></script>
 </head>
 <body data-page="orders">
 
@@ -743,6 +744,7 @@ async function loadProxyOrders(){
 const SO_DEMO = false;
 const SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
 function soEsc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function soImgFail(el){ el.replaceWith(Object.assign(document.createElement('span'),{innerHTML:SO_ICO.box}).firstChild); }
 function soMoney(n){ return '৳' + Number(n || 0).toLocaleString('en-IN'); }
 function soDateTime(iso){ try{ const d = new Date(iso); return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) + ', ' + d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); }catch(e){ return ''; } }
 function soDate(iso){ try{ return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
@@ -883,7 +885,7 @@ function soItemsV2(o){
   const items = o.items || [];
   const rows = items.map(i => {
     const qty = Number(i.qty) || 1, line = Number(i.price) * qty;
-    return '<div class="oc-item-row"><div class="oc-item-img">'+(i.image ? '<img src="'+soEsc(i.image)+'" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{innerHTML:SO_ICO.box}).firstChild)">' : SO_ICO.box)+'</div><div style="flex:1;min-width:0"><div class="oc-item-name-row"><div class="oc-item-name">'+soEsc(i.name)+'</div></div>'
+    return '<div class="oc-item-row"><div class="oc-item-img">'+(i.image ? '<img'+svImgAttrs(i.image,300,'soImgFail')+' alt="" loading="lazy">' : SO_ICO.box)+'</div><div style="flex:1;min-width:0"><div class="oc-item-name-row"><div class="oc-item-name">'+soEsc(i.name)+'</div></div>'
       + (i.variant ? '<div class="oc-item-sub">'+soEsc(i.variant)+'</div>' : '') + '</div>'
       + '<div class="oc-item-math"><div class="oc-item-linetotal">'+soMoney(line)+'</div>'+(qty > 1 ? '<div class="oc-item-qtyprice">'+qty+' × '+soMoney(i.price)+'</div>' : '')+'</div></div>';
   }).join('');
