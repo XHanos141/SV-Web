@@ -1882,10 +1882,10 @@ function finalizeSubmit(orderNumber, awaitingVerification){
 
 const TXN_FIELD = { bkash: 'bkTxn', nagad: 'ngTxn', rocket: 'rkTxn', cellfin: 'cfTxn', bank: 'bnkTxn', crypto: 'cryptoTxn' };
 let _placing = false;
-/* Store orders are created by the server (prices, stock, shipping and voucher are decided there).
-   Carts whose items carry no SKU yet (demo catalog) and proxy quotes keep the old demo confirmation. */
+/* Store orders are created by the server (prices, stock, shipping and voucher are decided there). */
 async function placeOrder(){
   const lines = S.flow === 'internal' ? cartSkuLines() : null;
+  if(S.flow === 'internal' && !lines){ showToast('Your cart has an item that cannot be ordered. Remove it and add it again.'); return; }
   if(!lines){ finalizeSubmit(); return; }
   if(_placing) return;
   if(!sbClient){ showToast('Could not reach the server. Please try again.'); return; }

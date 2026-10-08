@@ -701,8 +701,8 @@ body.dark-mode .pv-qty-val{border-left-color:rgba(255,255,255,0.08);border-right
 
 </style>
 <script>
-/* Hide static demo content until live data loads (prevents flash of fake product) */
-if(/[?&]pid=/.test(location.search)){document.write('<style id="pvPre">body .pv-info,body .pv-actions{visibility:hidden}</style>');setTimeout(function(){var s=document.getElementById('pvPre');if(s&&s.parentNode)s.parentNode.removeChild(s)},12000)}
+/* Hide placeholder markup until live data loads */
+if(!/[?&]name=/.test(location.search)){document.write('<style id="pvPre">body .pv-info,body .pv-actions{visibility:hidden}</style>');setTimeout(function(){var s=document.getElementById('pvPre');if(s&&s.parentNode)s.parentNode.removeChild(s)},12000)}
 </script>
 </head>
 <body>
@@ -977,7 +977,7 @@ let qty = 1;
 // ─── Populate from URL params (passed from store.html card click) ───
 (function applyProductFromUrl(){
   const params = new URLSearchParams(window.location.search);
-  if(!params.has('name')) return; // no params — keep static demo product as-is
+  if(!params.has('name')) return;
   const rawName = params.get('name');
   const brand = params.get('brand') || '';
   const name = brand ? (brand + ' ' + rawName) : rawName;
@@ -1709,7 +1709,7 @@ function submitReview(){
 })();
 </script>
 <script src="assets/js/sv-img.js"></script>
-<script src="assets/js/pv-live.js?v=16"></script>
+<script src="assets/js/pv-live.js?v=18"></script>
 <script src="assets/js/pv-oos.js?v=1"></script>
 <script src="assets/js/pv-cart-tick.js?v=1"></script>
 <script>

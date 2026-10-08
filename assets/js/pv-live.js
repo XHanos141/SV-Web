@@ -1,9 +1,9 @@
 /* Live product data for product_view_*.html — loads by ?pid=<uuid> from Supabase (published products only). */
 (function(){
-  function reveal(){ var s = document.getElementById('pvPre'); if(s && s.parentNode) s.parentNode.removeChild(s); }
+  function reveal(){ document.querySelectorAll('style#pvPre').forEach(function(s){ s.parentNode && s.parentNode.removeChild(s); }); }
   var params = new URLSearchParams(window.location.search);
   var pid = params.get('pid') || window.__SV_PID;
-  if(!pid){ reveal(); return; }
+  if(!pid){ if(/[?&]name=/.test(location.search)) reveal(); else location.replace('store.html'); return; }
   if(typeof sbClient === 'undefined' || !sbClient){ reveal(); return; }
 
   var TYPE_BY_CAT = { supplement:'Supplement', gadget:'Gadget', cosmetic:'Cosmetic', clothing:'Clothing', general:'General' };
