@@ -1506,10 +1506,20 @@ function readCart(){
   catch(e){ return []; }
 }
 function writeCart(cart){
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+  catch(e){ showToast('Could not update your cart. Check your browser storage settings.', 'warn'); return false; }
   if(window.svRefreshCartBadge) window.svRefreshCartBadge();
+  return true;
+}
+function inCart(id){ return readCart().some(c => c.id === id); }
+function canBuy(product){
+  if(!product) return false;
+  if(product.stock === 'out'){ showToast('This product is out of stock', 'warn'); return false; }
+  if(!product.sku){ showToast('This product is not available to order yet', 'warn'); return false; }
+  return true;
 }
 function addToCart(product){
+  if(!canBuy(product)) return false;
   const cart = readCart();
   const id = product.id;
   const existing = cart.find(c => c.id === id);
@@ -1532,34 +1542,48 @@ function addToCart(product){
       category: product.cat || ''
     });
   }
-  writeCart(cart);
+  return writeCart(cart);
 }
 function removeFromCart(product){
   const id = product.id;
-  writeCart(readCart().filter(c => c.id !== id));
+  return writeCart(readCart().filter(c => c.id !== id));
 }
+
+const WISH_KEY = 'sv-wishlist';
+function readWish(){
+  try { const w = JSON.parse(localStorage.getItem(WISH_KEY)); return Array.isArray(w) ? w : []; }
+  catch(e){ return []; }
+}
+function writeWish(list){
+  try { localStorage.setItem(WISH_KEY, JSON.stringify(list)); } catch(e){}
+}
+const checkSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>';
 
 function renderCard(p,i){
   var isOut = p.stock === 'out';
+  var price = Number.isFinite(p.price) ? p.price : 0;
+  var old = Number.isFinite(p.old) && p.old > 0 ? p.old : 0;
+  var added = !isOut && !(p.groupSize > 1) && inCart(p.id);
+  var wished = readWish().indexOf(p.id) !== -1;
   var gridImg = p.image ? '<img src="' + esc(p.image) + '" alt="' + esc(svTitle(p)) + '" loading="lazy">' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 2h8"/><path d="M9 2v6.5L4.5 15A3 3 0 0 0 7 20h10a3 3 0 0 0 2.5-5L15 8.5V2"/></svg>';
   var stockClass = p.stock;
   var stockText = p.stock === 'in' ? 'In Stock' : p.stock === 'low' ? 'Low Stock' : 'Out';
   var saleBadge = (!isOut && p.sale) ? '<span class="p-badge-ribbon">Sale</span>' : '';
   var outBar = isOut ? '<div class="p-out-bar">OUT OF STOCK</div>' : '';
   var actions = isOut 
-    ? '<div class="p-actions"><button class="p-wish" onclick="event.stopPropagation();toggleWish(this)" aria-label="Add to wishlist"><svg class="heart-icon" width="16" height="16" style="margin-top:-1px" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wishlist</button></div>'
-    : '<div class="p-actions"><button class="p-add" data-id="' + esc(p.id) + '" onclick="event.stopPropagation();toggleCart(this)" aria-label="Add to cart">' + cartSVG + '</button><button class="p-buy" data-id="' + esc(p.id) + '" onclick="event.stopPropagation();buyNow(this)" aria-label="Buy now">Buy</button></div>';
+    ? '<div class="p-actions"><button class="p-wish" onclick="event.stopPropagation();toggleWish(this)" data-id="' + esc(p.id) + '" aria-label="Add to wishlist"><svg class="heart-icon' + (wished ? ' filled' : '') + '" width="16" height="16" style="margin-top:-1px" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wishlist</button></div>'
+    : '<div class="p-actions"><button class="p-add' + (added ? ' added' : '') + '" data-id="' + esc(p.id) + '" onclick="event.stopPropagation();toggleCart(this)" aria-label="Add to cart">' + (added ? checkSVG : cartSVG) + '</button><button class="p-buy" data-id="' + esc(p.id) + '" onclick="event.stopPropagation();buyNow(this)" aria-label="Buy now">Buy</button></div>';
   var stockBadge = isOut ? '' : '<span class="p-badge-stock ' + stockClass + '">' + stockText + '</span>';
   var pvUrl = pvHref(p);
-  return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (i*0.06) + 's;cursor:pointer" onclick="window.location.href=\'' + pvUrl + '\'">' +
+  return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (i*0.06) + 's;cursor:pointer" data-href="' + esc(pvUrl) + '">' +
     '<div class="p-img-wrap">' + gridImg + stockBadge + saleBadge + outBar + '</div>' +
     '<div class="p-body">' +
       '<div class="p-meta"><span class="p-cat">' + esc(p.cat) + '</span>' + (p.rating > 0 ? '<span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span>' : '') + '</div>' +
       '<div class="p-name">' + esc(svTitle(p)) + '</div>' +
       '<div class="p-footer">' +
-        '<div class="p-price-block' + (p.old ? '' : ' no-discount') + '">' +
-          '<div class="p-price">' + '৳' + p.price.toLocaleString() + '</div>' +
-          (p.old ? '<div class="p-old-row"><span class="p-old-price">৳' + p.old.toLocaleString() + '</span><span class="p-discount-inline">' + p.discount + '</span></div>' : '') +
+        '<div class="p-price-block' + (old ? '' : ' no-discount') + '">' +
+          '<div class="p-price">' + '৳' + price.toLocaleString() + '</div>' +
+          (old ? '<div class="p-old-row"><span class="p-old-price">৳' + old.toLocaleString() + '</span><span class="p-discount-inline">' + p.discount + '</span></div>' : '') +
         '</div>' + actions +
       '</div>' +
     '</div>' +
@@ -1591,18 +1615,16 @@ function productViewParams(p){
 }
 
 function toggleCart(btn){
-  const isAdded = btn.classList.contains('added');
-  const checkIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>';
   const pid = btn.getAttribute('data-id');
   const product = products.find(p => p.id === pid);
   if(product && product.groupSize > 1){ window.location.href = pvHref(product); return; }
-  if(product){
-    if(isAdded) removeFromCart(product);
-    else addToCart(product);
-  }
-  btn.classList.toggle('added');
-  btn.innerHTML = isAdded ? cartSVG : checkIcon;
-  showToast(isAdded ? 'Item removed from cart' : 'Item added to cart', 'cart');
+  if(!product) return;
+  const wasIn = inCart(product.id);
+  const ok = wasIn ? removeFromCart(product) : addToCart(product);
+  if(!ok) return;
+  btn.classList.toggle('added', !wasIn);
+  btn.innerHTML = wasIn ? cartSVG : checkSVG;
+  showToast(wasIn ? 'Item removed from cart' : 'Item added to cart', 'cart');
 }
 const BUYNOW_KEY = 'sv-buynow-item';
 function buyNow(btn){
@@ -1612,6 +1634,7 @@ function buyNow(btn){
   const product = products.find(p => p.id === pid);
   if(!product) return;
   if(product.groupSize > 1){ window.location.href = pvHref(product); return; }
+  if(!canBuy(product)) return;
   const item = {
     id: product.id,
     productId: product.id,
@@ -1636,21 +1659,26 @@ function buyNow(btn){
 function toggleWish(btn){
   var svg = btn.querySelector('.heart-icon');
   if(!svg) return;
+  var id = btn.getAttribute('data-id');
+  var list = readWish();
   var isFilled = svg.classList.contains('filled');
   if(isFilled){
     svg.classList.remove('filled');
+    if(id) writeWish(list.filter(function(x){ return x !== id; }));
     showToast('Removed from wishlist');
   } else {
     svg.classList.add('filled','bounce');
     setTimeout(function(){ svg.classList.remove('bounce'); }, 400);
+    if(id && list.indexOf(id) === -1){ list.push(id); writeWish(list); }
     showToast('Product added to the wishlist');
   }
 }
 const TOAST_ICONS = {
+  warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',
   heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
   cart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.29977 5H21L19 12H7.37671M20 16H8L6 3H3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z"/></svg>'
 };
-const TOAST_COLORS = { heart:'var(--red)', cart:'var(--green)' };
+const TOAST_COLORS = { heart:'var(--red)', cart:'var(--green)', warn:'var(--orange)' };
 function showToast(msg, icon){
   var t = document.getElementById('wishToast');
   var txt = document.getElementById('wishToastText');
@@ -1694,7 +1722,7 @@ function showToast(msg, icon){
   function updateTypeCounts(){
     var totalCount = 0;
     typeDropdown.querySelectorAll('.s-type-row').forEach(function(row){
-      var n = products.filter(function(p){ return p.type === row.dataset.cat; }).length;
+      var n = products.filter(function(p){ return p.type === row.dataset.cat && p.stock !== 'out'; }).length;
       row.querySelector('.s-type-row-count').textContent = n;
       totalCount += n;
     });
@@ -1724,9 +1752,13 @@ function showToast(msg, icon){
     return avail.concat(oos);
   }
 
+  grid.addEventListener('click', function(e){
+    var c = e.target.closest('.p-card');
+    if(c && c.dataset.href) window.location.href = c.dataset.href;
+  });
+
   function paint(list, animateIn){
-    grid.innerHTML = list.length ? '' : emptyHTML();
-    list.forEach(function(p,i){ grid.innerHTML += renderCard(p,i); });
+    grid.innerHTML = list.length ? list.map(function(p,i){ return renderCard(p,i); }).join('') : emptyHTML();
     if(animateIn){
       grid.querySelectorAll('.p-card').forEach(function(c,i){
         c.style.animationDelay = (i * 0.06) + 's';
