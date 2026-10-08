@@ -455,6 +455,7 @@ body.dark-mode .summary-line.total{border-top-color:var(--accent)}
 <script src="assets/js/catalog-badges.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
+<script src="assets/js/sv-img.js"></script>
 </head>
 <body>
 
@@ -716,7 +717,7 @@ function cardHTML(item, flow){
   const href = flow === 'internal' ? pvHref(item) : null;
   const out = isOut(item, flow);
   const outBar = out ? '<div class="p-out-bar">Out of stock</div>' : '';
-  const imgBlock0 = item.img ? `<img src="${esc(item.img)}" alt="${esc(item.name)}">` : `<svg viewBox="0 0 24 24"><path d="M20.5 7.28a1 1 0 00-.5-.86l-8-4.62a1 1 0 00-1 0l-8 4.62a1 1 0 00-.5.86v9.44a1 1 0 00.5.86l8 4.62a1 1 0 001 0l8-4.62a1 1 0 00.5-.86V7.28z"/><path d="M3.5 7.28l8.5 4.62 8.5-4.62M12 22V12"/></svg>`;
+  const imgBlock0 = item.img ? `<img${svImgAttrs(item.img, 300)} alt="${esc(item.name)}">` : `<svg viewBox="0 0 24 24"><path d="M20.5 7.28a1 1 0 00-.5-.86l-8-4.62a1 1 0 00-1 0l-8 4.62a1 1 0 00-.5.86v9.44a1 1 0 00.5.86l8 4.62a1 1 0 001 0l8-4.62a1 1 0 00.5-.86V7.28z"/><path d="M3.5 7.28l8.5 4.62 8.5-4.62M12 22V12"/></svg>`;
   const imgBlock = imgBlock0 + outBar;
   const badgeRow = flow === 'proxy'
     ? `<div class="cc-badge-row"><span class="badge-proxy">Proxy</span><span class="cc-store">via ${esc(item.store)}</span></div>`

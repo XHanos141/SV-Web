@@ -1081,6 +1081,7 @@ body.dark-mode .s-tab{
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
+<script src="assets/js/sv-img.js"></script>
 </head>
 <body data-page="store">
 <!-- CATEGORY ICON SPRITE -->
@@ -1469,7 +1470,7 @@ function renderTrending(){
     const meta = TYPE_BADGE_META[p.type] || TYPE_BADGE_META.General;
     trendingScroll.innerHTML += `
       <div class="trending-item" style="animation:cardIn 0.4s var(--ease) ${i*0.08}s both">
-        <div class="trending-pic">${p.image ? '<img src="' + esc(p.image) + '" alt="" loading="lazy">' : picSVG}</div>
+        <div class="trending-pic">${p.image ? '<img' + svImgAttrs(p.image, 300) + ' alt="" loading="lazy">' : picSVG}</div>
         <div class="trending-meta">
           <div class="trending-tag">${p.cat}</div>
           <div class="trending-title">${svTitle(p)}</div>
@@ -1541,7 +1542,7 @@ function removeFromCart(product){
 
 function renderCard(p,i){
   var isOut = p.stock === 'out';
-  var gridImg = p.image ? '<img src="' + esc(p.image) + '" alt="' + esc(svTitle(p)) + '" loading="lazy">' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 2h8"/><path d="M9 2v6.5L4.5 15A3 3 0 0 0 7 20h10a3 3 0 0 0 2.5-5L15 8.5V2"/></svg>';
+  var gridImg = p.image ? '<img' + svImgAttrs(p.image, 600) + ' alt="' + esc(svTitle(p)) + '" loading="lazy">' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 2h8"/><path d="M9 2v6.5L4.5 15A3 3 0 0 0 7 20h10a3 3 0 0 0 2.5-5L15 8.5V2"/></svg>';
   var stockClass = p.stock;
   var stockText = p.stock === 'in' ? 'In Stock' : p.stock === 'low' ? 'Low Stock' : 'Out';
   var saleBadge = (!isOut && p.sale) ? '<span class="p-badge-ribbon">Sale</span>' : '';
