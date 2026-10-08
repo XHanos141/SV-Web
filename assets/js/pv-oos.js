@@ -3,7 +3,8 @@
    Driven by the existing .pv-stock badge (static, URL param, pv-live.js or variant picker). */
 (function(){
   var css =
-    '.pv-gallery-track,.pv-name,.pv-price,.pv-old,.pv-discount{transition:filter .25s ease,opacity .25s ease}' +
+    '.pv-name,.pv-price,.pv-old,.pv-discount{transition:filter .25s ease,opacity .25s ease}' +
+    '.pv-gallery-track{transition:transform .35s var(--ease),filter .25s ease,opacity .25s ease}' +
     'body.pv-oos .pv-gallery-track{filter:grayscale(.85) brightness(.92);opacity:.5}' +
     'body.pv-oos .pv-name,body.pv-oos .pv-price,body.pv-oos .pv-old,body.pv-oos .pv-discount{filter:grayscale(.65) brightness(.92);opacity:.55}' +
     '.pv-out-bar{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;pointer-events:none;' +
