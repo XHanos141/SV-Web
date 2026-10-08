@@ -129,6 +129,20 @@ main{max-width:600px;margin:0 auto;padding:0 16px}
 .momo-txt{display:block;transition:opacity .2s ease,transform .2s ease}
 .momo-txt.swap{opacity:0;transform:translateY(5px)}
 @media (prefers-reduced-motion:reduce){.momo-bubble,.momo-bubble::before,.momo-txt{transition:none}.momo-bubble.pop{animation:none}}
+/* Momo link-reading: searching shimmer, fill pop, tags, orange shockwave */
+.scan{box-shadow:0 0 0 2px rgba(47,134,255,.45),0 0 14px rgba(47,134,255,.25)!important;background-image:linear-gradient(100deg,transparent,rgba(47,134,255,.30) 50%,transparent);background-size:55% 100%;background-repeat:no-repeat;animation:scanBg 1.15s linear infinite}
+@keyframes scanBg{from{background-position:-60% 0}to{background-position:160% 0}}
+.scan input::placeholder,.scan .store-select-text{opacity:.35}
+.filled-pop{animation:fillPop .6s ease-out}
+@keyframes fillPop{0%{box-shadow:0 0 0 0 rgba(242,100,48,.55);transform:scale(1)}35%{box-shadow:0 0 0 5px rgba(242,100,48,.28);transform:scale(1.015)}100%{box-shadow:0 0 0 0 rgba(242,100,48,0);transform:scale(1)}}
+.ai-tag{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:999px;background:rgba(47,134,255,.14);color:#2476f0;font-size:9px;font-weight:800;letter-spacing:.04em;vertical-align:middle;opacity:0;transform:translateY(3px);animation:tagIn .35s ease forwards}
+@keyframes tagIn{to{opacity:1;transform:none}}
+.item-row.shock{animation:cardGlow 1.5s ease-out}
+.item-row.shock::before,.item-row.shock::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;border:2px solid #f26430;opacity:0;animation:shockRing 1.1s cubic-bezier(.2,.7,.3,1) forwards}
+.item-row.shock::after{animation-delay:.28s}
+@keyframes shockRing{0%{opacity:.85;box-shadow:0 0 0 0 rgba(242,100,48,.45)}100%{opacity:0;box-shadow:0 0 0 26px rgba(242,100,48,0)}}
+@keyframes cardGlow{0%{border-color:#f26430}40%{border-color:#f26430;box-shadow:0 0 22px rgba(242,100,48,.35)}100%{box-shadow:0 1px 4px rgba(0,0,0,.04)}}
+@media (prefers-reduced-motion:reduce){.scan,.filled-pop,.item-row.shock,.item-row.shock::before,.item-row.shock::after{animation:none}}
 .field-label{font-size:11px;font-weight:800;color:var(--text);margin-top:7px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .field-label .req,.item-num .req{color:var(--orange)}
 
@@ -581,7 +595,7 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
     <h3>What do you want us to get?</h3>
     <div class="momo-row">
       <div class="ai-slot" id="aiSlot" aria-hidden="true"></div>
-      <div class="momo-bubble" data-state="idle" aria-live="polite"><span class="momo-txt" id="momoTxt">Hey there 👋 I'm <b>Momo</b>. Drop a product link and I'll fill in the rest.</span></div>
+      <div class="momo-bubble" aria-live="polite"><span class="momo-txt" id="momoTxt">Hey there 👋 I'm <b>Momo</b>. Drop a product link and I'll fill in the rest.</span></div>
     </div>
 
     <div id="itemsWrap"></div>
@@ -1304,6 +1318,7 @@ function wireItemRow(row, item){
 
   linkInput.addEventListener('input', validateRow);
   linkInput.addEventListener('blur', validateRow);
+  linkInput.addEventListener('input', () => { clearTimeout(row._momoT); row._momoT = setTimeout(() => { if(window.SVMomo) window.SVMomo.run(row); }, 700); });
 
   qtyMinus.addEventListener('click', () => {
     let v = parseInt(qtyVal.dataset.qtyRollValue || qtyVal.textContent, 10);
@@ -1963,7 +1978,6 @@ window.svBot = SVBot.mount(document.getElementById('aiSlot'), { size: 56 });
     base(s);
     if(!say[s]||s===cur) return;
     cur=s; clearTimeout(t1); clearTimeout(t2);
-    bub.setAttribute('data-state',s);
     bub.classList.remove('pop'); void bub.offsetWidth; bub.classList.add('pop');
     if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){ txt.innerHTML=say[s]; return; }
     var h0=bub.offsetHeight,h1=measure(say[s]);
@@ -1972,6 +1986,87 @@ window.svBot = SVBot.mount(document.getElementById('aiSlot'), { size: 56 });
     t1=setTimeout(function(){ txt.innerHTML=say[s]; txt.classList.remove('swap'); },170);
     t2=setTimeout(function(){ bub.style.height=''; },380);
   };
+})();
+/* Momo link-reading flow. Extractor contract: window.SVMomoExtract(url) -> Promise<{name,price,store}>.
+   Until the Edge Function exists, a stub is enabled ONLY with ?momo_demo=1 (or =fail),
+   so real customers see no change. */
+(function(){
+  var demo=new URLSearchParams(location.search).get('momo_demo');
+  if(!window.SVMomoExtract && demo){
+    window.SVMomoExtract=function(url){
+      return new Promise(function(res,rej){ setTimeout(function(){
+        if(demo==='fail') return rej(new Error('demo-fail'));
+        var st=detectStore(url);
+        res({name:'Sony WH-1000XM5 Headphones',price:348.00,store:st?st.label:''});
+      },900); });
+    };
+  }
+  var CYCLE=1150, busy=false;
+  var wait=function(ms){ return new Promise(function(r){ setTimeout(r,ms); }); };
+  function pop(el){ el.classList.remove('filled-pop'); void el.offsetWidth; el.classList.add('filled-pop'); }
+  function tag(label){ var o=label.querySelector('.opt-tag'); if(o) o.style.display='none'; var t=document.createElement('span'); t.className='ai-tag'; t.textContent='✦ Momo'; label.appendChild(t); }
+  function clearTags(row){ row.querySelectorAll('.ai-tag').forEach(function(t){ t.remove(); }); row.querySelectorAll('.opt-tag').forEach(function(o){ o.style.display=''; }); }
+
+  async function runInner(row){
+    if(busy || typeof window.SVMomoExtract!=='function' || !window.svBot) return;
+    var link=row.querySelector('[data-role="link"]'), url=link.value.trim();
+    if(!url || !isValidUrl(url) || row._momoUrl===url) return;
+    var nameIn=row.querySelector('[data-role="product-name"]'), priceIn=row.querySelector('[data-role="price-input"]'),
+        storeBtn=row.querySelector('[data-role="store-select"]'), storeTxt=row.querySelector('[data-role="store-select-text"]');
+    var needName=!nameIn.value.trim(), needPrice=!priceIn.value;
+    if(!needName && !needPrice) return;                       // never overwrite what the customer typed
+    var curKey=storeBtn.value, det=detectStore(url);
+    var animStore=!curKey || (det && det.key===curKey);        // skip if the customer picked a different store by hand
+    var wName=nameIn.closest('.link-input-wrap'), wPrice=priceIn.closest('.price-input-wrap'), wStore=row.querySelector('[data-role="store-select-wrap"]'), wLink=link.closest('.link-input-wrap');
+    var rows=row.querySelectorAll('.store-label-row'), lName=rows[0].querySelector('.sl-left'), lStore=rows[1].querySelector('.sl-left'), lPrice=rows[1].querySelector('.sl-right');
+    var targets=[needName&&wName, animStore&&wStore, needPrice&&wPrice].filter(Boolean);
+
+    busy=true; row._momoUrl=url; clearTags(row);
+    if(animStore) storeTxt.textContent='Auto-detect';
+    window.svBot.setState('reading');
+    targets.forEach(function(w){ w.classList.add('scan'); });   // all start together
+    var t0=performance.now(), data=null, bad=false;
+    try{
+      data=await Promise.race([ window.SVMomoExtract(url), new Promise(function(_,rej){ setTimeout(function(){ rej(new Error('timeout')); },20000); }) ]);
+    }catch(e){ bad=true; }
+    var el=performance.now()-t0, end=Math.max(3*CYCLE, Math.ceil(el/CYCLE)*CYCLE);   // end together, on a full sweep
+    await wait(end-el);
+    targets.forEach(function(w){ w.classList.remove('scan'); });
+
+    if(bad || !data || (!(needName&&data.name) && !(needPrice&&data.price))){
+      if(animStore) storeBtn.value=curKey;                     // restore the real label
+      window.svBot.setState('failed'); wLink.classList.add('shake'); setTimeout(function(){ wLink.classList.remove('shake'); },600);
+      row._momoUrl=null; busy=false; return;
+    }
+    if(needName && data.name){                                  // 1) name types in
+      for(var i=1;i<=data.name.length;i++){ nameIn.value=data.name.slice(0,i); await wait(26); }
+      nameIn.dispatchEvent(new Event('input',{bubbles:true})); pop(wName); tag(lName); await wait(250);
+    }
+    var label=(data.store||(det&&det.label)||'');               // 2) store + price fill together
+    var d=720, t1=performance.now();
+    storeTxt.textContent='';
+    await Promise.all([
+      (async function(){ if(!animStore||!label){ return; } for(var k=1;k<=label.length;k++){ storeTxt.textContent=label.slice(0,k); await wait(d/label.length); } })(),
+      new Promise(function(res){ (function f(n){ var p=Math.min(1,(n-t1)/d), e=1-Math.pow(1-p,3);
+        if(needPrice&&data.price) priceIn.value=(data.price*e).toFixed(2);
+        if(p<1) requestAnimationFrame(f); else res(); })(t1); })
+    ]);
+    var found=STORES.find(function(s){ return s.label.toLowerCase()===String(data.store||'').toLowerCase(); });
+    storeBtn.value = (animStore && found) ? found.key : curKey;   // set the real value + label
+    if(needPrice&&data.price) priceIn.dispatchEvent(new Event('input',{bubbles:true}));
+    if(row._validate) row._validate();
+    if(animStore) { pop(wStore); tag(lStore); }
+    if(needPrice&&data.price){ pop(wPrice); tag(lPrice); }
+    await wait(350);
+    window.svBot.setState('found'); row.classList.remove('shock'); void row.offsetWidth; row.classList.add('shock');
+    setTimeout(function(){ row.classList.remove('shock'); },1700);
+    busy=false;
+  }
+  async function run(row){
+    try{ await runInner(row); }
+    catch(e){ busy=false; document.querySelectorAll('.scan').forEach(function(w){ w.classList.remove('scan'); }); }
+  }
+  window.SVMomo={run:run};
 })();
 </script>
 </body>
