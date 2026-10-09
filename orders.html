@@ -767,7 +767,7 @@ function soRender(o){
   return '<div class="order-card collapsed" data-oid="'+soEsc(o.id)+'">'
     +'<div class="oc-head" onclick="this.closest(\'.order-card\').classList.toggle(\'collapsed\')">'
       +'<div class="oc-head-left"><div class="oc-id-row"><span class="oc-id-label">Order ID</span><div class="oc-id store">'+soEsc(o.order_number)+'</div></div>'
-      +'<div class="oc-meta">Order created <span class="oc-meta-date">'+soDate(o.created_at)+'</span></div></div>'
+      +'<div class="oc-meta">Created at <span class="oc-meta-date">'+soDateTime(o.created_at)+'</span></div></div>'
       +'<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill '+soEsc(o.state)+'">'+soEsc(label)+'</span></div>'
       +'<svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>'
     +'</div>'
@@ -911,7 +911,7 @@ function soRenderV2(o, opts){
   return '<div class="order-card so-v2'+(opts.collapsed ? ' collapsed' : '')+'" data-oid="'+soEsc(o.id)+'">'
     + '<div class="oc-head" onclick="this.closest(\'.order-card\').classList.toggle(\'collapsed\')">'
     + '<div class="oc-head-left"><div class="oc-id-row"><span class="oc-id-label">Order ID</span><div class="oc-id store">'+soEsc(o.order_number)+'</div></div>'
-    + '<div class="oc-meta">Order created <span class="oc-meta-date">'+soDate(o.created_at)+'</span></div></div>'
+    + '<div class="oc-meta">Created at <span class="oc-meta-date">'+soDateTime(o.created_at)+'</span></div></div>'
     + '<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill '+soEsc(o.state)+'">'+soEsc(label)+'</span><span class="oc-status-date">'+soStatusLine(o)+'</span></div>'+SO_ICO.chev+'</div></div>'
     + '<div class="so-collapse"><div class="so-inner"><div class="oc-body">'+body+'</div></div></div></div>';
 }
