@@ -206,27 +206,47 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 .qnav-title{font-size:13px;font-weight:700;color:var(--text)}
 .qnav-sub{font-size:10.5px;color:var(--text3);font-weight:600;margin-top:-4px}
 
-/* ===== ORDER PREVIEW CARDS ===== */
-.order-list{display:flex;flex-direction:column;gap:10px;padding:0 16px}
+/* ===== ORDER PREVIEW CARDS (same header as orders.html collapsed cards) ===== */
+.order-list{display:flex;flex-direction:column;gap:12px;padding:0 16px}
 .order-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
-  padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--shadow-sm);
+  background:var(--surface);border:1px solid rgba(10,155,220,0.30);
+  border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm);cursor:pointer;
 }
+body.dark-mode .order-card{border-color:rgba(45,190,245,0.32)}
+.oc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;min-height:65px}
+.oc-head-left{display:flex;flex-direction:column;gap:2px;min-width:0}
 .oc-id{
-  font-family:var(--font-display);font-size:11px;font-weight:800;
-  padding:2px 7px;border-radius:7px;flex-shrink:0;
+  font-family:var(--font-display);font-size:11.5px;font-weight:800;
+  padding:2px 7px;border-radius:7px;letter-spacing:.2px;
+  display:inline-flex;align-items:center;justify-content:center;line-height:1;
 }
+.oc-id-row{display:flex;align-items:center;gap:6px}
+.oc-id-label{font-size:10.5px;font-weight:700;color:var(--text)}
 .oc-id.store{color:var(--accent);background:rgba(10,155,220,0.12);border:1.5px solid rgba(10,155,220,0.35)}
+body.dark-mode .oc-id.store{background:rgba(45,190,245,0.16);border-color:rgba(45,190,245,0.45)}
 .oc-id.proxy{color:var(--orange);background:rgba(242,100,48,0.08);border:1.5px dashed rgba(242,100,48,0.55)}
-.oc-mid{flex:1;min-width:0}
-.oc-mid-title{font-size:12.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.oc-mid-date{font-size:10.5px;color:var(--text3);font-weight:600;margin-top:2px}
+body.dark-mode .oc-id.proxy{background:rgba(242,100,48,0.14);border-color:rgba(242,100,48,0.6)}
+.oc-id.rq{color:var(--orange);background:rgba(242,100,48,0.08);border:1.5px solid rgba(242,100,48,0.55)}
+body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,100,48,0.6)}
+.oc-meta{font-size:10.5px;color:var(--text);font-weight:700;margin-top:3px}
+.oc-meta .oc-meta-date{color:var(--text3);font-weight:600}
+.oc-head-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.oc-chevron{width:21px;height:21px;stroke-width:2.7;margin-right:-5px;color:var(--text3);transform:rotate(-90deg)}
+.oc-status-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.oc-status-date{font-size:10.5px;font-weight:600;color:var(--text3)}
 .oc-status-pill{
-  font-size:10px;font-weight:800;padding:3px 8px;border-radius:7px;white-space:nowrap;border:1.5px solid transparent;flex-shrink:0;
+  font-size:10.5px;font-weight:800;letter-spacing:.2px;
+  padding:2px 7px;border-radius:7px;white-space:nowrap;border:1.5px solid transparent;
 }
 .oc-status-pill.shipped{background:var(--orange-soft);color:var(--orange);border-color:rgba(242,100,48,0.4)}
 .oc-status-pill.delivered{background:var(--green-soft);color:var(--green);border-color:rgba(10,155,114,0.4)}
-.oc-status-pill.quote{background:var(--purple-soft);color:var(--purple);border-color:rgba(124,111,247,0.4)}
+.oc-status-pill.quote{background:#EDE9FE;color:#7C6FF7;border-color:rgba(124,111,247,0.4)}
+.oc-status-pill.paid,.oc-status-pill.purchased{background:var(--accent-soft);color:var(--accent);border-color:rgba(10,155,220,0.4)}
+.oc-status-pill.unpaid,.oc-status-pill.awaiting_payment{background:var(--orange-soft);color:var(--orange);border-color:rgba(242,100,48,0.4)}
+.oc-status-pill.verifying,.oc-status-pill.cod_pending{background:var(--accent-soft);color:var(--accent);border-color:rgba(10,155,220,0.4)}
+.oc-status-pill.cancelled,.oc-status-pill.closed{background:rgba(217,83,83,0.10);color:#d95353;border-color:rgba(217,83,83,0.4)}
+.order-card.so .oc-status-pill.processing,.order-card.so .oc-status-pill.shipped{background:var(--accent-soft);color:var(--accent);border-color:rgba(10,155,220,0.4)}
+.order-card.px .oc-status-pill.processing{background:var(--accent-soft);color:var(--accent);border-color:rgba(10,155,220,0.4)}
 .empty-mini{padding:20px 14px;text-align:center;color:var(--text3);font-size:12px;font-weight:600;background:var(--surface2);border-radius:var(--radius-sm);margin:0 16px}
 
 /* ===== ADDRESS CARDS ===== */
@@ -507,12 +527,12 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   <div class="qnav-card" onclick="location.href='orders.html'">
     <div class="qnav-icon orders"><svg viewBox="0 0 24 24"><path d="M3 3h18v6H3z"/><path d="M3 9v12h18V9"/><path d="M9 13h6"/></svg></div>
     <div class="qnav-title">My Orders</div>
-    <div class="qnav-sub" id="orderCountSub">2 total</div>
+    <div class="qnav-sub" id="orderCountSub">&nbsp;</div>
   </div>
   <div class="qnav-card" onclick="location.href='wishlist.html'">
     <div class="qnav-icon wishlist"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></div>
     <div class="qnav-title">Wishlist</div>
-    <div class="qnav-sub" id="wishCountSub">3 items</div>
+    <div class="qnav-sub" id="wishCountSub">&nbsp;</div>
   </div>
 </div>
 
@@ -524,22 +544,7 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
   </div>
 </div>
 <div class="order-list" id="recentOrders">
-  <div class="order-card" onclick="location.href='orders.html'">
-    <span class="oc-id store">SV-1042</span>
-    <div class="oc-mid">
-      <div class="oc-mid-title">Whey Protein 2kg + 2 items</div>
-      <div class="oc-mid-date">Aug 24, 2026</div>
-    </div>
-    <span class="oc-status-pill shipped">Shipped</span>
-  </div>
-  <div class="order-card" onclick="location.href='orders.html'">
-    <span class="oc-id proxy">PX-0087</span>
-    <div class="oc-mid">
-      <div class="oc-mid-title">Amazon — Creatine Monohydrate</div>
-      <div class="oc-mid-date">Aug 19, 2026</div>
-    </div>
-    <span class="oc-status-pill delivered">Delivered</span>
-  </div>
+  <div class="empty-mini">Loading your orders…</div>
 </div>
 
 <!-- SAVED ADDRESSES -->
@@ -955,6 +960,73 @@ function handleLogout(){
   svSignOut('login.html');
 }
 
+// ===== RECENT ORDERS (live: store orders + Buy For Me requests) =====
+const RO_SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
+const RO_PX_PILL = {
+  pending_quote:['Awaiting quote','quote'], quoted:['Quote ready','quote'], approved:['Awaiting payment','quote'],
+  paid:['Paid','paid'], purchasing:['Purchasing','purchased'], ordered:['Ordered','purchased'],
+  shipped_intl:['Shipped','shipped'], arrived_bd:['In Bangladesh','shipped'], delivered:['Delivered','delivered'],
+  rejected:['Declined by us','closed'], cancelled:['Cancelled','closed'], expired:['Quote expired','closed']
+};
+const RO_CHEV = '<svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+function roEsc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function roDate(iso){ try{ const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
+function roDateTime(iso){ try{ const d = new Date(iso); return isNaN(d) ? '' : roDate(iso) + ', ' + d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); }catch(e){ return ''; } }
+function roStoreStatusTime(o){
+  const at = { verifying:o.payment_submitted_at || o.created_at, cod_pending:o.created_at, paid:o.paid_at, processing:o.processing_at,
+               shipped:o.shipped_at, delivered:o.delivered_at, cancelled:o.cancelled_at || o.created_at }[o.state];
+  return at ? roDateTime(at) : '';
+}
+function roCard(cls, idLabel, idHtml, metaLabel, metaVal, pillCls, pillText, statusTime){
+  return '<div class="order-card '+cls+'" onclick="location.href=\'orders.html\'">'
+    + '<div class="oc-head"><div class="oc-head-left"><div class="oc-id-row"><span class="oc-id-label">'+idLabel+'</span>'+idHtml+'</div>'
+    + '<div class="oc-meta">'+metaLabel+' <span class="oc-meta-date">'+metaVal+'</span></div></div>'
+    + '<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill '+roEsc(pillCls)+'">'+roEsc(pillText)+'</span>'
+    + (statusTime ? '<span class="oc-status-date">'+statusTime+'</span>' : '') + '</div>'+RO_CHEV+'</div></div></div>';
+}
+async function loadRecentOrders(){
+  const list = document.getElementById('recentOrders');
+  const cnt = document.getElementById('orderCountSub');
+  if(!list) return;
+  try{
+    const [soRes, pxRes] = await Promise.all([
+      sbClient.rpc('my_orders'),
+      sbClient.from('proxy_requests').select('*, orders(order_number,status)').order('created_at', { ascending:false })
+    ]);
+    const store = (soRes && !soRes.error && soRes.data && soRes.data.ok) ? (soRes.data.orders || []) : null;
+    const proxy = (pxRes && !pxRes.error) ? (pxRes.data || []) : null;
+    if(store === null && proxy === null){
+      list.innerHTML = '<div class="empty-mini">Could not load your orders. Please try again.</div>';
+      if(cnt) cnt.textContent = '';
+      return;
+    }
+    const all = []
+      .concat((store || []).map(o => ({ t:o.created_at, html:roCard('so', 'Order ID', '<div class="oc-id store">'+roEsc(o.order_number)+'</div>',
+        'Created at', roDateTime(o.created_at), o.state, RO_SO_LABEL[o.state] || 'Order', roStoreStatusTime(o)) })))
+      .concat((proxy || []).map(r => {
+        const pill = RO_PX_PILL[r.status] || [r.status, 'quote'];
+        const ord = r.orders || null, isOrder = !!(ord && ord.order_number);
+        const expired = r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date();
+        return { t:r.created_at, html:roCard('px', isOrder ? 'Order ID' : 'Request ID',
+          isOrder ? '<div class="oc-id proxy">'+roEsc(ord.order_number)+'</div>' : '<div class="oc-id rq">'+roEsc(r.request_no || 'RQ')+'</div>',
+          'Submitted', roDate(r.created_at), expired ? 'closed' : pill[1], expired ? 'Quote expired' : pill[0], '') };
+      }));
+    all.sort((a, b) => new Date(b.t) - new Date(a.t));
+    if(cnt) cnt.textContent = all.length + ' total';
+    list.innerHTML = all.length
+      ? all.slice(0, 3).map(x => x.html).join('')
+      : '<div class="empty-mini">No orders yet. <a href="store.html" style="color:var(--accent);font-weight:800;text-decoration:none">Browse the store</a></div>';
+  }catch(e){
+    console.error('recent orders load error:', e);
+    list.innerHTML = '<div class="empty-mini">Could not load your orders. Please try again.</div>';
+  }
+}
+function loadWishCount(){
+  const el = document.getElementById('wishCountSub'); if(!el) return;
+  let n = 0; try{ const w = JSON.parse(localStorage.getItem('sv-wishlist')); n = Array.isArray(w) ? w.length : 0; }catch(e){}
+  el.textContent = n + (n === 1 ? ' item' : ' items');
+}
+
 // ===== LOAD REAL PROFILE DATA =====
 let currentCustomer = null;
 
@@ -993,6 +1065,8 @@ async function loadRealProfile(){
   document.getElementById('custIdTag').textContent = code;
   renderAvatar(customer);
   document.getElementById('idCard').classList.remove('is-loading');
+  loadRecentOrders();
+  loadWishCount();
 
   // Change Password only applies to email/password accounts — Google-only
   // accounts have no password to change.
