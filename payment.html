@@ -404,8 +404,8 @@ body.dark-mode .pay-success-sheet{background:#1b2738;border-color:rgba(255,255,2
 .pay-success-overlay.show .ps-icon svg{stroke-dashoffset:0}
 .pay-success-sheet h3{position:relative;z-index:2;font-family:var(--fd);font-size:19px;font-weight:800;letter-spacing:-.02em;margin-bottom:12px;color:#111827;opacity:0;transform:translateY(12px);transition:all .5s ease .5s}
 body.dark-mode .pay-success-sheet h3{color:#fff}
-.pay-success-sheet p{position:relative;z-index:2;font-size:13px;color:#6b7280;line-height:1.5;margin-bottom:20px;opacity:0;transform:translateY(10px);transition:all .5s ease .65s}
-body.dark-mode .pay-success-sheet p{color:rgba(255,255,255,.55)}
+.pay-success-sheet p{position:relative;z-index:2;font-size:13px;font-weight:600;color:#374151;line-height:1.5;margin-bottom:20px;opacity:0;transform:translateY(10px);transition:all .5s ease .65s}
+body.dark-mode .pay-success-sheet p{color:rgba(255,255,255,.88)}
 .ps-oid{position:relative;z-index:2;display:none;margin:0 auto 12px;align-items:center;justify-content:center;gap:8px;opacity:0;transition:opacity .5s ease .55s}
 .ps-oid.on{display:inline-flex}
 .ps-oid-lbl{font-size:12px;font-weight:600;color:#6b7280}
@@ -1009,7 +1009,7 @@ body.dark-mode .pay-success-sheet .ps-btn-ghost{color:#34d399;border-color:#34d3
     <div class="ps-oid" id="psOid"></div>
     <p id="psText">Your order is confirmed. We'll send updates via WhatsApp.</p>
     <a class="ps-btn" id="psViewBtn" href="orders.html">View order</a>
-    <button class="ps-btn ps-btn-ghost" id="psCloseBtn" type="button">Done</button>
+    <button class="ps-btn ps-btn-ghost" id="psCloseBtn" type="button">Continue shopping</button>
   </div>
 </div>
 
@@ -1863,8 +1863,8 @@ function finalizeSubmit(orderNumber, awaitingVerification){
   } else if(S.method === 'cod'){
     psIcon.classList.remove('pending');
     psIcon.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
-    psTitle.textContent = 'Order placed!';
-    psText.textContent = "Keep cash ready for delivery. We'll confirm your order on WhatsApp and update you until it arrives.";
+    psTitle.textContent = 'Order placed successfully';
+    psText.textContent = "Your order has been placed. Our team will confirm it with you on WhatsApp and keep you updated until it arrives.";
   } else {
     psIcon.classList.remove('pending');
     psIcon.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
