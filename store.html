@@ -2095,7 +2095,7 @@ function svMapProduct(r){
     price: price, old: old,
     discount: old ? Math.round((old - price) / old * 100) + '% OFF' : '',
     rating: Number(st.rating) || 0,
-    stock: qty <= 0 ? 'out' : (qty <= SV_LOW_STOCK ? 'low' : 'in'),
+    stock: qty <= 0 ? 'out' : ((st.stock_override === 'in' || st.stock_override === 'low' || st.stock_override === 'out') ? st.stock_override : (qty <= SV_LOW_STOCK ? 'low' : 'in')),
     sale: !!st.sale, trending: !!st.trending,
     image: imgs[0] || null,
     groupSize: r._gn || 1, priceRange: !!r._range
