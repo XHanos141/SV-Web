@@ -59,5 +59,12 @@
         "pathname": "/storage/v1/object/public/**"
       }
     ]
-  }
+  },
+  "redirects": [
+    {
+      "source": "/(SV-Web.old|bkash-relay-app|supabase)/:path*",
+      "destination": "/",
+      "permanent": false
+    }
+  ]
 }

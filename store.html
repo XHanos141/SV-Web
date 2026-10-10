@@ -25,7 +25,7 @@
 <meta name="twitter:title" content="Shop Supplements &amp; Health Products — SuppVerse BD">
 <meta name="twitter:description" content="Browse authentic local-stock supplements, vitamins and health products at SuppVerse BD. Real brands, clear prices in ৳, delivered in Bangladesh.">
 <!-- seo:end -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preload" href="/assets/fonts/barabara-final.woff2" as="font" type="font/woff2" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
 <link href="/assets/css/fonts.css" rel="stylesheet">
@@ -1078,10 +1078,15 @@ body.dark-mode .s-tab{
   from{opacity:0;transform:scale(0.92) translateY(18px)}
   to{opacity:1;transform:scale(1) translateY(0)}
 }
+.p-skel{min-height:250px;border-radius:18px;border:1px solid var(--border,rgba(10,22,40,.07));background:linear-gradient(90deg,var(--surface,#fff) 25%,var(--surface2,#F8FAFD) 50%,var(--surface,#fff) 75%);background-size:200% 100%;animation:pSkel 1.2s linear infinite}
+@keyframes pSkel{to{background-position:-200% 0}}
+.s-retry{margin-top:14px;border:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;padding:11px 26px;border-radius:12px;background:var(--accent,#0A9BDC);color:#fff}
+@media(prefers-reduced-motion:reduce){.p-skel{animation:none}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
 <script src="assets/js/sv-img.js"></script>
+<style>@supports (-webkit-touch-callout:none){input,select,textarea{font-size:16px!important}}</style>
 </head>
 <body data-page="store">
 <!-- CATEGORY ICON SPRITE -->
@@ -2139,11 +2144,14 @@ async function svLoadProducts(){
   renderTrending();
   if(window.svStoreRefresh) window.svStoreRefresh();
 }
-grid.innerHTML = '<div class="s-empty"><strong>Loading products…</strong></div>';
-svLoadProducts().catch(function(err){
-  console.error('svLoadProducts failed:', err);
-  grid.innerHTML = '<div class="s-empty"><strong>Could not load products</strong><span>Check your connection and refresh.</span></div>';
-});
+function svLoadWithUi(){
+  grid.innerHTML = new Array(6).join('<div class="p-skel" aria-hidden="true"></div>') + '<div class="p-skel" aria-hidden="true"></div>';
+  return svLoadProducts().catch(function(err){
+    console.error('svLoadProducts failed:', err);
+    grid.innerHTML = '<div class="s-empty"><strong>Could not load products</strong><span>Check your connection and try again.</span><button type="button" class="s-retry" onclick="svLoadWithUi()">Retry</button></div>';
+  });
+}
+svLoadWithUi();
 (function(){
   var last = Date.now();
   document.addEventListener('visibilitychange', function(){
