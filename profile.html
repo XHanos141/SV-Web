@@ -1127,6 +1127,13 @@ const DEL_OTP_TTL = 600, DEL_RESEND_GAP = 60, DEL_RESEND_MAX = 3, DEL_MAX_ATTEMP
 const DEL_STORE_ACTIVE = ['awaiting_payment','unpaid','verifying','cod_pending','paid','processing','shipped'];
 const DEL_PX_ACTIVE = ['approved','paid','purchasing','ordered','shipped_intl','arrived_bd'];
 const delMock = { attempts:0, sent:0 };
+const DEL_SEND_ERR = {
+  blocked:'You have an order still in progress. Please try again once it is delivered or cancelled.',
+  cooldown:'Please wait a minute before requesting another code.',
+  rate_limited:'Too many code requests. Please try again in an hour.',
+  not_configured:'Account deletion is temporarily unavailable. Please contact support.',
+  send_failed:'We could not email the code. Please try again.'
+};
 const delApi = {
   async eligibility(){
     try{
@@ -1238,7 +1245,7 @@ async function delSendCode(){
   delBusy('delSendBtn', true);
   const r = await delApi.sendOtp();
   delBusy('delSendBtn', false); delRefreshSend();
-  if(!r.ok){ $del('delErr1').textContent = 'Could not send the code. Please try again.'; return; }
+  if(!r.ok){ $del('delErr1').textContent = DEL_SEND_ERR[r.error] || 'Could not send the code. Please try again.'; if(r.error === 'blocked') delCheckEligibility(); return; }
   $del('delMail').textContent = delMask(currentCustomer.email);
   $del('delErr2').textContent = '';
   delClearOtp(false); delStep(2); delStartTimers(r.expires_in || DEL_OTP_TTL, r.resend_in || DEL_RESEND_GAP);
@@ -1248,7 +1255,7 @@ async function delResendCode(){
   if(delSt.busy || delSt.resends >= DEL_RESEND_MAX) return;
   $del('delResend').disabled = true; $del('delErr2').textContent = '';
   const r = await delApi.sendOtp();
-  if(!r.ok){ $del('delErr2').textContent = 'Could not resend the code. Try again shortly.'; $del('delResend').disabled = false; return; }
+  if(!r.ok){ $del('delErr2').textContent = DEL_SEND_ERR[r.error] || 'Could not resend the code. Try again shortly.'; $del('delResend').disabled = r.error === 'rate_limited'; return; }
   delSt.resends++; delClearOtp(true); delStartTimers(r.expires_in || DEL_OTP_TTL, r.resend_in || DEL_RESEND_GAP);
 }
 function delBack(){ if(delSt.busy) return; clearInterval(delSt.expTimer); clearInterval(delSt.gapTimer); delStep(1); }
@@ -1266,8 +1273,10 @@ async function delConfirm(){
   const row = $del('otpRow'); row.classList.remove('err'); void row.offsetWidth; row.classList.add('err');
   $del('delErr2').textContent = r.error === 'invalid' ? 'Incorrect code. ' + r.attempts_left + (r.attempts_left === 1 ? ' attempt' : ' attempts') + ' left.'
     : r.error === 'locked' ? 'Too many attempts. Go back and request a new code.'
+    : r.error === 'expired' ? 'This code has expired. Go back and request a new one.'
+    : r.error === 'blocked' ? 'You have an order still in progress, so the account cannot be deleted yet.'
     : 'Something went wrong. Please try again.';
-  if(r.error === 'locked'){ delClearOtp(false); $del('delConfirmBtn').disabled = true; }
+  if(r.error === 'locked' || r.error === 'expired' || r.error === 'blocked'){ delClearOtp(false); $del('delConfirmBtn').disabled = true; }
   else { delClearOtp(true); }
 }
 (function initDeleteAccountUI(){
