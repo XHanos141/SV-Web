@@ -192,19 +192,25 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 /* ===== QUICK NAV GRID ===== */
 .qnav-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px}
 .qnav-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
-  padding:13px;display:flex;flex-direction:column;gap:8px;cursor:pointer;
-  box-shadow:var(--shadow-sm);transition:transform .15s var(--ease),box-shadow .15s var(--ease);
+  position:relative;overflow:hidden;min-width:0;
+  display:flex;align-items:center;gap:10px;padding:10px 10px 10px 10px;
+  background:linear-gradient(135deg,var(--accent-soft),var(--surface) 70%);
+  border:1px solid rgba(10,155,220,.38);border-radius:var(--radius-sm);
+  cursor:pointer;box-shadow:var(--shadow-sm);
+  transition:transform .15s var(--ease),box-shadow .15s var(--ease);
 }
+body.dark-mode .qnav-card{border-color:rgba(45,190,245,.42)}
+.qnav-card.wish{background:linear-gradient(135deg,var(--red-soft),var(--surface) 70%);border-color:rgba(225,67,67,.35)}
+body.dark-mode .qnav-card.wish{border-color:rgba(255,107,107,.40)}
 .qnav-card:active{transform:scale(.97)}
-.qnav-icon{
-  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-}
-.qnav-icon svg{width:18px;height:18px;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.qnav-icon{width:38px;height:38px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
+.qnav-icon svg{width:21px;height:21px;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .qnav-icon.orders{background:var(--accent-soft)} .qnav-icon.orders svg{stroke:var(--accent)}
-.qnav-icon.wishlist{background:var(--red-soft)} .qnav-icon.wishlist svg{stroke:var(--red);fill:var(--red)}
-.qnav-title{font-size:13px;font-weight:700;color:var(--text)}
-.qnav-sub{font-size:10.5px;color:var(--text3);font-weight:600;margin-top:-4px}
+.qnav-icon.wishlist{background:var(--red-soft)} .qnav-icon.wishlist svg{stroke:var(--red);fill:var(--red);stroke-width:2;width:18px;height:18px}
+.qnav-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.qnav-title{font-family:var(--font-display);font-size:13.5px;font-weight:800;color:var(--text);line-height:1.2;white-space:nowrap}
+.qnav-sub{font-size:11px;color:var(--text2);font-weight:600;line-height:1.2;white-space:nowrap}
+.qnav-chev{width:15px;height:15px;flex-shrink:0;stroke:var(--text3);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
 /* ===== ORDER PREVIEW CARDS (same header as orders.html collapsed cards) ===== */
 .order-list{display:flex;flex-direction:column;gap:8px;padding:0 16px}
@@ -536,15 +542,15 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
 
 <!-- QUICK NAV -->
 <div class="qnav-grid" style="margin-top:16px">
-  <div class="qnav-card" onclick="location.href='orders.html'">
-    <div class="qnav-icon orders"><svg viewBox="0 0 24 24"><path d="M3 3h18v6H3z"/><path d="M3 9v12h18V9"/><path d="M9 13h6"/></svg></div>
-    <div class="qnav-title">My Orders</div>
-    <div class="qnav-sub" id="orderCountSub">&nbsp;</div>
+  <div class="qnav-card" onclick="location.href='orders.html'" role="link" tabindex="0">
+    <div class="qnav-icon orders"><svg viewBox="0 0 24 24"><path d="M15.5777 3.38197L17.5777 4.43152C19.7294 5.56066 20.8052 6.12523 21.4026 7.13974C22 8.15425 22 9.41667 22 11.9415V12.0585C22 14.5833 22 15.8458 21.4026 16.8603C20.8052 17.8748 19.7294 18.4393 17.5777 19.5685L15.5777 20.618C13.8221 21.5393 12.9443 22 12 22C11.0557 22 10.1779 21.5393 8.42229 20.618L6.42229 19.5685C4.27063 18.4393 3.19479 17.8748 2.5974 16.8603C2 15.8458 2 14.5833 2 12.0585V11.9415C2 9.41667 2 8.15425 2.5974 7.13974C3.19479 6.12523 4.27063 5.56066 6.42229 4.43152L8.42229 3.38197C10.1779 2.46066 11.0557 2 12 2C12.9443 2 13.8221 2.46066 15.5777 3.38197Z"/><path d="M21 7.5L17 9.5M12 12L3 7.5M12 12V21.5M12 12C12 12 14.7426 10.6287 16.5 9.75C16.6953 9.65237 17 9.5 17 9.5M17 9.5V13M17 9.5L7.5 4.5"/></svg></div>
+    <div class="qnav-txt"><div class="qnav-title">My Orders</div><div class="qnav-sub" id="orderCountSub">&nbsp;</div></div>
+    <svg class="qnav-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
   </div>
-  <div class="qnav-card" onclick="location.href='wishlist.html'">
+  <div class="qnav-card wish" onclick="location.href='wishlist.html'" role="link" tabindex="0">
     <div class="qnav-icon wishlist"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></div>
-    <div class="qnav-title">Wishlist</div>
-    <div class="qnav-sub" id="wishCountSub">&nbsp;</div>
+    <div class="qnav-txt"><div class="qnav-title">Wishlist</div><div class="qnav-sub" id="wishCountSub">&nbsp;</div></div>
+    <svg class="qnav-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
   </div>
 </div>
 
