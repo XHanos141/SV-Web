@@ -1,0 +1,3 @@
+-- Rollback = re-apply the previous function bodies from git history (commit d49c82d, live state before this fix:
+-- see Supabase function definitions captured in the audit). Run on staging first.
+-- Drop the helper only after restoring the old bodies: drop function public._norm_trx(text);
