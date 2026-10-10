@@ -269,6 +269,8 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
 .addr-info .af-icon svg{width:14px;height:14px;stroke:var(--accent);stroke-width:2.3;fill:none}
 .addr-info .af-icon.solid svg{fill:var(--accent);stroke:none}
 .addr-info .af-text{font-size:11.5px;color:var(--text2);font-weight:600;line-height:1.5;padding-top:2px}
+.addr-info .af-text.af-phone{color:var(--text);font-weight:700}
+.addr-info .af-text.af-line{opacity:.72}
 .addr-info .af-name{font-size:12.5px;color:var(--text);font-weight:800;padding-top:1px}
 .addr-actions{display:flex;gap:6px;margin-top:8px;padding-left:34px}
 .addr-actions button{
@@ -825,11 +827,11 @@ function renderAddrCard(card, data){
       </div>
       <div class="af-row">
         <span class="af-icon" aria-hidden="true">${phoneSvg}</span>
-        <span class="af-text">${roEsc(data.phone)}</span>
+        <span class="af-text af-phone">${roEsc(data.phone)}</span>
       </div>
       <div class="af-row">
         <span class="af-icon" aria-hidden="true">${pinSvg}</span>
-        <span class="af-text">${roEsc(lineText)}</span>
+        <span class="af-text af-line">${roEsc(lineText)}</span>
       </div>
     </div>
     <div class="addr-actions">
