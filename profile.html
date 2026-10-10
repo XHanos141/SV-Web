@@ -281,12 +281,14 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
 .addr-actions button:active{transform:scale(.96)}
 .addr-actions button.danger{color:var(--red);border-color:rgba(225,67,67,0.3);background:var(--red-soft)}
 .add-addr-btn{
-  margin:2px 16px 0;padding:13px;border-radius:var(--radius-sm);
+  margin:12px 16px 0;padding:8px 14px;border-radius:10px;
   border:1.5px dashed var(--border-strong);background:transparent;
-  color:var(--accent);font-family:var(--font-body);font-size:13px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;
+  color:var(--accent);font-family:var(--font-body);font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;
 }
-.add-addr-btn svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:2.2;stroke-linecap:round}
+.add-addr-btn[hidden],.addr-limit-note[hidden]{display:none}
+.addr-limit-note{margin:12px 16px 0;font-size:11px;font-weight:600;color:var(--text3)}
+.add-addr-btn svg{width:14px;height:14px;stroke:var(--accent);fill:none;stroke-width:2.2;stroke-linecap:round}
 
 /* ===== SETTINGS LIST ===== */
 .settings-card{
@@ -558,10 +560,11 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
 <div class="addr-list" id="addrList">
   <div class="empty-mini">Loading your addresses…</div>
 </div>
-<button class="add-addr-btn" onclick="openAddrModal()">
+<button class="add-addr-btn" id="addAddrBtn" onclick="openAddrModal()">
   <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
   Add New Address
 </button>
+<div class="addr-limit-note" id="addrLimitNote" hidden>You can save up to 2 addresses. Delete one to add a new address.</div>
 
 <!-- ACCOUNT SETTINGS -->
 <div class="sect"><span class="sect-label">Account Settings</span></div>
@@ -740,7 +743,16 @@ applyTheme();
 
 // ===== ADDRESS MODAL =====
 let editingAddrId = null;
+const MAX_ADDRESSES = 2;
+function addrCount(){ return document.querySelectorAll('#addrList .addr-card').length; }
+function updateAddrLimitUI(){
+  const full = addrCount() >= MAX_ADDRESSES;
+  const btn = document.getElementById('addAddrBtn'), note = document.getElementById('addrLimitNote');
+  if(btn) btn.hidden = full;
+  if(note) note.hidden = !full;
+}
 function openAddrModal(id){
+  if(!id && addrCount() >= MAX_ADDRESSES){ updateAddrLimitUI(); return; }
   editingAddrId = id || null;
   document.getElementById('addrModalTitle').textContent = id ? 'Edit Address' : 'Add New Address';
   const card = id ? document.querySelector(`.addr-card[data-id="${id}"]`) : null;
@@ -882,6 +894,7 @@ async function loadAddresses(){
       renderAddrCard(card, addrRowToData(r));
     });
     syncCheckoutAddress(data);
+    updateAddrLimitUI();
   }catch(e){
     console.error('addresses load error:', e);
     list.innerHTML = '<div class="empty-mini">Could not load your addresses. Please try again.</div>';
@@ -899,6 +912,7 @@ async function saveAddress(){
     phone: document.getElementById('addrPhone').value.trim()
   };
   if(!data.name || !data.full || !data.district || !data.phone){ closeAddrModal(); return; }
+  if(!editingAddrId && addrCount() >= MAX_ADDRESSES){ closeAddrModal(); updateAddrLimitUI(); return; }
   _addrBusy = true;
   const btn = document.querySelector('#addrModal .modal-save-btn'); if(btn) btn.disabled = true;
   try{
