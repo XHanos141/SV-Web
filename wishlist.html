@@ -455,7 +455,18 @@ body.dark-mode .summary-line.total{border-top-color:var(--accent)}
 <style>
 body{padding-bottom:40px}
 .wl-wrap{padding:14px 16px 0;max-width:640px;margin:0 auto}
-.wl-count{font-size:12.5px;font-weight:700;color:var(--text2);margin:2px 2px 12px;letter-spacing:.2px}
+.wl-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 2px 12px;min-height:34px}
+.wl-count{font-size:12.5px;font-weight:700;color:var(--text2);letter-spacing:.2px}
+.wl-all{border:1px solid rgba(10,155,220,.35);background:var(--accent-soft);color:var(--accent);font-family:var(--font-body);font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:11px;cursor:pointer;display:none;align-items:center;gap:6px}
+.wl-all.on{display:flex}.wl-all:active{transform:scale(.96)}
+.wl-all svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.wl-off{display:inline-block;margin-left:6px;font-size:10.5px;font-weight:800;color:var(--green);background:var(--green-soft);padding:2px 7px;border-radius:7px;vertical-align:2px}
+.wl-view{border:1px solid var(--border-strong);background:transparent;color:var(--text2);font-family:var(--font-body);font-size:13px;font-weight:700;padding:8px 14px;border-radius:12px;cursor:pointer;text-decoration:none;display:inline-block}
+.wl-card.oos .wl-price,.wl-card.oos .wl-name{opacity:.6}
+.wl-sep{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin:8px 2px 0}
+.wl-toast{display:flex;align-items:center;gap:14px}
+.wl-toast button{pointer-events:auto;border:none;background:none;color:var(--accent);font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;padding:0}
+.wl-toast.on{pointer-events:auto}
 .wl-list{display:flex;flex-direction:column;gap:12px}
 .wl-card{display:flex;gap:12px;padding:10px;background:var(--surface);border:1px solid rgba(10,155,220,.38);border-radius:var(--radius);box-shadow:var(--shadow-sm);position:relative;animation:wlIn .4s var(--ease) both}
 body.dark-mode .wl-card{border-color:rgba(45,190,245,.42)}
@@ -523,7 +534,7 @@ body.dark-mode .wl-card{border-color:rgba(45,190,245,.42)}
 </header>
 
 <main class="wl-wrap">
-  <div class="wl-count" id="wlCount"></div>
+  <div class="wl-bar"><div class="wl-count" id="wlCount"></div><button type="button" class="wl-all" id="wlAll" onclick="wlAddAll()"></button></div>
   <div class="wl-list" id="wlList"></div>
   <div class="wl-empty" id="wlEmpty" style="display:none">
     <div class="ic"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 000-7.8z"/></svg></div>
@@ -575,14 +586,19 @@ function pvHref(p){
   return (PRODUCT_VIEW_PAGES[p.type]||'product_view_general.html')+'?pid='+encodeURIComponent(p.id)+'&name='+encodeURIComponent(p.name)+'&brand='+encodeURIComponent(p.brand||'')+'&price='+encodeURIComponent(p.price)+'&old='+encodeURIComponent(p.old||0)+'&discount='+encodeURIComponent(p.discount)+'&cat='+encodeURIComponent(p.cat)+'&type='+encodeURIComponent(p.type)+'&rating='+encodeURIComponent(p.rating)+'&stock='+encodeURIComponent(p.stock)+'&_v=3';
 }
 let items=[];
-function toast(msg){const t=document.getElementById('wlToast');t.textContent=msg;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),1800);}
+function toast(msg,actionLabel,action){
+  const t=document.getElementById('wlToast');
+  t.textContent='';const s=document.createElement('span');s.textContent=msg;t.appendChild(s);
+  if(actionLabel){const b=document.createElement('button');b.type='button';b.textContent=actionLabel;b.onclick=()=>{t.classList.remove('on');action();};t.appendChild(b);}
+  t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),actionLabel?5000:1800);
+}
 const CHECK='<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>', CARTI='<svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>';
 const BOTTLE='<svg viewBox="0 0 24 24" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8"/><path d="M9 2v6.5L4.5 15A3 3 0 0 0 7 20h10a3 3 0 0 0 2.5-5L15 8.5V2"/></svg>';
 function card(p,i){
   const out=p.stock==='out', added=!out&&inCart(p.id);
   const img=p.image?'<img'+(window.svImgAttrs?svImgAttrs(p.image,300):' src="'+esc(p.image)+'"')+' alt="'+esc(svTitle(p))+'" loading="lazy">':BOTTLE;
   const stockTxt=p.stock==='in'?'In stock':p.stock==='low'?'Low stock':'Out of stock';
-  const btn=out?'<button class="wl-add" disabled>Out of stock</button>'
+  const btn=out?'<a class="wl-view" href="'+esc(pvHref(p))+'">View</a>'
     :added?'<button class="wl-add done" onclick="window.location.href=\'cart.html\'">'+CHECK+'In cart</button>'
     :'<button class="wl-add" data-id="'+esc(p.id)+'" onclick="wlAdd(this)">'+CARTI+'Add</button>';
   return '<div class="wl-card'+(out?' oos':'')+'" style="animation-delay:'+Math.min(i,8)*50+'ms">'+
@@ -591,7 +607,7 @@ function card(p,i){
     '<a class="wl-name" href="'+esc(pvHref(p))+'">'+esc(p.name)+'</a>'+
     (p.spec?'<div class="wl-spec">'+esc(p.spec)+'</div>':'')+
     '<div class="wl-stock '+p.stock+'">'+stockTxt+'</div>'+
-    '<div class="wl-row"><div><span class="wl-price">'+money(p.price)+'</span>'+(p.old?'<span class="wl-old">'+money(p.old)+'</span>':'')+'</div>'+btn+'</div></div>'+
+    '<div class="wl-row"><div><span class="wl-price">'+money(p.price)+'</span>'+(p.old?'<span class="wl-old">'+money(p.old)+'</span>'+(!out&&p.discount?'<span class="wl-off">'+esc(p.discount)+'</span>':''):'')+'</div>'+btn+'</div></div>'+
     '<button class="wl-heart" aria-label="Remove from wishlist" data-id="'+esc(p.id)+'" onclick="wlRemove(this)"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 000-7.8z"/></svg></button></div>';
 }
 function render(){
@@ -600,7 +616,13 @@ function render(){
   if(!items.length){list.innerHTML='';cnt.textContent='';empty.style.display='';return;}
   empty.style.display='none';
   cnt.textContent=items.length+(items.length===1?' saved item':' saved items');
-  list.innerHTML=items.map(card).join('');
+  const avail=items.filter(p=>p.stock!=='out'), gone=items.filter(p=>p.stock==='out');
+  const addable=avail.filter(p=>!inCart(p.id));
+  const all=document.getElementById('wlAll');
+  all.classList.toggle('on',addable.length>=2);
+  all.innerHTML=CARTI+'Add all ('+addable.length+')';
+  let i=0;
+  list.innerHTML=avail.map(p=>card(p,i++)).join('')+(gone.length&&avail.length?'<div class="wl-sep">Currently unavailable</div>':'')+gone.map(p=>card(p,i++)).join('');
 }
 async function wlLoad(){
   const list=document.getElementById('wlList');
@@ -634,10 +656,26 @@ function wlAdd(btn){
   try{localStorage.setItem(CART_KEY,JSON.stringify(cart));}catch(e){}
   toast('Added to cart');render();
 }
+function wlAddAll(){
+  const cart=readCart();let n=0;
+  items.filter(p=>p.stock!=='out'&&!cart.some(c=>c.id===p.id)).forEach(p=>{
+    cart.push({id:p.id,productId:p.id,sku:p.sku,name:svTitle(p,true),baseName:svTitle({brand:p.brand,name:p.name}),spec:p.spec||'',variant:p.cat||'',price:p.price,oldPrice:p.old||null,qty:1,img:p.image||null,locked:false,type:p.type||'General',category:p.cat||''});n++;
+  });
+  if(!n) return;
+  try{localStorage.setItem(CART_KEY,JSON.stringify(cart));}catch(e){}
+  toast(n+(n===1?' item':' items')+' added to cart');render();
+}
 function wlRemove(btn){
-  const id=btn.dataset.id; items=items.filter(p=>String(p.id)!==id);
+  const id=btn.dataset.id, idx=items.findIndex(p=>String(p.id)===id), removed=items[idx];
+  if(!removed) return;
+  items=items.filter(p=>String(p.id)!==id);
   writeWish(readWish().filter(x=>String(x)!==id));
-  render();toast('Removed from wishlist');
+  render();
+  toast('Removed from wishlist','Undo',function(){
+    items.splice(Math.min(idx,items.length),0,removed);
+    const w=readWish(); w.splice(Math.min(idx,w.length),0,removed.id); writeWish(w);
+    render();
+  });
 }
 window.addEventListener('storage',e=>{if(e.key===WISH_KEY||e.key===CART_KEY) wlLoad();});
 wlLoad();
