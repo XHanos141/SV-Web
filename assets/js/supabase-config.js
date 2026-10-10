@@ -193,3 +193,28 @@ async function svApplyAvailability(rows) {
   } catch (e) {}
   return rows;
 }
+
+
+// ---- Action gate: browsing is public, any action needs a signed-in customer ----
+// Sync check (works inside plain onclick handlers): supabase-js keeps the session in
+// localStorage under sb-<project-ref>-auth-token. If it is absent the visitor is signed out.
+function svIsSignedIn() {
+  try {
+    const ref = new URL(SUPABASE_URL).hostname.split('.')[0];
+    const raw = localStorage.getItem('sb-' + ref + '-auth-token');
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    return !!(s && (s.access_token || s.refresh_token));
+  } catch (e) { return false; }
+}
+// Call at the top of any action handler: `if(!svRequireAuth()) return;`
+// Signed out -> remembers the current page, sends the visitor to login, and returns here after.
+function svRequireAuth() {
+  if (svIsSignedIn()) return true;
+  try {
+    const page = location.pathname.split('/').pop() || 'store.html';
+    sessionStorage.setItem('sv-login-return', page + location.search);
+  } catch (e) {}
+  window.location.href = 'login.html';
+  return false;
+}

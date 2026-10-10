@@ -1045,6 +1045,7 @@ body.dark-mode .pay-success-sheet .ps-btn-ghost{color:#34d399;border-color:#34d3
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
+<script>svRequireAuth(); /* checkout needs a signed-in customer */</script>
 <script>
 /* Theme */
 if(typeof svInitHeaderAuth === 'function') svInitHeaderAuth('headerAccountBtn');

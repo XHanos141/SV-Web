@@ -351,7 +351,7 @@ function svReturnTarget(){
   try{
     var t = sessionStorage.getItem('sv-login-return');
     sessionStorage.removeItem('sv-login-return');
-    if(t && /^[a-z0-9_\-]+\.html$/i.test(t)) return t;
+    if(t && /^[a-z0-9_\-]+\.html(\?[a-z0-9_\-=&%.]*)?$/i.test(t)) return t;
   }catch(e){}
   return 'store.html';
 }

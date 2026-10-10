@@ -1616,6 +1616,7 @@ function productViewParams(p){
 }
 
 function toggleCart(btn){
+  if(!svRequireAuth()) return;
   const pid = btn.getAttribute('data-id');
   const product = products.find(p => p.id === pid);
   if(product && product.groupSize > 1){ window.location.href = pvHref(product); return; }
@@ -1629,6 +1630,7 @@ function toggleCart(btn){
 }
 const BUYNOW_KEY = 'sv-buynow-item';
 function buyNow(btn){
+  if(!svRequireAuth()) return;
   btn.style.transform='scale(0.94)';
   setTimeout(()=>btn.style.transform='',150);
   const pid = btn.getAttribute('data-id');
@@ -1658,6 +1660,7 @@ function buyNow(btn){
 }
 
 function toggleWish(btn){
+  if(!svRequireAuth()) return;
   var svg = btn.querySelector('.heart-icon');
   if(!svg) return;
   var id = btn.getAttribute('data-id');

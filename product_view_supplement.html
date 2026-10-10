@@ -1485,6 +1485,7 @@ function getProductInfo(){
   };
 }
 function addToCart(){
+  if(!svRequireAuth()) return;
   const info = getProductInfo();
   const id = slugify(info.baseName + (info.variant ? '-' + info.variant : ''));
   const cart = readCart();
@@ -1509,6 +1510,7 @@ function addToCart(){
   showPvToast('Added ' + qty + ' to cart');
 }
 function buyNow(){
+  if(!svRequireAuth()) return;
   var buyBtn = document.querySelector('.pv-btn-buy');
   if(buyBtn && buyBtn.classList.contains('wishlist-mode')){
     var heart = buyBtn.querySelector('svg');

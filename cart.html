@@ -881,6 +881,7 @@ function setFlow(flow){
 tabInternal.addEventListener('click', () => setFlow('internal'));
 tabProxy.addEventListener('click', () => setFlow('proxy'));
 checkoutBtn.addEventListener('click', () => {
+  if(!svRequireAuth()) return;
   if(DATA[currentFlow].items.length === 0) return;
   if(currentFlow === 'internal' && DATA.internal.items.some(i => isOut(i, 'internal'))){ showToast('Remove out-of-stock items to continue'); return; }
   window.location.href = DATA[currentFlow].checkoutUrl;
