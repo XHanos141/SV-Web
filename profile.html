@@ -259,30 +259,30 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
 .addr-list{display:flex;flex-direction:column;gap:10px;padding:0 16px}
 .addr-card{
   background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);
-  padding:13px 14px;position:relative;box-shadow:var(--shadow-sm);
+  padding:10px 12px;position:relative;box-shadow:var(--shadow-sm);
 }
 .addr-card.default{border-color:rgba(10,155,220,0.4)}
-.addr-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.addr-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
 .addr-icon{width:26px;height:26px;border-radius:8px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .addr-icon svg{width:14px;height:14px;fill:var(--accent);stroke:none}
 .addr-label{font-size:13px;font-weight:800;color:var(--text);flex:1}
 .addr-default-chip{font-size:9.5px;font-weight:800;color:var(--accent);background:var(--accent-soft);padding:2px 7px;border-radius:6px;letter-spacing:.2px}
 .addr-body{font-size:12px;color:var(--text2);line-height:1.5;padding-left:34px}
 .addr-phone{font-size:11.5px;color:var(--text3);font-weight:600;padding-left:34px;margin-top:3px}
-.addr-info{display:flex;flex-direction:column;gap:4px;padding-left:34px}
+.addr-info{display:flex;flex-direction:column;gap:3px;padding-left:34px}
 .addr-info .af-row{display:flex;align-items:flex-start;gap:9px}
 .addr-info .af-icon{width:20px;height:20px;border-radius:7px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
 .addr-info .af-icon svg{width:14px;height:14px;stroke:var(--accent);stroke-width:2.3;fill:none}
 .addr-info .af-icon.solid svg{fill:var(--accent);stroke:none}
-.addr-info .af-text{font-size:11.5px;color:var(--text2);font-weight:600;line-height:1.5;padding-top:2px}
+.addr-info .af-text{font-size:11.5px;color:var(--text2);font-weight:600;line-height:1.4;padding-top:2px}
 .addr-info .af-text.af-phone{color:var(--text);font-weight:700}
 .addr-info .af-text.af-line{opacity:.72}
 .addr-info .af-name{font-size:12.5px;color:var(--text);font-weight:800;padding-top:1px}
-.addr-actions{display:flex;gap:6px;margin-top:8px;padding-left:34px}
+.addr-actions{display:flex;gap:6px;margin-top:6px;padding-left:34px}
 .addr-actions button{
   font-family:var(--font-body);font-size:10.5px;font-weight:700;
   border:1.5px solid var(--border-strong);background:var(--surface2);color:var(--text2);
-  padding:5px 11px;border-radius:8px;cursor:pointer;transition:transform .12s,box-shadow .12s;
+  padding:4px 11px;border-radius:8px;cursor:pointer;transition:transform .12s,box-shadow .12s;
 }
 .addr-actions button:active{transform:scale(.96)}
 .addr-actions button.danger{color:var(--red);border-color:rgba(225,67,67,0.3);background:var(--red-soft)}
@@ -758,6 +758,8 @@ applyTheme();
 // ===== ADDRESS MODAL =====
 let editingAddrId = null;
 const MAX_ADDRESSES = 2;
+/* Profile shows at most this many recent orders; the rest live behind "View all" */
+const RECENT_ORDERS_MAX = 2;
 function addrCount(){ return document.querySelectorAll('#addrList .addr-card').length; }
 function updateAddrLimitUI(){
   const full = addrCount() >= MAX_ADDRESSES;
@@ -1065,9 +1067,9 @@ async function loadRecentOrders(){
       }));
     all.sort((a, b) => new Date(b.t) - new Date(a.t));
     if(cnt) cnt.textContent = all.length + ' total';
-    const va = document.getElementById('recentViewAll'); if(va) va.style.display = all.length > 3 ? '' : 'none';
+    const va = document.getElementById('recentViewAll'); if(va) va.style.display = all.length > RECENT_ORDERS_MAX ? '' : 'none';
     list.innerHTML = all.length
-      ? all.slice(0, 3).map(x => x.html).join('')
+      ? all.slice(0, RECENT_ORDERS_MAX).map(x => x.html).join('')
       : '<div class="empty-mini">No orders yet. <a href="store.html" style="color:var(--accent);font-weight:800;text-decoration:none">Browse the store</a></div>';
   }catch(e){
     console.error('recent orders load error:', e);
