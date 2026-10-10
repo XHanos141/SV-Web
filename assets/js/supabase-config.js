@@ -84,7 +84,33 @@ async function svGetCurrentCustomer() {
     console.error('svGetCurrentCustomer error:', error.message);
     return null;
   }
+  // Account scheduled for deletion: a fresh login inside the 7-day window restores it
+  // (the server refuses the old session's token, so this only succeeds after a new sign-in).
+  if (data && data.deletion_purge_at && !data.anonymized_at) {
+    try {
+      const { data: restored } = await sbClient.rpc('restore_my_account');
+      if (restored) {
+        data.deletion_requested_at = null; data.deletion_purge_at = null;
+        try { sessionStorage.setItem('sv-account-restored', '1'); } catch (e) {}
+        svShowRestoredNotice();
+      }
+    } catch (e) { console.error('restore_my_account failed:', e); }
+  }
   return data;
+}
+
+// One-time "Welcome back" notice after an account is restored
+function svShowRestoredNotice() {
+  try { if (sessionStorage.getItem('sv-account-restored') !== '1') return; sessionStorage.removeItem('sv-account-restored'); } catch (e) { return; }
+  const show = () => {
+    const el = document.createElement('div');
+    el.setAttribute('role', 'status');
+    el.textContent = 'Welcome back! Your account deletion was cancelled and your account is restored.';
+    el.style.cssText = 'position:fixed;left:16px;right:16px;top:calc(env(safe-area-inset-top,0px) + 72px);z-index:99999;background:#0a9b72;color:#fff;font:700 13px/1.4 "DM Sans",sans-serif;padding:12px 14px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);text-align:center;transition:opacity .4s';
+    document.body.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 450); }, 5000);
+  };
+  if (document.body) show(); else document.addEventListener('DOMContentLoaded', show);
 }
 
 // ---- Customer cache (instant header avatar, no per-page network wait) ----

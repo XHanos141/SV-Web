@@ -98,7 +98,8 @@ language plpgsql security definer set search_path = public, pg_temp as $$
 declare n int;
 begin
   update public.customers set deletion_requested_at = null, deletion_purge_at = null
-   where auth_id = auth.uid() and anonymized_at is null and deletion_purge_at is not null and deletion_purge_at > now();
+   where auth_id = auth.uid() and anonymized_at is null and deletion_purge_at is not null and deletion_purge_at > now()
+     and coalesce(to_timestamp(nullif(auth.jwt() ->> 'iat', '')::bigint), now()) > deletion_requested_at;  -- only a login made AFTER the request restores; the old session's token must not
   get diagnostics n = row_count;
   return n > 0;
 end $$;
