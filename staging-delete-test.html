@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>STAGING · Delete account test</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#0b1220;color:#e8eef7;margin:0;padding:16px;max-width:480px;margin:0 auto}
+h1{font-size:18px;margin:0 0 4px}.warn{background:#5a1f1f;border-radius:10px;padding:8px 10px;font-size:12px;margin-bottom:14px}
+.card{background:#141d30;border:1px solid #243049;border-radius:14px;padding:14px;margin-bottom:12px}
+.card h2{font-size:13px;margin:0 0 10px;color:#2dbef5;text-transform:uppercase;letter-spacing:.05em}
+input{width:100%;box-sizing:border-box;padding:11px;border-radius:10px;border:1px solid #2c3a57;background:#0b1220;color:#fff;font-size:15px;margin-bottom:8px}
+button{width:100%;padding:12px;border:none;border-radius:10px;background:#0a9bdc;color:#fff;font-weight:700;font-size:14px;margin-bottom:8px}
+button.red{background:#d64545}button.gray{background:#33415f}button:disabled{opacity:.4}
+pre{background:#060b14;border-radius:10px;padding:10px;font-size:11.5px;white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;margin:0}
+</style></head><body>
+<h1>Delete account · test page</h1>
+<div class="warn">STAGING project only (suppverse-staging-tests). Uses the test user, never real customers.</div>
+
+<div class="card"><h2>1 · Log in</h2>
+<input id="em" type="email" placeholder="test user email" autocomplete="username">
+<input id="pw" type="password" placeholder="password" autocomplete="current-password">
+<button id="bLogin">Log in</button><button class="gray" id="bOut">Log out</button></div>
+
+<div class="card"><h2>2 · Delete flow</h2>
+<button id="bSend" disabled>Send code to my email</button>
+<input id="code" inputmode="numeric" maxlength="6" placeholder="6-digit code">
+<button class="red" id="bVerify" disabled>Verify and delete account</button>
+<button class="gray" id="bStatus" disabled>Check deletion status</button></div>
+
+<div class="card"><h2>3 · Restore</h2>
+<p style="font-size:12px;margin:0 0 8px;color:#9fb0c8">After deleting you are signed out everywhere. Log in again above, then press this. Restoring needs a login made after the deletion request.</p>
+<button id="bRestore" disabled>Restore my account</button></div>
+
+<div class="card"><h2>Log</h2><pre id="log">Ready.</pre></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const URL_='https://isnfryqqinaqrydrlfjk.supabase.co', KEY='sb_publishable_AXeqnhbGJWOM-9GapEMpig_HMNxufUf';
+const sb=supabase.createClient(URL_,KEY), $=id=>document.getElementById(id);
+const log=(t,o)=>{$('log').textContent=new Date().toLocaleTimeString()+'  '+t+(o!==undefined?'\n'+JSON.stringify(o,null,2):'')+'\n\n'+$('log').textContent};
+function ui(on){['bSend','bVerify','bStatus','bRestore'].forEach(i=>$(i).disabled=!on)}
+async function call(action,extra){const r=await sb.functions.invoke('account-delete',{body:{action,...extra}});return r.error?{ok:false,transport_error:String(r.error.message||r.error)}:r.data}
+$('bLogin').onclick=async()=>{const {data,error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});
+  if(error){log('login failed: '+error.message);return}ui(true);log('logged in as '+data.user.email);
+  const st=await sb.rpc('my_deletion_status');log('deletion status',st.data??st.error)};
+$('bOut').onclick=async()=>{await sb.auth.signOut();ui(false);log('logged out')};
+$('bSend').onclick=async()=>{$('bSend').disabled=true;log('send_otp ->',await call('send_otp'));$('bSend').disabled=false};
+$('bVerify').onclick=async()=>{const code=$('code').value.trim();const r=await call('verify',{code});log('verify ->',r);
+  if(r.ok){await sb.auth.signOut().catch(()=>{});ui(false);log('deleted (deactivated). Session ended. Log in again to test restore.')}};
+$('bStatus').onclick=async()=>{const r=await sb.rpc('my_deletion_status');log('my_deletion_status',r.data??r.error)};
+$('bRestore').onclick=async()=>{const r=await sb.rpc('restore_my_account');log('restore_my_account ->',r.data??r.error);const st=await sb.rpc('my_deletion_status');log('status after',st.data??st.error)};
+sb.auth.getSession().then(({data})=>{if(data.session){ui(true);log('session found for '+data.session.user.email)}});
+</script></body></html>
