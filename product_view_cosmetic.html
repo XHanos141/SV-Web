@@ -705,6 +705,13 @@ body.dark-mode .pv-qty-val{border-left-color:rgba(255,255,255,0.08);border-right
 if(!/[?&]name=/.test(location.search)){document.write('<style id="pvPre">body .pv-info,body .pv-actions{visibility:hidden}</style>');setTimeout(function(){var s=document.getElementById('pvPre');if(s&&s.parentNode)s.parentNode.removeChild(s)},12000)}
 </script>
 <style>@supports (-webkit-touch-callout:none){input,select,textarea{font-size:16px!important}}</style>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0f3258">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SuppVerse">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<script src="/assets/js/pwa.js" defer></script>
 </head>
 <body>
 
@@ -1378,7 +1385,8 @@ function showPvToast(msg){
 // ─── Share ───
 function shareProduct(){
   var title = document.querySelector('.pv-name') ? document.querySelector('.pv-name').textContent : 'SuppVerse BD Product';
-  var url = window.location.href;
+  var canon = document.querySelector('link[rel="canonical"]');
+  var url = (canon && canon.href) || window.location.href;   // share the clean /p/slug link so WhatsApp/Facebook show the product card
   if(navigator.share){
     navigator.share({ title: title, text: title, url: url }).catch(function(){});
   } else if(navigator.clipboard && navigator.clipboard.writeText){
