@@ -542,7 +542,7 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
 <div class="sect">
   <div class="sect-row">
     <span class="sect-label">Recent Orders</span>
-    <span class="sect-link" onclick="location.href='orders.html'">View all</span>
+    <span class="sect-link" id="recentViewAll" style="display:none" onclick="location.href='orders.html'">View all</span>
   </div>
 </div>
 <div class="order-list" id="recentOrders">
@@ -1037,6 +1037,7 @@ async function loadRecentOrders(){
       }));
     all.sort((a, b) => new Date(b.t) - new Date(a.t));
     if(cnt) cnt.textContent = all.length + ' total';
+    const va = document.getElementById('recentViewAll'); if(va) va.style.display = all.length > 3 ? '' : 'none';
     list.innerHTML = all.length
       ? all.slice(0, 3).map(x => x.html).join('')
       : '<div class="empty-mini">No orders yet. <a href="store.html" style="color:var(--accent);font-weight:800;text-decoration:none">Browse the store</a></div>';
