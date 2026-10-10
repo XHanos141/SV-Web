@@ -467,6 +467,48 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
   border-top-color:#fff;border-radius:50%;animation:avSpin2 .7s linear infinite;vertical-align:middle;
 }
 @keyframes avSpin2{to{transform:rotate(360deg)}}
+
+/* ===== DANGER ZONE + DELETE ACCOUNT ===== */
+.danger-zone{margin:14px 16px 0;border:1px solid rgba(225,67,67,.28);border-radius:var(--radius-sm);background:var(--surface);overflow:hidden}
+.danger-zone .dz-label{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--red);padding:10px 14px 0}
+.danger-zone .setting-row{border-bottom:none;padding-top:8px}
+.danger-zone .setting-icon{background:var(--red-soft)}
+.danger-zone .setting-icon svg{stroke:var(--red)}
+.danger-zone .setting-title{color:var(--red)}
+.del-steps{display:flex;gap:6px;margin:-4px 0 14px}
+.del-steps i{flex:1;height:3px;border-radius:2px;background:var(--border-strong);transition:background .25s var(--ease)}
+.del-steps i.on{background:var(--red)}
+.del-pane{display:none}.del-pane.on{display:block}
+.del-lead{font-size:13px;color:var(--text2);line-height:1.5;margin:-6px 0 12px}
+.del-lead b{color:var(--text);font-weight:700;word-break:break-all}
+.del-status{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;line-height:1.4;margin-bottom:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
+.del-status svg{width:16px;height:16px;flex-shrink:0;margin-top:1px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.del-status.ok{background:var(--green-soft);border-color:rgba(10,155,114,.3);color:var(--green)}
+.del-status.block{background:var(--red-soft);border-color:rgba(225,67,67,.35);color:var(--red)}
+.del-status .del-retry{margin-left:auto;border:none;background:none;color:inherit;font:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:0 0 0 8px}
+.del-two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.del-col{border-radius:var(--radius-sm);padding:10px;border:1px solid var(--border);background:var(--surface2)}
+.del-col h4{font-family:var(--font-display);font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.del-col.rm h4{color:var(--red)}.del-col.keep h4{color:var(--green)}
+.del-col ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.del-col li{font-size:11px;font-weight:600;color:var(--text2);line-height:1.35}
+.del-grace{font-size:11px;font-weight:600;color:var(--text3);line-height:1.45;margin:-2px 2px 12px}
+.otp-row{display:flex;gap:7px;justify-content:center;margin:4px 0 10px}
+.otp-box{width:42px;height:50px;border-radius:12px;border:1.5px solid var(--border-strong);background:var(--surface2);text-align:center;font-family:var(--font-display);font-size:21px;font-weight:800;color:var(--text);outline:none;padding:0;caret-color:var(--accent)}
+.otp-box:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.otp-row.err .otp-box{border-color:var(--red);animation:otpShake .35s}
+@keyframes otpShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.otp-meta{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;font-weight:700;color:var(--text3);margin-bottom:12px;padding:0 2px}
+.otp-meta button{border:none;background:none;font:inherit;font-weight:800;color:var(--accent);cursor:pointer;padding:0}
+.otp-meta button:disabled{color:var(--text3);cursor:default}
+.del-err{font-size:12px;color:var(--red);font-weight:700;text-align:center;min-height:16px;margin-bottom:6px}
+.del-hint{font-size:10.5px;font-weight:700;color:var(--orange);text-align:center;margin-bottom:8px}
+.modal-save-btn.danger{background:var(--red);box-shadow:0 6px 18px rgba(225,67,67,.28)}
+.modal-save-btn.danger:disabled{background:var(--text3);box-shadow:none;opacity:.5}
+.del-done{text-align:center;padding:6px 0 2px}
+.del-done .ic{width:56px;height:56px;border-radius:50%;background:var(--green-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.del-done .ic svg{width:26px;height:26px;stroke:var(--green);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+@media(prefers-reduced-motion:reduce){.otp-row.err .otp-box{animation:none}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
@@ -613,6 +655,18 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
   <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
   Log Out
 </button>
+<div class="danger-zone">
+  <div class="dz-label">Danger zone</div>
+  <div class="setting-row" id="deleteAccountRow" onclick="openDeleteAccount()" role="button" tabindex="0">
+    <div class="setting-icon"><svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></div>
+    <div class="setting-text">
+      <div class="setting-title">Delete Account</div>
+      <div class="setting-sub">Remove your personal data permanently</div>
+    </div>
+    <svg class="setting-chevron" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+  </div>
+</div>
+
 <div class="version-tag">SuppVerse BD · v1.0</div>
 
 <!-- EDIT PROFILE MODAL — compact, GitHub/Vercel style -->
@@ -683,6 +737,59 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
     <div class="ae-btn-row">
       <button class="ae-cancel-btn" onclick="closeCropModal()">Cancel</button>
       <button class="modal-save-btn" style="margin-top:0" onclick="confirmCrop()">Use Photo</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE ACCOUNT MODAL: 1 review + type DELETE -> 2 email OTP -> 3 scheduled -->
+<div class="modal-overlay center-popup" id="delModal" aria-hidden="true">
+  <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="delTitle">
+    <div class="del-steps" id="delSteps"><i class="on"></i><i></i><i></i></div>
+
+    <div class="del-pane on" id="delP1">
+      <div class="modal-title" id="delTitle">Delete your account?</div>
+      <div class="del-status" id="delElig"></div>
+      <div class="del-two">
+        <div class="del-col rm"><h4>Removed</h4><ul><li>Name, email, phone</li><li>Saved addresses</li><li>Wishlist &amp; avatar</li><li>Your login</li></ul></div>
+        <div class="del-col keep"><h4>Kept</h4><ul><li>Past orders &amp; payments (anonymized)</li><li>Invoices for accounting</li></ul></div>
+      </div>
+      <div class="del-grace">Your account is deactivated right away. Log in within 7 days to restore it; after that, deletion is permanent.</div>
+      <div class="field"><label for="delConfirmInput">Type <b>DELETE</b> to continue</label>
+        <input type="text" id="delConfirmInput" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="DELETE"></div>
+      <div class="del-err" id="delErr1"></div>
+      <div class="ae-btn-row">
+        <button class="ae-cancel-btn" type="button" onclick="closeDeleteAccount()">Cancel</button>
+        <button class="modal-save-btn danger" type="button" id="delSendBtn" style="margin-top:0" disabled onclick="delSendCode()"><span class="btn-label">Send code</span><span class="btn-spin" style="display:none"></span></button>
+      </div>
+    </div>
+
+    <div class="del-pane" id="delP2">
+      <div class="modal-title">Enter the code</div>
+      <p class="del-lead">We emailed a 6-digit code to <b id="delMail"></b>. Enter it to permanently delete your account.</p>
+      <div class="otp-row" id="otpRow">
+        <input class="otp-box" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="one-time-code" aria-label="Digit 1">
+        <input class="otp-box" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 2">
+        <input class="otp-box" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 3">
+        <input class="otp-box" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 4">
+        <input class="otp-box" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 5">
+        <input class="otp-box" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 6">
+      </div>
+      <div class="otp-meta"><span id="delExpiry">Expires in 10:00</span><button type="button" id="delResend" onclick="delResendCode()" disabled>Resend code</button></div>
+      <div class="del-hint" id="delHint" style="display:none">Preview mode: use code 123456</div>
+      <div class="del-err" id="delErr2"></div>
+      <div class="ae-btn-row">
+        <button class="ae-cancel-btn" type="button" onclick="delBack()">Back</button>
+        <button class="modal-save-btn danger" type="button" id="delConfirmBtn" style="margin-top:0" disabled onclick="delConfirm()"><span class="btn-label">Delete account</span><span class="btn-spin" style="display:none"></span></button>
+      </div>
+    </div>
+
+    <div class="del-pane" id="delP3">
+      <div class="del-done">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="modal-title" style="margin-bottom:6px">Account deactivated</div>
+        <p class="del-lead" style="margin:0 0 14px">Your data will be permanently removed on <b id="delPurge"></b>. Log in before then to restore it. We've emailed you a confirmation.</p>
+      </div>
+      <button class="modal-save-btn" type="button" style="margin-top:0" onclick="svSignOut('login.html')">Log out</button>
     </div>
   </div>
 </div>
@@ -1008,6 +1115,190 @@ function closePasswordConfirm(){
 function confirmPasswordReset(){
   window.location.href = 'login.html?mode=reset&email=' + encodeURIComponent(currentCustomer.email);
 }
+
+// ===== DELETE ACCOUNT (anonymize-and-close, email OTP final step) =====
+/* Server contract (Edge Function `account-delete`, service-role only; never trust this client):
+   send_otp -> hash+store 6-digit code per customer, 10 min expiry, 60s resend gap, hourly cap, emails the address ON FILE
+   verify   -> single use, max 5 attempts; deactivates account + schedules anonymization at purge_at (now + 7 days);
+               a login inside the window restores it. Purge deletes addresses/wishlist/auth user and keeps order+payment rows.
+   Flip DEL_MOCK to false once the function is deployed. */
+const DEL_MOCK = true;
+const DEL_OTP_TTL = 600, DEL_RESEND_GAP = 60, DEL_RESEND_MAX = 3, DEL_MAX_ATTEMPTS = 5, DEL_GRACE_DAYS = 7;
+const DEL_STORE_ACTIVE = ['awaiting_payment','unpaid','verifying','cod_pending','paid','processing','shipped'];
+const DEL_PX_ACTIVE = ['approved','paid','purchasing','ordered','shipped_intl','arrived_bd'];
+const delMock = { attempts:0, sent:0 };
+const delApi = {
+  async eligibility(){
+    try{
+      const [so, px] = await Promise.all([
+        sbClient.rpc('my_orders'),
+        sbClient.from('proxy_requests').select('request_no,status,orders(order_number)')
+      ]);
+      const store = (so && !so.error && so.data && so.data.ok) ? (so.data.orders || []) : null;
+      const proxy = (px && !px.error) ? (px.data || []) : null;
+      if(store === null || proxy === null) return { ok:false, error:'check_failed' };
+      const blocking = store.filter(o => DEL_STORE_ACTIVE.includes(o.state)).map(o => o.order_number)
+        .concat(proxy.filter(r => DEL_PX_ACTIVE.includes(r.status)).map(r => (r.orders && r.orders.order_number) || r.request_no || 'Request'));
+      return { ok:true, blocking };
+    }catch(e){ return { ok:false, error:'check_failed' }; }
+  },
+  async sendOtp(){
+    if(DEL_MOCK){ await new Promise(r => setTimeout(r, 700)); delMock.attempts = 0; delMock.sent++; return { ok:true, expires_in:DEL_OTP_TTL, resend_in:DEL_RESEND_GAP }; }
+    const r = await sbClient.functions.invoke('account-delete', { body:{ action:'send_otp' } });
+    return r.error ? { ok:false, error:'send_failed' } : (r.data || { ok:false, error:'send_failed' });
+  },
+  async verify(code){
+    if(DEL_MOCK){
+      await new Promise(r => setTimeout(r, 800));
+      if(delMock.attempts >= DEL_MAX_ATTEMPTS) return { ok:false, error:'locked' };
+      if(code !== '123456'){ delMock.attempts++; return { ok:false, error:'invalid', attempts_left:DEL_MAX_ATTEMPTS - delMock.attempts }; }
+      return { ok:true, purge_at:new Date(Date.now() + DEL_GRACE_DAYS*864e5).toISOString() };
+    }
+    const r = await sbClient.functions.invoke('account-delete', { body:{ action:'verify', code } });
+    return r.error ? { ok:false, error:'verify_failed' } : (r.data || { ok:false, error:'verify_failed' });
+  }
+};
+const delSt = { open:false, busy:false, eligible:false, resends:0, expTimer:null, gapTimer:null, expAt:0 };
+const $del = id => document.getElementById(id);
+const OTP_BOXES = () => Array.from(document.querySelectorAll('#otpRow .otp-box'));
+function delStep(n){
+  [1,2,3].forEach(i => $del('delP'+i).classList.toggle('on', i === n));
+  Array.from($del('delSteps').children).forEach((el, i) => el.classList.toggle('on', i < n));
+}
+function delSetStatus(kind, html){
+  const el = $del('delElig'); el.className = 'del-status' + (kind ? ' ' + kind : '');
+  const icon = kind === 'ok' ? '<path d="M20 6 9 17l-5-5"/>' : kind === 'block' ? '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' : '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>';
+  el.innerHTML = '<svg viewBox="0 0 24 24">'+icon+'</svg><span>'+html+'</span>';
+}
+function delRefreshSend(){
+  $del('delSendBtn').disabled = !(delSt.eligible && $del('delConfirmInput').value.trim() === 'DELETE') || delSt.busy;
+}
+async function delCheckEligibility(){
+  delSt.eligible = false; delRefreshSend();
+  delSetStatus('', 'Checking your orders…');
+  const r = await delApi.eligibility();
+  if(!delSt.open) return;
+  if(!r.ok){
+    delSetStatus('block', 'We couldn\'t verify your orders. Check your connection and try again. <button type="button" class="del-retry" onclick="delCheckEligibility()">Retry</button>');
+  }else if(r.blocking.length){
+    const shown = r.blocking.slice(0, 3).map(roEsc).join(', ') + (r.blocking.length > 3 ? ' +' + (r.blocking.length - 3) + ' more' : '');
+    delSetStatus('block', 'You have '+r.blocking.length+(r.blocking.length === 1 ? ' order' : ' orders')+' still in progress ('+shown+'). You can delete your account once '+(r.blocking.length === 1 ? 'it is' : 'they are')+' delivered or cancelled.');
+  }else{
+    delSt.eligible = true;
+    delSetStatus('ok', 'No orders in progress. You\'re clear to delete.');
+  }
+  delRefreshSend();
+}
+function openDeleteAccount(){
+  if(!currentCustomer || !currentCustomer.email) return;
+  Object.assign(delSt, { open:true, busy:false, eligible:false, resends:0 });
+  $del('delConfirmInput').value = ''; $del('delErr1').textContent = ''; $del('delErr2').textContent = '';
+  $del('delHint').style.display = DEL_MOCK ? '' : 'none';
+  delStep(1);
+  $del('delModal').classList.add('open'); $del('delModal').setAttribute('aria-hidden', 'false');
+  delCheckEligibility();
+}
+function closeDeleteAccount(){
+  if(delSt.busy) return;
+  delSt.open = false; clearInterval(delSt.expTimer); clearInterval(delSt.gapTimer);
+  $del('delModal').classList.remove('open'); $del('delModal').setAttribute('aria-hidden', 'true');
+}
+function delBusy(btnId, on){
+  delSt.busy = on;
+  const b = $del(btnId); b.querySelector('.btn-label').style.display = on ? 'none' : ''; b.querySelector('.btn-spin').style.display = on ? '' : 'none';
+  b.disabled = on;
+}
+function delMask(e){ const [u, d] = String(e).split('@'); return (u.slice(0, 2) + '***') + '@' + (d || ''); }
+function delFmt(s){ s = Math.max(0, s); return Math.floor(s/60) + ':' + String(s % 60).padStart(2, '0'); }
+function delStartTimers(expires, gap){
+  clearInterval(delSt.expTimer); clearInterval(delSt.gapTimer);
+  delSt.expAt = Date.now() + expires*1000;
+  const tickExp = () => {
+    const left = Math.round((delSt.expAt - Date.now())/1000);
+    $del('delExpiry').textContent = left > 0 ? 'Expires in ' + delFmt(left) : 'Code expired';
+    if(left <= 0){ clearInterval(delSt.expTimer); delRefreshConfirm(); }
+  };
+  tickExp(); delSt.expTimer = setInterval(tickExp, 1000);
+  let g = gap; const rb = $del('delResend');
+  const tickGap = () => {
+    if(delSt.resends >= DEL_RESEND_MAX){ rb.disabled = true; rb.textContent = 'Resend limit reached'; clearInterval(delSt.gapTimer); return; }
+    if(g > 0){ rb.disabled = true; rb.textContent = 'Resend in ' + g + 's'; g--; }
+    else { rb.disabled = false; rb.textContent = 'Resend code'; clearInterval(delSt.gapTimer); }
+  };
+  tickGap(); delSt.gapTimer = setInterval(tickGap, 1000);
+}
+function delCode(){ return OTP_BOXES().map(b => b.value).join(''); }
+function delRefreshConfirm(){
+  $del('delConfirmBtn').disabled = delSt.busy || delCode().length !== 6 || Date.now() > delSt.expAt;
+}
+function delClearOtp(focus){ OTP_BOXES().forEach(b => b.value = ''); $del('otpRow').classList.remove('err'); delRefreshConfirm(); if(focus) OTP_BOXES()[0].focus(); }
+async function delSendCode(){
+  if(delSt.busy || !delSt.eligible) return;
+  $del('delErr1').textContent = '';
+  delBusy('delSendBtn', true);
+  const r = await delApi.sendOtp();
+  delBusy('delSendBtn', false); delRefreshSend();
+  if(!r.ok){ $del('delErr1').textContent = 'Could not send the code. Please try again.'; return; }
+  $del('delMail').textContent = delMask(currentCustomer.email);
+  $del('delErr2').textContent = '';
+  delClearOtp(false); delStep(2); delStartTimers(r.expires_in || DEL_OTP_TTL, r.resend_in || DEL_RESEND_GAP);
+  setTimeout(() => OTP_BOXES()[0].focus(), 120);
+}
+async function delResendCode(){
+  if(delSt.busy || delSt.resends >= DEL_RESEND_MAX) return;
+  $del('delResend').disabled = true; $del('delErr2').textContent = '';
+  const r = await delApi.sendOtp();
+  if(!r.ok){ $del('delErr2').textContent = 'Could not resend the code. Try again shortly.'; $del('delResend').disabled = false; return; }
+  delSt.resends++; delClearOtp(true); delStartTimers(r.expires_in || DEL_OTP_TTL, r.resend_in || DEL_RESEND_GAP);
+}
+function delBack(){ if(delSt.busy) return; clearInterval(delSt.expTimer); clearInterval(delSt.gapTimer); delStep(1); }
+async function delConfirm(){
+  if(delSt.busy || delCode().length !== 6) return;
+  $del('delErr2').textContent = '';
+  delBusy('delConfirmBtn', true);
+  const r = await delApi.verify(delCode());
+  delBusy('delConfirmBtn', false);
+  if(r.ok){
+    clearInterval(delSt.expTimer); clearInterval(delSt.gapTimer);
+    $del('delPurge').textContent = roDate(r.purge_at);
+    delStep(3); return;
+  }
+  const row = $del('otpRow'); row.classList.remove('err'); void row.offsetWidth; row.classList.add('err');
+  $del('delErr2').textContent = r.error === 'invalid' ? 'Incorrect code. ' + r.attempts_left + (r.attempts_left === 1 ? ' attempt' : ' attempts') + ' left.'
+    : r.error === 'locked' ? 'Too many attempts. Go back and request a new code.'
+    : 'Something went wrong. Please try again.';
+  if(r.error === 'locked'){ delClearOtp(false); $del('delConfirmBtn').disabled = true; }
+  else { delClearOtp(true); }
+}
+(function initDeleteAccountUI(){
+  const confirmIn = $del('delConfirmInput'); if(!confirmIn) return;
+  confirmIn.addEventListener('input', delRefreshSend);
+  const boxes = OTP_BOXES();
+  boxes.forEach((b, i) => {
+    b.addEventListener('input', () => {
+      b.value = b.value.replace(/\D/g, '').slice(-1);
+      if(b.value && i < boxes.length - 1) boxes[i + 1].focus();
+      $del('otpRow').classList.remove('err'); delRefreshConfirm();
+      if(delCode().length === 6) delConfirm();
+    });
+    b.addEventListener('keydown', e => {
+      if(e.key === 'Backspace' && !b.value && i > 0){ boxes[i - 1].value = ''; boxes[i - 1].focus(); delRefreshConfirm(); }
+      else if(e.key === 'ArrowLeft' && i > 0) boxes[i - 1].focus();
+      else if(e.key === 'ArrowRight' && i < boxes.length - 1) boxes[i + 1].focus();
+      else if(e.key === 'Enter') delConfirm();
+    });
+    b.addEventListener('focus', () => b.select());
+    b.addEventListener('paste', e => {
+      const t = ((e.clipboardData || window.clipboardData).getData('text') || '').replace(/\D/g, '').slice(0, 6);
+      if(!t) return; e.preventDefault();
+      boxes.forEach((x, j) => x.value = t[j] || '');
+      boxes[Math.min(t.length, 5)].focus(); delRefreshConfirm();
+      if(t.length === 6) delConfirm();
+    });
+  });
+  $del('deleteAccountRow').addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openDeleteAccount(); } });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && delSt.open) closeDeleteAccount(); });
+})();
 
 // ===== LOGOUT =====
 function handleLogout(){
