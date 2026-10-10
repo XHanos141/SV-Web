@@ -288,9 +288,12 @@ function svShowLoginSheet() {
 // ---- Per-account device data ----
 // Cart, wishlist, saved address and pending checkout live in this device's localStorage, so they
 // must never outlive the signed-in account: guests have none, and a new account never inherits them.
+let svSyncMuted = false;
 const SV_USER_DATA_KEYS = ['sv-cart-internal', 'sv-wishlist', 'sv-address', 'sv-buynow-item', 'sv-unpaid-order'];
 function svClearUserData() {
+  svSyncMuted = true;
   try { SV_USER_DATA_KEYS.forEach(k => localStorage.removeItem(k)); localStorage.removeItem('sv-data-owner'); } catch (e) {}
+  svSyncMuted = false;
 }
 // Signed out on page load (explicit sign-out, expired session, "don't remember me") -> wipe leftovers.
 if (!svIsSignedIn()) svClearUserData();
@@ -304,6 +307,108 @@ if (sbClient) {
         if (owner && owner !== session.user.id) svClearUserData();
         localStorage.setItem('sv-data-owner', session.user.id);
       }
+      if (event === 'SIGNED_IN') svPullUserData();
     } catch (e) {}
   });
 }
+
+// ---- Account-linked cart & wishlist (table: customer_carts, one row per customer, RLS own-row) ----
+// localStorage stays the fast working copy every page already reads/writes. This layer mirrors it
+// to Supabase on every change (debounced) and restores it on any device after sign-in.
+const SV_SYNC_KEYS = { 'sv-cart-internal': 'cart', 'sv-wishlist': 'wishlist' };
+let svPushTimer = null, svPullPromise = null, svSyncReady = false;
+
+function svReadJsonArray(key) {
+  try { const v = JSON.parse(localStorage.getItem(key)); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+}
+function svWriteSilently(key, value) {
+  svSyncMuted = true;
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  svSyncMuted = false;
+}
+async function svPushUserData() {
+  try {
+    if (!sbClient || !svIsSignedIn()) return;
+    if (svPullPromise) await svPullPromise;            // never overwrite the server before restoring from it
+    const { data: { session } } = await sbClient.auth.getSession();
+    if (!session) return;
+    await sbClient.from('customer_carts').upsert({
+      auth_id: session.user.id,
+      cart: svReadJsonArray('sv-cart-internal'),
+      wishlist: svReadJsonArray('sv-wishlist')
+    }, { onConflict: 'auth_id' });
+  } catch (e) { console.warn('cart sync push failed', e); }
+}
+function svSchedulePush() {
+  clearTimeout(svPushTimer);
+  svPushTimer = setTimeout(svPushUserData, 600);
+}
+// Any write to the synced keys (from any page's existing code) schedules a push.
+(function patchStorage() {
+  const origSet = Storage.prototype.setItem, origRemove = Storage.prototype.removeItem;
+  Storage.prototype.setItem = function (k, v) {
+    origSet.apply(this, arguments);
+    if (this === window.localStorage && !svSyncMuted && SV_SYNC_KEYS[k]) svSchedulePush();
+  };
+  Storage.prototype.removeItem = function (k) {
+    origRemove.apply(this, arguments);
+    if (this === window.localStorage && !svSyncMuted && SV_SYNC_KEYS[k]) svSchedulePush();
+  };
+})();
+
+// Restore this account's cart/wishlist (and default delivery address) onto this device.
+function svPullUserData() {
+  if (svPullPromise) return svPullPromise;
+  svPullPromise = (async () => {
+    let changed = false;
+    try {
+      if (!sbClient || !svIsSignedIn()) return;
+      const { data: { session } } = await sbClient.auth.getSession();
+      if (!session) return;
+      const uid = session.user.id;
+      const { data: row, error } = await sbClient.from('customer_carts')
+        .select('cart,wishlist').eq('auth_id', uid).maybeSingle();
+      if (error) throw error;
+      if (row) {
+        [['sv-cart-internal', row.cart], ['sv-wishlist', row.wishlist]].forEach(([k, remote]) => {
+          remote = Array.isArray(remote) ? remote : [];
+          if (JSON.stringify(remote) !== JSON.stringify(svReadJsonArray(k))) { svWriteSilently(k, remote); changed = true; }
+        });
+      } else if (svReadJsonArray('sv-cart-internal').length || svReadJsonArray('sv-wishlist').length) {
+        svSyncReady = true; svPullPromise = null; svSchedulePush();   // first sync: upload what this device already has
+        return;
+      }
+      // Checkout reads the default address from 'sv-address'; restore it on a fresh device.
+      if (!localStorage.getItem('sv-address')) {
+        const { data: cust } = await sbClient.from('customers').select('id').eq('auth_id', uid).maybeSingle();
+        if (cust) {
+          const { data: addrs } = await sbClient.from('customer_addresses').select('*').eq('customer_id', cust.id)
+            .order('is_default', { ascending: false }).limit(1);
+          const d = addrs && addrs[0];
+          if (d) { localStorage.setItem('sv-address', JSON.stringify({ name: d.recipient_name, phone: d.phone, full: d.full_address, city: d.district, zip: d.postal_code || '' })); changed = true; }
+        }
+      }
+    } catch (e) {
+      console.warn('cart sync pull failed', e);
+    } finally {
+      svSyncReady = true;
+      svPullPromise = null;
+      if (changed) svAfterRestore();
+    }
+  })();
+  return svPullPromise;
+}
+// Pages render from localStorage at load; if the restore changed it, refresh badges and reload once.
+function svAfterRestore() {
+  try {
+    ['sv-cart-internal', 'sv-wishlist'].forEach(k => window.dispatchEvent(new StorageEvent('storage', { key: k })));
+    const page = location.pathname.split('/').pop();
+    if (page === 'payment.html' || page === 'login.html') return;   // never reload mid-checkout / mid-login
+    const last = Number(sessionStorage.getItem('sv-sync-reload') || 0);
+    if (Date.now() - last < 8000) return;                           // loop guard
+    sessionStorage.setItem('sv-sync-reload', String(Date.now()));
+    location.reload();
+  } catch (e) {}
+}
+if (svIsSignedIn()) svPullUserData();
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && svIsSignedIn()) svPullUserData(); });
