@@ -137,6 +137,7 @@ async function svGetCurrentCustomerCached(onRefresh) {
 // Signs the user out and redirects to login.
 async function svSignOut(redirectTo = 'login.html') {
   svSetCachedCustomer(null);
+  svClearUserData();
   if (sbClient) await sbClient.auth.signOut();
   window.location.href = redirectTo;
 }
@@ -282,4 +283,27 @@ function svShowLoginSheet() {
     else if (a === 'login' || a === 'signup') svGoLogin(a);
   });
   requestAnimationFrame(() => { el.classList.add('on'); const b = el.querySelector('.svas-primary'); if (b) b.focus(); });
+}
+
+// ---- Per-account device data ----
+// Cart, wishlist, saved address and pending checkout live in this device's localStorage, so they
+// must never outlive the signed-in account: guests have none, and a new account never inherits them.
+const SV_USER_DATA_KEYS = ['sv-cart-internal', 'sv-wishlist', 'sv-address', 'sv-buynow-item', 'sv-unpaid-order'];
+function svClearUserData() {
+  try { SV_USER_DATA_KEYS.forEach(k => localStorage.removeItem(k)); localStorage.removeItem('sv-data-owner'); } catch (e) {}
+}
+// Signed out on page load (explicit sign-out, expired session, "don't remember me") -> wipe leftovers.
+if (!svIsSignedIn()) svClearUserData();
+// Any sign-out from here on wipes it too; a different account signing in starts clean.
+if (sbClient) {
+  sbClient.auth.onAuthStateChange((event, session) => {
+    try {
+      if (event === 'SIGNED_OUT') { svClearUserData(); return; }
+      if (session && session.user) {
+        const owner = localStorage.getItem('sv-data-owner');
+        if (owner && owner !== session.user.id) svClearUserData();
+        localStorage.setItem('sv-data-owner', session.user.id);
+      }
+    } catch (e) {}
+  });
 }
