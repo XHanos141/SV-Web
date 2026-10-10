@@ -230,16 +230,14 @@ function svShowLoginSheet() {
     const st = document.createElement('style');
     st.id = 'svAuthSheetCss';
     st.textContent = `
-#svAuthSheet{position:fixed;inset:0;z-index:100000;display:flex;align-items:flex-end;justify-content:center;
+#svAuthSheet{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;
   background:rgba(8,14,28,0);transition:background .25s ease;font-family:var(--font,'DM Sans',sans-serif)}
 #svAuthSheet.on{background:rgba(8,14,28,.55)}
-#svAuthSheet .svas-card{width:100%;max-width:440px;background:var(--surface,#fff);color:var(--text,#0B1220);
-  border-radius:24px 24px 0 0;padding:10px 22px calc(22px + env(safe-area-inset-bottom,0px));text-align:center;
-  box-shadow:0 -12px 40px rgba(0,0,0,.22);transform:translateY(100%);transition:transform .3s cubic-bezier(.22,1,.36,1)}
-#svAuthSheet.on .svas-card{transform:translateY(0)}
-@media(min-width:600px){#svAuthSheet{align-items:center}#svAuthSheet .svas-card{border-radius:24px;padding-top:26px;transform:translateY(24px) scale(.97);opacity:0;transition:transform .25s ease,opacity .25s ease}#svAuthSheet.on .svas-card{transform:none;opacity:1}}
-#svAuthSheet .svas-grab{width:38px;height:4px;border-radius:4px;background:var(--border-strong,rgba(10,22,40,.12));margin:0 auto 18px}
-@media(min-width:600px){#svAuthSheet .svas-grab{display:none}}
+#svAuthSheet .svas-card{width:100%;max-width:360px;background:var(--surface,#fff);color:var(--text,#0B1220);
+  border-radius:24px;padding:26px 22px 18px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);
+  opacity:0;transform:translateY(16px) scale(.95);transition:transform .3s cubic-bezier(.22,1,.36,1),opacity .2s ease}
+#svAuthSheet.on .svas-card{opacity:1;transform:none}
+#svAuthSheet .svas-grab{display:none}
 #svAuthSheet .svas-ico{width:56px;height:56px;border-radius:18px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;
   background:var(--accent-soft,rgba(10,155,220,.1))}
 #svAuthSheet .svas-ico svg{width:26px;height:26px;fill:none;stroke:var(--accent,var(--cyan,#0A9BDC));stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
