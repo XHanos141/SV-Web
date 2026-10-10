@@ -618,6 +618,7 @@ function svReturnTarget(){
 <div class="toast" id="toast"></div>
 
 <script>
+(function(){ try{ if(new URLSearchParams(location.search).get('tab')==='signup') window.addEventListener('DOMContentLoaded',function(){ switchTab('signup'); }); }catch(e){} })();
 function switchTab(which){
   const thumb = document.getElementById('tabThumb');
   const tabLogin = document.getElementById('tabLogin');
