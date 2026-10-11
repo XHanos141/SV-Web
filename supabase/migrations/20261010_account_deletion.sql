@@ -65,10 +65,10 @@ begin
   return jsonb_build_object('ok', true, 'expires_in', 600, 'resend_in', 60);
 end $$;
 
--- Single-use, 5 attempts. On success: re-check blockers, then deactivate + schedule purge in 7 days.
+-- Single-use, 5 attempts. On success: re-check blockers, then deactivate + schedule purge in 15 days.
 create or replace function public.sv_del_verify_otp(p_customer uuid, p_code_hash text) returns jsonb
 language plpgsql security definer set search_path = public, pg_temp as $$
-declare o public.account_deletion_otps; b text[]; purge timestamptz := now() + interval '7 days';
+declare o public.account_deletion_otps; b text[]; purge timestamptz := now() + interval '15 days';
 begin
   select * into o from public.account_deletion_otps where customer_id = p_customer for update;
   if not found or o.consumed_at is not null or o.expires_at < now() then

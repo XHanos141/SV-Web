@@ -1,4 +1,4 @@
-// account-delete: email-OTP account deletion (anonymize-and-close, 7-day grace).
+// account-delete: email-OTP account deletion (anonymize-and-close, 15-day grace).
 // Actions (POST JSON): send_otp | verify  (customer JWT)   ·   purge (service-role key, or the x-cron-secret header from pg_cron)
 // Secrets: RESEND_API_KEY, OTP_PEPPER (random 32+ chars), optional RESEND_FROM.
 // Always answers HTTP 200 with {ok, ...} so the browser client can read the reason.
@@ -58,7 +58,7 @@ const otpMail = (name: string, code: string) => shell("Confirm account deletion"
    <p style="color:#c0392b;font-size:13px;font-weight:700;line-height:1.5;margin:0">Didn't request this? Ignore this email and change your password. Never share this code with anyone.</p>`);
 const doneMail = (name: string, when: string) => shell("Your account is scheduled for deletion",
   `<p style="color:#4a5b70;font-size:14px;line-height:1.5;margin:0 0 12px">Hi ${esc(name || "there")}, your account has been deactivated and your personal data will be permanently removed on <b>${esc(when)}</b>.</p>
-   <p style="color:#4a5b70;font-size:14px;line-height:1.5;margin:0">Changed your mind? Log in before that date and your account is restored automatically. Past orders are kept in anonymized form for accounting.</p>`);
+   <p style="color:#4a5b70;font-size:14px;line-height:1.5;margin:0">Changed your mind? Log in before that date and your account is restored automatically.</p>`);
 
 async function purge() {
   const { data, error } = await admin.rpc("sv_del_purge_due");

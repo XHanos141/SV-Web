@@ -24,8 +24,8 @@ begin
   r := public.sv_del_verify_otp(a, 'h3'); res := res || ('4b correct code but active order -> ' || (r->>'error'));
   update public.orders set status = 'delivered' where customer_id = a;
   r := public.sv_del_verify_otp(a, 'h3'); res := res || ('4c success: ' || (r->>'ok'));
-  select (deletion_purge_at is not null and deletion_purge_at > now() + interval '6 days 23 hours') into t from public.customers where id = a;
-  res := res || ('4d purge_at ~7d: ' || t);
+  select (deletion_purge_at is not null and deletion_purge_at > now() + interval '14 days 23 hours') into t from public.customers where id = a;
+  res := res || ('4d purge_at ~15d: ' || t);
   r := public.sv_del_verify_otp(a, 'h3'); res := res || ('4e code is single use -> ' || (r->>'error'));
   -- 5 expiry
   insert into public.account_deletion_otps(customer_id, code_hash, expires_at) values (b, 'x', now() - interval '1 minute');

@@ -3,7 +3,7 @@ do $$
 declare a uuid := gen_random_uuid(); u uuid := gen_random_uuid(); res text[] := '{}'; ok boolean; st jsonb;
 begin
   insert into public.customers(id, customer_code, email, full_name, source, auth_id, deletion_requested_at, deletion_purge_at)
-    values (a, 'CU-R1', 'r1@example.com', 'R One', 'web', u, now(), now() + interval '7 days');
+    values (a, 'CU-R1', 'r1@example.com', 'R One', 'web', u, now(), now() + interval '15 days');
   perform set_config('request.jwt.claims', json_build_object('sub', u, 'iat', extract(epoch from now() - interval '5 minutes')::bigint)::text, true);
   ok := public.restore_my_account(); res := res || ('old session cannot restore: ' || (not ok)::text);
   st := public.my_deletion_status(); res := res || ('still pending: ' || (st->>'pending'));
