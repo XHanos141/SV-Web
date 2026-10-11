@@ -407,6 +407,8 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
   border-radius:var(--radius-sm);padding:11px 12px;font-family:var(--font-body);font-size:14px;color:var(--text);outline:none;
 }
 .field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+#delConfirmInput{transition:border-color .15s,color .15s,box-shadow .15s}
+#delConfirmInput.match,#delConfirmInput.match:focus{border-color:var(--red);color:var(--red);font-weight:800;letter-spacing:.04em;box-shadow:0 0 0 4px var(--red-soft)}
 .field-row{display:flex;gap:10px}
 .field-row .field{flex:1}
 .chip-row{display:flex;gap:8px;margin-bottom:10px}
@@ -1162,6 +1164,7 @@ function delSetStatus(kind, html){
   el.innerHTML = '<svg viewBox="0 0 24 24">'+icon+'</svg><span>'+html+'</span>';
 }
 function delRefreshSend(){
+  $del('delConfirmInput').classList.toggle('match', $del('delConfirmInput').value.trim() === 'DELETE');
   $del('delSendBtn').disabled = !(delSt.eligible && $del('delConfirmInput').value.trim() === 'DELETE') || delSt.busy;
 }
 async function delCheckEligibility(){
@@ -1183,7 +1186,7 @@ async function delCheckEligibility(){
 function openDeleteAccount(){
   if(!currentCustomer || !currentCustomer.email) return;
   Object.assign(delSt, { open:true, busy:false, eligible:false, resends:0 });
-  $del('delConfirmInput').value = ''; $del('delErr1').textContent = ''; $del('delErr2').textContent = '';
+  $del('delConfirmInput').value = ''; $del('delConfirmInput').classList.remove('match'); $del('delErr1').textContent = ''; $del('delErr2').textContent = '';
   $del('delHint').style.display = DEL_MOCK ? '' : 'none';
   $del('delWarnTxt').textContent = 'Your account will go into a ' + DEL_GRACE_DAYS + '-day deletion period. Log in any time before it ends to restore it. After that, your personal information is permanently deleted and can\'t be recovered.';
   delStep(1);
