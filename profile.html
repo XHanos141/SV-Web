@@ -190,6 +190,20 @@ body.dark-mode .icon-moon{opacity:1;transform:scale(1) rotate(0)}
 .sect-row{display:flex;align-items:center;justify-content:space-between}
 
 /* ===== QUICK NAV GRID ===== */
+.vch-list{display:flex;flex-direction:column;gap:10px;padding:0 16px}
+.vch-card{position:relative;display:flex;gap:12px;align-items:center;padding:13px 14px;border-radius:16px;background:linear-gradient(135deg,rgba(225,29,116,.10),var(--surface) 70%);border:1px solid rgba(225,29,116,.32)}
+.vch-card.is-off{opacity:.55;filter:grayscale(.4)}
+.vch-ico{width:38px;height:38px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(225,29,116,.14)}
+.vch-ico svg{width:20px;height:20px;stroke:#e11d74;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.vch-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.vch-title{font-family:var(--font-display);font-size:13.5px;font-weight:800;color:var(--text);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vch-meta{font-size:11.5px;color:var(--text-2,var(--text));opacity:.75;line-height:1.3}
+.vch-code{font-family:'Roboto Mono',monospace;font-size:12px;font-weight:600;color:#e11d74;letter-spacing:.3px}
+.vch-side{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.vch-pill{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:99px;background:rgba(47,155,104,.14);color:#2f9b68;text-transform:capitalize}
+.vch-pill.used,.vch-pill.expired{background:rgba(120,120,130,.16);color:inherit;opacity:.8}
+.vch-pill.scheduled{background:rgba(244,169,34,.16);color:#c98410}
+.vch-copy{border:0;background:transparent;color:#e11d74;font-size:11.5px;font-weight:800;padding:2px 0;cursor:pointer}
 .qnav-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px}
 .qnav-card{
   position:relative;overflow:hidden;min-width:0;
@@ -603,6 +617,12 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
 <div class="order-list" id="recentOrders">
   <div class="empty-mini">Loading your orders…</div>
 </div>
+
+<!-- MY VOUCHERS -->
+<div class="sect" id="vchSect" style="display:none">
+  <div class="sect-row"><span class="sect-label">My Vouchers</span></div>
+</div>
+<div class="vch-list" id="vchList" style="display:none"></div>
 
 <!-- SAVED ADDRESSES -->
 <div class="sect">
@@ -1324,6 +1344,45 @@ function roCard(cls, idLabel, idHtml, metaLabel, metaVal, pillCls, pillText, sta
     + '<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill '+roEsc(pillCls)+'">'+roEsc(pillText)+'</span>'
     + (statusTime ? '<span class="oc-status-date">'+statusTime+'</span>' : '') + '</div>'+RO_CHEV+'</div></div></div>';
 }
+async function loadMyVouchers(){
+  const sect = document.getElementById('vchSect'), list = document.getElementById('vchList');
+  if(!list) return;
+  try{
+    const res = await sbClient.rpc('my_vouchers');
+    const rows = (res && !res.error && Array.isArray(res.data)) ? res.data : [];
+    if(!rows.length){ sect.style.display = 'none'; list.style.display = 'none'; return; }
+    const ico = '<svg viewBox="0 0 24 24"><path d="M3 9a2 2 0 0 0 0 6v3a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-3a2 2 0 0 1 0-6V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1z"/><path d="M13 5v14" stroke-dasharray="2 3"/></svg>';
+    list.innerHTML = '';
+    rows.forEach(v => {
+      const off = v.state !== 'available';
+      const disc = v.discount_type === 'percent' ? (Number(v.discount_value) + '% off')
+                 : v.discount_type === 'free_shipping' ? 'Free delivery'
+                 : ('৳' + Number(v.discount_value).toLocaleString('en-US') + ' off');
+      const bits = [disc];
+      if(v.min_order_amount) bits.push('min ৳' + Number(v.min_order_amount).toLocaleString('en-US'));
+      if(v.expires_at) bits.push((v.state === 'expired' ? 'expired ' : 'until ') + new Date(v.expires_at).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}));
+      const card = document.createElement('div');
+      card.className = 'vch-card' + (off ? ' is-off' : '');
+      card.innerHTML = '<div class="vch-ico">' + ico + '</div>'
+        + '<div class="vch-body"><div class="vch-title"></div><div class="vch-meta"></div><div class="vch-code"></div></div>'
+        + '<div class="vch-side"><span class="vch-pill ' + roEsc(v.state) + '"></span></div>';
+      card.querySelector('.vch-title').textContent = v.title || 'Private voucher';
+      card.querySelector('.vch-meta').textContent = bits.join(' · ');
+      card.querySelector('.vch-code').textContent = v.code;
+      card.querySelector('.vch-pill').textContent = v.state;
+      if(!off){
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'vch-copy'; b.textContent = 'Copy';
+        b.addEventListener('click', async () => {
+          try{ await navigator.clipboard.writeText(v.code); b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1500); }catch(e){}
+        });
+        card.querySelector('.vch-side').appendChild(b);
+      }
+      list.appendChild(card);
+    });
+    sect.style.display = ''; list.style.display = '';
+  }catch(e){ sect.style.display = 'none'; list.style.display = 'none'; }
+}
 async function loadRecentOrders(){
   const list = document.getElementById('recentOrders');
   const cnt = document.getElementById('orderCountSub');
@@ -1407,6 +1466,7 @@ async function loadRealProfile(){
   renderAvatar(customer);
   document.getElementById('idCard').classList.remove('is-loading');
   loadRecentOrders();
+  loadMyVouchers();
   loadWishCount();
   loadAddresses();
 
