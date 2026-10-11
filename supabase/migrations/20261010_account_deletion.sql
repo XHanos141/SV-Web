@@ -147,3 +147,11 @@ revoke execute on function public.sv_del_blockers(uuid), public.sv_del_issue_otp
 grant execute on function public.sv_del_blockers(uuid), public.sv_del_issue_otp(uuid, text), public.sv_del_verify_otp(uuid, text),
   public.sv_del_purge_due(int), public.sv_del_finalize(uuid[]) to service_role;
 grant execute on function public.my_deletion_status(), public.restore_my_account() to authenticated;
+
+-- Cron auth: the daily purge job proves itself with a random secret kept in Vault (see supabase/cron/account_purge.sql)
+create or replace function public.sv_del_verify_cron(p_secret text) returns boolean
+language sql security definer set search_path = public, vault, pg_temp as $$
+  select exists (select 1 from vault.decrypted_secrets where name = 'account_purge_cron_secret' and decrypted_secret = p_secret)
+$$;
+revoke execute on function public.sv_del_verify_cron(text) from public, anon, authenticated;
+grant execute on function public.sv_del_verify_cron(text) to service_role;

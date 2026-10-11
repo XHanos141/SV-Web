@@ -1,5 +1,5 @@
 // account-delete: email-OTP account deletion (anonymize-and-close, 7-day grace).
-// Actions (POST JSON): send_otp | verify  (customer JWT)   ·   purge (service-role key, called by cron)
+// Actions (POST JSON): send_otp | verify  (customer JWT)   ·   purge (service-role key, or the x-cron-secret header from pg_cron)
 // Secrets: RESEND_API_KEY, OTP_PEPPER (random 32+ chars), optional RESEND_FROM.
 // Always answers HTTP 200 with {ok, ...} so the browser client can read the reason.
 import { createClient } from "jsr:@supabase/supabase-js@2";
@@ -85,7 +85,12 @@ Deno.serve(async (req) => {
   let body: { action?: string; code?: string } = {};
   try { body = await req.json(); } catch { /* empty */ }
 
-  if (body.action === "purge") return token === SERVICE ? await purge() : json({ ok: false, error: "forbidden" });
+  if (body.action === "purge") {
+    if (token === SERVICE) return await purge();
+    const cron = req.headers.get("x-cron-secret") ?? ""; // daily pg_cron job: password lives in Vault, checked by the DB
+    if (cron) { const { data: okc } = await admin.rpc("sv_del_verify_cron", { p_secret: cron }); if (okc === true) return await purge(); }
+    return json({ ok: false, error: "forbidden" });
+  }
 
   const { data: u, error: ue } = await admin.auth.getUser(token);
   if (ue || !u?.user) return json({ ok: false, error: "unauthorized" });
