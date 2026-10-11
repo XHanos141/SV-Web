@@ -486,13 +486,6 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
 .del-status.ok{background:var(--green-soft);border-color:rgba(10,155,114,.3);color:var(--green)}
 .del-status.block{background:var(--red-soft);border-color:rgba(225,67,67,.35);color:var(--red)}
 .del-status .del-retry{margin-left:auto;border:none;background:none;color:inherit;font:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:0 0 0 8px}
-.del-two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.del-col{border-radius:var(--radius-sm);padding:10px;border:1px solid var(--border);background:var(--surface2)}
-.del-col h4{font-family:var(--font-display);font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
-.del-col.rm h4{color:var(--red)}.del-col.keep h4{color:var(--green)}
-.del-col ul{list-style:none;display:flex;flex-direction:column;gap:4px}
-.del-col li{font-size:11px;font-weight:600;color:var(--text2);line-height:1.35}
-.del-grace{font-size:11px;font-weight:600;color:var(--text3);line-height:1.45;margin:-2px 2px 12px}
 .otp-row{display:flex;gap:7px;justify-content:center;margin:4px 0 10px}
 .otp-box{width:42px;height:50px;border-radius:12px;border:1.5px solid var(--border-strong);background:var(--surface2);text-align:center;font-family:var(--font-display);font-size:21px;font-weight:800;color:var(--text);outline:none;padding:0;caret-color:var(--accent)}
 .otp-box:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
@@ -749,11 +742,7 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
     <div class="del-pane on" id="delP1">
       <div class="modal-title" id="delTitle">Delete your account?</div>
       <div class="del-status" id="delElig"></div>
-      <div class="del-two">
-        <div class="del-col rm"><h4>Removed</h4><ul><li>Name, email, phone</li><li>Saved addresses</li><li>Wishlist &amp; avatar</li><li>Your login</li></ul></div>
-        <div class="del-col keep"><h4>Kept</h4><ul><li>Past orders &amp; payments (anonymized)</li><li>Invoices for accounting</li></ul></div>
-      </div>
-      <div class="del-grace">Your account is deactivated right away. Log in within 7 days to restore it; after that, deletion is permanent.</div>
+      <div class="del-status block" id="delWarn" role="alert"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span id="delWarnTxt"></span></div>
       <div class="field"><label for="delConfirmInput">Type <b>DELETE</b> to continue</label>
         <input type="text" id="delConfirmInput" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="DELETE"></div>
       <div class="del-err" id="delErr1"></div>
@@ -1119,11 +1108,11 @@ function confirmPasswordReset(){
 // ===== DELETE ACCOUNT (anonymize-and-close, email OTP final step) =====
 /* Server contract (Edge Function `account-delete`, service-role only; never trust this client):
    send_otp -> hash+store 6-digit code per customer, 10 min expiry, 60s resend gap, hourly cap, emails the address ON FILE
-   verify   -> single use, max 5 attempts; deactivates account + schedules anonymization at purge_at (now + 7 days);
+   verify   -> single use, max 5 attempts; deactivates account + schedules anonymization at purge_at (now + 15 days);
                a login inside the window restores it. Purge deletes addresses/wishlist/auth user and keeps order+payment rows.
    Flip DEL_MOCK to false once the function is deployed. */
 const DEL_MOCK = true;
-const DEL_OTP_TTL = 600, DEL_RESEND_GAP = 60, DEL_RESEND_MAX = 3, DEL_MAX_ATTEMPTS = 5, DEL_GRACE_DAYS = 7;
+const DEL_OTP_TTL = 600, DEL_RESEND_GAP = 60, DEL_RESEND_MAX = 3, DEL_MAX_ATTEMPTS = 5, DEL_GRACE_DAYS = 15;
 const DEL_STORE_ACTIVE = ['awaiting_payment','unpaid','verifying','cod_pending','paid','processing','shipped'];
 const DEL_PX_ACTIVE = ['approved','paid','purchasing','ordered','shipped_intl','arrived_bd'];
 const delMock = { attempts:0, sent:0 };
@@ -1194,6 +1183,7 @@ function openDeleteAccount(){
   Object.assign(delSt, { open:true, busy:false, eligible:false, resends:0 });
   $del('delConfirmInput').value = ''; $del('delErr1').textContent = ''; $del('delErr2').textContent = '';
   $del('delHint').style.display = DEL_MOCK ? '' : 'none';
+  $del('delWarnTxt').textContent = 'Your account will go into a ' + DEL_GRACE_DAYS + '-day deletion period. Log in any time before it ends to restore it. After that, your personal information is permanently deleted and can\'t be recovered.';
   delStep(1);
   $del('delModal').classList.add('open'); $del('delModal').setAttribute('aria-hidden', 'false');
   delCheckEligibility();
