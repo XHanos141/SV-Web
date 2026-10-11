@@ -377,6 +377,8 @@ body.dark-mode .due-banner{background:rgba(244,169,34,.14)}
 .pay-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:400;box-shadow:0 -4px 20px rgba(0,0,0,.06)}
 .pay-bar-inner{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:12px}
 .pay-bar-total{flex:1;min-width:0}
+.pay-bar-total{transition:opacity .2s ease}
+.pay-bar-total.is-dup{opacity:0;pointer-events:none}
 .pay-bar-total .pb-label{font-size:9.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
 .pay-bar-total .pb-val{font-size:16px;font-weight:800;color:var(--text)}
 .pay-btn{background:var(--cyan);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:7px;transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
@@ -2312,6 +2314,22 @@ bkUploadRemove.addEventListener('click', () => {
   bkUploadPreview.classList.remove('show');
   bkUploadBox.style.display = 'flex';
 });
+
+/* De-duplicate Total: while the summary card's Total row is on screen, the sticky bar hides its own copy
+   (the Pay button stays put); scrolling the summary out of view brings the bar's Total back. */
+(function(){
+  const bar = document.querySelector('.pay-bar-total');
+  const rows = document.querySelectorAll('.draft-math-total');
+  if(!bar || !rows.length || !('IntersectionObserver' in window)) return;
+  const seen = new Set();
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => e.isIntersecting ? seen.add(e.target) : seen.delete(e.target));
+    const dup = seen.size > 0;
+    bar.classList.toggle('is-dup', dup);
+    bar.setAttribute('aria-hidden', dup ? 'true' : 'false');
+  }, { threshold: 0.9, rootMargin: '0px 0px -90px 0px' });
+  rows.forEach(r => io.observe(r));
+})();
 </script>
 </body>
 </html>
