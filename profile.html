@@ -469,9 +469,11 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
 @keyframes avSpin2{to{transform:rotate(360deg)}}
 
 /* ===== DANGER ZONE + DELETE ACCOUNT ===== */
-.danger-zone{margin:14px 16px 0;border:1px solid rgba(225,67,67,.28);border-radius:var(--radius-sm);background:var(--surface);overflow:hidden}
-.danger-zone .dz-label{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--red);padding:10px 14px 0}
-.danger-zone .setting-row{border-bottom:none;padding-top:8px}
+.danger-zone{margin:0 16px;border:1.5px solid var(--red);border-radius:var(--radius-sm);background:var(--surface);overflow:hidden}
+.sect-label.dz-head{color:var(--red)}
+.danger-zone .setting-row{border-bottom:none}
+.danger-zone .setting-sub{color:var(--red);opacity:.8}
+.danger-zone .setting-chevron{stroke:var(--red)}
 .danger-zone .setting-icon{background:var(--red-soft)}
 .danger-zone .setting-icon svg{stroke:var(--red)}
 .danger-zone .setting-title{color:var(--red)}
@@ -648,8 +650,8 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
   <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
   Log Out
 </button>
+<div class="sect"><span class="sect-label dz-head">Danger Zone</span></div>
 <div class="danger-zone">
-  <div class="dz-label">Danger zone</div>
   <div class="setting-row" id="deleteAccountRow" onclick="openDeleteAccount()" role="button" tabindex="0">
     <div class="setting-icon"><svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></div>
     <div class="setting-text">
