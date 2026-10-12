@@ -435,8 +435,12 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 #storeList .so-v2 .oc-action.danger{ background:#d95353;border-color:#d95353; }
 #storeList .so-v2 .oc-track-link{ background:transparent;color:var(--accent);border:1.5px solid var(--accent);box-shadow:none;padding:10px; }
 /* ===== Swipe-to-remove (completed store orders) + confirm sheet + undo toast ===== */
-.sw-wrap{position:relative;border-radius:12px;overflow:hidden}
-.sw-wrap.gone{transition:max-height .28s ease,opacity .2s ease,margin .28s ease;opacity:0;margin-bottom:-12px}
+.sw-wrap{position:relative;border-radius:12px;overflow:hidden;background:transparent;transition:background 0s .27s}
+.sw-wrap.open,.sw-wrap.drag,.sw-wrap.leaving{background:#DC5252;transition:none}
+.sw-wrap.leaving{margin-bottom:-12px;opacity:0;pointer-events:none;transition:max-height .34s cubic-bezier(.4,0,.2,1) .14s,margin .34s cubic-bezier(.4,0,.2,1) .14s,opacity .26s ease .1s}
+.sw-wrap.leaving>.order-card{transform:translateX(-110%);transition:transform .32s cubic-bezier(.4,0,.2,1)}
+.sw-wrap.enter{opacity:0;margin-bottom:-12px}
+.sw-wrap.enter-go{transition:max-height .36s cubic-bezier(.2,.8,.2,1),margin .36s cubic-bezier(.2,.8,.2,1),opacity .3s ease .08s}
 .sw-act{position:absolute;top:0;right:0;bottom:0;width:88px;border:0;background:#DC5252;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:var(--font-display);font-weight:800;font-size:12.5px;cursor:pointer;opacity:0;transition:opacity .2s ease;-webkit-tap-highlight-color:transparent}
 .sw-act svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sw-wrap.open .sw-act,.sw-wrap.drag .sw-act{opacity:1}
@@ -459,7 +463,7 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 .sv-toast{position:fixed;left:16px;right:16px;bottom:calc(var(--bottom-nav-h) + 14px + env(safe-area-inset-bottom,0px));z-index:310;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 16px;border-radius:14px;background:#0f2a4a;color:#fff;font-size:13px;font-weight:600;box-shadow:0 10px 28px rgba(0,0,0,.3);animation:svPop .2s ease}
 .sv-toast button{background:none;border:0;color:#38bdf8;font-family:var(--font-display);font-weight:800;font-size:13px;cursor:pointer;padding:4px 2px}
 @keyframes svPop{from{transform:scale(.95) translateY(6px);opacity:0}}
-@media (prefers-reduced-motion:reduce){.sw-wrap>.order-card,.sw-act,.sw-wrap.gone{transition:none}.sv-box,.sv-toast{animation:none}}
+@media (prefers-reduced-motion:reduce){.sw-wrap,.sw-wrap.leaving,.sw-wrap.leaving>.order-card,.sw-wrap.enter-go,.sw-wrap>.order-card,.sw-act{transition:none!important}.sv-box,.sv-toast{animation:none}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
@@ -791,7 +795,7 @@ async function loadProxyOrders(){
 
 /* ===== Store orders (live) ===== */
 const SO_FINAL = ['delivered','cancelled'];
-let soHidden = new Set(), soSwipeBusy = false;
+let soHidden = new Set(), soSwipeBusy = false, soEnterId = null;
 const SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
 function soEsc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function soImgFail(el){ el.replaceWith(Object.assign(document.createElement('span'),{innerHTML:SO_ICO.box}).firstChild); }
@@ -1029,7 +1033,7 @@ function rmOpen(id, no){
 }
 function rmClose(){
   rmModal.classList.remove('show'); rmPending = null;
-  document.querySelectorAll('#storeList .sw-wrap.open').forEach(x => x.classList.remove('open')); soSwipeBusy = false;
+  document.querySelectorAll('#storeList .sw-wrap.open:not(.leaving)').forEach(x => x.classList.remove('open')); soSwipeBusy = false;
 }
 function svToast(msg, undo){
   clearTimeout(toastTimer); document.querySelector('.sv-toast')?.remove();
@@ -1048,13 +1052,16 @@ async function soSetHidden(id, hide){
 rmOk.addEventListener('click', async () => {
   if(!rmPending) return; const { id, no } = rmPending; rmOk.disabled = true;
   const ok = await soSetHidden(id, true);
-  rmClose();
-  if(!ok){ svToast('Could not remove ' + no + '. Please try again.'); return; }
-  soHidden.add(id);
   const el = document.querySelector('#storeList .sw-wrap[data-oid="' + id + '"]');
-  if(el){ el.style.maxHeight = el.offsetHeight + 'px'; requestAnimationFrame(() => { el.classList.add('gone'); el.style.maxHeight = '0px'; }); setTimeout(() => el.remove(), 320); }
+  if(!ok){ rmClose(); svToast('Could not remove ' + no + '. Please try again.'); return; }
+  soHidden.add(id);
+  if(el){
+    el.style.maxHeight = el.offsetHeight + 'px'; el.classList.add('open'); void el.offsetHeight;
+    el.classList.add('leaving'); el.style.maxHeight = '0px'; setTimeout(() => el.remove(), 520);
+  }
+  rmClose();
   svToast(no + ' removed from Orders', async () => {
-    if(await soSetHidden(id, false)){ soHidden.delete(id); loadStoreOrders(); } else svToast('Could not restore ' + no + '.');
+    if(await soSetHidden(id, false)){ soHidden.delete(id); soEnterId = id; loadStoreOrders(); } else svToast('Could not restore ' + no + '.');
   });
 });
 document.getElementById('rmCancel').addEventListener('click', rmClose);
@@ -1105,6 +1112,14 @@ async function loadStoreOrders(){
         ? '<div class="sw-wrap" data-oid="'+soEsc(o.id)+'" data-no="'+soEsc(o.order_number)+'"><button class="sw-act" type="button" tabindex="-1" aria-label="Remove '+soEsc(o.order_number)+' from Orders tab"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>Remove</button>'+card+'</div>'
         : card;
     }).join('');
+    if(soEnterId){
+      const en = list.querySelector('.sw-wrap[data-oid="' + soEnterId + '"]'); soEnterId = null;
+      if(en){
+        const h = en.scrollHeight; en.style.maxHeight = '0px'; en.classList.add('enter'); void en.offsetHeight;
+        en.classList.add('enter-go'); en.classList.remove('enter'); en.style.maxHeight = h + 'px';
+        setTimeout(() => { en.style.maxHeight = ''; en.classList.remove('enter-go'); }, 420);
+      }
+    }
     list.querySelectorAll('.order-card').forEach(c => {
       const st = c.querySelector('.oc-status-pill').className;
       const needsAction = /unpaid|awaiting_payment/.test(st);
