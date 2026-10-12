@@ -1,11 +1,11 @@
 /* SuppVerse BD — Orders tab badge (mirrors the Cart badge).
-   Shows how many store orders still need the customer's attention
-   (awaiting payment / unpaid / verifying / COD pending). Hidden at 0 or logged out.
+   Shows how many store orders are still running (anything not delivered or cancelled:
+   payment, verifying, processing, shipped...). Hidden at 0 or logged out.
    Data: sbClient.rpc('my_orders'), cached in localStorage so every page paints instantly
    and stays in sync across tabs; refreshed on load, focus, tab-return and every 20s while visible. */
 (function(){
   var KEY = 'sv-orders-badge';
-  var ACTIVE = { awaiting_payment:1, unpaid:1, verifying:1, cod_pending:1 };
+  var FINAL = { delivered:1, cancelled:1 };
   var POLL_MS = 20000;
   var last = 0, busy = false, timer = null;
 
@@ -62,7 +62,7 @@
   function cached(){ var n = parseInt(localStorage.getItem(KEY), 10); return n > 0 ? n : 0; }
   function store(n){ try{ if(n > 0) localStorage.setItem(KEY, String(n)); else localStorage.removeItem(KEY); }catch(e){} }
   function countOf(orders){
-    return (orders || []).reduce(function(n,o){ return n + (o && ACTIVE[o.state] ? 1 : 0); }, 0);
+    return (orders || []).reduce(function(n,o){ return n + (o && o.state && !FINAL[o.state] ? 1 : 0); }, 0);
   }
 
   /* Pages that already hold the orders list (orders.html) push it here — no extra request. */
