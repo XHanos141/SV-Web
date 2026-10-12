@@ -792,8 +792,8 @@ async function loadProxyOrders(){
     return;
   }
   const open = new Set([...list.querySelectorAll('.order-card:not(.collapsed)')].map(c=>c.dataset.rid));
-  const rows = HIST ? data.filter(r => ['delivered','rejected','cancelled','expired'].includes(r.status) || (r.status==='quoted' && r.expires_at && new Date(r.expires_at) < new Date())) : data;
-  if(!rows.length){ list.innerHTML = '<div class="px-state">No completed Buy For Me orders yet.</div>'; return; }
+  const rows = HIST ? data.filter(r => ['delivered','rejected','cancelled','expired'].includes(r.status) || pxExpiredQuote(r)) : data.filter(r => !pxStale(r));
+  if(!rows.length){ list.innerHTML = HIST ? '<div class="px-state">No completed Buy For Me orders yet.</div>' : '<div class="px-state">No active Buy For Me requests.<br>Past ones are in Profile &rarr; Order History.<br><br><a href="orders.html?view=history#proxy">Open Order History</a></div>'; return; }
   list.innerHTML = rows.map(pxRender).join('');
   if(open.size) list.querySelectorAll('.order-card').forEach(c => { if(!open.has(c.dataset.rid)) c.classList.add('collapsed'); });
 }
@@ -801,6 +801,13 @@ async function loadProxyOrders(){
 
 /* ===== Store orders (live) ===== */
 const SO_FINAL = ['delivered','cancelled'];
+/* Auto-hide from the Orders tab (display only; nothing is deleted, Order History keeps everything). */
+const AUTO_HIDE_DELIVERED_DAYS = 7, AUTO_HIDE_CLOSED_DAYS = 3;
+const soAged = (iso, days) => { const t = Date.parse(iso); return !!t && (Date.now() - t) > days * 86400000; };
+const soStale = o => SO_FINAL.includes(o.state) && (o.state === 'delivered' ? soAged(o.delivered_at, AUTO_HIDE_DELIVERED_DAYS) : soAged(o.cancelled_at || o.created_at, AUTO_HIDE_CLOSED_DAYS));
+const pxExpiredQuote = r => r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date();
+const pxStale = r => r.status === 'delivered' ? soAged(r.updated_at, AUTO_HIDE_DELIVERED_DAYS)
+  : (['rejected','cancelled','expired'].includes(r.status) ? soAged(r.updated_at, AUTO_HIDE_CLOSED_DAYS) : (pxExpiredQuote(r) ? soAged(r.expires_at, AUTO_HIDE_CLOSED_DAYS) : false));
 let soHidden = new Set(), soSwipeBusy = false, soEnterId = null, soStates = {};
 const SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
 function soEsc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -1110,7 +1117,7 @@ async function loadStoreOrders(){
     soHidden = new Set((hres && !hres.error && hres.data && hres.data.ok && hres.data.ids) || []);
     const all = res.data.orders || [];
     if(window.svOrdersBadgeSet) window.svOrdersBadgeSet(all);
-    const orders = HIST ? all.filter(o => SO_FINAL.includes(o.state)) : all.filter(o => !(SO_FINAL.includes(o.state) && soHidden.has(o.id)));
+    const orders = HIST ? all.filter(o => SO_FINAL.includes(o.state)) : all.filter(o => !(SO_FINAL.includes(o.state) && (soHidden.has(o.id) || soStale(o))));
     if(!orders.length){
       list.innerHTML = HIST ? '<div class="px-state">No completed orders yet.</div>'
         : (all.length ? '<div class="px-state">No orders here.<br>Past orders are in Profile &rarr; Order History.<br><br><a href="orders.html?view=history">Open Order History</a></div>'
