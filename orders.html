@@ -451,6 +451,7 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 .sw-wrap>.order-card{position:relative;touch-action:pan-y;transition:transform .26s cubic-bezier(.2,.8,.2,1)}
 .sw-wrap.drag>.order-card{transition:none}
 .sw-wrap.open>.order-card{transform:translateX(-88px)}
+.sv-was{margin-right:6px;font-weight:600;opacity:.55;text-decoration:line-through}
 .oc-hidden-tag{margin-left:6px;padding:2px 8px;border-radius:999px;font-family:var(--font-display);font-size:10.5px;font-weight:800;color:var(--text2);background:var(--surface2);border:1px solid var(--border-strong)}
 #storeList .so-v2 .oc-track-link.sw-rm{color:#DC5252}
 .sv-modal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(10,16,30,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
@@ -951,9 +952,15 @@ function soItemsV2(o){
       + (i.variant ? '<div class="oc-item-sub">'+soEsc(i.variant)+'</div>' : '') + '</div>'
       + '<div class="oc-item-math"><div class="oc-item-linetotal">'+soMoney(line)+'</div>'+(qty > 1 ? '<div class="oc-item-qtyprice">'+qty+' × '+soMoney(i.price)+'</div>' : '')+'</div></div>';
   }).join('');
-  const disc = Number(o.discount) > 0 ? '<div class="oc-math-row discount"><span>'+SO_ICO.tag+'Discount'+(o.voucher_code ? ' (<span class="vcode">'+soEsc(o.voucher_code)+'</span>)' : '')+'</span><span>−'+soMoney(o.discount)+'</span></div>' : '';
-  const free = Number(o.shipping) === 0;
-  const ship = '<div class="oc-math-row ship'+(free ? ' free' : '')+'"><span>'+SO_ICO.truck+'Shipping</span><span>'+(free ? 'Free' : soMoney(o.shipping))+'</span></div>';
+  /* Same rule as the dashboard's svDiscShipRows(): a free-shipping voucher is NOT a discount; discount = the waived fee, shipping = the original fee. */
+  const sv = !!o.ship_voucher, dsc = Number(o.discount) || 0, shp = Number(o.shipping) || 0;
+  const code = o.voucher_code ? ' (<span class="vcode">' + soEsc(o.voucher_code) + '</span>)' : '';
+  const disc = (!sv && dsc > 0) ? '<div class="oc-math-row discount"><span>'+SO_ICO.tag+'Discount'+code+'</span><span>−'+soMoney(dsc)+'</span></div>' : '';
+  const free = sv ? dsc > 0 : shp === 0;
+  const was = sv ? Math.max(shp, 0) : 0;
+  const shipLbl = sv && dsc > 0 ? 'Shipping' + code : 'Shipping';
+  const shipVal = free ? ((was > 0 ? '<s class="sv-was">'+soMoney(was)+'</s>' : '') + 'Free') : soMoney(shp);
+  const ship = '<div class="oc-math-row ship'+(free ? ' free' : '')+'"><span>'+SO_ICO.truck+shipLbl+'</span><span>'+shipVal+'</span></div>';
   const math = '<div class="oc-math-card"><div class="oc-math-row"><span>Subtotal</span><span>'+soMoney(o.subtotal)+'</span></div>'+disc+ship+'<div class="oc-math-row total"><span>Total</span><span>'+soMoney(o.total)+'</span></div></div>';
   const prev = items.length + ' item' + (items.length === 1 ? '' : 's') + ' · ' + soMoney(o.total);
   return '<div class="oc-subsection"><div class="oc-subhead" onclick="this.closest(\'.oc-subsection\').classList.toggle(\'collapsed\')"><div class="oc-section-label">Items &amp; Summary</div><div class="oc-subhead-right"><span class="oc-subtotal-preview">'+prev+'</span>'+SO_ICO.subchev+'</div></div>'
