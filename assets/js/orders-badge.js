@@ -1,10 +1,10 @@
 /* SuppVerse BD — Orders tab badge (mirrors the Cart badge).
-   Shows how many store orders are still running (anything not delivered or cancelled:
-   payment, verifying, processing, shipped...). Hidden at 0 or logged out.
+   Shows how many orders are still running across the whole account: store orders (anything not delivered
+   or cancelled) + Buy For Me requests (not delivered / rejected / cancelled / expired). Hidden at 0 or logged out.
    Data: sbClient.rpc('my_orders'), cached in localStorage so every page paints instantly
    and stays in sync across tabs; refreshed on load, focus, tab-return and every 20s while visible. */
 (function(){
-  var KEY = 'sv-orders-badge';
+  var KEY = 'sv-orders-badge', KEY_S = 'sv-orders-badge-s', KEY_P = 'sv-orders-badge-p';
   var FINAL = { delivered:1, cancelled:1 };
   var POLL_MS = 20000;
   var last = 0, busy = false, timer = null;
@@ -59,14 +59,19 @@
     last = count;
   }
 
-  function cached(){ var n = parseInt(localStorage.getItem(KEY), 10); return n > 0 ? n : 0; }
-  function store(n){ try{ if(n > 0) localStorage.setItem(KEY, String(n)); else localStorage.removeItem(KEY); }catch(e){} }
+  function part(k){ var n = parseInt(localStorage.getItem(k), 10); return n > 0 ? n : 0; }
+  function cached(){ return part(KEY_S) + part(KEY_P); }
+  function put(k, n){ try{ if(n > 0) localStorage.setItem(k, String(n)); else localStorage.removeItem(k); }catch(e){} }
+  function pxRunning(r){
+    return !!r && !(['delivered','rejected','cancelled','expired'].indexOf(r.status) > -1 || (r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date()));
+  }
   function countOf(orders){
     return (orders || []).reduce(function(n,o){ return n + (o && o.state && !FINAL[o.state] ? 1 : 0); }, 0);
   }
 
   /* Pages that already hold the orders list (orders.html) push it here — no extra request. */
-  window.svOrdersBadgeSet = function(orders){ var n = countOf(orders); store(n); render(n); };
+  window.svOrdersBadgeSet = function(orders){ put(KEY_S, countOf(orders)); render(cached()); };
+  window.svProxyBadgeSet  = function(rows){ put(KEY_P, (rows || []).filter(pxRunning).length); render(cached()); };
 
   async function refresh(){
     if(busy || document.hidden) return;
@@ -74,11 +79,12 @@
     busy = true;
     try{
       var s = await sbClient.auth.getSession();
-      if(!(s.data && s.data.session)){ store(0); render(0); return; }
+      if(!(s.data && s.data.session)){ put(KEY_S, 0); put(KEY_P, 0); render(0); return; }
       var r = await sbClient.rpc('my_orders');
-      if(r.error || !r.data || !r.data.ok) return;   // keep last known value on failure
-      var n = countOf(r.data.orders);
-      store(n); render(n);
+      if(!(r.error || !r.data || !r.data.ok)) put(KEY_S, countOf(r.data.orders));   // keep last known value on failure
+      var px = await sbClient.from('proxy_requests').select('status,expires_at');
+      if(!px.error && px.data) put(KEY_P, px.data.filter(pxRunning).length);
+      render(cached());
     }catch(e){} finally { busy = false; }
   }
   window.svRefreshOrdersBadge = refresh;
@@ -93,5 +99,5 @@
   window.addEventListener('pageshow', function(){ render(cached()); refresh(); });
   window.addEventListener('focus', refresh);
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) refresh(); });
-  window.addEventListener('storage', function(e){ if(!e.key || e.key === KEY) render(cached()); });
+  window.addEventListener('storage', function(e){ if(!e.key || e.key === KEY_S || e.key === KEY_P) render(cached()); });
 })();

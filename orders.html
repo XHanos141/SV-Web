@@ -451,10 +451,6 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 .sw-wrap>.order-card{position:relative;touch-action:pan-y;transition:transform .26s cubic-bezier(.2,.8,.2,1)}
 .sw-wrap.drag>.order-card{transition:none}
 .sw-wrap.open>.order-card{transform:translateX(-88px)}
-.tab-count{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:7px;border-radius:999px;background:#E64848;color:#fff;font:800 11px/1 var(--font-display);vertical-align:middle;position:relative;top:-1px;box-shadow:0 2px 6px rgba(230,72,72,.35);opacity:0;transform:scale(.4);width:auto;transition:opacity .22s ease,transform .38s cubic-bezier(.2,.9,.3,1.3)}
-.tab-count.show{opacity:1;transform:scale(1)}
-.tab-count:not(.show){display:none}
-@media (prefers-reduced-motion:reduce){.tab-count{transition:none}}
 .sv-was{margin-right:6px;font-weight:600;opacity:.55;text-decoration:line-through}
 .oc-hidden-tag{margin-left:6px;padding:2px 8px;border-radius:999px;font-family:var(--font-display);font-size:10.5px;font-weight:800;color:var(--text2);background:var(--surface2);border:1px solid var(--border-strong)}
 #storeList .so-v2 .oc-track-link.sw-rm{color:#DC5252}
@@ -537,8 +533,8 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 </header>
 
 <div class="flow-tabs" id="ordersFlowTabs">
-  <button class="flow-tab active" id="tabStoreOrders" type="button">Store Orders<span class="tab-count" id="tabStoreCount" aria-live="polite"></span></button>
-  <button class="flow-tab" id="tabProxyOrders" type="button">Buy For Me Orders<span class="tab-count" id="tabProxyCount" aria-live="polite"></span></button>
+  <button class="flow-tab active" id="tabStoreOrders" type="button">Store Orders</button>
+  <button class="flow-tab" id="tabProxyOrders" type="button">Buy For Me Orders</button>
 </div>
 
 <div id="viewStoreOrders">
@@ -646,18 +642,6 @@ var __svBadgeLast = 0;
   window.addEventListener('storage', function(e){ if(!e.key || e.key === 'sv-cart-internal') svRefreshCartBadge(); });
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) svRefreshCartBadge(); });
 
-/* Running-order count pills on the two tabs (hidden at 0, and in Order History). */
-function setTabCount(id, n){
-  const el = document.getElementById(id); if(!el) return;
-  n = HIST ? 0 : n;
-  if(n > 0){
-    const wasShown = el.classList.contains('show'), t = n > 99 ? '99+' : String(n);
-    el.textContent = t;
-    if(!wasShown){ el.style.display = 'inline-grid'; requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show'))); }
-    else el.style.display = '';
-  } else { el.classList.remove('show'); el.style.display = ''; el.textContent = ''; }
-}
-const pxRunning = r => !(['delivered','rejected','cancelled','expired'].includes(r.status) || (r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date()));
 const tabStore = document.getElementById('tabStoreOrders');
 const tabProxy = document.getElementById('tabProxyOrders');
 const viewStore = document.getElementById('viewStoreOrders');
@@ -802,7 +786,7 @@ async function loadProxyOrders(){
   const { data, error } = await sbClient.from('proxy_requests')
     .select('*, orders(order_number,status)').order('created_at', { ascending:false });
   if(error){ console.error('proxy_requests load error:', error); list.innerHTML = '<div class="px-state">Could not load your requests. Pull down to retry.</div>'; return; }
-  setTabCount('tabProxyCount', (data || []).filter(pxRunning).length);
+  if(window.svProxyBadgeSet) window.svProxyBadgeSet(data || []);
   if(!data || !data.length){
     list.innerHTML = '<div class="px-state">No Buy For Me requests yet.<br><br><a href="buy_for_me.html">Send your first request</a></div>';
     return;
@@ -1126,7 +1110,6 @@ async function loadStoreOrders(){
     soHidden = new Set((hres && !hres.error && hres.data && hres.data.ok && hres.data.ids) || []);
     const all = res.data.orders || [];
     if(window.svOrdersBadgeSet) window.svOrdersBadgeSet(all);
-    setTabCount('tabStoreCount', all.filter(o => !SO_FINAL.includes(o.state)).length);
     const orders = HIST ? all.filter(o => SO_FINAL.includes(o.state)) : all.filter(o => !(SO_FINAL.includes(o.state) && soHidden.has(o.id)));
     if(!orders.length){
       list.innerHTML = HIST ? '<div class="px-state">No completed orders yet.</div>'
