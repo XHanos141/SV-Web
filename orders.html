@@ -437,10 +437,11 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 /* ===== Swipe-to-remove (completed store orders) + confirm sheet + undo toast ===== */
 .sw-wrap{position:relative;border-radius:12px;overflow:hidden;background:transparent;transition:background 0s .27s}
 .sw-wrap.open,.sw-wrap.drag,.sw-wrap.leaving{background:#DC5252;transition:none}
-.sw-wrap.leaving{margin-bottom:-12px;opacity:0;pointer-events:none;transition:max-height .34s cubic-bezier(.4,0,.2,1) .14s,margin .34s cubic-bezier(.4,0,.2,1) .14s,opacity .26s ease .1s}
-.sw-wrap.leaving>.order-card{transform:translateX(-110%);transition:transform .32s cubic-bezier(.4,0,.2,1)}
+.sw-wrap.leaving{margin-bottom:-12px;pointer-events:none;animation:svSortOut .35s cubic-bezier(.4,0,.2,1) forwards;transition:max-height .3s cubic-bezier(.4,0,.2,1) .18s,margin .3s cubic-bezier(.4,0,.2,1) .18s}
 .sw-wrap.enter{opacity:0;margin-bottom:-12px}
-.sw-wrap.enter-go{transition:max-height .36s cubic-bezier(.2,.8,.2,1),margin .36s cubic-bezier(.2,.8,.2,1),opacity .3s ease .08s}
+.sw-wrap.enter-go{animation:svSortIn .45s cubic-bezier(.4,0,.2,1) forwards;transition:max-height .4s cubic-bezier(.4,0,.2,1),margin .4s cubic-bezier(.4,0,.2,1)}
+@keyframes svSortOut{from{opacity:1;transform:scale(1) translateY(0)}to{opacity:0;transform:scale(.88) translateY(12px)}}
+@keyframes svSortIn{from{opacity:0;transform:scale(.92) translateY(18px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .sw-act{position:absolute;top:0;right:0;bottom:0;width:88px;border:0;background:#DC5252;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:var(--font-display);font-weight:800;font-size:12.5px;cursor:pointer;opacity:0;transition:opacity .2s ease;-webkit-tap-highlight-color:transparent}
 .sw-act svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sw-wrap.open .sw-act,.sw-wrap.drag .sw-act{opacity:1}
@@ -463,7 +464,7 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 .sv-toast{position:fixed;left:16px;right:16px;bottom:calc(var(--bottom-nav-h) + 14px + env(safe-area-inset-bottom,0px));z-index:310;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 16px;border-radius:14px;background:#0f2a4a;color:#fff;font-size:13px;font-weight:600;box-shadow:0 10px 28px rgba(0,0,0,.3);animation:svPop .2s ease}
 .sv-toast button{background:none;border:0;color:#38bdf8;font-family:var(--font-display);font-weight:800;font-size:13px;cursor:pointer;padding:4px 2px}
 @keyframes svPop{from{transform:scale(.95) translateY(6px);opacity:0}}
-@media (prefers-reduced-motion:reduce){.sw-wrap,.sw-wrap.leaving,.sw-wrap.leaving>.order-card,.sw-wrap.enter-go,.sw-wrap>.order-card,.sw-act{transition:none!important}.sv-box,.sv-toast{animation:none}}
+@media (prefers-reduced-motion:reduce){.sw-wrap,.sw-wrap.leaving,.sw-wrap.leaving>.order-card,.sw-wrap.enter-go,.sw-wrap>.order-card,.sw-act{transition:none!important;animation:none!important}.sv-box,.sv-toast{animation:none}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
@@ -795,7 +796,7 @@ async function loadProxyOrders(){
 
 /* ===== Store orders (live) ===== */
 const SO_FINAL = ['delivered','cancelled'];
-let soHidden = new Set(), soSwipeBusy = false, soEnterId = null;
+let soHidden = new Set(), soSwipeBusy = false, soEnterId = null, soStates = {};
 const SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
 function soEsc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function soImgFail(el){ el.replaceWith(Object.assign(document.createElement('span'),{innerHTML:SO_ICO.box}).firstChild); }
@@ -1057,7 +1058,7 @@ rmOk.addEventListener('click', async () => {
   soHidden.add(id);
   if(el){
     el.style.maxHeight = el.offsetHeight + 'px'; el.classList.add('open'); void el.offsetHeight;
-    el.classList.add('leaving'); el.style.maxHeight = '0px'; setTimeout(() => el.remove(), 520);
+    el.classList.add('leaving'); el.style.maxHeight = '0px'; setTimeout(() => el.remove(), 500);
   }
   rmClose();
   svToast(no + ' removed from Orders', async () => {
@@ -1105,9 +1106,14 @@ async function loadStoreOrders(){
                       : '<div class="px-state">No orders yet.<br><br><a href="store.html">Browse the store</a></div>');
       return;
     }
-    const open = new Set([...list.querySelectorAll('.order-card:not(.collapsed)')].map(c => c.dataset.oid));
+    const prev = new Map([...list.querySelectorAll('.order-card')].map(c => [c.dataset.oid, c.classList.contains('collapsed')]));
+    const act = x => !SO_FINAL.includes(x.state);
+    orders.sort((a, b) => (act(b) - act(a)));   /* running orders pinned on top (stable: newest first inside each group) */
     list.innerHTML = orders.map(o => {
-      const card = soRenderV2(o, { collapsed:true });
+      const fin = SO_FINAL.includes(o.state);
+      /* running = expanded by default; finished = collapsed. A card the customer collapsed/expanded keeps that choice, unless it just finished. */
+      const collapsed = fin ? (HIST || !prev.has(o.id) || soStates[o.id] !== o.state ? true : prev.get(o.id)) : (prev.has(o.id) ? prev.get(o.id) : false);
+      const card = soRenderV2(o, { collapsed });
       return (!HIST && SO_FINAL.includes(o.state))
         ? '<div class="sw-wrap" data-oid="'+soEsc(o.id)+'" data-no="'+soEsc(o.order_number)+'"><button class="sw-act" type="button" tabindex="-1" aria-label="Remove '+soEsc(o.order_number)+' from Orders tab"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>Remove</button>'+card+'</div>'
         : card;
@@ -1117,14 +1123,10 @@ async function loadStoreOrders(){
       if(en){
         const h = en.scrollHeight; en.style.maxHeight = '0px'; en.classList.add('enter'); void en.offsetHeight;
         en.classList.add('enter-go'); en.classList.remove('enter'); en.style.maxHeight = h + 'px';
-        setTimeout(() => { en.style.maxHeight = ''; en.classList.remove('enter-go'); }, 420);
+        setTimeout(() => { en.style.maxHeight = ''; en.classList.remove('enter-go'); }, 500);
       }
     }
-    list.querySelectorAll('.order-card').forEach(c => {
-      const st = c.querySelector('.oc-status-pill').className;
-      const needsAction = /unpaid|awaiting_payment/.test(st);
-      if(open.has(c.dataset.oid) || (needsAction && !open.size)) c.classList.remove('collapsed');
-    });
+    soStates = Object.fromEntries(orders.map(o => [o.id, o.state]));
     soTick();
   } finally { _soBusy = false; }
 }
