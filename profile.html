@@ -595,9 +595,9 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
 
 <!-- QUICK NAV -->
 <div class="qnav-grid" style="margin-top:16px">
-  <div class="qnav-card" onclick="location.href='orders.html'" role="link" tabindex="0">
+  <div class="qnav-card" onclick="location.href='orders.html?view=history'" role="link" tabindex="0">
     <div class="qnav-icon orders"><svg viewBox="0 0 24 24"><path d="M15.5777 3.38197L17.5777 4.43152C19.7294 5.56066 20.8052 6.12523 21.4026 7.13974C22 8.15425 22 9.41667 22 11.9415V12.0585C22 14.5833 22 15.8458 21.4026 16.8603C20.8052 17.8748 19.7294 18.4393 17.5777 19.5685L15.5777 20.618C13.8221 21.5393 12.9443 22 12 22C11.0557 22 10.1779 21.5393 8.42229 20.618L6.42229 19.5685C4.27063 18.4393 3.19479 17.8748 2.5974 16.8603C2 15.8458 2 14.5833 2 12.0585V11.9415C2 9.41667 2 8.15425 2.5974 7.13974C3.19479 6.12523 4.27063 5.56066 6.42229 4.43152L8.42229 3.38197C10.1779 2.46066 11.0557 2 12 2C12.9443 2 13.8221 2.46066 15.5777 3.38197Z"/><path d="M21 7.5L17 9.5M12 12L3 7.5M12 12V21.5M12 12C12 12 14.7426 10.6287 16.5 9.75C16.6953 9.65237 17 9.5 17 9.5M17 9.5V13M17 9.5L7.5 4.5"/></svg></div>
-    <div class="qnav-txt"><div class="qnav-title">My Orders</div><div class="qnav-sub" id="orderCountSub">&nbsp;</div></div>
+    <div class="qnav-txt"><div class="qnav-title">Order History</div><div class="qnav-sub" id="orderCountSub">&nbsp;</div></div>
     <svg class="qnav-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
   </div>
   <div class="qnav-card wish" onclick="location.href='wishlist.html'" role="link" tabindex="0">
@@ -610,8 +610,8 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
 <!-- RECENT ORDERS -->
 <div class="sect">
   <div class="sect-row">
-    <span class="sect-label">Recent Orders</span>
-    <span class="sect-link" id="recentViewAll" style="display:none" onclick="location.href='orders.html'">View all</span>
+    <span class="sect-label">Recent History</span>
+    <span class="sect-link" id="recentViewAll" style="display:none" onclick="location.href='orders.html?view=history'">View all</span>
   </div>
 </div>
 <div class="order-list" id="recentOrders">
@@ -1338,7 +1338,7 @@ function roStoreStatusTime(o){
   return at ? roDateTime(at) : '';
 }
 function roCard(cls, idLabel, idHtml, metaLabel, metaVal, pillCls, pillText, statusTime){
-  return '<div class="order-card '+cls+'" onclick="location.href=\'orders.html\'">'
+  return '<div class="order-card '+cls+'" onclick="location.href=\'orders.html?view=history\'">'
     + '<div class="oc-head"><div class="oc-head-left"><div class="oc-id-row"><span class="oc-id-label">'+idLabel+'</span>'+idHtml+'</div>'
     + '<div class="oc-meta">'+metaLabel+' <span class="oc-meta-date">'+metaVal+'</span></div></div>'
     + '<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill '+roEsc(pillCls)+'">'+roEsc(pillText)+'</span>'
@@ -1399,10 +1399,13 @@ async function loadRecentOrders(){
       if(cnt) cnt.textContent = '';
       return;
     }
+    const RO_SO_DONE = ['delivered','cancelled'], RO_PX_DONE = ['delivered','rejected','cancelled','expired'];
+    const doneStore = (store || []).filter(o => RO_SO_DONE.includes(o.state));
+    const doneProxy = (proxy || []).filter(r => RO_PX_DONE.includes(r.status) || (r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date()));
     const all = []
-      .concat((store || []).map(o => ({ t:o.created_at, html:roCard('so', 'Order ID', '<div class="oc-id store">'+roEsc(o.order_number)+'</div>',
+      .concat(doneStore.map(o => ({ t:o.created_at, html:roCard('so', 'Order ID', '<div class="oc-id store">'+roEsc(o.order_number)+'</div>',
         'Created at', roDateTime(o.created_at), o.state, RO_SO_LABEL[o.state] || 'Order', roStoreStatusTime(o)) })))
-      .concat((proxy || []).map(r => {
+      .concat(doneProxy.map(r => {
         const pill = RO_PX_PILL[r.status] || [r.status, 'quote'];
         const ord = r.orders || null, isOrder = !!(ord && ord.order_number);
         const expired = r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date();
@@ -1411,11 +1414,11 @@ async function loadRecentOrders(){
           'Submitted', roDate(r.created_at), expired ? 'closed' : pill[1], expired ? 'Quote expired' : pill[0], '') };
       }));
     all.sort((a, b) => new Date(b.t) - new Date(a.t));
-    if(cnt) cnt.textContent = all.length + ' total';
+    if(cnt) cnt.textContent = all.length + ' completed';
     const va = document.getElementById('recentViewAll'); if(va) va.style.display = all.length > RECENT_ORDERS_MAX ? '' : 'none';
     list.innerHTML = all.length
       ? all.slice(0, RECENT_ORDERS_MAX).map(x => x.html).join('')
-      : '<div class="empty-mini">No orders yet. <a href="store.html" style="color:var(--accent);font-weight:800;text-decoration:none">Browse the store</a></div>';
+      : '<div class="empty-mini">No completed orders yet. <a href="store.html" style="color:var(--accent);font-weight:800;text-decoration:none">Browse the store</a></div>';
   }catch(e){
     console.error('recent orders load error:', e);
     list.innerHTML = '<div class="empty-mini">Could not load your orders. Please try again.</div>';

@@ -434,6 +434,32 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 #storeList .so-v2 .oc-action:active{ transform:scale(.98); }
 #storeList .so-v2 .oc-action.danger{ background:#d95353;border-color:#d95353; }
 #storeList .so-v2 .oc-track-link{ background:transparent;color:var(--accent);border:1.5px solid var(--accent);box-shadow:none;padding:10px; }
+/* ===== Swipe-to-remove (completed store orders) + confirm sheet + undo toast ===== */
+.sw-wrap{position:relative;border-radius:12px;overflow:hidden}
+.sw-wrap.gone{transition:max-height .28s ease,opacity .2s ease,margin .28s ease;opacity:0;margin-bottom:-12px}
+.sw-act{position:absolute;top:0;right:0;bottom:0;width:88px;border:0;background:#DC5252;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:var(--font-display);font-weight:800;font-size:12.5px;cursor:pointer;opacity:0;transition:opacity .2s ease;-webkit-tap-highlight-color:transparent}
+.sw-act svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sw-wrap.open .sw-act,.sw-wrap.drag .sw-act{opacity:1}
+.sw-wrap>.order-card{position:relative;touch-action:pan-y;transition:transform .26s cubic-bezier(.2,.8,.2,1)}
+.sw-wrap.drag>.order-card{transition:none}
+.sw-wrap.open>.order-card{transform:translateX(-88px)}
+.oc-hidden-tag{margin-left:6px;padding:2px 8px;border-radius:999px;font-family:var(--font-display);font-size:10.5px;font-weight:800;color:var(--text2);background:var(--surface2);border:1px solid var(--border-strong)}
+#storeList .so-v2 .oc-track-link.sw-rm{color:#DC5252}
+.sv-modal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(10,16,30,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.sv-modal.show{display:flex}
+.sv-box{width:100%;max-width:340px;background:var(--surface);border:1px solid var(--border-strong);border-radius:24px;padding:26px 20px 20px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.28);animation:svPop .22s ease}
+.sv-ico{width:58px;height:58px;margin:0 auto 14px;border-radius:50%;background:#DC5252;display:grid;place-items:center;box-shadow:0 8px 20px rgba(220,82,82,.35)}
+.sv-ico svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2.6;stroke-linecap:round}
+.sv-box h3{margin:0 0 6px;font-family:var(--font-display);font-weight:800;font-size:19px;color:var(--text)}
+.sv-box p{margin:0 0 20px;font-size:13.5px;font-weight:500;line-height:1.45;color:var(--text2)}
+.sv-row{display:flex;gap:10px}
+.sv-row button{flex:1;height:46px;border-radius:14px;font-family:var(--font-display);font-weight:800;font-size:14px;cursor:pointer;border:1.5px solid var(--border-strong);background:transparent;color:var(--text2)}
+.sv-row button.danger{background:#DC5252;border-color:#DC5252;color:#fff}
+.sv-row button:disabled{opacity:.6}
+.sv-toast{position:fixed;left:16px;right:16px;bottom:calc(var(--bottom-nav-h) + 14px + env(safe-area-inset-bottom,0px));z-index:310;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 16px;border-radius:14px;background:#0f2a4a;color:#fff;font-size:13px;font-weight:600;box-shadow:0 10px 28px rgba(0,0,0,.3);animation:svPop .2s ease}
+.sv-toast button{background:none;border:0;color:#38bdf8;font-family:var(--font-display);font-weight:800;font-size:13px;cursor:pointer;padding:4px 2px}
+@keyframes svPop{from{transform:scale(.95) translateY(6px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.sw-wrap>.order-card,.sw-act,.sw-wrap.gone{transition:none}.sv-box,.sv-toast{animation:none}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
@@ -476,7 +502,7 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
     <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
   </div>
   <div class="s-header-title">
-    <h1>Orders</h1>
+    <h1 id="ordersTitle">Orders</h1>
   </div>
   <div class="header-right">
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
@@ -510,6 +536,15 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 <div class="order-list" id="proxyList"><div class="px-state">Loading your requests…</div></div>
 </div>
 
+<div class="sv-modal" id="rmModal" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
+  <div class="sv-box">
+    <div class="sv-ico"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+    <h3 id="rmTitle">Remove order?</h3>
+    <p>Removed from your Orders tab. You can still find it in Profile &rarr; Order History.</p>
+    <div class="sv-row"><button type="button" id="rmCancel">Cancel</button><button type="button" class="danger" id="rmOk">Remove</button></div>
+  </div>
+</div>
+
 <nav class="s-nav" id="svFooterNav">
   <a href="store.html" class="s-nav-item" data-page="store">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5 3.8 3h16.4L22 8.5"/><path d="M2 8.5a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0"/><path d="M3.5 8.5V20a1 1 0 0 0 1 1h15a1 1 0 0 0 1-1V8.5"/><path d="M8.5 21v-6a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v6"/></svg>
@@ -532,6 +567,12 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 
 <script>
 const S = { theme: localStorage.getItem('sv-theme') || 'light' };
+const HIST = new URLSearchParams(location.search).get('view') === 'history';
+if(HIST){
+  document.title = 'Order History | SuppVerse BD';
+  const _t = document.getElementById('ordersTitle'); if(_t) _t.textContent = 'Order History';
+  const _b = document.querySelector('.header-back'); if(_b) _b.onclick = () => { window.location.href = 'profile.html'; };
+}
 function applyTheme(){
   document.body.classList.toggle('dark-mode', S.theme === 'dark');
   const themeBtn = document.getElementById('themeToggle');
@@ -741,12 +782,16 @@ async function loadProxyOrders(){
     return;
   }
   const open = new Set([...list.querySelectorAll('.order-card:not(.collapsed)')].map(c=>c.dataset.rid));
-  list.innerHTML = data.map(pxRender).join('');
+  const rows = HIST ? data.filter(r => ['delivered','rejected','cancelled','expired'].includes(r.status) || (r.status==='quoted' && r.expires_at && new Date(r.expires_at) < new Date())) : data;
+  if(!rows.length){ list.innerHTML = '<div class="px-state">No completed Buy For Me orders yet.</div>'; return; }
+  list.innerHTML = rows.map(pxRender).join('');
   if(open.size) list.querySelectorAll('.order-card').forEach(c => { if(!open.has(c.dataset.rid)) c.classList.add('collapsed'); });
 }
 
 
 /* ===== Store orders (live) ===== */
+const SO_FINAL = ['delivered','cancelled'];
+let soHidden = new Set(), soSwipeBusy = false;
 const SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
 function soEsc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function soImgFail(el){ el.replaceWith(Object.assign(document.createElement('span'),{innerHTML:SO_ICO.box}).firstChild); }
@@ -884,7 +929,11 @@ function soActionsV2(o){
   else if(o.state === 'delivered') btns = '<div class="oc-actions-row">'+A('Order again','reorder')+A('Download invoice','invoice')+'</div>';
   else if(o.state === 'cancelled' && o.cancel_reason === 'Not paid in time') btns = A('Order again','repay');
   const bottomNote = ['awaiting_payment','unpaid','cod_pending','cancelled'].includes(o.state) ? soNoteV2(o) : '';
-  return '<div class="oc-actions">'+bottomNote+btns+'<button class="oc-track-link" data-act="help" data-id="'+id+'">Need Help With This Order?</button></div>';
+  const fin = SO_FINAL.includes(o.state);
+  const vis = !fin ? '' : (HIST
+    ? (soHidden.has(o.id) ? '<button class="oc-track-link" data-act="unhide" data-id="'+id+'" data-no="'+soEsc(o.order_number)+'">Show in Orders tab</button>' : '')
+    : '<button class="oc-track-link sw-rm" data-act="hide" data-id="'+id+'" data-no="'+soEsc(o.order_number)+'">Remove from Orders tab</button>');
+  return '<div class="oc-actions">'+bottomNote+btns+'<button class="oc-track-link" data-act="help" data-id="'+id+'">Need Help With This Order?</button>'+vis+'</div>';
 }
 function soItemsV2(o){
   const items = o.items || [];
@@ -918,7 +967,7 @@ function soRenderV2(o, opts){
     + soItemsV2(o) + soTimeline(o.state) + soPaymentV2(o) + soActionsV2(o);
   return '<div class="order-card so-v2'+(opts.collapsed ? ' collapsed' : '')+'" data-oid="'+soEsc(o.id)+'">'
     + '<div class="oc-head" onclick="this.closest(\'.order-card\').classList.toggle(\'collapsed\')">'
-    + '<div class="oc-head-left"><div class="oc-id-row"><span class="oc-id-label">Order ID</span><div class="oc-id store">'+soEsc(o.order_number)+'</div></div>'
+    + '<div class="oc-head-left"><div class="oc-id-row"><span class="oc-id-label">Order ID</span><div class="oc-id store">'+soEsc(o.order_number)+'</div>'+(HIST && soHidden.has(o.id) ? '<span class="oc-hidden-tag">Hidden</span>' : '')+'</div>'
     + '<div class="oc-meta">Created at <span class="oc-meta-date">'+soDateTime(o.created_at)+'</span></div></div>'
     + '<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill '+soEsc(o.state)+'">'+soEsc(label)+'</span><span class="oc-status-date">'+soStatusLine(o)+'</span></div>'+SO_ICO.chev+'</div></div>'
     + '<div class="so-collapse"><div class="so-inner"><div class="oc-body">'+body+'</div></div></div></div>';
@@ -930,6 +979,95 @@ function soTick(){
     else el.textContent = soLeft(iso);
   });
 }
+/* ===== Swipe to remove completed orders from the Orders tab (soft hide, never deletes) ===== */
+(function(){
+  const list = document.getElementById('storeList'), OPEN_W = 88;
+  if(!list) return;
+  let w = null, card = null, x0 = 0, y0 = 0, dx = 0, base = 0, dragging = false, down = false, justDragged = false;
+  const closeAll = except => list.querySelectorAll('.sw-wrap.open').forEach(x => { if(x !== except) x.classList.remove('open'); });
+  list.addEventListener('pointerdown', e => {
+    const t = e.target.closest('.sw-wrap'); if(!t || e.target.closest('.sw-act') || e.button > 0) return;
+    closeAll(t); w = t; card = t.querySelector('.order-card');
+    x0 = e.clientX; y0 = e.clientY; dx = 0; dragging = false; down = true; base = t.classList.contains('open') ? -OPEN_W : 0;
+  });
+  list.addEventListener('pointermove', e => {
+    if(!down || !w) return;
+    const mx = e.clientX - x0, my = e.clientY - y0;
+    if(!dragging){
+      if(Math.abs(mx) < 8 || Math.abs(mx) < Math.abs(my)) return;
+      dragging = true; soSwipeBusy = true; w.classList.add('drag');
+      try{ card.setPointerCapture(e.pointerId); }catch(_){}
+    }
+    dx = mx;
+    card.style.transform = 'translateX(' + Math.max(-OPEN_W, Math.min(0, base + dx)) + 'px)';
+  });
+  const end = () => {
+    if(!down) return; down = false;
+    if(dragging){
+      const open = (base + dx) < -OPEN_W / 2;
+      w.classList.remove('drag'); card.style.transform = ''; w.classList.toggle('open', open);
+      justDragged = true; setTimeout(() => { justDragged = false; }, 60);
+    }
+    dragging = false; soSwipeBusy = !!list.querySelector('.sw-wrap.open'); w = card = null;
+  };
+  list.addEventListener('pointerup', end); list.addEventListener('pointercancel', end);
+  /* A swipe or a tap on an open card must not toggle expand/collapse. */
+  list.addEventListener('click', e => {
+    const t = e.target.closest('.sw-wrap'); if(!t) return;
+    if(justDragged){ e.stopPropagation(); e.preventDefault(); return; }
+    if(t.classList.contains('open') && !e.target.closest('.sw-act')){ e.stopPropagation(); e.preventDefault(); t.classList.remove('open'); soSwipeBusy = false; }
+  }, true);
+  document.addEventListener('pointerdown', e => { if(!e.target.closest('.sw-wrap') && !e.target.closest('.sv-modal')){ closeAll(); soSwipeBusy = false; } });
+})();
+
+const rmModal = document.getElementById('rmModal'), rmOk = document.getElementById('rmOk');
+let rmPending = null, toastTimer = null;
+function rmOpen(id, no){
+  rmPending = { id, no };
+  document.getElementById('rmTitle').textContent = 'Remove ' + no + '?';
+  rmModal.classList.add('show'); rmOk.disabled = false; document.getElementById('rmCancel').focus();
+}
+function rmClose(){
+  rmModal.classList.remove('show'); rmPending = null;
+  document.querySelectorAll('#storeList .sw-wrap.open').forEach(x => x.classList.remove('open')); soSwipeBusy = false;
+}
+function svToast(msg, undo){
+  clearTimeout(toastTimer); document.querySelector('.sv-toast')?.remove();
+  const t = document.createElement('div'); t.className = 'sv-toast'; t.setAttribute('role','status');
+  t.innerHTML = '<span></span>' + (undo ? '<button type="button">Undo</button>' : '');
+  t.firstChild.textContent = msg;
+  if(undo) t.querySelector('button').onclick = () => { t.remove(); undo(); };
+  document.body.appendChild(t); toastTimer = setTimeout(() => t.remove(), 5000);
+}
+async function soSetHidden(id, hide){
+  try{
+    const r = await sbClient.rpc('hide_order', { p_id:id, p_hide:hide });
+    return !r.error && r.data && r.data.ok;
+  }catch(e){ return false; }
+}
+rmOk.addEventListener('click', async () => {
+  if(!rmPending) return; const { id, no } = rmPending; rmOk.disabled = true;
+  const ok = await soSetHidden(id, true);
+  rmClose();
+  if(!ok){ svToast('Could not remove ' + no + '. Please try again.'); return; }
+  soHidden.add(id);
+  const el = document.querySelector('#storeList .sw-wrap[data-oid="' + id + '"]');
+  if(el){ el.style.maxHeight = el.offsetHeight + 'px'; requestAnimationFrame(() => { el.classList.add('gone'); el.style.maxHeight = '0px'; }); setTimeout(() => el.remove(), 320); }
+  svToast(no + ' removed from Orders', async () => {
+    if(await soSetHidden(id, false)){ soHidden.delete(id); loadStoreOrders(); } else svToast('Could not restore ' + no + '.');
+  });
+});
+document.getElementById('rmCancel').addEventListener('click', rmClose);
+rmModal.addEventListener('click', e => { if(e.target === rmModal) rmClose(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && rmModal.classList.contains('show')) rmClose(); });
+document.addEventListener('click', async e => {
+  const sw = e.target.closest('.sw-act'); if(sw){ const w = sw.closest('.sw-wrap'); rmOpen(w.dataset.oid, w.dataset.no); return; }
+  const b = e.target.closest('.oc-track-link[data-act="hide"], .oc-track-link[data-act="unhide"]'); if(!b) return;
+  if(b.dataset.act === 'hide'){ rmOpen(b.dataset.id, b.dataset.no); return; }
+  b.disabled = true;
+  if(await soSetHidden(b.dataset.id, false)){ soHidden.delete(b.dataset.id); svToast(b.dataset.no + ' is back in your Orders tab'); loadStoreOrders(); }
+  else { b.disabled = false; svToast('Could not update ' + b.dataset.no + '. Please try again.'); }
+});
 let _soBusy = false;
 async function loadStoreOrders(){
   const list = document.getElementById('storeList');
@@ -944,20 +1082,29 @@ async function loadStoreOrders(){
       if(l) l.addEventListener('click', () => { try{ sessionStorage.setItem('sv-login-return','orders.html'); }catch(e){} });
       return;
     }
-    const res = await sbClient.rpc('my_orders');
+    if(soSwipeBusy) return;
+    const [res, hres] = await Promise.all([ sbClient.rpc('my_orders'), sbClient.rpc('my_hidden_orders').then(r => r, () => null) ]);
     if(res.error || !res.data || !res.data.ok){
       list.innerHTML = '<div class="px-state">Could not load your orders. Please try again.</div>';
       return;
     }
-    const orders = res.data.orders || [];
+    soHidden = new Set((hres && !hres.error && hres.data && hres.data.ok && hres.data.ids) || []);
+    const all = res.data.orders || [];
+    if(window.svOrdersBadgeSet) window.svOrdersBadgeSet(all);
+    const orders = HIST ? all.filter(o => SO_FINAL.includes(o.state)) : all.filter(o => !(SO_FINAL.includes(o.state) && soHidden.has(o.id)));
     if(!orders.length){
-      if(window.svOrdersBadgeSet) window.svOrdersBadgeSet([]);
-      list.innerHTML = '<div class="px-state">No orders yet.<br><br><a href="store.html">Browse the store</a></div>';
+      list.innerHTML = HIST ? '<div class="px-state">No completed orders yet.</div>'
+        : (all.length ? '<div class="px-state">No orders here.<br>Past orders are in Profile &rarr; Order History.<br><br><a href="orders.html?view=history">Open Order History</a></div>'
+                      : '<div class="px-state">No orders yet.<br><br><a href="store.html">Browse the store</a></div>');
       return;
     }
     const open = new Set([...list.querySelectorAll('.order-card:not(.collapsed)')].map(c => c.dataset.oid));
-    list.innerHTML = orders.map(o => soRenderV2(o, { collapsed:true })).join('');
-    if(window.svOrdersBadgeSet) window.svOrdersBadgeSet(orders);
+    list.innerHTML = orders.map(o => {
+      const card = soRenderV2(o, { collapsed:true });
+      return (!HIST && SO_FINAL.includes(o.state))
+        ? '<div class="sw-wrap" data-oid="'+soEsc(o.id)+'" data-no="'+soEsc(o.order_number)+'"><button class="sw-act" type="button" tabindex="-1" aria-label="Remove '+soEsc(o.order_number)+' from Orders tab"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>Remove</button>'+card+'</div>'
+        : card;
+    }).join('');
     list.querySelectorAll('.order-card').forEach(c => {
       const st = c.querySelector('.oc-status-pill').className;
       const needsAction = /unpaid|awaiting_payment/.test(st);
