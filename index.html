@@ -2445,14 +2445,31 @@ async function loadFooterSection(){
 }
 loadFooterSection();
 
-function subscribeNewsletter(){
-  const email = document.getElementById('nlEmail').value;
-  if(!email || !email.includes('@')){
+let nlBusy = false;
+async function subscribeNewsletter(){
+  if(nlBusy) return;
+  const input = document.getElementById('nlEmail');
+  const email = (input.value || '').trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
     T('Please enter a valid email','⚠️');
     return;
   }
-  T('Subscribed! Check your inbox','✅');
-  document.getElementById('nlEmail').value = '';
+  if(!svwSb){
+    T('Signup is unavailable right now','⚠️');
+    return;
+  }
+  nlBusy = true;
+  try{
+    const { error } = await svwSb.rpc('subscribe_newsletter', { p_email: email, p_source: 'landing' });
+    if(error) throw error;
+    input.value = '';
+    T("Thanks! We've received your email",'✅');
+  }catch(err){
+    console.error('newsletter signup failed', err);
+    T("Couldn't save your email. Please try again",'⚠️');
+  }finally{
+    nlBusy = false;
+  }
 }
 
 const io = new IntersectionObserver((entries) => {
