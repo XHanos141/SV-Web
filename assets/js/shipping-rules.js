@@ -3,7 +3,7 @@
    Exposes window.SVShipping { flat, freeThreshold, onChange(fn) }. Falls back to the last cached value, then to the
    server defaults (120 / 6800), so the UI never disagrees with what checkout charges. Needs supabase-config.js first. */
 (function(){
-  var KEY = 'sv-ship-live', DEF = { flat: 120, freeThreshold: 6800 }, subs = [];
+  var KEY = 'sv-ship-live', DEF = { flat: 120, freeThreshold: 6800, full: false }, subs = [];
   function num(v){ v = Number(v); return isFinite(v) && v >= 0 ? v : null; }
   function cached(){
     try{ var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if(s && num(s.flat) !== null && num(s.freeThreshold) !== null) return s; }catch(e){}
@@ -11,7 +11,7 @@
   }
   var c = cached() || DEF;
   var S = window.SVShipping = {
-    flat: c.flat, freeThreshold: c.freeThreshold,
+    flat: c.flat, freeThreshold: c.freeThreshold, full: !!c.full,   /* full = admin 'Shipping Discount: Full' -> shipping is free on every order */
     onChange: function(fn){ if(typeof fn === 'function') subs.push(fn); }
   };
   function load(){
@@ -21,9 +21,10 @@
         var d = r && r.data && r.data.content; if(!d) return;
         var flat = num(d.flat), thr = num(d.free_threshold);
         if(flat === null || thr === null) return;
-        var changed = flat !== S.flat || thr !== S.freeThreshold;
-        S.flat = flat; S.freeThreshold = thr;
-        try{ localStorage.setItem(KEY, JSON.stringify({ flat: flat, freeThreshold: thr })); }catch(e){}
+        var full = d.shipping_discount === 'full';
+        var changed = flat !== S.flat || thr !== S.freeThreshold || full !== S.full;
+        S.flat = flat; S.freeThreshold = thr; S.full = full;
+        try{ localStorage.setItem(KEY, JSON.stringify({ flat: flat, freeThreshold: thr, full: full })); }catch(e){}
         if(changed) subs.forEach(function(fn){ try{ fn(S); }catch(e){} });
       }, function(){});
   }

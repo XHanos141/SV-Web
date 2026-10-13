@@ -982,7 +982,10 @@ if(themeToggle) themeToggle.addEventListener('click', toggleTheme);
 (function initFreeShipBadge(){
   function paint(r){
     const el = document.getElementById('pvFreeShipThreshold');
-    if(el) el.textContent = '৳' + Number(r.freeThreshold).toLocaleString('en-US');
+    if(!el) return;
+    const box = el.parentNode;   /* .pv-spec-text; Full = admin covers shipping on every order */
+    box.innerHTML = r.full ? 'Free shipping on <b id="pvFreeShipThreshold">all orders</b>'
+                           : 'Free shipping over <b id="pvFreeShipThreshold">৳' + Number(r.freeThreshold).toLocaleString('en-US') + '</b>';
   }
   paint(window.SVShipping); window.SVShipping.onChange(paint);
 })();

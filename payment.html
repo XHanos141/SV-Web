@@ -1229,7 +1229,8 @@ S.started = false; S.unpaid = null;
 const CART_KEY = 'sv-cart-internal';
 let SHIPPING_FLAT = window.SVShipping.flat;              /* live: Supabase site_content, set in the admin dashboard */
 let SHIPPING_FREE_THRESHOLD = window.SVShipping.freeThreshold;
-window.SVShipping.onChange(function(r){ SHIPPING_FLAT = r.flat; SHIPPING_FREE_THRESHOLD = r.freeThreshold; try{ renderInternalSummary(); }catch(e){} });
+let SHIPPING_FULL = !!window.SVShipping.full;           /* admin 'Shipping Discount: Full' */
+window.SVShipping.onChange(function(r){ SHIPPING_FLAT = r.flat; SHIPPING_FREE_THRESHOLD = r.freeThreshold; SHIPPING_FULL = !!r.full; try{ renderInternalSummary(); }catch(e){} });
 function fmt(n){ return '৳' + Math.round(n).toLocaleString('en-US'); }
 const BUYNOW_KEY = 'sv-buynow-item';
 const IS_BUYNOW = new URLSearchParams(window.location.search).get('mode') === 'buynow';
@@ -1267,7 +1268,7 @@ function renderInternalSummary(){
       rowsEl.appendChild(row);
     });
   }
-  let shipping = (items.length === 0 || subtotal >= SHIPPING_FREE_THRESHOLD) ? 0 : SHIPPING_FLAT;
+  let shipping = (items.length === 0 || SHIPPING_FULL || subtotal >= SHIPPING_FREE_THRESHOLD) ? 0 : SHIPPING_FLAT;
   let discount = 0;
   const ap = PROMO.internal.applied;
   const shipVoucher = !!(ap && items.length && ap.kind === 'shipping');

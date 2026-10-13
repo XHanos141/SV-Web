@@ -578,7 +578,7 @@ if (window.SVBadges) SVBadges.init();
 
 /* ─── Live shipping rules (Supabase site_content via assets/js/shipping-rules.js, set in the admin dashboard) ─── */
 (function syncShippingRules(){
-  function apply(r){ if(DATA.internal.shipping){ DATA.internal.shipping.flat = r.flat; DATA.internal.shipping.freeThreshold = r.freeThreshold; } }
+  function apply(r){ if(DATA.internal.shipping){ DATA.internal.shipping.flat = r.flat; DATA.internal.shipping.freeThreshold = r.freeThreshold; DATA.internal.shipping.full = !!r.full; } }
   apply(window.SVShipping);
   window.SVShipping.onChange(function(r){ apply(r); try{ updateSummary('internal'); }catch(e){} });
 })();
@@ -709,7 +709,7 @@ function updateSummary(flow){
     e.sumSavedRow.style.display = 'none';
   }
   if(e.freeShipNote){
-    if(!hasItems || subtotal >= d.shipping.freeThreshold){
+    if(!hasItems || d.shipping.full || subtotal >= d.shipping.freeThreshold){
       e.freeShipNote.style.display = 'none';
     } else {
       e.freeShipNote.style.display = '';
