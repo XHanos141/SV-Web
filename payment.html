@@ -1060,6 +1060,7 @@ body.dark-mode .pay-success-sheet .ps-btn-ghost{color:#34d399;border-color:#34d3
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
+<script src="assets/js/shipping-rules.js"></script>
 <script>svRequireAuth({redirect:true}); /* checkout needs a signed-in customer */</script>
 <script>
 /* Theme */
@@ -1226,17 +1227,9 @@ S.started = false; S.unpaid = null;
 
 /* ─── Internal cart: read real items from localStorage (written by store.html) ─── */
 const CART_KEY = 'sv-cart-internal';
-let SHIPPING_FLAT = 120;
-let SHIPPING_FREE_THRESHOLD = 6800;
-(function syncShippingRules(){
-  try {
-    const saved = JSON.parse(localStorage.getItem('sv-shipping') || 'null');
-    if(saved){
-      if(typeof saved.flat === 'number') SHIPPING_FLAT = saved.flat;
-      if(typeof saved.freeThreshold === 'number') SHIPPING_FREE_THRESHOLD = saved.freeThreshold;
-    }
-  } catch(e){}
-})();
+let SHIPPING_FLAT = window.SVShipping.flat;              /* live: Supabase site_content, set in the admin dashboard */
+let SHIPPING_FREE_THRESHOLD = window.SVShipping.freeThreshold;
+window.SVShipping.onChange(function(r){ SHIPPING_FLAT = r.flat; SHIPPING_FREE_THRESHOLD = r.freeThreshold; try{ renderInternalSummary(); }catch(e){} });
 function fmt(n){ return '৳' + Math.round(n).toLocaleString('en-US'); }
 const BUYNOW_KEY = 'sv-buynow-item';
 const IS_BUYNOW = new URLSearchParams(window.location.search).get('mode') === 'buynow';

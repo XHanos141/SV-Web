@@ -1,0 +1,32 @@
+/* Live shipping rules: one source of truth = Supabase site_content (page 'store', section 'shipping'),
+   the same row the server's _store_ship_fee() prices checkout from and the admin dashboard publishes.
+   Exposes window.SVShipping { flat, freeThreshold, onChange(fn) }. Falls back to the last cached value, then to the
+   server defaults (120 / 6800), so the UI never disagrees with what checkout charges. Needs supabase-config.js first. */
+(function(){
+  var KEY = 'sv-ship-live', DEF = { flat: 120, freeThreshold: 6800 }, subs = [];
+  function num(v){ v = Number(v); return isFinite(v) && v >= 0 ? v : null; }
+  function cached(){
+    try{ var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if(s && num(s.flat) !== null && num(s.freeThreshold) !== null) return s; }catch(e){}
+    return null;
+  }
+  var c = cached() || DEF;
+  var S = window.SVShipping = {
+    flat: c.flat, freeThreshold: c.freeThreshold,
+    onChange: function(fn){ if(typeof fn === 'function') subs.push(fn); }
+  };
+  function load(){
+    if(typeof sbClient === 'undefined' || !sbClient) return;
+    sbClient.from('site_content').select('content').eq('page', 'store').eq('section', 'shipping').maybeSingle()
+      .then(function(r){
+        var d = r && r.data && r.data.content; if(!d) return;
+        var flat = num(d.flat), thr = num(d.free_threshold);
+        if(flat === null || thr === null) return;
+        var changed = flat !== S.flat || thr !== S.freeThreshold;
+        S.flat = flat; S.freeThreshold = thr;
+        try{ localStorage.setItem(KEY, JSON.stringify({ flat: flat, freeThreshold: thr })); }catch(e){}
+        if(changed) subs.forEach(function(fn){ try{ fn(S); }catch(e){} });
+      }, function(){});
+  }
+  load();
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) load(); });
+})();

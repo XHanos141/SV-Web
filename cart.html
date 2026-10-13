@@ -455,6 +455,7 @@ body.dark-mode .summary-line.total{border-top-color:var(--accent)}
 <script src="assets/js/catalog-badges.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
+<script src="assets/js/shipping-rules.js"></script>
 <script src="assets/js/sv-img.js"></script>
 <style>@supports (-webkit-touch-callout:none){input,select,textarea{font-size:16px!important}}</style>
 <link rel="manifest" href="/manifest.webmanifest">
@@ -575,15 +576,11 @@ const DATA = {
 };
 if (window.SVBadges) SVBadges.init();
 
-/* ─── Shared shipping rules (sv-shipping localStorage, synced from admin) ─── */
+/* ─── Live shipping rules (Supabase site_content via assets/js/shipping-rules.js, set in the admin dashboard) ─── */
 (function syncShippingRules(){
-  try {
-    const saved = JSON.parse(localStorage.getItem('sv-shipping') || 'null');
-    if(saved && DATA.internal.shipping){
-      if(typeof saved.flat === 'number') DATA.internal.shipping.flat = saved.flat;
-      if(typeof saved.freeThreshold === 'number') DATA.internal.shipping.freeThreshold = saved.freeThreshold;
-    }
-  } catch(e){}
+  function apply(r){ if(DATA.internal.shipping){ DATA.internal.shipping.flat = r.flat; DATA.internal.shipping.freeThreshold = r.freeThreshold; } }
+  apply(window.SVShipping);
+  window.SVShipping.onChange(function(r){ apply(r); try{ updateSummary('internal'); }catch(e){} });
 })();
 
 /* ─── Merge items added from store.html (localStorage) into internal cart ─── */
