@@ -21,6 +21,7 @@
         var d = r && r.data && r.data.content; if(!d) return;
         var flat = num(d.flat), thr = num(d.free_threshold);
         if(flat === null || thr === null) return;
+        flat = Math.max(0, flat - (num(d.flat_discount) || 0));   /* admin 'Flat' shipping discount: fee customers actually pay */
         var full = d.shipping_discount === 'full';
         var changed = flat !== S.flat || thr !== S.freeThreshold || full !== S.full;
         S.flat = flat; S.freeThreshold = thr; S.full = full;
