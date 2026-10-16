@@ -21,22 +21,7 @@ function fail(res, code, msg) {
   res.end(JSON.stringify({ error: msg }));
 }
 
-/* TEMPORARY self-test (removed right after the first live check) */
-async function selfTest(res) {
-  const t = Date.now();
-  try {
-    const o = { id: 'x', order_number: 'SV-TEST', state: 'paid', created_at: '2026-10-11T09:57:00Z', customer: { name: '\u09b9\u09be\u09b8\u09be\u09a8 HASAN', phone: '01700000000', address: 'Dhaka' }, items: [{ name: 'Test item', qty: 2, price: 500 }], subtotal: 1000, discount: 0, shipping: 100, total: 1100 };
-    const pdf = await renderInvoicePdf(o);
-    const txt = pdf.toString('latin1');
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ ok: true, ms: Date.now() - t, bytes: pdf.length, header: txt.slice(0, 5), pages: (txt.match(/\/Type\s*\/Page[^s]/g) || []).length, rasterImages: (txt.match(/\/Subtype\s*\/Image/g) || []).length }));
-  } catch (e) {
-    res.statusCode = 500; res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ ok: false, ms: Date.now() - t, error: String(e && e.stack || e).slice(0, 1500) }));
-  }
-}
 module.exports = async (req, res) => {
-  if (req.method === 'GET' && req.query && req.query.selftest === 'st64c0d07f995fe4d3') return selfTest(res);
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return fail(res, 405, 'POST only'); }
   const auth = String(req.headers.authorization || '');
   const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
