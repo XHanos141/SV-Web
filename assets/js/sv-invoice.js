@@ -195,21 +195,6 @@ function generateCustomerInvoiceHTML(inv, size, theme) {
 }
 
 
-var PDF_LIB = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-function loadPdfLib(){
-  if(window.html2pdf) return Promise.resolve();
-  return new Promise(function(res, rej){
-    var el = document.createElement('script'); el.src = PDF_LIB; el.async = true;
-    el.onload = res; el.onerror = function(){ rej(new Error('Could not load the PDF engine')); };
-    document.head.appendChild(el);
-  });
-}
-function injectFont(){
-  if(document.getElementById('sv-inv-font')) return;
-  var st = document.createElement('style'); st.id = 'sv-inv-font';
-  st.textContent = "@font-face{font-family:'BARABARA-FINAL';src:url('/assets/fonts/barabara-final.woff2') format('woff2');font-weight:normal;font-style:normal;font-display:block}";
-  document.head.appendChild(st);
-}
 function fmtDate(iso){
   try{ return new Date(iso).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', timeZone:'Asia/Dhaka' }); }catch(e){ return ''; }
 }
@@ -233,8 +218,9 @@ function mapOrder(o){
 }
 /* Preferred path: server renders a true vector PDF (selectable text, sharp at any zoom) */
 function serverDownload(o){
-  if(!window.sbClient || !window.fetch) return Promise.reject(new Error('no client'));
-  return window.sbClient.auth.getSession().then(function(r){
+  var sb = (typeof sbClient !== 'undefined') ? sbClient : null;
+  if(!sb || !window.fetch) return Promise.reject(new Error('Not signed in'));
+  return sb.auth.getSession().then(function(r){
     var t = r && r.data && r.data.session && r.data.session.access_token;
     if(!t) throw new Error('no session');
     return fetch('/api/invoice', { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + t }, body: JSON.stringify({ id: o.id }) });
@@ -249,31 +235,6 @@ function serverDownload(o){
     setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
   });
 }
-function download(o){
-  return serverDownload(o).catch(function(err){ console.warn('vector invoice unavailable, using browser fallback:', err); return rasterDownload(o); });
-}
-function rasterDownload(o){
-  injectFont();
-  return loadPdfLib().then(function(){
-    return Promise.all([
-      document.fonts.load("800 16px 'BARABARA-FINAL'"), document.fonts.load("700 14px 'Plus Jakarta Sans'"),
-      document.fonts.load("700 14px 'DM Sans'"), document.fonts.ready
-    ]).catch(function(){});
-  }).then(function(){
-    var inv = mapOrder(o);
-    var host = document.createElement('div');
-    host.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;background:#fff';
-    host.innerHTML = generateCustomerInvoiceHTML(inv, 'a4');
-    document.body.appendChild(host);
-    var name = 'suppverse-invoice-' + String(o.order_number || 'order').replace(/[^A-Za-z0-9_-]/g, '') + '.pdf';
-    return window.html2pdf().set({
-      margin: 0, filename: name,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, windowWidth: 794 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: [] }
-    }).from(host.firstElementChild).save().then(function(){ host.remove(); }, function(e){ host.remove(); throw e; });
-  });
-}
+function download(o){ return serverDownload(o); }
 window.svInvoice = { html: function(o){ return generateCustomerInvoiceHTML(mapOrder(o), 'a4'); }, download: download };
 })();
