@@ -158,6 +158,7 @@ body.dark-mode .draft-math-total{border-top-color:rgba(255,255,255,0.18)}
 .of-banner.show{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .of-banner b{font-weight:800}
 .of-banner button{border:0;background:transparent;color:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:4px 2px;font-size:13px}
+.px-order .flow-tabs,.px-order #addrCard,.px-order .pay-timer-row,.px-order .method-card[data-method="card"],.px-order .method-card[data-method="upay"],.px-order .method-card[data-method="cod"]{display:none!important}
 .of-locked #addrCard,.of-locked #promoRowInternal,.of-locked #promoAppliedInternal{pointer-events:none;opacity:.6}
 .of-timer{margin:0 0 12px;padding:10px 12px;border-radius:12px;font-weight:800;font-size:13px;text-align:center;border:1.5px dashed var(--panel-accent,#009b72);color:var(--panel-accent,#009b72)}
 .of-timer.expired{color:var(--muted);border-color:var(--muted)}
@@ -1219,7 +1220,10 @@ S.orderRef = (S.flow === 'proxy' ? 'PX-' : 'SV-') + (Math.floor(Math.random() * 
 const ORDER_FIRST = true;
 const OF_METHODS = ['bkash','nagad','rocket','cellfin','bank','crypto'];
 const OF_KEY = 'sv-unpaid-order';
-S.started = false; S.unpaid = null;
+S.started = false; S.unpaid = null; S.proxyOrder = null;
+/* Real Buy For Me order: payment.html?order=<orders.id> (set by orders.html > Pay now) */
+const PX_ORDER_ID = (function(){ const v = new URLSearchParams(location.search).get('order') || ''; return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v) ? v : ''; })();
+if(PX_ORDER_ID){ S.flow = 'proxy'; S.orderRef = ''; document.body.classList.add('px-order'); }
 (function showOrderIdBadge(){
   const el = document.getElementById(S.flow === 'proxy' ? 'orderIdBadgeProxy' : 'orderIdBadgeInternal');
   if(el) el.textContent = S.orderRef;
@@ -1324,7 +1328,7 @@ function getCheckoutAddress(){
 }
 
 function renderProxySummary(){
-  const total = PROXY_BASE_TOTAL;
+  const total = PX_ORDER_ID ? (S.proxyOrder ? Number(S.proxyOrder.total) || 0 : 0) : PROXY_BASE_TOTAL;
   document.getElementById('payTotalProxy').textContent = fmt(total);
   TOTALS_BDT.proxy = total;
   if(S.flow === 'proxy'){
@@ -1478,6 +1482,26 @@ tabProxy.addEventListener('click', () => setFlow('proxy'));
 renderInternalSummary();
 renderProxySummary();
 setFlow(S.flow);
+async function loadProxyOrder(){
+  const back = () => setTimeout(() => { window.location.href = 'orders.html#proxy'; }, 1400);
+  try {
+    const res = await sbClient.rpc('my_proxy_order', { p_id: PX_ORDER_ID });
+    const d = res.data;
+    if(res.error || !d || !d.ok){ showToast('Could not load your order'); back(); return; }
+    if(d.status !== 'pending' || d.req_status !== 'approved'){ showToast(d.status === 'paid' ? 'This order is already paid' : 'This order is not waiting for payment'); back(); return; }
+    if(d.submitted){ showToast('Payment details already submitted. We are verifying.'); back(); return; }
+    S.proxyOrder = d; S.orderRef = d.order_number;
+    TOTALS_BDT.proxy = Number(d.total) || 0;
+    const badge = document.getElementById('orderIdBadgeProxy'); if(badge) badge.textContent = d.order_number;
+    const sec = document.getElementById('summaryProxy');
+    sec.querySelectorAll('.draft-math-row, .pay-tracking').forEach(el => { el.style.display = 'none'; });
+    const tot = sec.querySelector('.draft-math-total');
+    if(tot) tot.insertAdjacentHTML('beforebegin', '<div class="draft-math-row"><span class="draft-math-label">Request</span><span class="draft-math-val">' + escHtml(d.request_no || '') + '</span></div><div class="draft-math-row"><span class="draft-math-label">Final price (approved quote)</span><span class="draft-math-val">' + fmt(TOTALS_BDT.proxy) + '</span></div>');
+    renderProxySummary();
+    setFlow('proxy');
+  } catch(e){ showToast('Could not load your order'); back(); }
+}
+if(PX_ORDER_ID){ loadProxyOrder(); }
 
 /* Method selection */
 const methodCards = document.querySelectorAll('.method-card');
@@ -1498,7 +1522,7 @@ function selectMethod(method){
   if(method === 'cod' || method === 'crypto'){
     panelId = `panel-${method}`;
   } else {
-    panelId = `panel-${method}-${S.flow}`;
+    panelId = `panel-${method}-${S.proxyOrder ? 'internal' : S.flow}`;
   }
   // bKash: payment details/QR/TrxID stay hidden until sender number is collected via the popup
   if(method !== 'bkash' && !orderFirstActive()){
@@ -1958,7 +1982,7 @@ async function placeOrder(){
 /* ─── Order-first checkout ─── */
 let _ofTimerId = null;
 function orderFirstActive(){
-  try { return ORDER_FIRST && S.flow === 'internal' && OF_METHODS.indexOf(S.method) !== -1 && !!cartSkuLines() && typeof sbClient !== 'undefined' && !!sbClient; } catch(e){ return false; }
+  try { return ORDER_FIRST && (S.proxyOrder ? true : (S.flow === 'internal' && !!cartSkuLines())) && OF_METHODS.indexOf(S.method) !== -1 && typeof sbClient !== 'undefined' && !!sbClient; } catch(e){ return false; }
 }
 function ofPanel(){ return document.getElementById(S.method === 'crypto' ? 'panel-crypto' : 'panel-' + S.method + '-internal'); }
 function ofClearTimer(){
@@ -2017,7 +2041,30 @@ function ofApplyServerTotal(total){
   const pv = document.getElementById('payBarVal'); if(pv) pv.textContent = fmt(t);
   const pt = document.getElementById('payTotal'); if(pt) pt.textContent = fmt(t);
 }
+async function startProxyPayment(){
+  if(_placing || !S.proxyOrder) return;
+  _placing = true; payBtn.disabled = true;
+  try {
+    const res = await sbClient.rpc('proxy_start_payment', { p_order_id: S.proxyOrder.order_id, p_method: S.method, p_sender: S.method === 'bkash' ? S.senderBkashNumber : null });
+    if(res.error){ showToast('Could not start your payment. Please try again.'); return; }
+    const d = res.data;
+    if(!d || !d.ok){ showToast((d && d.error) || 'Could not start your payment'); return; }
+    S.unpaid = { id: d.order_id, number: d.order_number, method: S.method };
+    S.started = true;
+    bkpInvNo.textContent = 'Inv No: ' + d.order_number;
+    ofApplyServerTotal(d.total);
+    ofLock(true);
+    const panel = ofPanel(); if(panel) panel.classList.add('show');
+    payBtnText.textContent = "I've Sent the Payment";
+  } catch(e){
+    showToast('Could not start your payment. Please try again.');
+  } finally {
+    _placing = false;
+    payBtn.disabled = !S.method;
+  }
+}
 async function startOrderFirst(){
+  if(S.proxyOrder){ return startProxyPayment(); }
   const lines = cartSkuLines();
   if(!lines){ placeOrder(); return; }
   if(_placing) return;
@@ -2085,7 +2132,7 @@ async function submitPaymentFirst(){
       if(/cancelled|not waiting/i.test(msg)){ S.unpaid = null; try { sessionStorage.removeItem(OF_KEY); } catch(e){} ofReset(); }
       return;
     }
-    if(!IS_BUYNOW){ try { localStorage.removeItem(CART_KEY); } catch(e){} }
+    if(!IS_BUYNOW && !S.proxyOrder){ try { localStorage.removeItem(CART_KEY); } catch(e){} }
     try { sessionStorage.removeItem(OF_KEY); } catch(e){}
     const num = d.order_number || S.unpaid.number;
     S.unpaid = null; S.started = false; ofClearTimer(); ofLock(false);
@@ -2101,6 +2148,7 @@ document.getElementById('ofEditBtn').addEventListener('click', () => ofReset());
 
 payBtn.addEventListener('click', () => {
   if(!S.method) return;
+  if(PX_ORDER_ID && !S.proxyOrder){ showToast('Loading your order…'); return; }
   if(S.started && orderFirstActive()){ submitPaymentFirst(); return; }
   if(S.method === 'bkash' && !S.senderBkashNumber){
     bkpNumberInput.value = '';
