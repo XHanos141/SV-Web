@@ -28,11 +28,12 @@ function fontCss() {
 function invoiceJs() { return _js || (_js = fs.readFileSync(path.join(ROOT, 'assets/js/sv-invoice.js'), 'utf8')); }
 
 async function launch() {
-  const puppeteer = require('puppeteer-core');
+  /* puppeteer-core / @sparticuz/chromium are ESM-only: require() fails on Vercel, so load them with import() */
+  const pp = await import('puppeteer-core'); const puppeteer = pp.default || pp;
   if (process.env.CHROME_PATH) {            /* local testing */
     return puppeteer.launch({ executablePath: process.env.CHROME_PATH, headless: true, args: ['--no-sandbox'] });
   }
-  const chromium = require('@sparticuz/chromium');
+  const cm = await import('@sparticuz/chromium'); const chromium = cm.default || cm;
   return puppeteer.launch({
     args: await puppeteer.defaultArgs({ args: chromium.args, headless: 'shell' }),
     executablePath: await chromium.executablePath(),
