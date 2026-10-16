@@ -473,6 +473,7 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
 <script src="assets/js/sv-img.js"></script>
+<script src="assets/js/sv-invoice.js" defer></script>
 <style>@supports (-webkit-touch-callout:none){input,select,textarea{font-size:16px!important}}</style>
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#0f3258">
@@ -1163,6 +1164,21 @@ document.addEventListener('click', function(e){
     }catch(e){}
     location.href = 'payment.html';
   });
+});
+/* Download invoice (paid / shipped / delivered orders): builds the A4 PDF in the browser from the order row */
+document.addEventListener('click', async function(e){
+  const b = e.target.closest && e.target.closest('.oc-action[data-act="invoice"]'); if(!b || b.disabled) return;
+  const label = b.textContent; b.disabled = true; b.textContent = 'Preparing invoice…';
+  try{
+    const res = await sbClient.rpc('my_orders');
+    const o = res && res.data && res.data.orders && res.data.orders.find(x => x.id === b.dataset.id);
+    if(!o) throw new Error('Order not found');
+    if(!window.svInvoice) throw new Error('Invoice module not loaded');
+    await window.svInvoice.download(o);
+  }catch(err){
+    console.error('invoice error:', err);
+    alert('Could not create your invoice. Please check your connection and try again.');
+  }finally{ b.disabled = false; b.textContent = label; }
 });
 loadStoreOrders();
 setInterval(soTick, 30000);
