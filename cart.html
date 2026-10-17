@@ -748,7 +748,7 @@ function updateTabCounts(){
   [['tabInternalCount','internal'],['tabProxyCount','proxy']].forEach(([id, fl]) => {
     const el = document.getElementById(id), d = DATA[fl];
     if(!el || !d) return;
-    const n = fl === 'proxy' ? (window.PQ_N || 0) : d.items.length;
+    const n = fl === 'proxy' ? (window.PQ_N || 0) : d.items.reduce((a, i) => a + (Number(i.qty) || 1), 0);
     if(n > 0){ el.textContent = n > 99 ? '99+' : String(n); el.classList.add('show'); }
     else { el.classList.remove('show'); el.textContent = ''; }
   });
