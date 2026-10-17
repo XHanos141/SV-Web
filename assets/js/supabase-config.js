@@ -139,7 +139,7 @@ async function svSignOut(redirectTo = 'login.html') {
   svSetCachedCustomer(null);
   svClearUserData();
   if (sbClient) await sbClient.auth.signOut();
-  window.location.href = redirectTo;
+  window.location.replace(redirectTo);
 }
 
 // Call on page load for any page with a header account/profile button.

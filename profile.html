@@ -809,6 +809,18 @@ body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,
   </div>
 </div>
 
+<!-- LOGOUT CONFIRM MODAL -->
+<div class="modal-overlay center-popup" id="logoutConfirmModal">
+  <div class="modal-sheet">
+    <div class="modal-title">Log out?</div>
+    <p style="font-size:14px;color:var(--text-muted);line-height:1.5;margin:-6px 0 18px">You'll need to log in again to view your orders and send requests.</p>
+    <div class="ae-btn-row">
+      <button class="ae-cancel-btn" type="button" onclick="closeLogoutConfirm()">Cancel</button>
+      <button class="modal-save-btn danger" type="button" style="margin-top:0" onclick="svSignOut('login.html')">Log out</button>
+    </div>
+  </div>
+</div>
+
 <!-- CHANGE PASSWORD CONFIRM MODAL -->
 <div class="modal-overlay center-popup" id="pwConfirmModal">
   <div class="modal-sheet">
@@ -1319,8 +1331,14 @@ async function delConfirm(){
 
 // ===== LOGOUT =====
 function handleLogout(){
-  svSignOut('login.html');
+  document.getElementById('logoutConfirmModal').classList.add('open');
 }
+function closeLogoutConfirm(){
+  document.getElementById('logoutConfirmModal').classList.remove('open');
+}
+window.addEventListener('pageshow', e => {
+  if(e.persisted) loadRealProfile();
+});
 
 // ===== RECENT ORDERS (live: store orders + Buy For Me requests) =====
 const RO_SO_LABEL = { awaiting_payment:'Awaiting payment', unpaid:'Unpaid', verifying:'Verifying payment', cod_pending:'Pending (COD)', paid:'Paid', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
