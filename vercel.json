@@ -93,6 +93,10 @@
     "api/invoice.js": {
       "maxDuration": 30,
       "includeFiles": "{assets/fonts/**,assets/js/sv-invoice.js,node_modules/@sparticuz/chromium/bin/**}"
+    },
+    "api/pdf.js": {
+      "maxDuration": 30,
+      "includeFiles": "{assets/fonts/**,assets/js/sv-invoice.js,node_modules/@sparticuz/chromium/bin/**}"
     }
   }
 }
