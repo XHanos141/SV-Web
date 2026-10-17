@@ -32,6 +32,14 @@ function fontCss() {
 }
 function invoiceJs() { return _js || (_js = fs.readFileSync(path.join(ROOT, 'assets/js/sv-invoice.js'), 'utf8')); }
 
+/* Vector-only guarantee. Skia/PDF turns blur filters, blurred shadows, SVG filters and bitmap images into /Image XObjects.
+   Any image object in the output means the page is not purely vector, so the export is refused instead of served. */
+class RasterContentError extends Error { constructor() { super('PDF contains raster image content'); this.code = 'RASTER_CONTENT'; } }
+function assertVector(pdf) {
+  if (/\/Subtype\s*\/Image\b/.test(Buffer.from(pdf).toString('latin1'))) throw new RasterContentError();
+  return pdf;
+}
+
 async function launch() {
   /* puppeteer-core / @sparticuz/chromium are ESM-only: require() fails on Vercel, so load them with import() */
   const pp = await import('puppeteer-core'); const puppeteer = pp.default || pp;
@@ -72,7 +80,7 @@ async function renderInvoicePdf(order) {
     await page.evaluate(o => { document.getElementById('root').innerHTML = window.svInvoice.html(o); }, order);
     await page.evaluate(() => document.fonts.ready);
     const pdf = await page.pdf({ width: '794px', height: '1123px', printBackground: true, tagged: false, outline: false, preferCSSPageSize: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } });
-    return Buffer.from(pdf);
+    return assertVector(Buffer.from(pdf));
   } finally {
     await browser.close();
   }
@@ -87,7 +95,7 @@ async function renderHtmlPdf({ html, size, bleed }) {
   try {
     const page = await browser.newPage();
     await page.setRequestInterception(true);
-    page.on('request', r => { const u = r.url(); (u.startsWith('data:') || u === 'about:blank') ? r.continue() : r.abort(); });
+    page.on('request', r => { const u = r.url(); (((u.startsWith('data:') && !/^data:image\/(?!svg\+xml)/i.test(u)) || u === 'about:blank') ? r.continue() : r.abort()); });
     const isReceipt = size === 'receipt';
     await page.setViewport({ width: isReceipt ? 302 : 794, height: 1123, deviceScaleFactor: 1 });
     const pageCss = isReceipt ? '@page{size:80mm 240mm;margin:0}' : (bleed ? '@page{size:794px 1123px;margin:0}' : '@page{size:210mm 297mm;margin:0}');
@@ -109,9 +117,9 @@ async function renderHtmlPdf({ html, size, bleed }) {
     } else {
       opts = { format: 'A4', printBackground: true, tagged: false, outline: false, scale: A4_SCALE, margin: { top: '8mm', right: '8mm', bottom: '8mm', left: '8mm' } };
     }
-    return Buffer.from(await page.pdf(opts));
+    return assertVector(Buffer.from(await page.pdf(opts)));
   } finally {
     await browser.close();
   }
 }
-module.exports = { renderInvoicePdf, renderHtmlPdf };
+module.exports = { renderInvoicePdf, renderHtmlPdf, assertVector, RasterContentError };

@@ -181,7 +181,7 @@ function generateCustomerInvoiceHTML(inv, size, theme) {
 
   const pageHTML = (p, idx) => {
     const isFirst = idx === 0, isLast = p[2];
-    /* last page is 3px short so html2pdf's rounding never spills an extra blank sheet */
+    /* last page is 3px short so rounding never spills an extra blank sheet */
     const ph = isLast ? H - 3 : H;
     const table = (p[1] > p[0] || isFirst) ? `<div style="padding-top:${isFirst ? 22 : 0}px">${tbl(p[0], p[1])}</div>` : '';
     return `<div style="width:794px;height:${ph}px;overflow:hidden;display:flex;flex-direction:column;background:#fff;color:#001f3c;font-family:'DM Sans',sans-serif">
@@ -260,7 +260,7 @@ function serverDownload(o){
     if(!t) throw new Error('no session');
     return fetch('/api/invoice', { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + t }, body: JSON.stringify({ id: o.id }) });
   }).then(function(res){
-    if(!res.ok) throw new Error('server ' + res.status);
+    if(!res.ok) return res.json().catch(function(){ return {}; }).then(function(j){ var e = new Error((j && j.error) || ('Server error ' + res.status)); e.userMessage = (j && j.error) || ''; throw e; });
     return res.blob();
   }).then(function(blob){
     if(!blob || blob.type.indexOf('pdf') < 0) throw new Error('bad pdf');

@@ -2,7 +2,7 @@
    Admin-only vector PDF renderer for the SuppVerse dashboard app (invoices, return receipts, ...).
    Callable cross-origin from the app: auth is the bearer token, not cookies, so CORS can be open. */
 const { SB, KEY } = require('./_site');
-const { renderHtmlPdf } = require('./_invoice-pdf');
+const { renderHtmlPdf, RasterContentError } = require('./_invoice-pdf');
 
 const MAX_HTML = 3.5 * 1024 * 1024;
 function cors(res) {
@@ -60,6 +60,7 @@ module.exports = async (req, res) => {
     res.end(pdf);
   } catch (e) {
     console.error('pdf error:', e);
+    if (e instanceof RasterContentError) return fail(res, 422, 'Export blocked: the document contained non-vector content (blur, shadow or bitmap)');
     fail(res, 500, 'Could not create the PDF');
   }
 };

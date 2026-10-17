@@ -2,7 +2,7 @@
    Returns the customer's own order invoice as a vector PDF. Ownership is enforced by Supabase itself:
    the order list is fetched with the caller's JWT through the same my_orders RPC the Orders page uses. */
 const { SB, KEY } = require('./_site');
-const { renderInvoicePdf } = require('./_invoice-pdf');
+const { renderInvoicePdf, RasterContentError } = require('./_invoice-pdf');
 
 const OK_STATES = ['paid', 'processing', 'shipped', 'delivered'];
 
@@ -56,6 +56,7 @@ module.exports = async (req, res) => {
     res.end(pdf);
   } catch (e) {
     console.error('invoice pdf error:', e);
+    if (e instanceof RasterContentError) return fail(res, 422, 'Export blocked: the invoice contained non-vector content');
     fail(res, 500, 'Could not create the PDF');
   }
 };

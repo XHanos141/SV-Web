@@ -1201,7 +1201,7 @@ document.addEventListener('click', async function(e){
     await window.svInvoice.download(o);
   }catch(err){
     console.error('invoice error:', err);
-    alert('Could not create your invoice. Please check your connection and try again.');
+    alert(err && err.userMessage ? 'Could not create your invoice: ' + err.userMessage : 'Could not create your invoice. Please check your connection and try again.');
   }finally{ b.disabled = false; b.textContent = label; }
 });
 loadStoreOrders();
