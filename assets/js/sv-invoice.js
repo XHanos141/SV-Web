@@ -37,6 +37,24 @@ function _ciLockup(h, tc, bdc, b, ih) {
   return `<div style="display:flex;align-items:center;gap:${r(9.1)}px"><span style="display:block;flex-shrink:0;width:${w}px;height:${ih}px;line-height:0;position:relative;top:-3px">${_CI_LOGO_SVG.replace('<svg ', '<svg width="' + w + '" height="' + ih + '" style="display:block" ')}</span><div style="transform:translateY(${(5.3*k-2).toFixed(2)}px);line-height:1"><div style="${F};font-size:${(16.6*k+b).toFixed(2)}px;font-weight:800;color:${tc};letter-spacing:${r(1)}px;line-height:1;white-space:nowrap">SUPPVERSE</div><div style="${F};font-size:${(10.6*k+b*0.6).toFixed(2)}px;font-weight:700;color:${bdc};letter-spacing:.22em;line-height:1;margin-left:${r(1)}px">BD</div></div></div>`;
 }
 const _ciPill = s => { const x = _CI_TXB[s] || _CI_TXB.paid; return `<span style="display:inline-block;${_CI_PJ};font-size:12px;font-weight:700;padding:4px 14px;border-radius:999px;border:1px solid ${x.b};background:${x.bg};color:${x.c};line-height:1.2">${x.t}</span>`; };
+const _CI_TONE = {
+  g: ['#2f9b68', 'rgba(47,155,104,.12)', 'rgba(47,155,104,.35)'],
+  a: ['#a86400', 'rgba(232,160,32,.16)', 'rgba(200,130,10,.4)'],
+  c: ['#0A9BDC', 'rgba(10,155,220,.1)', 'rgba(10,155,220,.4)'],
+  p: ['#6a5de6', 'rgba(124,111,247,.12)', 'rgba(124,111,247,.35)']
+};
+const _CI_STAGE = { processing: ['Processing', 'c'], shipped: ['Shipped', 'p'], delivered: ['Delivered', 'g'] };
+function _ciBadge(t, k) {
+  const c = _CI_TONE[k] || _CI_TONE.g;
+  return `<span style="display:inline-block;${_CI_PJ};font-size:12px;font-weight:700;padding:4px 14px;border-radius:999px;border:1px solid ${c[2]};background:${c[1]};color:${c[0]};line-height:1.2;white-space:nowrap">${t}</span>`;
+}
+/* payment badge (Paid / COD due) + order stage badge, side by side */
+function _ciPills(inv) {
+  const due = _ciMoney(inv.amountDue != null ? inv.amountDue : (inv.total || 0));
+  const pay = inv.payType === 'cod' && !inv.paid ? ['COD \u00b7 ' + due + ' due', 'a'] : ['Paid', 'g'];
+  const stg = _CI_STAGE[inv.stage];
+  return `<span style="display:inline-flex;gap:6px;align-items:center">${stg ? _ciBadge(stg[0], stg[1]) : ''}${_ciBadge(pay[0], pay[1])}</span>`;
+}
 const _ciChip = (d, solid) => `<span style="flex:none;width:26px;height:26px;border-radius:8px;background:#eef2f8;display:inline-flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" style="${solid ? 'fill:#001f3c;stroke:none' : 'fill:none;stroke:#001f3c;stroke-width:2.3;stroke-linecap:butt;stroke-linejoin:round'}">${d}</svg></span>`;
 /* Order ID badge — mirrors the LOCKED .order-id-badge (SV-) and .tracking-tag (PX- proxy), inlined for PDF */
 const _ciOrderBadge = id => {
@@ -89,7 +107,7 @@ function _ciIntro(inv) {
     <div style="display:flex;align-items:center;gap:10px;min-height:26px">${_ciChip(_CI_IC.user, true)}<span style="${_CI_PJ};font-size:17px;font-weight:700">${escapeHtml(inv.customerName || '')}</span></div>
     <div style="display:flex;justify-content:flex-end;align-items:center">${_ciOrderBadge(inv.linkedDraftId)}</div>
     <div style="display:flex;align-items:center;gap:10px;min-height:26px">${_ciChip(_CI_IC.phone)}<span style="font-size:14px;font-weight:600">${escapeHtml(inv.customerPhone || '')}</span></div>
-    <div style="display:flex;justify-content:flex-end;align-items:center">${_ciPill(inv.status || 'paid')}</div>
+    <div style="display:flex;justify-content:flex-end;align-items:center">${_ciPills(inv)}</div>
     <div style="display:flex;align-items:center;gap:10px;min-height:26px">${_ciChip(_CI_IC.pin)}<span style="font-size:14px;font-weight:600;line-height:1.4">${escapeHtml(inv.customerLocation || '')}</span></div>
     <div style="display:flex;justify-content:flex-end;align-items:center;font-size:14px;font-weight:700;color:#001f3c">${escapeHtml(inv.date || '')}</div>
   </div></div>`;
@@ -213,6 +231,10 @@ function mapOrder(o){
     discount: Number(o.discount) || 0, voucher: o.voucher_code || null, shipVoucher: !!o.ship_voucher,
     shipping: Number(o.shipping) || 0,
     status: o.state === 'shipped' ? 'shipped' : 'paid',
+    payType: o.payment_method === 'cod' ? 'cod' : 'prepaid',
+    paid: o.payment_method === 'cod' ? (o.state === 'delivered' || o.state === 'paid') : true,
+    amountDue: (o.payment_method === 'cod' && !(o.state === 'delivered' || o.state === 'paid')) ? Number(o.total) || 0 : 0,
+    stage: o.state || '',
     date: fmtDate(o.paid_at || o.created_at)
   };
 }
