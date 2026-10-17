@@ -344,9 +344,9 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 /* Expand / collapse (store orders) */
 .so-collapse{display:grid;grid-template-rows:1fr;transition:grid-template-rows .28s ease}
 .so-inner{overflow:hidden;min-height:0}
-#storeList .order-card.collapsed .so-collapse{grid-template-rows:0fr}
-#storeList .oc-head{transition:border-color .2s ease}
-#storeList .order-card.collapsed .oc-head{border-bottom-color:transparent}
+#storeList .order-card.collapsed .so-collapse,#proxyList .order-card.collapsed .so-collapse{grid-template-rows:0fr}
+#storeList .oc-head,#proxyList .oc-head{transition:border-color .2s ease}
+#storeList .order-card.collapsed .oc-head,#proxyList .order-card.collapsed .oc-head{border-bottom-color:transparent}
 @media (prefers-reduced-motion:reduce){.so-collapse{transition:none}}
 /* Store orders — typography matched to payment.html draft-math-* / cart summary-line spec */
 #storeList .oc-body{gap:0;padding:6px 14px 12px}
@@ -764,13 +764,13 @@ function pxRender(r){
       +'<div class="oc-head-left"><div class="oc-id-row">'+idPill+'</div><div class="oc-meta">Submitted <span class="oc-meta-date">'+soDateTime(r.created_at)+'</span></div></div>'
       +'<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill '+(expired?'closed':pill[1])+'">'+pxEsc(expired?'Quote expired':pill[0])+'</span><span class="oc-status-date">'+soDateTime(expired ? (r.expires_at||r.updated_at) : r.status==='pending_quote' ? r.created_at : r.status==='quoted' ? (r.quoted_at||r.updated_at) : (r.updated_at||r.created_at))+'</span></div>'
       +'<svg class="oc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div></div>'
-    +'<div class="oc-body">'+action
+    +'<div class="so-collapse"><div class="so-inner"><div class="oc-body">'+action
       +'<div class="oc-subsection"><div class="oc-subhead" onclick="this.closest(\'.oc-subsection\').classList.toggle(\'collapsed\')"><div class="oc-section-label">Items &amp; Summary</div>'
       +'<div class="oc-subhead-right"><span class="oc-subtotal-preview">'+preview+'</span><svg class="oc-sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div></div>'
       +'<div class="oc-subsection-content"><div>'+itemRows+math+'</div></div></div>'
       +(snap.notes?'<div class="px-note">'+pxEsc(snap.notes)+'</div>':'')
       +timeline
-    +'</div></div>';
+    +'</div></div></div></div>';
 }
 
 async function loadProxyOrders(){
