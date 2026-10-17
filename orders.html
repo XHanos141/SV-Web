@@ -167,6 +167,12 @@ body.dark-mode .oc-id.rq{ background:rgba(242,100,48,0.14);border-color:rgba(242
 
 /* Flow tabs */
 .flow-tabs{ margin:12px 16px 0; }
+/* Running-order count badges on the two tabs (same pill shape as the admin + sheet badges) */
+.tab-count{position:absolute;top:-8px;right:8px;min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--c);color:#fff;border:2px solid var(--surface);font:800 11px/1 var(--font-display);display:none;place-items:center;transform:scale(0);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.tab-count.show{display:grid;transform:scale(1)}
+#tabStoreCount{--c:#009ddc}
+#tabProxyCount{--c:#f26430}
+@media (prefers-reduced-motion:reduce){.tab-count{transition:none}}
 #tabStoreOrders.active{ color:var(--accent); }
 #tabProxyOrders.active{ color:var(--orange); }
 
@@ -537,8 +543,8 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 </header>
 
 <div class="flow-tabs" id="ordersFlowTabs">
-  <button class="flow-tab active" id="tabStoreOrders" type="button">Store Orders</button>
-  <button class="flow-tab" id="tabProxyOrders" type="button">Buy For Me Orders</button>
+  <button class="flow-tab active" id="tabStoreOrders" type="button">Store Orders<span class="tab-count" id="tabStoreCount" aria-live="polite"></span></button>
+  <button class="flow-tab" id="tabProxyOrders" type="button">Buy For Me Orders<span class="tab-count" id="tabProxyCount" aria-live="polite"></span></button>
 </div>
 
 <div id="viewStoreOrders">
@@ -791,6 +797,7 @@ async function loadProxyOrders(){
     .select('*, orders(order_number,status)').order('created_at', { ascending:false });
   if(error){ console.error('proxy_requests load error:', error); list.innerHTML = '<div class="px-state">Could not load your requests. Pull down to retry.</div>'; return; }
   if(window.svProxyBadgeSet) window.svProxyBadgeSet(data || []);
+  setTabCount('tabProxyCount', (data || []).filter(pxRunning).length);
   if(!data || !data.length){
     list.innerHTML = '<div class="px-state">No Buy For Me requests yet.<br><br><a href="buy_for_me.html">Send your first request</a></div>';
     return;
@@ -812,6 +819,13 @@ const AUTO_HIDE_DELIVERED_DAYS = 7, AUTO_HIDE_CLOSED_DAYS = 3;
 const soAged = (iso, days) => { const t = Date.parse(iso); return !!t && (Date.now() - t) > days * 86400000; };
 const soStale = o => SO_FINAL.includes(o.state) && (o.state === 'delivered' ? soAged(o.delivered_at, AUTO_HIDE_DELIVERED_DAYS) : soAged(o.cancelled_at || o.created_at, AUTO_HIDE_CLOSED_DAYS));
 const pxExpiredQuote = r => r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date();
+const pxRunning = r => !(['delivered','rejected','cancelled','expired'].includes(r.status) || pxExpiredQuote(r));
+function setTabCount(id, n){
+  const el = document.getElementById(id); if(!el) return;
+  n = HIST ? 0 : n;
+  if(n > 0){ el.textContent = n > 99 ? '99+' : String(n); el.classList.add('show'); }
+  else { el.classList.remove('show'); el.textContent = ''; }
+}
 const pxStale = r => r.status === 'delivered' ? soAged(r.updated_at, AUTO_HIDE_DELIVERED_DAYS)
   : (['rejected','cancelled','expired'].includes(r.status) ? soAged(r.updated_at, AUTO_HIDE_CLOSED_DAYS) : (pxExpiredQuote(r) ? soAged(r.expires_at, AUTO_HIDE_CLOSED_DAYS) : false));
 let soHidden = new Set(), soSwipeBusy = false, soEnterId = null, soStates = {};
@@ -1123,6 +1137,7 @@ async function loadStoreOrders(){
     soHidden = new Set((hres && !hres.error && hres.data && hres.data.ok && hres.data.ids) || []);
     const all = res.data.orders || [];
     if(window.svOrdersBadgeSet) window.svOrdersBadgeSet(all);
+    setTabCount('tabStoreCount', all.filter(o => !SO_FINAL.includes(o.state)).length);
     const orders = HIST ? all.filter(o => SO_FINAL.includes(o.state)) : all.filter(o => !(SO_FINAL.includes(o.state) && (soHidden.has(o.id) || soStale(o))));
     if(!orders.length){
       list.innerHTML = HIST ? '<div class="px-state">No completed orders yet.</div>'
