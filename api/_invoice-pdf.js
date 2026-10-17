@@ -13,19 +13,21 @@ function fontCss() {
   if (_css) return _css;
   const face = (family, file, extra) =>
     "@font-face{font-family:'" + family + "';src:url(data:font/woff2;base64," + b64(file) + ") format('woff2');" + extra + "font-display:block}";
-  const BN = 'unicode-range:U+0964-0965,U+0980-09FF,U+200C-200D,U+25CC;font-weight:100 900;';
-  const LT = 'font-weight:100 900;';
-  _css = [
-    face('Plus Jakarta Sans', 'assets/fonts/inv/plus-jakarta-sans.woff2', LT),
-    face('Plus Jakarta Sans', 'assets/fonts/inv/noto-sans-bengali.woff2', BN),
-    face('DM Sans', 'assets/fonts/inv/dm-sans.woff2', LT),
-    face('DM Sans', 'assets/fonts/inv/noto-sans-bengali.woff2', BN),
-    face('BARABARA-FINAL', 'assets/fonts/barabara-final.woff2', 'font-weight:normal;font-style:normal;'),
-    face('Courier Prime', 'assets/fonts/inv/courier-prime-400.woff2', 'font-weight:400;font-style:normal;'),
-    face('Courier Prime', 'assets/fonts/inv/courier-prime-700.woff2', 'font-weight:700;font-style:normal;'),
-    face('Courier Prime', 'assets/fonts/inv/noto-sans-bengali.woff2', BN),
-    face('Noto Sans Bengali', 'assets/fonts/inv/noto-sans-bengali.woff2', 'font-weight:100 900;')
-  ].join('\n');
+  const BN = 'unicode-range:U+0964-0965,U+0980-09FF,U+200C-200D,U+25CC;';
+  /* Static per-weight instances (not variable fonts): Skia embeds variable fonts as heavy, slow-to-zoom Type 3 outlines,
+     static fonts embed as compact subset TrueType. Bengali only covers the Taka sign / Bangla names. */
+  const W = [400, 500, 600, 700, 800], BW = [400, 600, 700, 800];
+  const fam = (family, file) => W.map(w => face(family, 'assets/fonts/inv/' + file + '-' + w + '.woff2', 'font-weight:' + w + ';font-style:normal;'));
+  const bn = family => BW.map(w => face(family, 'assets/fonts/inv/noto-sans-bengali-' + w + '.woff2', BN + 'font-weight:' + w + ';font-style:normal;'));
+  _css = [].concat(
+    fam('Plus Jakarta Sans', 'plus-jakarta-sans'), bn('Plus Jakarta Sans'),
+    fam('DM Sans', 'dm-sans'), bn('DM Sans'),
+    [face('BARABARA-FINAL', 'assets/fonts/barabara-final.woff2', 'font-weight:normal;font-style:normal;'),
+     face('Courier Prime', 'assets/fonts/inv/courier-prime-400.woff2', 'font-weight:400;font-style:normal;'),
+     face('Courier Prime', 'assets/fonts/inv/courier-prime-700.woff2', 'font-weight:700;font-style:normal;')],
+    bn('Courier Prime'),
+    BW.map(w => face('Noto Sans Bengali', 'assets/fonts/inv/noto-sans-bengali-' + w + '.woff2', 'font-weight:' + w + ';font-style:normal;'))
+  ).join('\n');
   return _css;
 }
 function invoiceJs() { return _js || (_js = fs.readFileSync(path.join(ROOT, 'assets/js/sv-invoice.js'), 'utf8')); }
@@ -69,7 +71,7 @@ async function renderInvoicePdf(order) {
     });
     await page.evaluate(o => { document.getElementById('root').innerHTML = window.svInvoice.html(o); }, order);
     await page.evaluate(() => document.fonts.ready);
-    const pdf = await page.pdf({ width: '794px', height: '1123px', printBackground: true, preferCSSPageSize: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } });
+    const pdf = await page.pdf({ width: '794px', height: '1123px', printBackground: true, tagged: false, outline: false, preferCSSPageSize: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } });
     return Buffer.from(pdf);
   } finally {
     await browser.close();
@@ -100,12 +102,12 @@ async function renderHtmlPdf({ html, size, bleed }) {
     let opts;
     if (isReceipt) {
       const h = await page.evaluate(() => Math.ceil(document.getElementById('root').getBoundingClientRect().height));
-      opts = { width: '80mm', height: Math.max(h + 2, 300) + 'px', printBackground: true, preferCSSPageSize: false, margin: { top: 0, right: 0, bottom: 0, left: 0 } };
+      opts = { width: '80mm', height: Math.max(h + 2, 300) + 'px', printBackground: true, tagged: false, outline: false, preferCSSPageSize: false, margin: { top: 0, right: 0, bottom: 0, left: 0 } };
       await page.addStyleTag({ content: '@page{size:80mm ' + opts.height + ';margin:0}' });
     } else if (bleed) {
-      opts = { width: '794px', height: '1123px', printBackground: true, preferCSSPageSize: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } };
+      opts = { width: '794px', height: '1123px', printBackground: true, tagged: false, outline: false, preferCSSPageSize: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } };
     } else {
-      opts = { format: 'A4', printBackground: true, scale: A4_SCALE, margin: { top: '8mm', right: '8mm', bottom: '8mm', left: '8mm' } };
+      opts = { format: 'A4', printBackground: true, tagged: false, outline: false, scale: A4_SCALE, margin: { top: '8mm', right: '8mm', bottom: '8mm', left: '8mm' } };
     }
     return Buffer.from(await page.pdf(opts));
   } finally {
