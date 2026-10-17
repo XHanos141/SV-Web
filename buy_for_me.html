@@ -305,6 +305,11 @@ body.dark-mode .wa-input{border-color:rgba(255,255,255,0.25)}
 body.dark-mode .note-input{border-color:rgba(255,255,255,0.25)}
 .note-input:focus{border-color:var(--orange)}
 .note-input.error{border-color:var(--err);background:var(--err-soft)}
+.login-banner{display:none;align-items:center;gap:10px;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:rgba(242,100,48,.1);border:1.5px solid rgba(242,100,48,.35);font-size:12px;font-weight:700;color:var(--text)}
+.login-banner.show{display:flex}
+.login-banner svg{width:18px;height:18px;flex-shrink:0;stroke:#f26430;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.login-banner span{flex:1;line-height:1.35}
+.login-banner a{flex-shrink:0;color:#fff;background:linear-gradient(135deg,#f26430,#b83200);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800;text-decoration:none}
 .note-count{text-align:right;font-size:9.5px;color:var(--t3);margin-bottom:0}
 #orderSummary{margin-top:4px}
 
@@ -599,6 +604,11 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
 </section>
 
 <main>
+  <div class="login-banner" id="loginBanner" role="note">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
+    <span>Login needed to send your request. Fill the form first, we'll save it.</span>
+    <a href="login.html" id="loginBannerBtn">Login</a>
+  </div>
   <section class="form-card rv">
     <h3>What do you want us to get?</h3>
     <div class="momo-row">
@@ -667,7 +677,7 @@ body.dark-mode .processing-sheet{background:#0f1a2e;box-shadow:0 8px 10px rgba(0
     <div style="text-align:center">
     <button class="purchase-req-btn" id="purchaseReqBtn" type="button">
       <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-      Send purchase request
+      <span id="purchaseReqLabel">Send purchase request</span>
     </button>
     </div>
   </section>
@@ -1387,7 +1397,7 @@ function updateRemoveVisibility(){
 }
 
 document.getElementById('addItemBtn').addEventListener('click', () => { addItemRow(); setTimeout(updateOrderSummary, 100); });
-window.__bfmStoresReady.then(() => addItemRow());
+window.__bfmStoresReady.then(() => { if(!restoreDraft()) addItemRow(); });
 
 /* ─── WhatsApp ─── */
 const waInput = document.getElementById('waInput');
@@ -1579,10 +1589,8 @@ function buildPayload(){
 
 document.getElementById('purchaseReqBtn').addEventListener('click', openReview);
 document.getElementById('lgCancelBtn').addEventListener('click', () => closeOverlay(loginGate));
-document.getElementById('lgLoginBtn').addEventListener('click', () => {
-  try{ sessionStorage.setItem('sv-login-return','buy_for_me.html'); }catch(e){}
-  window.location.href = 'login.html';
-});
+document.getElementById('lgLoginBtn').addEventListener('click', () => goLogin(true));
+document.getElementById('loginBannerBtn').addEventListener('click', (e) => { e.preventDefault(); goLogin(false); });
 document.getElementById('homeBtn').addEventListener('click', resetProcessingSheet);
 document.getElementById('trackBtn').addEventListener('click', () => { window.location.href = 'orders.html#proxy'; });
 
@@ -1665,6 +1673,7 @@ async function doSubmit(){
     if(/log in/.test(errMsg)) openOverlay(loginGate); else alert(errMsg);
     return;
   }
+  clearDraft();
   S.trackingId = row.request_no;
   trackingVal.textContent = S.trackingId;
   badge.classList.add('done');
@@ -1709,9 +1718,78 @@ function openReview(){
     if(firstError) firstError.scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
+  if(!S.isLoggedIn){ goLogin(true); return; }
   buildReviewPopup();
   openOverlay(reviewOverlay);
 }
+
+/* ─── Draft + login gate ─── */
+const DRAFT_KEY = 'sv-bfm-draft', RESUME_KEY = 'sv-bfm-resume';
+function saveDraft(){
+  if(S.trackingId) return;
+  try{
+    const items = Array.from(itemsWrap.querySelectorAll('.item-row')).map(r => ({
+      url: (r.querySelector('[data-role="link"]')||{}).value || '',
+      name: (r.querySelector('[data-role="product-name"]')||{}).value || '',
+      store: (r.querySelector('[data-role="store-select"]')||{}).value || '',
+      price: (r.querySelector('[data-role="price-input"]')||{}).value || '',
+      qty: (r._item && r._item.qty) || 1
+    }));
+    const has = items.some(i => i.url || i.name) || waInput.value || noteInput.value;
+    if(!has){ localStorage.removeItem(DRAFT_KEY); return; }
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ t: Date.now(), items, wa: waInput.value, notes: noteInput.value }));
+  }catch(e){}
+}
+function clearDraft(){ try{ localStorage.removeItem(DRAFT_KEY); sessionStorage.removeItem(RESUME_KEY); }catch(e){} }
+function restoreDraft(){
+  let d = null;
+  try{ d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); }catch(e){}
+  if(!d || !d.items || !d.items.length || Date.now() - d.t > 86400000) return false;
+  d.items.forEach(it => {
+    addItemRow();
+    const r = itemsWrap.lastElementChild;
+    const set = (sel, v, ev) => { const el = r.querySelector(sel); if(el && v !== ''){ el.value = v; el.dispatchEvent(new Event(ev || 'input', {bubbles:true})); } };
+    const st = r.querySelector('[data-role="store-select"]');
+    if(st && it.store) st.value = it.store;
+    set('[data-role="link"]', it.url);
+    set('[data-role="product-name"]', it.name);
+    set('[data-role="price-input"]', it.price);
+    const q = r.querySelector('[data-role="qty-val"]');
+    if(it.qty > 1 && q && r._item){ r._item.qty = it.qty; q.textContent = it.qty; q.dataset.qtyRollValue = it.qty; }
+    if(r._validate) r._validate();
+  });
+  if(d.wa){ waInput.value = d.wa; waInput.dispatchEvent(new Event('input')); }
+  if(d.notes){ noteInput.value = d.notes; noteInput.dispatchEvent(new Event('input')); }
+  updateOrderSummary();
+  return true;
+}
+function goLogin(resume){
+  saveDraft();
+  try{
+    sessionStorage.setItem('sv-login-return','buy_for_me.html');
+    if(resume) sessionStorage.setItem(RESUME_KEY,'1');
+  }catch(e){}
+  window.location.href = 'login.html';
+}
+function applyAuthUI(){
+  document.getElementById('loginBanner').classList.toggle('show', !S.isLoggedIn);
+  document.getElementById('purchaseReqLabel').textContent = S.isLoggedIn ? 'Send purchase request' : 'Login to send request';
+}
+['input','change','click'].forEach(ev => document.addEventListener(ev, () => { clearTimeout(window.__draftT); window.__draftT = setTimeout(saveDraft, 400); }, true));
+(async function initAuthGate(){
+  try{
+    const r = await sbClient.auth.getSession();
+    S.isLoggedIn = !!(r.data && r.data.session);
+    sbClient.auth.onAuthStateChange((_e, sess) => { S.isLoggedIn = !!sess; applyAuthUI(); });
+  }catch(e){}
+  applyAuthUI();
+  let resume = false;
+  try{ resume = sessionStorage.getItem(RESUME_KEY) === '1'; sessionStorage.removeItem(RESUME_KEY); }catch(e){}
+  if(resume && S.isLoggedIn){
+    await window.__bfmStoresReady;
+    setTimeout(() => { if(validateForm()){ buildReviewPopup(); openOverlay(reviewOverlay); } }, 600);
+  }
+})();
 </script>
 
 <nav class="s-nav" id="svFooterNav">
