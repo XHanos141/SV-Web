@@ -966,6 +966,7 @@ function soActionsV2(o){
   else if(o.state === 'unpaid') btns = A('Pay again','repay');
   else if(o.state === 'cod_pending') btns = A('Cancel order','cancel','danger');
   else if(o.state === 'paid') btns = A('Download invoice','invoice');
+  else if((o.state === 'processing' || o.state === 'shipped') && o.payment_method === 'cod') btns = A('Download invoice','invoice'); /* COD: invoice shows as due, flips to Paid once delivered */
   else if(o.state === 'delivered') btns = '<div class="oc-actions-row">'+A('Order again','reorder')+A('Download invoice','invoice')+'</div>';
   else if(o.state === 'cancelled' && o.cancel_reason === 'Not paid in time') btns = A('Order again','repay');
   const bottomNote = ['awaiting_payment','unpaid','cod_pending','cancelled'].includes(o.state) ? soNoteV2(o) : '';
@@ -1189,7 +1190,7 @@ document.addEventListener('click', function(e){
     location.href = 'payment.html';
   });
 });
-/* Download invoice (paid / shipped / delivered orders): builds the A4 PDF in the browser from the order row */
+/* Download invoice (paid / delivered orders; COD also while processing / shipped, shown as due): builds the A4 PDF in the browser from the order row */
 document.addEventListener('click', async function(e){
   const b = e.target.closest && e.target.closest('.oc-action[data-act="invoice"]'); if(!b || b.disabled) return;
   const label = b.textContent; b.disabled = true; b.textContent = 'Preparing invoice…';
