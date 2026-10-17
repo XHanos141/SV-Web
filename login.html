@@ -143,6 +143,12 @@ body{
   padding:12px 12px;min-width:0;
 }
 .input-shell input::placeholder{color:var(--text3)}
+.input-shell input{border-radius:calc(var(--radius-sm) - 2px)}
+.input-shell input:-webkit-autofill,.input-shell input:-webkit-autofill:hover,.input-shell input:-webkit-autofill:active{
+  -webkit-box-shadow:0 0 0 1000px var(--surface2) inset;-webkit-text-fill-color:var(--text);caret-color:var(--text);
+  transition:background-color 9999s ease-out 0s;
+}
+.input-shell:focus-within input:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px var(--surface) inset}
 .eye-toggle{
   background:none;border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;color:var(--text3);
