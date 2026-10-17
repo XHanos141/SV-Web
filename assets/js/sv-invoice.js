@@ -39,7 +39,6 @@ function _ciLockup(h, tc, bdc, b, ih) {
 const _ciPill = s => { const x = _CI_TXB[s] || _CI_TXB.paid; return `<span style="display:inline-block;${_CI_PJ};font-size:12px;font-weight:700;padding:4px 14px;border-radius:999px;border:1px solid ${x.b};background:${x.bg};color:${x.c};line-height:1.2">${x.t}</span>`; };
 const _CI_TONE = {
   g: ['#2f9b68', 'rgba(47,155,104,.12)', 'rgba(47,155,104,.35)'],
-  a: ['#a86400', 'rgba(232,160,32,.16)', 'rgba(200,130,10,.4)'],
   c: ['#0A9BDC', 'rgba(10,155,220,.1)', 'rgba(10,155,220,.4)'],
   p: ['#6a5de6', 'rgba(124,111,247,.12)', 'rgba(124,111,247,.35)']
 };
@@ -48,12 +47,10 @@ function _ciBadge(t, k) {
   const c = _CI_TONE[k] || _CI_TONE.g;
   return `<span style="display:inline-block;${_CI_PJ};font-size:12px;font-weight:700;padding:4px 14px;border-radius:999px;border:1px solid ${c[2]};background:${c[1]};color:${c[0]};line-height:1.2;white-space:nowrap">${t}</span>`;
 }
-/* payment badge (Paid / COD due) + order stage badge, side by side */
+/* Invoices exist only once paid (COD: once delivered), so the payment badge is always Paid; stage badge shows fulfilment */
 function _ciPills(inv) {
-  const due = _ciMoney(inv.amountDue != null ? inv.amountDue : (inv.total || 0));
-  const pay = inv.payType === 'cod' && !inv.paid ? ['COD \u00b7 ' + due + ' due', 'a'] : ['Paid', 'g'];
   const stg = _CI_STAGE[inv.stage];
-  return `<span style="display:inline-flex;gap:6px;align-items:center">${stg ? _ciBadge(stg[0], stg[1]) : ''}${_ciBadge(pay[0], pay[1])}</span>`;
+  return `<span style="display:inline-flex;gap:6px;align-items:center">${stg ? _ciBadge(stg[0], stg[1]) : ''}${_ciBadge('Paid', 'g')}</span>`;
 }
 const _ciChip = (d, solid) => `<span style="flex:none;width:26px;height:26px;border-radius:8px;background:#eef2f8;display:inline-flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" style="${solid ? 'fill:#001f3c;stroke:none' : 'fill:none;stroke:#001f3c;stroke-width:2.3;stroke-linecap:butt;stroke-linejoin:round'}">${d}</svg></span>`;
 /* Order ID badge — mirrors the LOCKED .order-id-badge (SV-) and .tracking-tag (PX- proxy), inlined for PDF */
@@ -231,9 +228,6 @@ function mapOrder(o){
     discount: Number(o.discount) || 0, voucher: o.voucher_code || null, shipVoucher: !!o.ship_voucher,
     shipping: Number(o.shipping) || 0,
     status: o.state === 'shipped' ? 'shipped' : 'paid',
-    payType: o.payment_method === 'cod' ? 'cod' : 'prepaid',
-    paid: o.payment_method === 'cod' ? (o.state === 'delivered' || o.state === 'paid') : true,
-    amountDue: (o.payment_method === 'cod' && !(o.state === 'delivered' || o.state === 'paid')) ? Number(o.total) || 0 : 0,
     stage: o.state || '',
     date: fmtDate(o.paid_at || o.created_at)
   };
