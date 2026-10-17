@@ -216,6 +216,41 @@ function mapOrder(o){
     date: fmtDate(o.paid_at || o.created_at)
   };
 }
+/* Save PDF + visible in-app confirmation (browsers may download silently, e.g. after async fetch / PWA) */
+function svPdfSaved(blob, filename, accent){
+  var url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = filename; a.style.display = 'none';
+  document.body.appendChild(a); a.click(); a.remove();
+  var old = document.getElementById('_svPdfDone'); if(old) old.remove();
+  var c = document.createElement('div'); c.id = '_svPdfDone'; c.setAttribute('role','status'); c.setAttribute('aria-live','polite');
+  c.style.cssText = "position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:420px;margin:0 auto;z-index:2147483647;background:#0f1e3c;color:#fff;border-radius:16px;padding:12px 12px 12px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 32px rgba(0,0,0,.35);font:600 13px/1.3 'DM Sans',system-ui,sans-serif;transform:translateY(24px);opacity:0;transition:transform .25s ease,opacity .25s ease";
+  var ic = document.createElement('div');
+  ic.style.cssText = 'flex:none;width:32px;height:32px;border-radius:50%;background:' + accent + ';display:flex;align-items:center;justify-content:center';
+  ic.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>';
+  var tx = document.createElement('div'); tx.style.cssText = 'flex:1;min-width:0';
+  var t1 = document.createElement('div'); t1.style.fontWeight = '800'; t1.textContent = 'PDF saved to Downloads';
+  var t2 = document.createElement('div'); t2.style.cssText = 'opacity:.7;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'; t2.textContent = filename;
+  tx.appendChild(t1); tx.appendChild(t2);
+  var bs = 'flex:none;border:0;border-radius:10px;padding:9px 12px;font:800 12px/1 inherit;color:#fff;text-decoration:none;cursor:pointer;';
+  var op = document.createElement('a'); op.href = url; op.target = '_blank'; op.rel = 'noopener'; op.textContent = 'Open';
+  op.style.cssText = bs + 'background:' + accent;
+  c.appendChild(ic); c.appendChild(tx); c.appendChild(op);
+  var file = null;
+  try{ file = new File([blob], filename, { type:'application/pdf' }); }catch(e){}
+  if(file && navigator.canShare && navigator.canShare({ files:[file] })){
+    var sh = document.createElement('button'); sh.type = 'button'; sh.textContent = 'Share';
+    sh.style.cssText = bs + 'background:rgba(255,255,255,.14)';
+    sh.onclick = function(){ navigator.share({ files:[file], title:filename }).catch(function(){}); };
+    c.appendChild(sh);
+  }
+  var done = function(){ c.style.opacity = '0'; setTimeout(function(){ c.remove(); URL.revokeObjectURL(url); }, 300); };
+  var x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label','Dismiss'); x.textContent = '\u2715';
+  x.style.cssText = 'flex:none;background:none;border:0;color:#fff;opacity:.6;font-size:14px;padding:6px;cursor:pointer';
+  x.onclick = done; c.appendChild(x);
+  document.body.appendChild(c);
+  requestAnimationFrame(function(){ c.style.transform = 'none'; c.style.opacity = '1'; });
+  setTimeout(done, 15000);
+}
 /* Preferred path: server renders a true vector PDF (selectable text, sharp at any zoom) */
 function serverDownload(o){
   var sb = (typeof sbClient !== 'undefined') ? sbClient : null;
@@ -229,10 +264,7 @@ function serverDownload(o){
     return res.blob();
   }).then(function(blob){
     if(!blob || blob.type.indexOf('pdf') < 0) throw new Error('bad pdf');
-    var a = document.createElement('a'), url = URL.createObjectURL(blob);
-    a.href = url; a.download = 'suppverse-invoice-' + String(o.order_number || 'order').replace(/[^A-Za-z0-9_-]/g, '') + '.pdf';
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
+    svPdfSaved(blob, 'suppverse-invoice-' + String(o.order_number || 'order').replace(/[^A-Za-z0-9_-]/g, '') + '.pdf', '#009ddc');
   });
 }
 function download(o){ return serverDownload(o); }
