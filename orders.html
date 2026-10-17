@@ -800,7 +800,7 @@ async function loadProxyOrders(){
   if(!rows.length){ list.innerHTML = HIST ? '<div class="px-state">No completed Buy For Me orders yet.</div>' : '<div class="px-state">No active Buy For Me requests.<br>Past ones are in Profile &rarr; Order History.<br><br><a href="orders.html?view=history#proxy">Open Order History</a></div>'; return; }
   const pxDone = r => ['delivered','rejected','cancelled','expired'].includes(r.status) || pxExpiredQuote(r);
   rows.sort((a, b) => (pxDone(a) - pxDone(b)));
-  list.innerHTML = rows.map((r, i) => ((!HIST && pxDone(r) && !rows.slice(0, i).some(pxDone)) ? '<div class="oc-sep">Request order</div>' : '') + pxRender(r)).join('');
+  list.innerHTML = rows.map((r, i) => ((!HIST && pxDone(r) && !rows.slice(0, i).some(pxDone)) ? '<div class="oc-sep">Past Requests</div>' : '') + pxRender(r)).join('');
   if(open.size) list.querySelectorAll('.order-card').forEach(c => { if(!open.has(c.dataset.rid)) c.classList.add('collapsed'); });
 }
 
@@ -1135,7 +1135,7 @@ async function loadStoreOrders(){
     orders.sort((a, b) => (act(b) - act(a)));   /* running orders pinned on top (stable: newest first inside each group) */
     list.innerHTML = orders.map((o, i) => {
       const fin = SO_FINAL.includes(o.state);
-      const sep = (!HIST && fin && !orders.slice(0, i).some(x => SO_FINAL.includes(x.state))) ? '<div class="oc-sep">Previous order</div>' : '';
+      const sep = (!HIST && fin && !orders.slice(0, i).some(x => SO_FINAL.includes(x.state))) ? '<div class="oc-sep">Past Orders</div>' : '';
       /* running = expanded by default; finished = collapsed. A card the customer collapsed/expanded keeps that choice, unless it just finished. */
       const collapsed = fin ? (HIST || !prev.has(o.id) || soStates[o.id] !== o.state ? true : prev.get(o.id)) : (prev.has(o.id) ? prev.get(o.id) : false);
       const card = soRenderV2(o, { collapsed });
