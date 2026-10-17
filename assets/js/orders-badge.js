@@ -62,8 +62,9 @@
   function part(k){ var n = parseInt(localStorage.getItem(k), 10); return n > 0 ? n : 0; }
   function cached(){ return part(KEY_S) + part(KEY_P); }
   function put(k, n){ try{ if(n > 0) localStorage.setItem(k, String(n)); else localStorage.removeItem(k); }catch(e){} }
+  var PX_CONF = ['approved','paid','purchasing','ordered','shipped_intl','arrived_bd','delivered'];
   function pxRunning(r){
-    return !!r && !(['delivered','rejected','cancelled','expired'].indexOf(r.status) > -1 || (r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date()));
+    return !!r && (!!r.order_id || PX_CONF.indexOf(r.status) > -1) && !(['delivered','rejected','cancelled','expired'].indexOf(r.status) > -1 || (r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date()));
   }
   function countOf(orders){
     return (orders || []).reduce(function(n,o){ return n + (o && o.state && !FINAL[o.state] ? 1 : 0); }, 0);
@@ -82,7 +83,7 @@
       if(!(s.data && s.data.session)){ put(KEY_S, 0); put(KEY_P, 0); render(0); return; }
       var r = await sbClient.rpc('my_orders');
       if(!(r.error || !r.data || !r.data.ok)) put(KEY_S, countOf(r.data.orders));   // keep last known value on failure
-      var px = await sbClient.from('proxy_requests').select('status,expires_at');
+      var px = await sbClient.from('proxy_requests').select('status,expires_at,order_id');
       if(!px.error && px.data) put(KEY_P, px.data.filter(pxRunning).length);
       render(cached());
     }catch(e){} finally { busy = false; }

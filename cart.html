@@ -336,6 +336,27 @@ body.dark-mode #viewProxy .summary-card.glass-card-green{
   border-color:rgba(170,80,0,0.5);
 }
 #viewProxy .cart-card{border-color:rgba(242,100,48,0.38)}
+/* Proxy Quote tab: requests + quotes (confirmed orders live in Orders tab) */
+.pq-card{width:100%;background:var(--surface);border:1px solid rgba(242,100,48,0.38);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:14px;display:flex;flex-direction:column;gap:10px}
+.pq-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pq-id{font-family:'Roboto Mono',ui-monospace,monospace;font-size:11.5px;font-weight:700;color:var(--orange);background:var(--orange-soft);border:1.5px solid rgba(242,100,48,0.55);border-radius:8px;padding:3px 9px}
+.pq-pill{font-size:10.5px;font-weight:800;border-radius:999px;padding:3px 10px;background:var(--orange-soft);color:var(--orange)}
+.pq-pill.ready{background:var(--green-soft);color:var(--green)}
+.pq-items{display:flex;flex-direction:column;gap:6px}
+.pq-item{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;font-weight:600;color:var(--text)}
+.pq-item small{color:var(--text3);font-weight:600}
+.pq-info{font-size:12.5px;font-weight:600;color:var(--text2);padding:10px 12px;border-radius:12px;background:var(--bg)}
+.pq-quote{padding:12px;border-radius:14px;background:var(--orange-soft);border:1.5px solid rgba(242,100,48,0.4)}
+.pq-quote-top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.pq-lbl{font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--text3)}
+.pq-amt{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--orange);line-height:1.1}
+.pq-exp{font-size:11px;font-weight:600;color:var(--text3);text-align:right}
+.pq-btns{display:flex;gap:10px;margin-top:12px}
+.pq-btn{flex:1;padding:12px;border-radius:12px;border:none;font:800 13.5px var(--font-display);cursor:pointer}
+.pq-btn:disabled{opacity:.6}
+.pq-btn.accept{background:var(--green);color:#fff}
+.pq-btn.decline{background:transparent;color:#d95353;border:1.5px solid rgba(217,83,83,0.45)}
+
 body.dark-mode #viewProxy .cart-card{border-color:rgba(255,140,90,0.42)}
 #viewProxy .cc-img-wrap{background:linear-gradient(135deg,var(--orange-soft),var(--bg))}
 #viewProxy .free-ship-note{background:var(--orange-soft);border-color:rgba(242,100,48,0.25)}
@@ -536,8 +557,8 @@ body.dark-mode .summary-line.total{border-top-color:var(--accent)}
   <div class="empty-icon">
     <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
   </div>
-  <div class="empty-title">No approved quotes yet</div>
-  <div class="empty-desc">Once your proxy request is quoted and approved,<br>it'll show up here ready to pay.</div>
+  <div class="empty-title">No open requests</div>
+  <div class="empty-desc">Your Buy For Me requests and quotes show up here.<br>Confirmed orders move to the Orders tab.</div>
   <button class="empty-btn" onclick="window.location.href='buy_for_me.html'">Request a Product</button>
 </div>
 
@@ -727,7 +748,7 @@ function updateTabCounts(){
   [['tabInternalCount','internal'],['tabProxyCount','proxy']].forEach(([id, fl]) => {
     const el = document.getElementById(id), d = DATA[fl];
     if(!el || !d) return;
-    const n = d.items.length;
+    const n = fl === 'proxy' ? (window.PQ_N || 0) : d.items.length;
     if(n > 0){ el.textContent = n > 99 ? '99+' : String(n); el.classList.add('show'); }
     else { el.classList.remove('show'); el.textContent = ''; }
   });
@@ -908,6 +929,57 @@ checkoutBtn.addEventListener('click', () => {
 renderFlow('internal');
 renderFlow('proxy');
 setFlow('internal');
+
+/* ─── Proxy Quote tab: open requests + quotes. Confirmed orders live in Orders tab. ─── */
+const PQ_OPEN = ['pending_quote','quoted'];
+function pqUsd(n){ return '$' + (Number(n)||0).toFixed(2); }
+function pqBdt(n){ return '৳' + Math.round(Number(n)||0).toLocaleString('en-US'); }
+function pqDate(iso){ const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
+function pqCard(r){
+  const items = ((r.product_snapshot || {}).items || []).map(i => '<div class="pq-item"><span>'+esc(i.name||'Product')+' <small>× '+esc(Math.max(1,parseInt(i.qty,10)||1))+(i.store?' · '+esc(i.store):'')+'</small></span><span>'+pqUsd((Number(i.price)||0)*Math.max(1,parseInt(i.qty,10)||1))+'</span></div>').join('');
+  const quoted = r.status === 'quoted';
+  const action = quoted
+    ? '<div class="pq-quote"><div class="pq-quote-top"><div><div class="pq-lbl">Your quote</div><div class="pq-amt">'+pqBdt(r.quote_total)+'</div></div>'+(r.expires_at?'<div class="pq-exp">Valid until<br>'+pqDate(r.expires_at)+'</div>':'')+'</div>'
+      +'<div class="pq-btns"><button class="pq-btn decline" data-act="decline" data-id="'+esc(r.id)+'">Decline</button><button class="pq-btn accept" data-act="accept" data-id="'+esc(r.id)+'">Accept &amp; confirm</button></div></div>'
+    : '<div class="pq-info">We are reviewing your request. We will send your quote on WhatsApp.</div>';
+  return '<div class="pq-card"><div class="pq-top"><span class="pq-id">'+esc(r.request_no||'RQ')+'</span><span class="pq-pill'+(quoted?' ready':'')+'">'+(quoted?'Quote ready':'Awaiting quote')+'</span></div>'
+    +'<div class="pq-items">'+items+'</div>'+action+'</div>';
+}
+async function loadProxyRequests(){
+  const list = document.getElementById('cartListProxy'), empty = document.getElementById('cartEmptyProxy');
+  if(!list || typeof sbClient === 'undefined' || !sbClient) return;
+  try{
+    const sess = await sbClient.auth.getSession();
+    if(!(sess.data && sess.data.session)){ window.PQ_N = 0; list.innerHTML = ''; empty.classList.add('show'); updateTabCounts(); return; }
+    const { data, error } = await sbClient.from('proxy_requests').select('*').in('status', PQ_OPEN).order('created_at', { ascending:false });
+    if(error) throw error;
+    const rows = (data || []).filter(r => !(r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date()));
+    window.PQ_N = rows.length;
+    list.innerHTML = rows.map(pqCard).join('');
+    empty.classList.toggle('show', !rows.length);
+    updateTabCounts();
+  }catch(err){ console.error('proxy requests load error:', err); }
+}
+document.getElementById('cartListProxy').addEventListener('click', async function(e){
+  const b = e.target.closest('.pq-btn'); if(!b) return;
+  const act = b.dataset.act, id = b.dataset.id;
+  if(act === 'decline' && !confirm('Decline this quote? The request will be cancelled.')) return;
+  b.disabled = true;
+  try{
+    const { error } = await sbClient.rpc('customer_respond_quote', { p_id:id, p_accept: act === 'accept' });
+    if(error) throw error;
+    if(act === 'accept'){ window.location.href = 'orders.html#proxy'; return; }
+    showToast('Request cancelled');
+  }catch(err){
+    console.error('customer_respond_quote error:', err);
+    alert('Could not update your request. Please try again.');
+  }
+  await loadProxyRequests();
+});
+if(location.hash === '#proxy') setFlow('proxy');
+loadProxyRequests();
+window.addEventListener('pageshow', loadProxyRequests);
+document.addEventListener('visibilitychange', () => { if(!document.hidden) loadProxyRequests(); });
 
 /* Live stock check: refresh limits from the products table, clamp over-limit quantities, flag unavailable items */
 let _stockBusy = false;

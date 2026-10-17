@@ -792,18 +792,19 @@ async function loadProxyOrders(){
     if(l) l.addEventListener('click', () => { try{ sessionStorage.setItem('sv-login-return','orders.html'); }catch(e){} });
     return;
   }
-  const { data, error } = await sbClient.from('proxy_requests')
+  const { data: allRows, error } = await sbClient.from('proxy_requests')
     .select('*, orders(order_number,status)').order('created_at', { ascending:false });
-  if(error){ console.error('proxy_requests load error:', error); list.innerHTML = '<div class="px-state">Could not load your requests. Pull down to retry.</div>'; return; }
+  if(error){ console.error('proxy_requests load error:', error); list.innerHTML = '<div class="px-state">Could not load your orders. Pull down to retry.</div>'; return; }
+  const data = (allRows || []).filter(pxConfirmed);
   if(window.svProxyBadgeSet) window.svProxyBadgeSet(data || []);
   setTabCount('tabProxyCount', (data || []).filter(pxRunning).length);
   if(!data || !data.length){
-    list.innerHTML = '<div class="px-state">No Buy For Me requests yet.<br><br><a href="buy_for_me.html">Send your first request</a></div>';
+    list.innerHTML = '<div class="px-state">No confirmed Buy For Me orders yet.<br>Requests and quotes are in Cart &rarr; Proxy Quote.<br><br><a href="cart.html#proxy">Open Proxy Quote</a></div>';
     return;
   }
   const open = new Set([...list.querySelectorAll('.order-card:not(.collapsed)')].map(c=>c.dataset.rid));
   const rows = HIST ? data.filter(r => ['delivered','rejected','cancelled','expired'].includes(r.status) || pxExpiredQuote(r)) : data.filter(r => !pxStale(r));
-  if(!rows.length){ list.innerHTML = HIST ? '<div class="px-state">No completed Buy For Me orders yet.</div>' : '<div class="px-state">No active Buy For Me requests.<br>Past ones are in Profile &rarr; Order History.<br><br><a href="orders.html?view=history#proxy">Open Order History</a></div>'; return; }
+  if(!rows.length){ list.innerHTML = HIST ? '<div class="px-state">No completed Buy For Me orders yet.</div>' : '<div class="px-state">No active Buy For Me orders.<br>Past ones are in Profile &rarr; Order History.<br><br><a href="orders.html?view=history#proxy">Open Order History</a></div>'; return; }
   const pxDone = r => ['delivered','rejected','cancelled','expired'].includes(r.status) || pxExpiredQuote(r);
   rows.sort((a, b) => (pxDone(a) - pxDone(b)));
   list.innerHTML = rows.map((r, i) => ((!HIST && pxDone(r) && !rows.slice(0, i).some(pxDone)) ? '<div class="oc-sep">Past Requests</div>' : '') + pxRender(r)).join('');
@@ -817,6 +818,9 @@ const SO_FINAL = ['delivered','cancelled'];
 const AUTO_HIDE_DELIVERED_DAYS = 7, AUTO_HIDE_CLOSED_DAYS = 3;
 const soAged = (iso, days) => { const t = Date.parse(iso); return !!t && (Date.now() - t) > days * 86400000; };
 const soStale = o => SO_FINAL.includes(o.state) && (o.state === 'delivered' ? soAged(o.delivered_at, AUTO_HIDE_DELIVERED_DAYS) : soAged(o.cancelled_at || o.created_at, AUTO_HIDE_CLOSED_DAYS));
+const PX_CONFIRMED = ['approved','paid','purchasing','ordered','shipped_intl','arrived_bd','delivered'];
+/* Orders tab = confirmed orders only. Requests + quotes (pending_quote, quoted) live in Cart -> Proxy Quote. */
+const pxConfirmed = r => !!r.order_id || PX_CONFIRMED.includes(r.status);
 const pxExpiredQuote = r => r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date();
 const pxRunning = r => !(['delivered','rejected','cancelled','expired'].includes(r.status) || pxExpiredQuote(r));
 function setTabCount(id, n){
