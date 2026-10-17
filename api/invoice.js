@@ -44,8 +44,6 @@ module.exports = async (req, res) => {
   } catch (e) { return fail(res, 502, 'Could not load your orders'); }
   if (!order) return fail(res, 404, 'Order not found');
   if (OK_STATES.indexOf(order.state) < 0) return fail(res, 409, 'Invoice is available once the order is paid');
-  /* COD stays unpaid until delivery: no invoice while in transit (it is issued, as Paid, once delivered) */
-  if (order.payment_method === 'cod' && ['paid', 'delivered'].indexOf(order.state) < 0) return fail(res, 409, 'Invoice is available once the order is delivered');
 
   try {
     const pdf = await renderInvoicePdf(order);
