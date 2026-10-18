@@ -814,7 +814,7 @@ async function loadProxyOrders(){
   if(window.svProxyBadgeSet) window.svProxyBadgeSet(data || []);
   setTabCount('tabProxyCount', (data || []).filter(pxRunning).length);
   if(!data || !data.length){
-    list.innerHTML = '<div class="px-state">No confirmed Buy For Me orders yet.<br>Requests and quotes are in Cart &rarr; Proxy Quote.<br><br><a href="cart.html#proxy">Open Proxy Quote</a></div>';
+    list.innerHTML = '<div class="px-state">No confirmed Buy For Me orders yet.<br>Requests, quotes and unpaid orders are in Cart &rarr; Proxy Quote.<br><br><a href="cart.html#proxy">Open Proxy Quote</a></div>';
     return;
   }
   const open = new Set([...list.querySelectorAll('.order-card:not(.collapsed)')].map(c=>c.dataset.rid));
@@ -833,9 +833,9 @@ const SO_FINAL = ['delivered','cancelled'];
 const AUTO_HIDE_DELIVERED_DAYS = 7, AUTO_HIDE_CLOSED_DAYS = 3;
 const soAged = (iso, days) => { const t = Date.parse(iso); return !!t && (Date.now() - t) > days * 86400000; };
 const soStale = o => SO_FINAL.includes(o.state) && (o.state === 'delivered' ? soAged(o.delivered_at, AUTO_HIDE_DELIVERED_DAYS) : soAged(o.cancelled_at || o.created_at, AUTO_HIDE_CLOSED_DAYS));
-const PX_CONFIRMED = ['approved','paid','purchasing','ordered','shipped_intl','arrived_bd','delivered'];
+const PX_CONFIRMED = ['paid','purchasing','ordered','shipped_intl','arrived_bd','delivered'];
 /* Orders tab = confirmed orders only. Requests + quotes (pending_quote, quoted) live in Cart -> Proxy Quote. */
-const pxConfirmed = r => !!r.order_id || PX_CONFIRMED.includes(r.status);
+const pxConfirmed = r => r.status !== 'approved' && (!!r.order_id || PX_CONFIRMED.includes(r.status));
 const pxExpiredQuote = r => r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date();
 const pxRunning = r => !(['delivered','rejected','cancelled','expired'].includes(r.status) || pxExpiredQuote(r));
 function setTabCount(id, n){
