@@ -121,17 +121,29 @@ body{
 .cart-card{
   width:100%;
   background:var(--surface);
-  border:1px solid rgba(10,155,220,0.38);
+  border:1px solid rgba(10,155,220,.55);
   border-radius:var(--radius);
   overflow:hidden;
-  box-shadow:var(--shadow-sm);
+  box-shadow:
+    0 2px 5px rgba(15,22,33,.10),
+    0 10px 22px -6px rgba(10,155,220,.42),
+    inset 0 1.5px 0 rgba(255,255,255,1),
+    inset 0 -3px 6px rgba(10,22,40,.06);
   display:flex;
   gap:12px;
   padding:9px 10px;
   position:relative;
   animation:cardIn 0.5s var(--ease) forwards;
 }
-body.dark-mode .cart-card{border-color:rgba(45,190,245,0.42)}
+body.dark-mode .cart-card{
+  border-color:rgba(45,190,245,.5);
+  background:linear-gradient(160deg,#1b3247 0%,#141f2f 100%);
+  box-shadow:
+    0 2px 5px rgba(0,0,0,.35),
+    0 10px 22px -8px rgba(45,190,245,.4),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -2px 4px rgba(0,0,0,.2);
+}
 .cart-card:active{transform:scale(0.98)}
 .cc-img-wrap{
   width:80px;min-width:80px;height:80px;
