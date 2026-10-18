@@ -363,7 +363,12 @@ body.dark-mode .order-card{border-color:rgba(45,190,245,0.32);}
 .oc-id.rq{color:var(--orange);background:rgba(242,100,48,0.08);border:1.5px solid rgba(242,100,48,0.55);}
 body.dark-mode .oc-id.rq{background:rgba(242,100,48,0.14);border-color:rgba(242,100,48,0.6);}
 .oc-status-pill.closed{background:rgba(217,83,83,0.10);color:#d95353;border-color:rgba(217,83,83,0.4);}
-.px-note{margin-top:10px;font-size:12px;font-weight:600;color:var(--text);padding:10px 12px;border-radius:10px;background:var(--bg);}
+.px-note{position:relative;margin:2px 0 14px;padding:10px 12px 10px 15px;border-radius:10px;background:var(--surface2);cursor:pointer;-webkit-tap-highlight-color:transparent;overflow:hidden}
+.px-note::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--orange)}
+.px-note-lbl{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.px-note-lbl svg{width:12px;height:12px;stroke:var(--orange)}
+.px-note-txt{font-size:14px;font-weight:500;line-height:1.45;color:var(--text2,var(--text3));display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.px-note.open .px-note-txt{display:block;-webkit-line-clamp:unset}
 #viewProxy .order-card{border-color:rgba(242,100,48,0.30);}
 body.dark-mode #viewProxy .order-card{border-color:rgba(255,140,90,0.34);}
 #viewProxy .oc-track-link{background:var(--orange);box-shadow:0 4px 14px rgba(242,100,48,0.22);}
@@ -1033,6 +1038,9 @@ function pqIcon(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="current
 function pqNoteH(html, cls){ return '<div class="so-note' + (cls ? ' ' + cls : '') + '"><span class="so-ni">' + (cls === 'bad' ? PQ_NI.warn : PQ_NI.info) + '</span><div class="so-nt">' + html + '</div></div>'; }
 function pqIsExpired(r){ return r.status === 'expired' || (r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date()); }
 function pqIsActive(r){ return PQ_ACTIVE.includes(r.status) && !pqIsExpired(r); }
+const NOTE_IC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+function pxNoteH(t){ return t ? '<div class="px-note" onclick="this.classList.toggle(\'open\')"><div class="px-note-lbl">' + NOTE_IC + 'Your note</div><div class="px-note-txt">' + esc(t) + '</div></div>' : ''; }
+
 function pqCard(r){
   const snap = r.product_snapshot || {}, f = r.fee_snapshot || {};
   const items = (snap.items || []).map(i => ({ name:i.name || 'Product', store:i.store || '', qty:Math.max(1, parseInt(i.qty,10) || 1), price:Number(i.price) || 0 }));
@@ -1114,8 +1122,7 @@ function pqCard(r){
     + '<div class="oc-head-right"><div class="oc-status-wrap"><span class="oc-status-pill ' + pill[1] + '">' + pill[0] + '</span><span class="oc-status-date">' + pqDateTime(pillDate) + '</span></div></div></div>'
     + '<div class="so-collapse"><div class="so-inner"><div class="oc-body">' + top
     + '<div class="oc-subsection"><div class="oc-subhead"><div class="oc-section-label">Items &amp; Summary</div></div>'
-    + '<div class="oc-subsection-content"><div>' + itemRows + math + hint + '</div></div></div>'
-    + (snap.notes ? '<div class="px-note">' + esc(snap.notes) + '</div>' : '')
+    + '<div class="oc-subsection-content"><div>' + itemRows + pxNoteH(snap.notes) + math + hint + '</div></div></div>'
     + timeline + actions
     + '</div></div></div></div>';
 }
