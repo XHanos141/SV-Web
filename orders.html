@@ -456,8 +456,9 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 #storeList .so-v2 .oc-action.danger{ background:#d95353;border-color:#d95353; }
 #storeList .so-v2 .oc-track-link{ background:transparent;color:var(--accent);border:1.5px solid var(--accent);box-shadow:none;padding:10px; }
 /* ===== Swipe-to-remove (completed store orders) + confirm sheet + undo toast ===== */
-.sw-wrap{position:relative;border-radius:12px;overflow:hidden;background:transparent;transition:background 0s .27s}
-.sw-wrap.open,.sw-wrap.drag,.sw-wrap.leaving{background:#DC5252;transition:none}
+/* overflow clips only while swiping: at rest it would cut the card's glow and mismatch its 16px radius */
+.sw-wrap{position:relative;border-radius:16px;background:transparent;transition:background 0s .27s}
+.sw-wrap.open,.sw-wrap.drag,.sw-wrap.leaving{background:#DC5252;overflow:hidden;transition:none}
 .sw-wrap.leaving{margin-bottom:-12px;pointer-events:none;animation:svSortOut .35s cubic-bezier(.4,0,.2,1) forwards;transition:max-height .3s cubic-bezier(.4,0,.2,1) .18s,margin .3s cubic-bezier(.4,0,.2,1) .18s}
 .sw-wrap.enter{opacity:0;margin-bottom:-12px}
 .sw-wrap.enter-go{animation:svSortIn .45s cubic-bezier(.4,0,.2,1) forwards;transition:max-height .4s cubic-bezier(.4,0,.2,1),margin .4s cubic-bezier(.4,0,.2,1)}
