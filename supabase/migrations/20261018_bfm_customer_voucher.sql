@@ -1,0 +1,3 @@
+-- Applied via Supabase MCP as migration "bfm_customer_voucher":
+-- proxy_apply_voucher / proxy_remove_voucher (customer-type vouchers only), _confirm_order_payment_core allows
+-- customer vouchers on proxy orders, my_proxy_order returns subtotal/discount/voucher_code.
