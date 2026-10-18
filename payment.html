@@ -1226,7 +1226,7 @@ const PX_ORDER_ID = (function(){ const v = new URLSearchParams(location.search).
 if(PX_ORDER_ID){ S.flow = 'proxy'; S.orderRef = ''; document.body.classList.add('px-order'); }
 (function showOrderIdBadge(){
   const el = document.getElementById(S.flow === 'proxy' ? 'orderIdBadgeProxy' : 'orderIdBadgeInternal');
-  if(el) el.textContent = S.orderRef;
+  if(el){ el.textContent = S.orderRef; if(!PX_ORDER_ID) el.style.display = 'none'; }
 })();
 
 /* ─── Internal cart: read real items from localStorage (written by store.html) ─── */
@@ -1290,9 +1290,9 @@ function renderInternalSummary(){
   if(shipVoucher && discount > 0){
     shipEl.innerHTML = '<s style="opacity:.55;font-weight:600;margin-right:6px;text-transform:none;letter-spacing:0">' + fmt(shipping) + '</s>' + (shipPaid === 0 ? 'Free' : fmt(shipPaid));
   } else {
-    shipEl.textContent = shipping === 0 ? 'Free' : fmt(shipping);
+    shipEl.textContent = !items.length ? '—' : (shipping === 0 ? 'Free' : fmt(shipping));
   }
-  document.getElementById('payShippingRow').classList.toggle('free-shipping', shipPaid === 0);
+  document.getElementById('payShippingRow').classList.toggle('free-shipping', items.length > 0 && shipPaid === 0);
   const discLine = document.getElementById('payDiscountLine');
   if(discount > 0 && !shipVoucher){
     discLine.style.display = 'flex';
@@ -2094,7 +2094,7 @@ async function startOrderFirst(){
     S.unpaid = { id: d.order_id, number: d.order_number, method: S.method };
     try { sessionStorage.setItem(OF_KEY, d.order_id); } catch(e){}
     S.started = true;
-    const badge = document.getElementById('orderIdBadgeInternal'); if(badge) badge.textContent = d.order_number;
+    const badge = document.getElementById('orderIdBadgeInternal'); if(badge){ badge.textContent = d.order_number; badge.style.display = ''; }
     bkpInvNo.textContent = 'Inv No: ' + d.order_number;
     ofApplyServerTotal(d.total);
     ofLock(true);
