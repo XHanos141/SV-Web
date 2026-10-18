@@ -62,10 +62,19 @@
   function part(k){ var n = parseInt(localStorage.getItem(k), 10); return n > 0 ? n : 0; }
   function cached(){ return part(KEY_S) + part(KEY_P); }
   function put(k, n){ try{ if(n > 0) localStorage.setItem(k, String(n)); else localStorage.removeItem(k); }catch(e){} }
-  var PX_CONF = ['approved','paid','purchasing','ordered','shipped_intl','arrived_bd','delivered'];
+  var PX_CONF = ['paid','purchasing','ordered','shipped_intl','arrived_bd','delivered'];
   function pxRunning(r){
-    return !!r && (!!r.order_id || PX_CONF.indexOf(r.status) > -1) && !(['delivered','rejected','cancelled','expired'].indexOf(r.status) > -1 || (r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date()));
+    return !!r && r.status !== 'approved' && (!!r.order_id || PX_CONF.indexOf(r.status) > -1) && !(['delivered','rejected','cancelled','expired'].indexOf(r.status) > -1 || (r.status === 'quoted' && r.expires_at && new Date(r.expires_at) < new Date()));
   }
+  var KEY_C = 'sv-cart-proxy-badge';
+  function pxCartActive(r){
+    if(!r) return false;
+    if(r.status === 'approved') return true;
+    if(r.order_id) return false;
+    if(r.status === 'pending_quote') return true;
+    return r.status === 'quoted' && !(r.expires_at && new Date(r.expires_at) < new Date());
+  }
+  function syncCart(){ if(window.svRefreshCartBadge) try{ window.svRefreshCartBadge(); }catch(e){} }
   function countOf(orders){
     return (orders || []).reduce(function(n,o){ return n + (o && o.state && !FINAL[o.state] ? 1 : 0); }, 0);
   }
@@ -73,6 +82,7 @@
   /* Pages that already hold the orders list (orders.html) push it here — no extra request. */
   window.svOrdersBadgeSet = function(orders){ put(KEY_S, countOf(orders)); render(cached()); };
   window.svProxyBadgeSet  = function(rows){ put(KEY_P, (rows || []).filter(pxRunning).length); render(cached()); };
+  window.svCartProxySet   = function(n){ put(KEY_C, n); syncCart(); };
 
   async function refresh(){
     if(busy || document.hidden) return;
@@ -80,12 +90,12 @@
     busy = true;
     try{
       var s = await sbClient.auth.getSession();
-      if(!(s.data && s.data.session)){ put(KEY_S, 0); put(KEY_P, 0); render(0); return; }
+      if(!(s.data && s.data.session)){ put(KEY_S, 0); put(KEY_P, 0); put(KEY_C, 0); render(0); syncCart(); return; }
       var r = await sbClient.rpc('my_orders');
       if(!(r.error || !r.data || !r.data.ok)) put(KEY_S, countOf(r.data.orders));   // keep last known value on failure
       var px = await sbClient.from('proxy_requests').select('status,expires_at,order_id');
-      if(!px.error && px.data) put(KEY_P, px.data.filter(pxRunning).length);
-      render(cached());
+      if(!px.error && px.data){ put(KEY_P, px.data.filter(pxRunning).length); put(KEY_C, px.data.filter(pxCartActive).length); }
+      render(cached()); syncCart();
     }catch(e){} finally { busy = false; }
   }
   window.svRefreshOrdersBadge = refresh;

@@ -1155,7 +1155,7 @@ async function loadProxyRequests(){
   if(!list || typeof sbClient === 'undefined' || !sbClient) return;
   try{
     const sess = await sbClient.auth.getSession();
-    if(!(sess.data && sess.data.session)){ window.PQ_N = 0; list.innerHTML = ''; empty.classList.add('show'); updateTabCounts(); return; }
+    if(!(sess.data && sess.data.session)){ window.PQ_N = 0; try{ localStorage.removeItem('sv-cart-proxy-badge'); }catch(e){} list.innerHTML = ''; empty.classList.add('show'); updateTabCounts(); return; }
     const q = sel => sbClient.from('proxy_requests').select(sel).in('status', PQ_ACTIVE.concat(PQ_CLOSED)).order('created_at', { ascending:false }).limit(50);
     let res = await q('*, orders(payment_ref)');
     if(res.error) res = await q('*');
@@ -1165,6 +1165,7 @@ async function loadProxyRequests(){
     const rows = (data || []).filter(r => r.status === 'approved' || !r.order_id).filter(r => pqIsActive(r) || new Date(r.updated_at).getTime() >= cutoff)
       .sort((a, b) => (pqIsActive(b) ? 1 : 0) - (pqIsActive(a) ? 1 : 0));
     window.PQ_N = rows.filter(pqIsActive).length;
+    try{ if(window.PQ_N > 0) localStorage.setItem('sv-cart-proxy-badge', String(window.PQ_N)); else localStorage.removeItem('sv-cart-proxy-badge'); }catch(e){}
     list.innerHTML = rows.map(pqCard).join('');
     empty.classList.toggle('show', !rows.length);
     updateTabCounts();

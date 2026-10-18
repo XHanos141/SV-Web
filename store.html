@@ -1410,6 +1410,7 @@ body.dark-mode .s-tab{
     try{
       var cart = JSON.parse(localStorage.getItem('sv-cart-internal') || '[]');
       var count = Array.isArray(cart) ? cart.reduce(function(n,i){return n+(i.qty||1);},0) : 0;
+      count += parseInt(localStorage.getItem('sv-cart-proxy-badge'),10) || 0;
       var badge = document.getElementById('svNavCartBadge');
       if(!badge) return;
       var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1449,7 +1450,7 @@ body.dark-mode .s-tab{
   window.svRefreshCartBadge = svRefreshCartBadge;
   svRefreshCartBadge();
   window.addEventListener('pageshow', svRefreshCartBadge);
-  window.addEventListener('storage', function(e){ if(!e.key || e.key === 'sv-cart-internal') svRefreshCartBadge(); });
+  window.addEventListener('storage', function(e){ if(!e.key || e.key === 'sv-cart-internal' || e.key === 'sv-cart-proxy-badge') svRefreshCartBadge(); });
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) svRefreshCartBadge(); });
 })();
 </script>
