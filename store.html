@@ -329,21 +329,20 @@ body.dark-mode .s-search-input-wrap svg{
 .p-card:active{transform:scale(0.98)}
 /* Bubble card (ported from dashboard inbox.html, blue -> store cyan) */
 .p-card{
-  border:1px solid rgba(10,155,220,.5);
-  background:linear-gradient(160deg,#ffffff 0%,#e9f7fd 100%);
+  border:1px solid rgba(10,155,220,.38);
+  background:var(--surface);
   box-shadow:
-    0 2px 4px rgba(15,22,33,.08),
-    0 12px 26px -6px rgba(10,155,220,.5),
-    inset 0 1.5px 0 rgba(255,255,255,.95),
-    inset 0 -2px 4px rgba(10,155,220,.08);
+    0 2px 4px rgba(15,22,33,.07),
+    0 8px 18px -8px rgba(10,155,220,.28),
+    inset 0 1.5px 0 rgba(255,255,255,.95);
   transition:transform .18s var(--ease), box-shadow .25s var(--ease);
 }
 body.dark-mode .p-card{
-  border-color:rgba(45,190,245,.45);
+  border-color:rgba(45,190,245,.35);
   background:linear-gradient(160deg,#1b3247 0%,#141f2f 100%);
   box-shadow:
     0 2px 4px rgba(0,0,0,.3),
-    0 10px 24px -8px rgba(45,190,245,.45),
+    0 8px 18px -10px rgba(45,190,245,.3),
     inset 0 1px 0 rgba(255,255,255,.07),
     inset 0 -2px 4px rgba(0,0,0,.2);
 }
