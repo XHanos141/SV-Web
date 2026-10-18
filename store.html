@@ -609,15 +609,21 @@ body.dark-mode .p-card-out .p-img-wrap{
   scrollbar-width:none;
 }
 .trending-scroll::-webkit-scrollbar{display:none}
+/* room for the card glow (overflow-x:auto clips it); negative margin keeps layout unchanged */
+.trending-scroll{padding-top:4px;padding-bottom:22px;margin-top:-4px;margin-bottom:-18px}
 
 .trending-item{
   flex:0 0 260px;
   scroll-snap-align:start;
   background:var(--surface);
-  border:1px solid var(--border-strong);
-  border-radius:var(--radius-sm);
+  border:1px solid rgba(10,155,220,.55);
+  border-radius:16px;
   overflow:hidden;
-  box-shadow:var(--shadow-sm);
+  box-shadow:
+    0 2px 5px rgba(15,22,33,.10),
+    0 10px 22px -6px rgba(10,155,220,.42),
+    inset 0 1.5px 0 rgba(255,255,255,1),
+    inset 0 -3px 6px rgba(10,22,40,.06);
   display:flex;
   align-items:stretch;
   gap:8px;
@@ -626,6 +632,15 @@ body.dark-mode .p-card-out .p-img-wrap{
   position:relative;
 }
 
+body.dark-mode .trending-item{
+  border-color:rgba(45,190,245,.5);
+  background:linear-gradient(160deg,#1b3247 0%,#141f2f 100%);
+  box-shadow:
+    0 2px 5px rgba(0,0,0,.35),
+    0 10px 22px -8px rgba(45,190,245,.4),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -2px 4px rgba(0,0,0,.2);
+}
 .trending-pic{
   width:88px;
   min-width:88px;
