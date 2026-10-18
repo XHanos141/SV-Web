@@ -172,6 +172,7 @@ body.dark-mode .draft-math-total{border-top-color:rgba(255,255,255,0.18)}
 .of-banner b{font-weight:800}
 .of-banner button{border:0;background:transparent;color:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:4px 2px;font-size:13px}
 .px-order #addrCard,.px-order .pay-timer-row,.px-order .method-card[data-method="card"],.px-order .method-card[data-method="upay"],.px-order .method-card[data-method="cod"]{display:none!important}
+.px-order #tabInternal{opacity:.4;cursor:not-allowed;filter:grayscale(1)}
 .of-locked #addrCard,.of-locked #promoRowInternal,.of-locked #promoAppliedInternal,.of-locked #promoRowProxy,.of-locked #promoAppliedProxy,.of-locked #promoSuggestProxy{pointer-events:none;opacity:.6}
 .of-timer{margin:0 0 12px;padding:10px 12px;border-radius:12px;font-weight:800;font-size:13px;text-align:center;border:1.5px dashed var(--panel-accent,#009b72);color:var(--panel-accent,#009b72)}
 .of-timer.expired{color:var(--muted);border-color:var(--muted)}
@@ -1488,7 +1489,7 @@ function setFlow(flow){
   // Re-render method selection for new flow context
   if(S.method) selectMethod(S.method);
 }
-tabInternal.addEventListener('click', () => { if(PX_ORDER_ID){ window.location.href = 'payment.html'; return; } setFlow('internal'); });
+tabInternal.addEventListener('click', () => { if(PX_ORDER_ID){ showToast('Finish your Buy For Me payment first'); return; } setFlow('internal'); });
 tabProxy.addEventListener('click', () => setFlow('proxy'));
 
 /* Init: load real cart data, then apply the flow from ?flow= URL param */
@@ -1627,8 +1628,9 @@ function selectMethod(method){
     if(panel) panel.classList.add('show');
   }
 
-  payBtn.disabled = false;
-  payBtnText.textContent = methodLabels[method] || 'Continue';
+  const _emptyStore = !PX_ORDER_ID && S.flow === 'internal' && !S.proxyOrder && !readInternalCart().length;
+  payBtn.disabled = _emptyStore;
+  payBtnText.textContent = _emptyStore ? 'Your cart is empty' : (methodLabels[method] || 'Continue');
 }
 
 const CRYPTO_WALLET = '0x48698E8fc2bcf3324a9A6869d549e2e75AEEC586';
