@@ -1023,8 +1023,8 @@ function setFlow(flow){
   document.getElementById('cartFlowTabs').classList.toggle('flow-proxy', flow === 'proxy');
   updateBar();
 }
-tabInternal.addEventListener('click', () => setFlow('internal'));
-tabProxy.addEventListener('click', () => setFlow('proxy'));
+tabInternal.addEventListener('click', () => { window.__flowPicked = true; setFlow('internal'); });
+tabProxy.addEventListener('click', () => { window.__flowPicked = true; setFlow('proxy'); });
 checkoutBtn.addEventListener('click', () => {
   if(!svRequireAuth()) return;
   if(DATA[currentFlow].items.length === 0) return;
@@ -1169,6 +1169,7 @@ async function loadProxyRequests(){
     list.innerHTML = rows.map(pqCard).join('');
     empty.classList.toggle('show', !rows.length);
     updateTabCounts();
+    if(!window.__flowPicked){ window.__flowPicked = true; if(location.hash !== '#proxy' && currentFlow === 'internal' && DATA.internal.items.length === 0 && window.PQ_N > 0) setFlow('proxy'); }
   }catch(err){ console.error('proxy requests load error:', err); }
 }
 document.getElementById('cartListProxy').addEventListener('click', async function(e){
