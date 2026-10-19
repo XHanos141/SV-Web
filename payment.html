@@ -1601,6 +1601,22 @@ async function loadProxyOrder(){
 }
 if(PX_ORDER_ID){ loadProxyOrder(); }
 
+/* Admin-controlled method visibility (site_content: checkout/payment_methods). Missing/true = shown. */
+(async function applyMethodVisibility(){
+  try{
+    if(typeof sbClient === 'undefined' || !sbClient) return;
+    const { data, error } = await sbClient.from('site_content').select('content').eq('page','checkout').eq('section','payment_methods').maybeSingle();
+    const m = (!error && data && data.content && data.content.methods) || null;
+    if(!m) return;
+    document.querySelectorAll('.method-card').forEach(c => {
+      if(m[c.dataset.method] === false){
+        c.style.display = 'none';
+        if(S.method === c.dataset.method){ S.method = null; c.classList.remove('selected'); payBtn.disabled = true; payBtnText.textContent = 'Select a method'; }
+      }
+    });
+  }catch(e){}
+})();
+
 /* Method selection */
 const methodCards = document.querySelectorAll('.method-card');
 const allPanels = document.querySelectorAll('.detail-panel');
