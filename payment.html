@@ -132,6 +132,9 @@ body.dark-mode .pxd-qp{color:#fff}
 .pxd-note{margin:10px 0 6px;padding:9px 12px;border-left:3px solid #f4682f;border-radius:10px;background:rgba(244,104,47,.07);font-size:13px;color:#001f3c;word-break:break-word}
 body.dark-mode .pxd-note{color:#fff}
 .pxd-note b{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#8a94a6;margin-bottom:2px}
+main,.pay-bar{transition:opacity .25s ease}
+.px-boot main,.px-boot .pay-bar{opacity:0;pointer-events:none}
+.px-boot #summaryInternal{display:none!important}
 .pxd-old .draft-math-label{color:#5d6b82;font-weight:600;opacity:1}
 .pxd-old .draft-math-val{position:relative;display:inline-block;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;padding:0 2px;color:#5d6b82;opacity:1}
 .pxd-old .draft-math-val::after{content:"";position:absolute;left:-3px;right:-3px;top:50%;height:1.5px;border-radius:2px;background:#d95353;transform:rotate(-9deg)}
@@ -489,6 +492,7 @@ body.dark-mode .pay-success-sheet .ps-btn-ghost{color:#34d399;border-color:#34d3
 <script src="/assets/js/sv-back.js" defer></script>
 <script src="/assets/js/pwa.js" defer></script>
 </head>
+<script>if(/[?&]order=/.test(location.search)){document.documentElement.classList.add('px-boot');setTimeout(function(){document.documentElement.classList.remove('px-boot')},5000);}</script>
 <body>
 
 <header class="header">
@@ -1608,6 +1612,7 @@ async function loadProxyOrder(){
       const q = await sbClient.from('proxy_requests').select('product_snapshot,fee_snapshot,quote_total').eq('order_id', PX_ORDER_ID).maybeSingle();
       if(q.data) renderProxyDetails(q.data, sec);
     }catch(e){}
+    document.documentElement.classList.remove('px-boot');
   } catch(e){ showToast('Could not load your order'); back(); }
 }
 if(PX_ORDER_ID){ loadProxyOrder(); }
