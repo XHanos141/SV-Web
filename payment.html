@@ -120,6 +120,8 @@ body.dark-mode .pay-summary-head .tracking-tag .tt-val{color:#FF9466}
 body.dark-mode .pay-line.total{border-top-color:rgba(255,255,255,0.18)}
 .pay-line.total .amt{color:var(--text)}
 /* ── Order Summary math breakdown — matches the LOCKED spec on the main app's Draft Order Card (app.html .draft-math-*) ── */
+.pxd-sec-row{display:flex;align-items:center;justify-content:space-between}
+.pxd-rq{font-family:'Roboto Mono',monospace;font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--orange,#f26a2e);background:rgba(242,106,46,.1);border:1px solid rgba(242,106,46,.35);border-radius:8px;padding:3px 9px;text-transform:none}
 .pxd-sec{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8a94a6;margin:4px 0 8px}
 .pxd-item{padding:8px 0;border-bottom:1px dashed rgba(0,31,60,.12)}
 body.dark-mode .pxd-item{border-bottom-color:rgba(255,255,255,.14)}
@@ -1521,7 +1523,8 @@ function renderProxyDetails(r, sec){
   const est = rate ? (usd + tax + svc) * rate : 0;
   const U = n => '$' + (Number(n) || 0).toFixed(2);
   const row = (l, v, cls) => '<div class="draft-math-row' + (cls ? ' ' + cls : '') + '"><span class="draft-math-label">' + l + '</span><span class="draft-math-val">' + v + '</span></div>';
-  let h = '<div class="pxd-sec">Items</div>' + items.map(i =>
+  const rq = (S.proxyOrder && S.proxyOrder.request_no) || '';
+  let h = '<div class="pxd-sec pxd-sec-row"><span>Items</span>' + (rq ? '<span class="pxd-rq">' + escHtml(rq) + '</span>' : '') + '</div>' + items.map(i =>
     '<div class="pxd-item"><div class="pxd-r1"><span class="pxd-nm">' + escHtml(i.name) + '</span><span class="pxd-qp">' + i.qty + ' × ' + U(i.price) + '</span></div>'
     + '<div class="pxd-r2"><span class="pxd-st">' + escHtml(i.store) + '</span><span class="pxd-lt">' + U(i.qty * i.price) + '</span></div></div>').join('');
   if(snap.notes) h += '<div class="pxd-note"><b>Your note</b>' + escHtml(snap.notes) + '</div>';
@@ -1604,7 +1607,7 @@ async function loadProxyOrder(){
     const sec = document.getElementById('summaryProxy');
     sec.querySelectorAll('.draft-math-row, .pay-tracking').forEach(el => { el.style.display = 'none'; });
     const tot = sec.querySelector('.draft-math-total');
-    if(tot) tot.insertAdjacentHTML('beforebegin', '<div class="draft-math-row"><span class="draft-math-label">Request</span><span class="draft-math-val">' + escHtml(d.request_no || '') + '</span></div><div class="draft-math-row"><span class="draft-math-label">Final price (approved quote)</span><span class="draft-math-val">' + fmt(Number(d.subtotal) || TOTALS_BDT.proxy) + '</span></div>');
+    if(tot) tot.insertAdjacentHTML('beforebegin', '<div class="draft-math-row"><span class="draft-math-label">Final price (approved quote)</span><span class="draft-math-val">' + fmt(Number(d.subtotal) || TOTALS_BDT.proxy) + '</span></div>');
     renderProxySummary();
     setFlow('proxy');
     wireProxyVoucher(sec);
