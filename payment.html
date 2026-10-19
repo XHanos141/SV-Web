@@ -132,7 +132,9 @@ body.dark-mode .pxd-qp{color:#fff}
 .pxd-note{margin:10px 0 6px;padding:9px 12px;border-left:3px solid #f4682f;border-radius:10px;background:rgba(244,104,47,.07);font-size:13px;color:#001f3c;word-break:break-word}
 body.dark-mode .pxd-note{color:#fff}
 .pxd-note b{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#8a94a6;margin-bottom:2px}
-.pxd-old .draft-math-val{text-decoration:line-through;opacity:.55}
+.pxd-old .draft-math-label{color:#8a94a6;font-weight:600;opacity:.75}
+.pxd-old .draft-math-val{position:relative;display:inline-block;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;padding:0 2px;color:#8a94a6;opacity:.75}
+.pxd-old .draft-math-val::after{content:"";position:absolute;left:-3px;right:-3px;top:50%;height:1.5px;border-radius:2px;background:#d95353;transform:rotate(-9deg)}
 .draft-math-row{
   display:flex;justify-content:space-between;align-items:center;
   padding:5px 0;font-size:12.5px;font-weight:500;color:#1a2744;
@@ -178,7 +180,7 @@ body.dark-mode .draft-math-total{border-top-color:rgba(255,255,255,0.18)}
 .of-timer.expired{color:var(--muted);border-color:var(--muted)}
 .of-expired{margin:12px 0 0;padding:12px 14px;border-radius:12px;background:var(--surface2);font-size:13px;line-height:1.5}
 .of-expired button{margin-top:10px;display:block;border:0;border-radius:10px;padding:10px 14px;font-weight:800;background:var(--sel-bdr);color:#fff;cursor:pointer;font-size:13px}
-.promo-input{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:13px;color:var(--text);outline:none;font-family:'SV Code','Courier Prime','Courier New',monospace;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.promo-input{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;box-sizing:border-box;height:46px;min-width:0;padding:0 14px;line-height:normal;font-size:13px;color:var(--text);outline:none;font-family:'SV Code','Courier Prime','Courier New',monospace;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 .promo-input::placeholder{text-transform:none;letter-spacing:normal;color:var(--t3);font-family:var(--font);font-weight:400}
 .promo-input:focus{border-color:var(--cyan)}
 #summaryProxy .promo-input:focus{border-color:var(--orange)}
@@ -1593,11 +1595,11 @@ async function loadProxyOrder(){
     if(d.submitted){ showToast('Payment details already submitted. We are verifying.'); back(); return; }
     S.proxyOrder = d; S.orderRef = d.order_number;
     TOTALS_BDT.proxy = Number(d.total) || 0;
-    const badge = document.getElementById('orderIdBadgeProxy'); if(badge) badge.textContent = d.order_number;
+    const badge = document.getElementById('orderIdBadgeProxy'); if(badge) badge.textContent = d.request_no || d.order_number;
     const sec = document.getElementById('summaryProxy');
     sec.querySelectorAll('.draft-math-row, .pay-tracking').forEach(el => { el.style.display = 'none'; });
     const tot = sec.querySelector('.draft-math-total');
-    if(tot) tot.insertAdjacentHTML('beforebegin', '<div class="draft-math-row"><span class="draft-math-label">Request</span><span class="draft-math-val">' + escHtml(d.request_no || '') + '</span></div><div class="draft-math-row"><span class="draft-math-label">Final price (approved quote)</span><span class="draft-math-val">' + fmt(Number(d.subtotal) || TOTALS_BDT.proxy) + '</span></div>');
+    if(tot) tot.insertAdjacentHTML('beforebegin', '<div class="draft-math-row"><span class="draft-math-label">Final price (approved quote)</span><span class="draft-math-val">' + fmt(Number(d.subtotal) || TOTALS_BDT.proxy) + '</span></div>');
     renderProxySummary();
     setFlow('proxy');
     wireProxyVoucher(sec);
