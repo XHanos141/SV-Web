@@ -1600,11 +1600,11 @@ async function loadProxyOrder(){
     if(d.submitted){ showToast('Payment details already submitted. We are verifying.'); back(); return; }
     S.proxyOrder = d; S.orderRef = d.order_number;
     TOTALS_BDT.proxy = Number(d.total) || 0;
-    const badge = document.getElementById('orderIdBadgeProxy'); if(badge) badge.textContent = d.request_no || d.order_number;
+    const badge = document.getElementById('orderIdBadgeProxy'); if(badge) badge.textContent = d.order_number;
     const sec = document.getElementById('summaryProxy');
     sec.querySelectorAll('.draft-math-row, .pay-tracking').forEach(el => { el.style.display = 'none'; });
     const tot = sec.querySelector('.draft-math-total');
-    if(tot) tot.insertAdjacentHTML('beforebegin', '<div class="draft-math-row"><span class="draft-math-label">Final price (approved quote)</span><span class="draft-math-val">' + fmt(Number(d.subtotal) || TOTALS_BDT.proxy) + '</span></div>');
+    if(tot) tot.insertAdjacentHTML('beforebegin', '<div class="draft-math-row"><span class="draft-math-label">Request</span><span class="draft-math-val">' + escHtml(d.request_no || '') + '</span></div><div class="draft-math-row"><span class="draft-math-label">Final price (approved quote)</span><span class="draft-math-val">' + fmt(Number(d.subtotal) || TOTALS_BDT.proxy) + '</span></div>');
     renderProxySummary();
     setFlow('proxy');
     wireProxyVoucher(sec);
