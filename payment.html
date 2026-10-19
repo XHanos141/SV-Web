@@ -172,7 +172,7 @@ body.dark-mode .draft-math-total{border-top-color:rgba(255,255,255,0.18)}
 .of-banner b{font-weight:800}
 .of-banner button{border:0;background:transparent;color:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:4px 2px;font-size:13px}
 .px-order #addrCard,.px-order .pay-timer-row,.px-order .method-card[data-method="card"],.px-order .method-card[data-method="upay"],.px-order .method-card[data-method="cod"]{display:none!important}
-.px-order #tabInternal{opacity:.4;cursor:not-allowed;filter:grayscale(1)}
+.flow-tabs{display:none!important}
 .of-locked #addrCard,.of-locked #promoRowInternal,.of-locked #promoAppliedInternal,.of-locked #promoRowProxy,.of-locked #promoAppliedProxy,.of-locked #promoSuggestProxy{pointer-events:none;opacity:.6}
 .of-timer{margin:0 0 12px;padding:10px 12px;border-radius:12px;font-weight:800;font-size:13px;text-align:center;border:1.5px dashed var(--panel-accent,#009b72);color:var(--panel-accent,#009b72)}
 .of-timer.expired{color:var(--muted);border-color:var(--muted)}
@@ -1496,6 +1496,14 @@ tabProxy.addEventListener('click', () => setFlow('proxy'));
 renderInternalSummary();
 renderProxySummary();
 setFlow(S.flow);
+(function unifiedEntry(){
+  const h = document.querySelector('.hdr-title h1');
+  if(h) h.textContent = PX_ORDER_ID ? 'Buy For Me Payment' : 'Checkout';
+  if(PX_ORDER_ID) return;
+  let empty = false;
+  try { empty = S.flow === 'proxy' || !readInternalCart().length; } catch(e){}
+  if(empty) window.location.replace('cart.html');
+})();
 function renderProxyDetails(r, sec){
   const snap = r.product_snapshot || {}, f = r.fee_snapshot || {};
   const items = (snap.items || []).map(i => ({ name:i.name || 'Product', store:i.store || '', qty:Math.max(1, parseInt(i.qty,10) || 1), price:Number(i.price) || 0 }));
