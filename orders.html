@@ -502,7 +502,15 @@ body.dark-mode #storeList .so-v2 .oc-customer-row .oc-ci{ background:rgba(255,25
 <script src="assets/js/supabase-config.js"></script>
 <script src="assets/js/sv-img.js"></script>
 <script src="assets/js/sv-invoice.js" defer></script>
-<style>@supports (-webkit-touch-callout:none){input,select,textarea{font-size:16px!important}}</style>
+<style>@supports (-webkit-touch-callout:none){input,select,textarea{font-size:16px!important}}
+/* tighter order cards (store + BFM) */
+#storeList .oc-body,#proxyList .oc-body,#storeList .so-v2 .oc-body{gap:10px;padding:12px}
+#storeList .oc-math-card,#proxyList .oc-math-card{padding:8px 12px;gap:4px;margin-top:6px}
+#storeList .oc-math-row.px-sub,#proxyList .oc-math-row.px-sub{margin-top:2px;padding-top:5px}
+#storeList .oc-math-row.total,#proxyList .oc-math-row.total{padding-top:6px}
+#proxyList .px-note{margin:0 0 6px;padding:8px 12px 8px 15px}
+#storeList .oc-section-label,#proxyList .oc-section-label{margin-bottom:5px}
+</style>
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#0f3258">
 <meta name="apple-mobile-web-app-capable" content="yes">
