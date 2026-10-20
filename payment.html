@@ -540,6 +540,7 @@ body.dark-mode .pay-success-sheet .ps-btn-ghost{color:#34d399;border-color:#34d3
       <svg viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
       <h2>Delivery Address</h2>
       <button class="addr-change" id="addrChangeBtn" type="button" style="display:none">Change</button>
+      <button class="addr-change" id="addrDoneBtn" type="button" style="display:none">Done</button>
     </div>
 
     <div id="addrFilled" class="addr-filled" style="display:none">
@@ -1120,6 +1121,7 @@ const addrInputCity = document.getElementById('addrInputCity');
 const addrInputZip = document.getElementById('addrInputZip');
 const addrSaveChk = document.getElementById('addrSaveChk');
 const citySuggest = document.getElementById('citySuggest');
+const addrDoneBtn = document.getElementById('addrDoneBtn');
 
 /* Postal code: digits only */
 addrInputZip.addEventListener('input', function(){
@@ -1165,11 +1167,13 @@ function showFilledAddress(addr){
   addrFilled.style.display = 'flex';
   addrForm.style.display = 'none';
   addrChangeBtn.style.display = 'block';
+  addrDoneBtn.style.display = 'none';
 }
 function showAddressForm(prefill){
   addrFilled.style.display = 'none';
   addrForm.style.display = 'block';
   addrChangeBtn.style.display = 'none';
+  addrDoneBtn.style.display = prefill ? 'block' : 'none';
   if(prefill){
     addrInputName.value = prefill.name || '';
     addrInputPhone.value = prefill.phone || '';
@@ -1196,6 +1200,16 @@ if(savedAddr && savedAddr.name) showFilledAddress(savedAddr);
 else showAddressForm();
 
 addrChangeBtn.addEventListener('click', () => showAddressForm(loadAddress()));
+addrDoneBtn.addEventListener('click', () => {
+  const addr = collectAddressInput();
+  if(!addr.name || !/^01[3-9]\d{8}$/.test(addr.phone.replace(/\D/g, '')) || !addr.full){
+    showToast('Enter name, a valid phone and address');
+    return;
+  }
+  addr.phone = addr.phone.replace(/\D/g, '');
+  if(addrSaveChk.checked) localStorage.setItem(ADDR_KEY, JSON.stringify(addr));
+  showFilledAddress(addr);
+});
 
 /* Persist on blur of last field so it's saved before user reaches Pay button */
 [addrInputName, addrInputPhone, addrInputFull, addrInputCity, addrInputZip].forEach(inp => {
