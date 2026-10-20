@@ -181,7 +181,7 @@ body.dark-mode .draft-math-total{border-top-color:rgba(255,255,255,0.18)}
 .of-banner.show{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .of-banner b{font-weight:800}
 .of-banner button{border:0;background:transparent;color:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:4px 2px;font-size:13px}
-.px-order #addrCard,.px-order .pay-timer-row,.px-order .method-card[data-method="card"],.px-order .method-card[data-method="upay"],.px-order .method-card[data-method="cod"]{display:none!important}
+.px-order .method-card[data-method="card"],.px-order .method-card[data-method="upay"],.px-order .method-card[data-method="cod"]{display:none!important}
 .flow-tabs{display:none!important}
 .of-locked #addrCard,.of-locked #promoRowInternal,.of-locked #promoAppliedInternal,.of-locked #promoRowProxy,.of-locked #promoAppliedProxy,.of-locked #promoSuggestProxy{pointer-events:none;opacity:.6}
 .of-timer{margin:0 0 12px;padding:10px 12px;border-radius:12px;font-weight:800;font-size:13px;text-align:center;border:1.5px dashed var(--panel-accent,#009b72);color:var(--panel-accent,#009b72)}
@@ -2183,9 +2183,16 @@ function ofApplyServerTotal(total){
 }
 async function startProxyPayment(){
   if(_placing || !S.proxyOrder) return;
+  const a = getCheckoutAddress();
+  if(!(a.name && a.phone && a.full)){
+    showToast('Please enter your delivery address');
+    const ac = document.getElementById('addrCard'); if(ac) ac.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
   _placing = true; payBtn.disabled = true;
   try {
-    const res = await sbClient.rpc('proxy_start_payment', { p_order_id: S.proxyOrder.order_id, p_method: S.method, p_sender: S.method === 'bkash' ? S.senderBkashNumber : null });
+    const res = await sbClient.rpc('proxy_start_payment', { p_order_id: S.proxyOrder.order_id, p_method: S.method, p_sender: S.method === 'bkash' ? S.senderBkashNumber : null,
+      p_name: a.name, p_phone: a.phone, p_address: a.full, p_district: a.city || null, p_zip: a.zip || null });
     if(res.error){ showToast('Could not start your payment. Please try again.'); return; }
     const d = res.data;
     if(!d || !d.ok){ showToast((d && d.error) || 'Could not start your payment'); return; }
