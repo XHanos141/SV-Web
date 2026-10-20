@@ -638,7 +638,7 @@ body.dark-mode .pay-success-sheet .ps-btn-ghost{color:#34d399;border-color:#34d3
     </div>
   </div>
 
-  <div class="of-banner" id="ofBanner"><span>Order <b id="ofBannerNum">SV-0000</b> created. Your details are locked while you pay.</span><button type="button" id="ofEditBtn">Edit</button></div>
+  <div class="of-banner" id="ofBanner"><span><span id="ofBannerPre">Order</span> <b id="ofBannerNum">SV-0000</b><span id="ofBannerPost"> created. Your details are locked while you pay.</span></span><button type="button" id="ofEditBtn">Edit</button></div>
   <h2 class="section-label rv">Select Payment Method</h2>
   <div class="method-grid rv">
     <button class="method-card mc-bkash" data-method="bkash" type="button" aria-label="bKash">
@@ -2132,6 +2132,7 @@ function ofLock(on){
   const b = document.getElementById('ofBanner');
   if(b) b.classList.toggle('show', !!on);
   if(on && S.unpaid){ const n = document.getElementById('ofBannerNum'); if(n) n.textContent = S.unpaid.number; }
+  if(on){ const px = S.flow === 'proxy' || !!S.proxyOrder; const pre = document.getElementById('ofBannerPre'), post = document.getElementById('ofBannerPost'); if(pre) pre.textContent = px ? 'Payment started for' : 'Order'; if(post) post.textContent = px ? '. Details are locked while you pay.' : ' created. Your details are locked while you pay.'; }
 }
 function ofReset(){
   S.started = false; ofClearTimer(); ofLock(false);
