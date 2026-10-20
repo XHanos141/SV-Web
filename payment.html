@@ -2130,7 +2130,7 @@ function ofClearTimer(){
 function ofLock(on){
   document.body.classList.toggle('of-locked', !!on);
   const b = document.getElementById('ofBanner');
-  if(b) b.classList.toggle('show', !!on);
+  if(b) b.classList.toggle('show', !!on && !(S.flow === 'proxy' || !!S.proxyOrder));
   if(on && S.unpaid){ const n = document.getElementById('ofBannerNum'); if(n) n.textContent = S.unpaid.number; }
   if(on){ const px = S.flow === 'proxy' || !!S.proxyOrder; const pre = document.getElementById('ofBannerPre'), post = document.getElementById('ofBannerPost'); if(pre) pre.textContent = px ? 'Payment started for' : 'Order'; if(post) post.textContent = px ? '. Details are locked while you pay.' : ' created. Your details are locked while you pay.'; }
 }
