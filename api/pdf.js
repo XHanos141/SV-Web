@@ -1,5 +1,6 @@
 /* POST /api/pdf  { html, size: 'a4'|'receipt', bleed?: boolean }  + Authorization: Bearer <supabase access token>
    Admin-only vector PDF renderer for the SuppVerse dashboard app (invoices, return receipts, ...).
+   RULE: size 'receipt' (80mm) is admin-app only — this route is admin-gated before any render. The web store downloads A4 via /api/invoice, which has no size option.
    Callable cross-origin from the app: auth is the bearer token, not cookies, so CORS can be open. */
 const { SB, KEY } = require('./_site');
 const { renderHtmlPdf, RasterContentError } = require('./_invoice-pdf');
