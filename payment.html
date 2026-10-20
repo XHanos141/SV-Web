@@ -189,8 +189,8 @@ body.dark-mode .draft-math-total{border-top-color:rgba(255,255,255,0.18)}
 .of-expired{margin:12px 0 0;padding:12px 14px;border-radius:12px;background:var(--surface2);font-size:13px;line-height:1.5}
 .of-expired button{margin-top:10px;display:block;border:0;border-radius:10px;padding:10px 14px;font-weight:800;background:var(--sel-bdr);color:#fff;cursor:pointer;font-size:13px}
 .promo-input{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;box-sizing:border-box;height:46px;min-width:0;padding:0 14px;line-height:normal;font-size:13px;color:var(--text);outline:none;font-family:'SV Code','Courier Prime','Courier New',monospace;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
-.promo-input{text-align:center}
-.promo-input::placeholder{text-align:center;text-transform:none;letter-spacing:normal;color:var(--t3);font-family:var(--font);font-weight:400}
+.promo-input{text-align:left}
+.promo-input::placeholder{text-align:left;text-transform:none;letter-spacing:normal;color:var(--t3);font-family:var(--font);font-weight:400}
 .promo-input:focus{border-color:var(--cyan)}
 #summaryProxy .promo-input:focus{border-color:var(--orange)}
 .promo-apply-btn{background:#009b72;color:#fff;border:2px solid var(--surface);border-radius:6px;padding:0 16px;font-size:12px;font-weight:800;flex-shrink:0;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform .15s ease,box-shadow .15s ease,opacity .15s}
@@ -1494,7 +1494,7 @@ function setFlow(flow){
   showEl.style.animation = 'none';
   void showEl.offsetWidth; // force reflow to restart animation
   showEl.style.animation = '';
-  dueBanner.style.display = flow === 'proxy' ? 'flex' : 'none';
+  dueBanner.style.display = 'none';
   payBarLabel.textContent = flow === 'proxy' ? 'Total Due' : 'Total';
   payBarVal.textContent = flow === 'proxy' ? fmt(TOTALS_BDT.proxy) : fmt(TOTALS_BDT.internal);
   if(typeof updateMfsAmounts === 'function') updateMfsAmounts();
