@@ -1529,7 +1529,7 @@ renderProxySummary();
 setFlow(S.flow);
 (function unifiedEntry(){
   const h = document.querySelector('.hdr-title h1');
-  if(h) h.textContent = PX_ORDER_ID ? 'Buy For Me Payment' : 'Checkout';
+  if(h) h.textContent = PX_ORDER_ID ? 'Payment' : 'Checkout';
   if(PX_ORDER_ID) return;
   let empty = false;
   try { empty = S.flow === 'proxy' || !readInternalCart().length; } catch(e){}
