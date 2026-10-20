@@ -402,6 +402,9 @@ body.dark-mode #viewProxy .order-card{border-color:rgba(255,140,90,0.34);}
 .oc-math-row{display:flex;justify-content:space-between;align-items:center;}
 .oc-math-row span:first-child{font-size:12px;font-weight:600;color:var(--text2);}
 .oc-math-row span:last-child{font-size:12px;font-weight:700;color:var(--text);}
+.oc-math-row.px-sub{border-top:1px dashed rgba(138,148,166,.45);margin-top:4px;padding-top:8px}
+.oc-math-row.px-sub span{font-weight:800;color:var(--text)}
+.oc-math-row.total small{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-top:2px}
 .oc-math-row.total{padding-top:8px;border-top:1px solid var(--border-strong);}
 .oc-math-row.total span:first-child{font-size:13px;font-weight:800;color:var(--text);}
 .oc-math-row.total span:last-child{font-family:var(--font-display);font-size:15px;font-weight:800;}
@@ -1090,12 +1093,13 @@ function pqCard(r){
     if(rate){
       math += '<div class="oc-math-row"><span>US sales tax (' + taxP + '%)</span><span>' + pqUsd(tax) + '</span></div>'
             + '<div class="oc-math-row"><span>Service charge (' + svcP + '%)</span><span>' + pqUsd(svc) + '</span></div>'
+            + '<div class="oc-math-row px-sub"><span>Subtotal</span><span>' + pqUsd(usd + tax + svc) + '</span></div>'
             + '<div class="oc-math-row"><span>Rate</span><span>1 USD = ' + pqBdt(rate) + '</span></div>';
     }
   }
   if(quoted){
     if(est && Math.round(Number(r.quote_total) - est) !== 0) math += '<div class="oc-math-row px-old"><span>Estimated price</span><span>≈ ' + pqBdt(est) + '</span></div>';
-    math += '<div class="oc-math-row total"><span>Final price</span><span>' + pqBdt(r.quote_total) + '</span></div>';
+    math += '<div class="oc-math-row total"><span>Total Due<small>Final · approved quote</small></span><span>' + pqBdt(r.quote_total) + '</span></div>';
   } else if(est){
     math += '<div class="oc-math-row total"><span>Estimated price</span><span>≈ ' + pqBdt(est) + '</span></div>';
   }

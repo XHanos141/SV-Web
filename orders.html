@@ -278,6 +278,12 @@ body.dark-mode #viewProxyOrders .order-card{ border-color:rgba(255,140,90,0.34);
 .oc-math-row span:first-child{ font-size:12px;font-weight:600;color:var(--text2); }
 .oc-math-row span:last-child{ font-size:12px;font-weight:700;color:var(--text); }
 .oc-math-row.discount span:last-child{ color:var(--green); }
+.oc-math-row.px-sub{border-top:1px dashed rgba(138,148,166,.45);margin-top:4px;padding-top:8px}
+.oc-math-row.px-sub span{font-weight:800;color:var(--text)}
+.oc-math-row.total small{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-top:2px}
+.oc-math-row.px-old span{color:var(--text2);font-weight:600}
+.oc-math-row.px-old span:last-child{position:relative;display:inline-block;font-family:var(--font-display);font-size:12px;font-weight:700;padding:0 2px}
+.oc-math-row.px-old span:last-child::after{content:"";position:absolute;left:-3px;right:-3px;top:50%;height:1.5px;border-radius:2px;background:#d95353;transform:rotate(-9deg)}
 .oc-math-row.total{ padding-top:8px;border-top:1px solid var(--border-strong); }
 .oc-math-row.total span:first-child{ font-size:13px;font-weight:800;color:var(--text); }
 .oc-math-row.total span:last-child{ font-family:var(--font-display);font-size:15px;font-weight:800; }
@@ -748,10 +754,14 @@ function pxRender(r){
     if(rate){
       math += '<div class="oc-math-row"><span>US sales tax ('+taxP+'%)</span><span>'+pxUsd(tax)+'</span></div>'
             + '<div class="oc-math-row"><span>Service charge ('+svcP+'%)</span><span>'+pxUsd(svc)+'</span></div>'
+            + '<div class="oc-math-row px-sub"><span>Subtotal</span><span>'+pxUsd(usd+tax+svc)+'</span></div>'
             + '<div class="oc-math-row"><span>Rate</span><span>1 USD = '+pxBdt(rate)+'</span></div>';
     }
   }
-  if(quoted) math += '<div class="oc-math-row total"><span>Final price</span><span>'+pxBdt(r.quote_total)+'</span></div>';
+  if(quoted){
+    if(est && Math.round(Number(r.quote_total)-est) !== 0) math += '<div class="oc-math-row px-old"><span>Estimated price</span><span>≈ '+pxBdt(est)+'</span></div>';
+    math += '<div class="oc-math-row total"><span>Total Due<small>Final · approved quote</small></span><span>'+pxBdt(r.quote_total)+'</span></div>';
+  }
   else if(est) math += '<div class="oc-math-row total"><span>Estimate (final after quote)</span><span>'+pxBdt(est)+'</span></div>';
   math += '</div>';
   const preview = quoted ? pxBdt(r.quote_total) : (est ? '≈ '+pxBdt(est) : '');
