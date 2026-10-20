@@ -294,6 +294,9 @@ body.dark-mode .pt-timer-widget{--timer-color:#f5f7fa;--spinner-color:#e4e7ec;--
 .pay-input{width:100%;background:var(--bg);border:1.5px solid rgba(15,35,65,0.28);border-radius:11px;padding:12px;font-size:13px;color:var(--text);outline:none;margin-bottom:12px}
 body.dark-mode .pay-input{border-color:rgba(255,255,255,0.25)}
 .pay-input:focus{border-color:var(--panel-accent)}
+.pay-input.txn-err,.pay-input.txn-err:focus{border-color:#e5484d!important;box-shadow:0 0 0 3px rgba(229,72,77,.16)}
+@keyframes txnShake{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(8px)}45%{transform:translateX(-6px)}60%{transform:translateX(6px)}75%{transform:translateX(-3px)}90%{transform:translateX(3px)}}
+.pay-input.txn-shake{animation:txnShake .45s ease}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 /* P2P-style (proxy bKash/Nagad/Card) */
@@ -2279,13 +2282,22 @@ async function startOrderFirst(){
     payBtn.disabled = !S.method;
   }
 }
+function txnMissing(el){
+  showToast('Enter your transaction ID to confirm payment');
+  if(!el) return;
+  el.classList.remove('txn-shake'); void el.offsetWidth;
+  el.classList.add('txn-err','txn-shake');
+  try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(e){}
+  el.focus({ preventScroll: true });
+  if(navigator.vibrate) navigator.vibrate(60);
+}
+document.addEventListener('input', e => { if(e.target && e.target.classList && e.target.classList.contains('txn-err')) e.target.classList.remove('txn-err'); });
 async function submitPaymentFirst(){
   if(_placing || !S.unpaid) return;
   const txnEl = TXN_FIELD[S.method] ? document.getElementById(TXN_FIELD[S.method]) : null;
   const ref = txnEl ? txnEl.value.trim() : '';
   if(ref.length < 4){
-    if(txnEl){ txnEl.focus(); txnEl.style.borderColor = 'var(--bkash-text)'; setTimeout(() => { txnEl.style.borderColor = ''; }, 900); }
-    showToast('Please enter your transaction ID');
+    txnMissing(txnEl);
     return;
   }
   _placing = true; payBtn.disabled = true;
@@ -2336,9 +2348,7 @@ payBtn.addEventListener('click', () => {
   if(S.method === 'bkash' && S.senderBkashNumber){
     const txnField = document.getElementById(S.flow === 'proxy' ? 'bkTxnP' : 'bkTxn');
     if(txnField && !txnField.value.trim()){
-      txnField.focus();
-      txnField.style.borderColor = 'var(--bkash-text)';
-      setTimeout(() => { txnField.style.borderColor = ''; }, 900);
+      txnMissing(txnField);
       return;
     }
   }
