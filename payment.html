@@ -2178,6 +2178,7 @@ function ofApplyServerTotal(total){
   document.querySelectorAll('.mfs-amount-copy').forEach(el => { el.setAttribute('data-copy', String(t)); });
   const pv = document.getElementById('payBarVal'); if(pv) pv.textContent = fmt(t);
   const pt = document.getElementById('payTotal'); if(pt) pt.textContent = fmt(t);
+  const ptp = document.getElementById('payTotalProxy'); if(ptp) ptp.textContent = fmt(t);
 }
 async function startProxyPayment(){
   if(_placing || !S.proxyOrder) return;
@@ -2194,6 +2195,8 @@ async function startProxyPayment(){
     ofLock(true);
     const panel = ofPanel(); if(panel) panel.classList.add('show');
     payBtnText.textContent = "I've Sent the Payment";
+    if(S.method === 'bkash') startPaymentCountdown();
+    ofStartCountdown();
   } catch(e){
     showToast('Could not start your payment. Please try again.');
   } finally {
