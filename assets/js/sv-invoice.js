@@ -4,7 +4,6 @@
 (function(){
 'use strict';
 function escapeHtml(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-function _generateCustomerInvoiceHTMLLegacy(){ return ''; }
 /* ====== CUSTOMER INVOICE · A4 — Header F + Classic Table ======
    Full-bleed navy header, paginated into true A4 pages (794x1123) so rows never split across a sheet.
    Web is A4-only (the 80mm Receipt lives in the admin app). Export with PDF margin 0. */
