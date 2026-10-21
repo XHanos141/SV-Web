@@ -205,8 +205,8 @@
         if(!cust){ setWriteMsg('<a href="login.html">Sign in</a> to write a review.'); return; }
         sbClient.from('product_reviews').select('id').eq('product_id', productId).eq('customer_id', cust.id).maybeSingle().then(function(rres){
           if(rres && rres.data){ setWriteMsg('You\u2019ve already reviewed this product. Thanks for your feedback!'); return; }
-          sbClient.from('order_items').select('id, orders!inner(status)').eq('product_id', productId).eq('orders.status', 'paid').then(function(ores){
-            if(!ores || !Array.isArray(ores.data) || !ores.data.length){ setWriteMsg('Only customers who\u2019ve purchased this product can leave a review.'); return; }
+          sbClient.from('order_items').select('id, orders!inner(status)').eq('product_id', productId).eq('orders.status', 'delivered').then(function(ores){
+            if(!ores || !Array.isArray(ores.data) || !ores.data.length){ setWriteMsg('You can review this product once your order has been delivered.'); return; }
             showWriteForm();
             window.submitReview = function(){
               var textEl = $('reviewText');
