@@ -65,7 +65,7 @@ const _ciOrderBadge = id => {
 
 /* Math section — same rules as svDiscShipRows(): ship-voucher => no Discount row, struck fee + FREE; customer view = green */
 function _ciMath(x, inv) {
-  const G = '#0A9B72', sv = !!inv.shipVoucher, code = inv.voucher ? ' (' + escapeHtml(inv.voucher) + ')' : '';
+  const G = '#0A9B72', sv = !!inv.shipVoucher, code = inv.voucher ? ' (<span style="font-family:\'Courier Prime\',\'Courier New\',monospace;font-weight:700;letter-spacing:.03em">' + escapeHtml(inv.voucher) + '</span>)' : '';
   const free = sv ? x.d > 0 : x.s === 0, was = sv ? Math.max(x.s, 0) : 0;
   const ic = (d, sw) => `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw || 2}" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">${d}</svg>`;
   const row = (color, icon, label, val, valCss, sw) => `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 18px 5px 0;font-size:14px;font-weight:500;color:${color}"><span style="display:flex;align-items:center;gap:6px">${ic(icon, sw)}${label}</span><span style="font-weight:600;color:${color};${valCss || ''}">${val}</span></div>`;
