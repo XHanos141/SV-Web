@@ -533,7 +533,9 @@ body.dark-mode .mcard-proxy .mcard-cta:hover {
 .newsletter-btn:active { transform: scale(0.95); }
 .newsletter-btn.done { background: linear-gradient(135deg, #2f9b68, #1f7a50); box-shadow: 0 4px 14px rgba(47,155,104,.35); cursor: default; }
 .newsletter-input[readonly] { color: rgba(255,255,255,.9); }
-.nl-unsub { display:block; margin:12px auto 0; background:none; border:none; color:rgba(255,255,255,.55); font-size:12px; font-weight:600; text-decoration:underline; }
+.nl-links { display:flex; justify-content:center; gap:18px; margin-top:12px; }
+.newsletter-btn.wait { background: linear-gradient(135deg, #f4a922, #d98a0b); box-shadow: 0 4px 14px rgba(244,169,34,.35); }
+.nl-unsub { display:block; margin:0; background:none; border:none; color:rgba(255,255,255,.55); font-size:12px; font-weight:600; text-decoration:underline; }
 
 /* ===== FOOTER ===== */
 .footer { background: var(--bg); padding: 32px 20px; position: relative; z-index: 1; border-top: 1px solid var(--border); }
@@ -2181,7 +2183,10 @@ createMarquee('hdTrack', '.hotdeals-section', 28);
         <input type="text" id="nlHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <button class="newsletter-btn" id="nlBtn" onclick="subscribeNewsletter()">Subscribe</button>
       </div>
-      <button type="button" id="nlUnsub" class="nl-unsub" hidden onclick="unsubscribeNewsletter()">Unsubscribe</button>
+      <div class="nl-links" id="nlLinks" hidden>
+        <button type="button" id="nlUnsub" class="nl-unsub" onclick="unsubscribeNewsletter()">Unsubscribe</button>
+        <button type="button" class="nl-unsub" onclick="changeNlEmail()">Change email</button>
+      </div>
     </div>
   </div>
 </section>
@@ -2451,63 +2456,68 @@ async function loadFooterSection(){
 loadFooterSection();
 
 const NL_KEY = 'svw_nl_email';
-function renderNl(){
-  const input = document.getElementById('nlEmail'), btn = document.getElementById('nlBtn'), un = document.getElementById('nlUnsub');
-  let saved = '';
-  try{ saved = localStorage.getItem(NL_KEY) || ''; }catch(_){}
-  if(saved){
-    input.value = saved; input.readOnly = true;
-    btn.textContent = 'Subscribed ✓'; btn.classList.add('done');
-    un.hidden = false;
-  }else{
-    input.readOnly = false; btn.textContent = 'Subscribe'; btn.classList.remove('done');
-    un.hidden = true;
-  }
+const NL_URL = SVW_SB_URL + '/functions/v1/newsletter-subscribe';
+let nlBusy = false, nlState = 'none';
+const nlGet = () => { try{ return localStorage.getItem(NL_KEY) || ''; }catch(_){ return ''; } };
+const nlSet = v => { try{ v ? localStorage.setItem(NL_KEY, v) : localStorage.removeItem(NL_KEY); }catch(_){} };
+async function nlCall(payload){
+  const res = await fetch(NL_URL, { method:'POST', headers:{ 'Content-Type':'application/json', apikey: SVW_SB_ANON_KEY }, body: JSON.stringify(payload) });
+  if(!res.ok) throw new Error('nl ' + res.status);
+  return res.json();
 }
+function renderNl(){
+  const input = document.getElementById('nlEmail'), btn = document.getElementById('nlBtn'), links = document.getElementById('nlLinks'), un = document.getElementById('nlUnsub');
+  const saved = nlGet();
+  btn.classList.remove('done','wait');
+  if(!saved || nlState === 'none'){
+    input.readOnly = false; if(saved) input.value = ''; btn.textContent = 'Subscribe'; links.hidden = true; return;
+  }
+  input.value = saved; input.readOnly = true; links.hidden = false;
+  if(nlState === 'subscribed'){ btn.textContent = 'Subscribed ✓'; btn.classList.add('done'); un.hidden = false; }
+  else { btn.textContent = 'Resend email'; btn.classList.add('wait'); un.hidden = true; }
+}
+async function refreshNl(){
+  const saved = nlGet();
+  if(!saved){ nlState = 'none'; renderNl(); return; }
+  nlState = 'pending'; renderNl();
+  try{
+    const d = await nlCall({ email: saved, mode: 'status' });
+    nlState = d.status === 'subscribed' ? 'subscribed' : d.status === 'pending' ? 'pending' : 'none';
+    if(nlState === 'none') nlSet('');
+  }catch(_){}
+  renderNl();
+}
+function changeNlEmail(){ nlSet(''); nlState = 'none'; renderNl(); document.getElementById('nlEmail').focus(); }
 async function unsubscribeNewsletter(){
   if(nlBusy) return;
-  let saved = '';
-  try{ saved = localStorage.getItem(NL_KEY) || ''; }catch(_){}
-  if(!saved) return;
+  const saved = nlGet(); if(!saved) return;
   nlBusy = true;
   try{
-    const res = await fetch(SVW_SB_URL + '/functions/v1/newsletter-subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', apikey: SVW_SB_ANON_KEY },
-      body: JSON.stringify({ email: saved, mode: 'unsubscribe' })
-    });
-    if(!res.ok) throw new Error('unsub ' + res.status);
-    T("Check your email for the unsubscribe link",'✅');
+    const d = await nlCall({ email: saved, mode: 'unsubscribe' });
+    if(d.mail === 'unavailable') T("Email service isn't ready yet. Please try later",'⚠️');
+    else T("Check your email for the unsubscribe link",'✅');
   }catch(err){
     console.error('newsletter unsubscribe failed', err);
     T("Couldn't send the link. Please try again",'⚠️');
   }finally{ nlBusy = false; }
 }
-let nlBusy = false;
 async function subscribeNewsletter(){
   if(nlBusy) return;
-  if(document.getElementById('nlBtn').classList.contains('done')) return;
+  if(nlState === 'subscribed') return;
   const input = document.getElementById('nlEmail');
-  const email = (input.value || '').trim();
+  const email = (nlState === 'pending' ? nlGet() : (input.value || '')).trim();
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
     T('Please enter a valid email','⚠️');
     return;
   }
-  if(!svwSb){
-    T('Signup is unavailable right now','⚠️');
-    return;
-  }
   nlBusy = true;
   try{
-    const res = await fetch(SVW_SB_URL + '/functions/v1/newsletter-subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', apikey: SVW_SB_ANON_KEY },
-      body: JSON.stringify({ email, hp: (document.getElementById('nlHp') || {}).value || '' })
-    });
-    if(!res.ok) throw new Error('signup ' + res.status);
-    try{ localStorage.setItem(NL_KEY, email); }catch(_){}
+    const d = await nlCall({ email, hp: (document.getElementById('nlHp') || {}).value || '' });
+    nlSet(email); nlState = 'pending';
+    if(d.mail === 'unavailable') T("Saved, but the confirmation email can't be sent yet",'⚠️');
+    else T("Check your email to confirm your subscription",'✅');
     renderNl();
-    T("Check your email to confirm your subscription",'✅');
+    refreshNl();
   }catch(err){
     console.error('newsletter signup failed', err);
     T("Couldn't save your email. Please try again",'⚠️');
@@ -2515,8 +2525,7 @@ async function subscribeNewsletter(){
     nlBusy = false;
   }
 }
-
-renderNl();
+refreshNl();
 
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
