@@ -531,6 +531,10 @@ body.dark-mode .mcard-proxy .mcard-cta:hover {
 .newsletter-input::placeholder { color: rgba(255,255,255,.4); }
 .newsletter-btn { height: 44px; padding: 0 12px; border-radius: 12px; background: linear-gradient(135deg, var(--cyan), #006daa); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .03em; border: none; flex-shrink: 0; transition: transform .15s, box-shadow .2s; box-shadow: 0 4px 14px rgba(0,157,220,.35); }
 .newsletter-btn:active { transform: scale(0.95); }
+.nl-toggle { display:flex; gap:4px; max-width:340px; margin:16px auto 0; padding:4px; border-radius:12px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); }
+.nl-toggle button { flex:1; height:34px; border:none; border-radius:9px; background:transparent; color:rgba(255,255,255,.65); font-size:12px; font-weight:700; letter-spacing:.02em; transition:background .2s,color .2s; }
+.nl-toggle button.on { background:linear-gradient(135deg,var(--cyan),#006daa); color:#fff; box-shadow:0 3px 10px rgba(0,157,220,.35); }
+.nl-toggle button[data-mode="unsubscribe"].on { background:linear-gradient(135deg,#f26430,#c0481a); box-shadow:0 3px 10px rgba(242,100,48,.35); }
 
 /* ===== FOOTER ===== */
 .footer { background: var(--bg); padding: 32px 20px; position: relative; z-index: 1; border-top: 1px solid var(--border); }
@@ -2171,12 +2175,16 @@ createMarquee('hdTrack', '.hotdeals-section', 28);
       <div class="newsletter-icon">
         <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       </div>
-      <h3 class="newsletter-title">Stay in the Loop</h3>
-      <p class="newsletter-desc" style="margin-top:2px;font-size:12px">Get early access to new arrivals, exclusive offers, and important updates. No spam, ever.</p>
+      <h3 class="newsletter-title" id="nlTitle">Stay in the Loop</h3>
+      <p class="newsletter-desc" id="nlDesc" style="margin-top:2px;font-size:12px">Get early access to new arrivals, exclusive offers, and important updates. No spam, ever.</p>
+      <div class="nl-toggle" role="tablist" aria-label="Newsletter">
+        <button type="button" class="on" data-mode="subscribe" onclick="setNlMode('subscribe')">Subscribe</button>
+        <button type="button" data-mode="unsubscribe" onclick="setNlMode('unsubscribe')">Unsubscribe</button>
+      </div>
       <div class="newsletter-form">
         <input type="email" class="newsletter-input" placeholder="Enter your email" id="nlEmail" autocomplete="email" inputmode="email">
         <input type="text" id="nlHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
-        <button class="newsletter-btn" onclick="subscribeNewsletter()">Subscribe</button>
+        <button class="newsletter-btn" id="nlBtn" onclick="subscribeNewsletter()">Subscribe</button>
       </div>
     </div>
   </div>
@@ -2447,6 +2455,17 @@ async function loadFooterSection(){
 loadFooterSection();
 
 let nlBusy = false;
+let nlMode = 'subscribe';
+function setNlMode(m){
+  nlMode = m === 'unsubscribe' ? 'unsubscribe' : 'subscribe';
+  document.querySelectorAll('.nl-toggle button').forEach(b => b.classList.toggle('on', b.dataset.mode === nlMode));
+  const u = nlMode === 'unsubscribe';
+  document.getElementById('nlTitle').textContent = u ? 'Unsubscribe' : 'Stay in the Loop';
+  document.getElementById('nlDesc').textContent = u
+    ? "Enter your email and we'll send you a link to confirm unsubscribing."
+    : 'Get early access to new arrivals, exclusive offers, and important updates. No spam, ever.';
+  document.getElementById('nlBtn').textContent = u ? 'Unsubscribe' : 'Subscribe';
+}
 async function subscribeNewsletter(){
   if(nlBusy) return;
   const input = document.getElementById('nlEmail');
@@ -2464,11 +2483,11 @@ async function subscribeNewsletter(){
     const res = await fetch(SVW_SB_URL + '/functions/v1/newsletter-subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', apikey: SVW_SB_ANON_KEY },
-      body: JSON.stringify({ email, hp: (document.getElementById('nlHp') || {}).value || '' })
+      body: JSON.stringify({ email, mode: nlMode, hp: (document.getElementById('nlHp') || {}).value || '' })
     });
     if(!res.ok) throw new Error('signup ' + res.status);
     input.value = '';
-    T("Check your email to confirm your subscription",'✅');
+    T(nlMode === 'unsubscribe' ? "Check your email for the unsubscribe link" : "Check your email to confirm your subscription",'✅');
   }catch(err){
     console.error('newsletter signup failed', err);
     T("Couldn't save your email. Please try again",'⚠️');
