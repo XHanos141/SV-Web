@@ -2175,6 +2175,7 @@ createMarquee('hdTrack', '.hotdeals-section', 28);
       <p class="newsletter-desc" style="margin-top:2px;font-size:12px">Get early access to new arrivals, exclusive offers, and important updates. No spam, ever.</p>
       <div class="newsletter-form">
         <input type="email" class="newsletter-input" placeholder="Enter your email" id="nlEmail" autocomplete="email" inputmode="email">
+        <input type="text" id="nlHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <button class="newsletter-btn" onclick="subscribeNewsletter()">Subscribe</button>
       </div>
     </div>
@@ -2460,10 +2461,14 @@ async function subscribeNewsletter(){
   }
   nlBusy = true;
   try{
-    const { error } = await svwSb.rpc('subscribe_newsletter', { p_email: email, p_source: 'landing' });
-    if(error) throw error;
+    const res = await fetch(SVW_SB_URL + '/functions/v1/newsletter-subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: SVW_SB_ANON_KEY },
+      body: JSON.stringify({ email, hp: (document.getElementById('nlHp') || {}).value || '' })
+    });
+    if(!res.ok) throw new Error('signup ' + res.status);
     input.value = '';
-    T("Thanks! We've received your email",'✅');
+    T("Check your email to confirm your subscription",'✅');
   }catch(err){
     console.error('newsletter signup failed', err);
     T("Couldn't save your email. Please try again",'⚠️');

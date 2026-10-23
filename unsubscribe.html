@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Unsubscribe — SuppVerse BD</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px;font-family:'DM Sans',sans-serif;background:linear-gradient(160deg,#0f3258,#001532);color:#fff}
+.card{width:100%;max-width:420px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:32px 24px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:20px;margin-bottom:22px}.logo span{color:#f26430}
+.ico{width:64px;height:64px;border-radius:20px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#009ddc,#6761a8)}
+.ico svg{width:30px;height:30px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.card.err .ico{background:linear-gradient(135deg,#f26430,#c0392b)}
+h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:21px;margin-bottom:8px}
+p{font-size:14px;line-height:1.6;color:rgba(255,255,255,.72)}
+a.btn{display:inline-block;margin-top:22px;padding:13px 26px;border-radius:12px;background:linear-gradient(135deg,#009ddc,#006daa);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="logo">SuppVerse <span>BD</span></div>
+  <div class="ico"><svg id="icoSvg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg></div>
+  <h1 id="h">Please wait…</h1>
+  <p id="m"></p>
+  <a class="btn" href="/">Back to SuppVerse BD</a>
+</div>
+<script>
+const SB_URL='https://tlkoxltugvfwxmnrthvr.supabase.co', SB_KEY='sb_publishable_0dItRk9UZ40ZpwPqJRoOBw_6MyRFU6z';
+const OK='<polyline points="20 6 9 17 4 12"/>', BAD='<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>';
+const MSG={"unsubscribed": ["You're unsubscribed", "You won't receive marketing emails from SuppVerse BD anymore. Order updates may still be sent.", true], "already": ["Already unsubscribed", "This email is already unsubscribed.", true], "invalid": ["Link not valid", "This unsubscribe link is invalid.", false], "error": ["Something went wrong", "Please check your connection and try again.", false]};
+function show(k){const x=MSG[k]||MSG.invalid;document.getElementById('h').textContent=x[0];document.getElementById('m').textContent=x[1];
+  document.getElementById('icoSvg').innerHTML=x[2]?OK:BAD;document.getElementById('card').classList.toggle('err',!x[2]);}
+(async()=>{
+  const t=new URLSearchParams(location.search).get('t')||'';
+  if(!/^[0-9a-f-]{36}$/i.test(t)){show('invalid');return;}
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/rpc/newsletter_unsubscribe',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_token:t})});
+    const d=await r.json();show(r.ok&&d&&d.result?d.result:'invalid');
+  }catch(e){show('error');}
+})();
+</script>
+</body>
+</html>
