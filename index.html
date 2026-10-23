@@ -531,10 +531,9 @@ body.dark-mode .mcard-proxy .mcard-cta:hover {
 .newsletter-input::placeholder { color: rgba(255,255,255,.4); }
 .newsletter-btn { height: 44px; padding: 0 12px; border-radius: 12px; background: linear-gradient(135deg, var(--cyan), #006daa); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .03em; border: none; flex-shrink: 0; transition: transform .15s, box-shadow .2s; box-shadow: 0 4px 14px rgba(0,157,220,.35); }
 .newsletter-btn:active { transform: scale(0.95); }
-.nl-toggle { display:flex; gap:4px; max-width:340px; margin:16px auto 0; padding:4px; border-radius:12px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); }
-.nl-toggle button { flex:1; height:34px; border:none; border-radius:9px; background:transparent; color:rgba(255,255,255,.65); font-size:12px; font-weight:700; letter-spacing:.02em; transition:background .2s,color .2s; }
-.nl-toggle button.on { background:linear-gradient(135deg,var(--cyan),#006daa); color:#fff; box-shadow:0 3px 10px rgba(0,157,220,.35); }
-.nl-toggle button[data-mode="unsubscribe"].on { background:linear-gradient(135deg,#f26430,#c0481a); box-shadow:0 3px 10px rgba(242,100,48,.35); }
+.newsletter-btn.done { background: linear-gradient(135deg, #2f9b68, #1f7a50); box-shadow: 0 4px 14px rgba(47,155,104,.35); cursor: default; }
+.newsletter-input[readonly] { color: rgba(255,255,255,.9); }
+.nl-unsub { display:block; margin:12px auto 0; background:none; border:none; color:rgba(255,255,255,.55); font-size:12px; font-weight:600; text-decoration:underline; }
 
 /* ===== FOOTER ===== */
 .footer { background: var(--bg); padding: 32px 20px; position: relative; z-index: 1; border-top: 1px solid var(--border); }
@@ -2177,15 +2176,12 @@ createMarquee('hdTrack', '.hotdeals-section', 28);
       </div>
       <h3 class="newsletter-title" id="nlTitle">Stay in the Loop</h3>
       <p class="newsletter-desc" id="nlDesc" style="margin-top:2px;font-size:12px">Get early access to new arrivals, exclusive offers, and important updates. No spam, ever.</p>
-      <div class="nl-toggle" role="tablist" aria-label="Newsletter">
-        <button type="button" class="on" data-mode="subscribe" onclick="setNlMode('subscribe')">Subscribe</button>
-        <button type="button" data-mode="unsubscribe" onclick="setNlMode('unsubscribe')">Unsubscribe</button>
-      </div>
       <div class="newsletter-form">
         <input type="email" class="newsletter-input" placeholder="Enter your email" id="nlEmail" autocomplete="email" inputmode="email">
         <input type="text" id="nlHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <button class="newsletter-btn" id="nlBtn" onclick="subscribeNewsletter()">Subscribe</button>
       </div>
+      <button type="button" id="nlUnsub" class="nl-unsub" hidden onclick="unsubscribeNewsletter()">Unsubscribe</button>
     </div>
   </div>
 </section>
@@ -2454,20 +2450,43 @@ async function loadFooterSection(){
 }
 loadFooterSection();
 
-let nlBusy = false;
-let nlMode = 'subscribe';
-function setNlMode(m){
-  nlMode = m === 'unsubscribe' ? 'unsubscribe' : 'subscribe';
-  document.querySelectorAll('.nl-toggle button').forEach(b => b.classList.toggle('on', b.dataset.mode === nlMode));
-  const u = nlMode === 'unsubscribe';
-  document.getElementById('nlTitle').textContent = u ? 'Unsubscribe' : 'Stay in the Loop';
-  document.getElementById('nlDesc').textContent = u
-    ? "Enter your email and we'll send you a link to confirm unsubscribing."
-    : 'Get early access to new arrivals, exclusive offers, and important updates. No spam, ever.';
-  document.getElementById('nlBtn').textContent = u ? 'Unsubscribe' : 'Subscribe';
+const NL_KEY = 'svw_nl_email';
+function renderNl(){
+  const input = document.getElementById('nlEmail'), btn = document.getElementById('nlBtn'), un = document.getElementById('nlUnsub');
+  let saved = '';
+  try{ saved = localStorage.getItem(NL_KEY) || ''; }catch(_){}
+  if(saved){
+    input.value = saved; input.readOnly = true;
+    btn.textContent = 'Subscribed ✓'; btn.classList.add('done');
+    un.hidden = false;
+  }else{
+    input.readOnly = false; btn.textContent = 'Subscribe'; btn.classList.remove('done');
+    un.hidden = true;
+  }
 }
+async function unsubscribeNewsletter(){
+  if(nlBusy) return;
+  let saved = '';
+  try{ saved = localStorage.getItem(NL_KEY) || ''; }catch(_){}
+  if(!saved) return;
+  nlBusy = true;
+  try{
+    const res = await fetch(SVW_SB_URL + '/functions/v1/newsletter-subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: SVW_SB_ANON_KEY },
+      body: JSON.stringify({ email: saved, mode: 'unsubscribe' })
+    });
+    if(!res.ok) throw new Error('unsub ' + res.status);
+    T("Check your email for the unsubscribe link",'✅');
+  }catch(err){
+    console.error('newsletter unsubscribe failed', err);
+    T("Couldn't send the link. Please try again",'⚠️');
+  }finally{ nlBusy = false; }
+}
+let nlBusy = false;
 async function subscribeNewsletter(){
   if(nlBusy) return;
+  if(document.getElementById('nlBtn').classList.contains('done')) return;
   const input = document.getElementById('nlEmail');
   const email = (input.value || '').trim();
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
@@ -2483,11 +2502,12 @@ async function subscribeNewsletter(){
     const res = await fetch(SVW_SB_URL + '/functions/v1/newsletter-subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', apikey: SVW_SB_ANON_KEY },
-      body: JSON.stringify({ email, mode: nlMode, hp: (document.getElementById('nlHp') || {}).value || '' })
+      body: JSON.stringify({ email, hp: (document.getElementById('nlHp') || {}).value || '' })
     });
     if(!res.ok) throw new Error('signup ' + res.status);
-    input.value = '';
-    T(nlMode === 'unsubscribe' ? "Check your email for the unsubscribe link" : "Check your email to confirm your subscription",'✅');
+    try{ localStorage.setItem(NL_KEY, email); }catch(_){}
+    renderNl();
+    T("Check your email to confirm your subscription",'✅');
   }catch(err){
     console.error('newsletter signup failed', err);
     T("Couldn't save your email. Please try again",'⚠️');
@@ -2495,6 +2515,8 @@ async function subscribeNewsletter(){
     nlBusy = false;
   }
 }
+
+renderNl();
 
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });

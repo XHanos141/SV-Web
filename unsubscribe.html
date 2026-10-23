@@ -40,7 +40,7 @@ function show(k){const x=MSG[k]||MSG.invalid;document.getElementById('h').textCo
   if(!/^[0-9a-f-]{36}$/i.test(t)){show('invalid');return;}
   try{
     const r=await fetch(SB_URL+'/rest/v1/rpc/newsletter_unsubscribe',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_token:t})});
-    const d=await r.json();show(r.ok&&d&&d.result?d.result:'invalid');
+    const d=await r.json();if(d&&d.result&&d.result!=='invalid'){try{localStorage.removeItem('svw_nl_email')}catch(_){}}show(r.ok&&d&&d.result?d.result:'invalid');
   }catch(e){show('error');}
 })();
 </script>
