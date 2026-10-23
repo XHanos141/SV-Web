@@ -483,7 +483,7 @@ body.dark-mode #viewProxy .cart-card{border-color:rgba(255,140,90,0.42)}
 body.dark-mode #viewProxy .cart-card,body.dark-mode #viewProxy .order-card{border-color:rgba(255,140,90,.5);background:linear-gradient(160deg,#1b3247 0%,#141f2f 100%);box-shadow:0 2px 5px rgba(0,0,0,.35),0 10px 22px -8px rgba(255,140,90,.38),inset 0 1px 0 rgba(255,255,255,.07),inset 0 -2px 4px rgba(0,0,0,.2);}
 #viewProxy .cc-img-wrap{background:linear-gradient(135deg,var(--orange-soft),var(--bg))}
 #viewProxy .free-ship-note{background:var(--orange-soft);border-color:rgba(242,100,48,0.25)}
-#viewProxy .free-ship-note svg{stroke:var(--orange)}
+#viewProxy .free-ship-note svg{color:var(--orange)}
 body.dark-mode #viewProxy .free-ship-note{border-color:rgba(255,140,90,0.3)}
 #viewProxy .summary-line.total{border-top-color:var(--orange)}
 #viewProxy .summary-line.total .amt{color:var(--orange)}
@@ -495,7 +495,7 @@ body.dark-mode #viewProxy .free-ship-note{border-color:rgba(255,140,90,0.3)}
   color:var(--text2);margin-bottom:14px;
 }
 .free-ship-note svg{
-  width:15px;height:15px;stroke:var(--accent);stroke-width:2.2;fill:none;flex-shrink:0;
+  width:17px;height:17px;color:var(--accent);flex-shrink:0;
 }
 body.dark-mode .free-ship-note{border-color:rgba(45,190,245,0.3)}
 .free-ship-note b{color:var(--text)}
@@ -663,7 +663,7 @@ body.dark-mode .summary-line.total{border-top-color:var(--accent)}
 <div class="summary-card glass-card-green" id="cartSummaryInternal">
   <div class="summary-title">Order Summary</div>
   <div class="free-ship-note" id="freeShipNote">
-    <svg viewBox="0 0 24 24"><path d="M16 3H1v13h15V3z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
     <span>Add <b id="freeShipRemaining">৳550</b> more for <b>free delivery</b></span>
   </div>
   <div class="summary-line"><span>Subtotal</span><span id="sumSubtotalInternal">৳0</span></div>
@@ -726,7 +726,7 @@ if (window.SVBadges) SVBadges.init();
 
 /* ─── Live shipping rules (Supabase site_content via assets/js/shipping-rules.js, set in the admin dashboard) ─── */
 (function syncShippingRules(){
-  function apply(r){ if(DATA.internal.shipping){ DATA.internal.shipping.flat = r.flat; DATA.internal.shipping.freeThreshold = r.freeThreshold; DATA.internal.shipping.full = !!r.full; } }
+  function apply(r){ if(DATA.internal.shipping){ DATA.internal.shipping.flat = r.flat; DATA.internal.shipping.freeThreshold = r.freeThreshold; DATA.internal.shipping.full = !!r.full; DATA.internal.shipping.ready = !!r.ready; } }
   apply(window.SVShipping);
   window.SVShipping.onChange(function(r){ apply(r); try{ updateSummary('internal'); }catch(e){} });
 })();
@@ -857,7 +857,7 @@ function updateSummary(flow){
     e.sumSavedRow.style.display = 'none';
   }
   if(e.freeShipNote){
-    if(!hasItems || d.shipping.full || subtotal >= d.shipping.freeThreshold){
+    if(!hasItems || !d.shipping.ready || d.shipping.full || d.shipping.flat <= 0 || subtotal >= d.shipping.freeThreshold){
       e.freeShipNote.style.display = 'none';
     } else {
       e.freeShipNote.style.display = '';

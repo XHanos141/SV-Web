@@ -9,9 +9,10 @@
     try{ var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if(s && num(s.flat) !== null && num(s.freeThreshold) !== null) return s; }catch(e){}
     return null;
   }
-  var c = cached() || DEF;
+  var hasCache = !!cached(), c = cached() || DEF;
   var S = window.SVShipping = {
-    flat: c.flat, freeThreshold: c.freeThreshold, full: !!c.full,   /* full = admin 'Shipping Discount: Full' -> shipping is free on every order */
+    flat: c.flat, freeThreshold: c.freeThreshold, full: !!c.full, ready: hasCache,   /* ready = real admin values known (cache or live); UI hides rule-based hints until then */
+    /* full = admin 'Shipping Discount: Full' -> shipping is free on every order */
     onChange: function(fn){ if(typeof fn === 'function') subs.push(fn); }
   };
   function load(){
@@ -23,12 +24,14 @@
         if(flat === null || thr === null) return;
         flat = Math.max(0, flat - (num(d.flat_discount) || 0));   /* admin 'Flat' shipping discount: fee customers actually pay */
         var full = d.shipping_discount === 'full';
-        var changed = flat !== S.flat || thr !== S.freeThreshold || full !== S.full;
-        S.flat = flat; S.freeThreshold = thr; S.full = full;
+        var changed = !S.ready || flat !== S.flat || thr !== S.freeThreshold || full !== S.full;
+        S.flat = flat; S.freeThreshold = thr; S.full = full; S.ready = true;
         try{ localStorage.setItem(KEY, JSON.stringify({ flat: flat, freeThreshold: thr, full: full })); }catch(e){}
         if(changed) subs.forEach(function(fn){ try{ fn(S); }catch(e){} });
       }, function(){});
   }
   load();
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) load(); });
+  window.addEventListener('pageshow', function(e){ if(e.persisted) load(); });
+  setInterval(function(){ if(!document.hidden) load(); }, 60000);   /* pick up admin changes while the cart stays open */
 })();
