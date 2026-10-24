@@ -12,7 +12,10 @@
   st.textContent =
     '::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}' +
     '::view-transition-old(root){z-index:1}::view-transition-new(root){z-index:2}' +
-    'html.sv-theme-switching *,html.sv-theme-switching *::before,html.sv-theme-switching *::after{transition:none!important}';
+    'html.sv-theme-switching :not(.theme-toggle):not(.theme-toggle *),html.sv-theme-switching :not(.theme-toggle):not(.theme-toggle *)::before,html.sv-theme-switching :not(.theme-toggle):not(.theme-toggle *)::after{transition:none!important}' +
+    'html.sv-theme-switching #themeToggle{view-transition-name:sv-toggle}' +
+    '::view-transition-group(sv-toggle){animation:none;z-index:3}' +
+    '::view-transition-old(sv-toggle){display:none}::view-transition-new(sv-toggle){animation:none}';
   document.head.appendChild(st);
 
   document.addEventListener('click', function(e){
