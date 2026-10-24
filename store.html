@@ -324,7 +324,7 @@ body.dark-mode .s-search-input-wrap svg{
   cursor:pointer;
   position:relative;
   display:flex;flex-direction:column;
-  animation:cardIn 0.5s var(--ease) forwards;
+  animation:cardIn 0.6s var(--ease) backwards;
 }
 .p-card:active{transform:scale(0.98)}
 /* Bubble card (ported from dashboard inbox.html, blue -> store cyan) */
@@ -1034,8 +1034,8 @@ body.dark-mode .s-tab{
 }
 /* ─── Animation ─── */
 @keyframes cardIn{
-  from{opacity:0;transform:translateY(16px) scale(0.96)}
-  to{opacity:1;transform:translateY(0) scale(1)}
+  from{opacity:0;filter:blur(10px);transform:translateY(18px) scale(0.92)}
+  to{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
 }
 
 /* ─── Heart bounce animation ─── */
@@ -1103,16 +1103,17 @@ body.dark-mode .s-tab{
   animation:sortOut 0.35s var(--ease) forwards;
 }
 .p-card.sort-in{
-  animation:sortIn 0.45s var(--ease) forwards;
+  animation:sortIn 0.6s var(--ease) backwards;
 }
 @keyframes sortOut{
   from{opacity:1;transform:scale(1) translateY(0)}
   to{opacity:0;transform:scale(0.88) translateY(12px)}
 }
 @keyframes sortIn{
-  from{opacity:0;transform:scale(0.92) translateY(18px)}
-  to{opacity:1;transform:scale(1) translateY(0)}
+  from{opacity:0;filter:blur(10px);transform:scale(0.92) translateY(18px)}
+  to{opacity:1;filter:blur(0);transform:scale(1) translateY(0)}
 }
+@media(prefers-reduced-motion:reduce){.p-card,.p-card.sort-in,.trending-item{animation:none!important}}
 .p-skel{min-height:250px;border-radius:18px;border:1px solid var(--border,rgba(10,22,40,.07));background:linear-gradient(90deg,var(--surface,#fff) 25%,var(--surface2,#F8FAFD) 50%,var(--surface,#fff) 75%);background-size:200% 100%;animation:pSkel 1.2s linear infinite}
 @keyframes pSkel{to{background-position:-200% 0}}
 .s-retry{margin-top:14px;border:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;padding:11px 26px;border-radius:12px;background:var(--accent,#0A9BDC);color:#fff}
@@ -1519,7 +1520,7 @@ function renderTrending(){
   trendingItems.forEach((p,i) => {
     const meta = TYPE_BADGE_META[p.type] || TYPE_BADGE_META.General;
     trendingScroll.innerHTML += `
-      <div class="trending-item" style="animation:cardIn 0.4s var(--ease) ${i*0.08}s both">
+      <div class="trending-item" style="animation:cardIn 0.6s var(--ease) ${Math.min(i,8)*0.08}s backwards">
         <div class="trending-pic">${p.image ? '<img' + svImgAttrs(p.image, 300) + ' alt="" loading="lazy">' : picSVG}</div>
         <div class="trending-meta">
           <div class="trending-tag">${p.cat}</div>
@@ -1626,7 +1627,7 @@ function renderCard(p,i){
     : '<div class="p-actions"><button class="p-add' + (added ? ' added' : '') + '" data-id="' + esc(p.id) + '" onclick="event.stopPropagation();toggleCart(this)" aria-label="Add to cart">' + (added ? checkSVG : cartSVG) + '</button><button class="p-buy" data-id="' + esc(p.id) + '" onclick="event.stopPropagation();buyNow(this)" aria-label="Buy now">Buy</button></div>';
   var stockBadge = isOut ? '' : '<span class="p-badge-stock ' + stockClass + '">' + stockText + '</span>';
   var pvUrl = pvHref(p);
-  return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (i*0.06) + 's;cursor:pointer" data-href="' + esc(pvUrl) + '">' +
+  return '<div class="p-card ' + (isOut ? 'p-card-out' : '') + '" style="animation-delay:' + (Math.min(i,8)*0.08) + 's;cursor:pointer" data-href="' + esc(pvUrl) + '">' +
     '<div class="p-img-wrap">' + gridImg + stockBadge + saleBadge + outBar + '</div>' +
     '<div class="p-body">' +
       '<div class="p-meta"><span class="p-cat">' + esc(p.cat) + '</span>' + (p.rating > 0 ? '<span class="p-rating"><span class="p-stars">' + buildStars(p.rating) + '</span>' + p.rating + '</span>' : '') + '</div>' +
@@ -1815,7 +1816,7 @@ function showToast(msg, icon){
     grid.innerHTML = list.length ? list.map(function(p,i){ return renderCard(p,i); }).join('') : emptyHTML();
     if(animateIn){
       grid.querySelectorAll('.p-card').forEach(function(c,i){
-        c.style.animationDelay = (i * 0.06) + 's';
+        c.style.animationDelay = (Math.min(i,8) * 0.08) + 's';
         c.classList.add('sort-in');
       });
     }
