@@ -324,7 +324,7 @@ body.dark-mode .s-search-input-wrap svg{
   cursor:pointer;
   position:relative;
   display:flex;flex-direction:column;
-  animation:cardIn 0.45s var(--ease) backwards;
+  animation:cardIn 0.35s var(--ease) backwards;
 }
 .p-card:active{transform:scale(0.98)}
 /* Bubble card (ported from dashboard inbox.html, blue -> store cyan) */
@@ -1034,7 +1034,7 @@ body.dark-mode .s-tab{
 }
 /* ─── Animation ─── */
 @keyframes cardIn{
-  from{opacity:0;filter:blur(5px);transform:translateY(18px) scale(0.92)}
+  from{opacity:0;filter:blur(2px);transform:translateY(18px) scale(0.92)}
   to{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
 }
 
@@ -1103,14 +1103,14 @@ body.dark-mode .s-tab{
   animation:sortOut 0.35s var(--ease) forwards;
 }
 .p-card.sort-in{
-  animation:sortIn 0.45s var(--ease) backwards;
+  animation:sortIn 0.35s var(--ease) backwards;
 }
 @keyframes sortOut{
   from{opacity:1;transform:scale(1) translateY(0)}
   to{opacity:0;transform:scale(0.88) translateY(12px)}
 }
 @keyframes sortIn{
-  from{opacity:0;filter:blur(5px);transform:scale(0.92) translateY(18px)}
+  from{opacity:0;filter:blur(2px);transform:scale(0.92) translateY(18px)}
   to{opacity:1;filter:blur(0);transform:scale(1) translateY(0)}
 }
 @media(prefers-reduced-motion:reduce){.p-card,.p-card.sort-in,.trending-item{animation:none!important}}
@@ -1520,7 +1520,7 @@ function renderTrending(){
   trendingItems.forEach((p,i) => {
     const meta = TYPE_BADGE_META[p.type] || TYPE_BADGE_META.General;
     trendingScroll.innerHTML += `
-      <div class="trending-item" style="animation:cardIn 0.45s var(--ease) ${Math.min(i,8)*0.08}s backwards">
+      <div class="trending-item" style="animation:cardIn 0.35s var(--ease) ${Math.min(i,8)*0.08}s backwards">
         <div class="trending-pic">${p.image ? '<img' + svImgAttrs(p.image, 300) + ' alt="" loading="lazy">' : picSVG}</div>
         <div class="trending-meta">
           <div class="trending-tag">${p.cat}</div>
