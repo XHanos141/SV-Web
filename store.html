@@ -1034,8 +1034,8 @@ body.dark-mode .s-tab{
 }
 /* ─── Animation ─── */
 @keyframes cardIn{
-  from{opacity:0;filter:blur(2px);transform:translateY(18px) scale(0.92)}
-  to{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
+  from{opacity:0;transform:translateY(18px) scale(0.92)}
+  to{opacity:1;transform:translateY(0) scale(1)}
 }
 
 /* ─── Heart bounce animation ─── */
@@ -1110,8 +1110,8 @@ body.dark-mode .s-tab{
   to{opacity:0;transform:scale(0.88) translateY(12px)}
 }
 @keyframes sortIn{
-  from{opacity:0;filter:blur(2px);transform:scale(0.92) translateY(18px)}
-  to{opacity:1;filter:blur(0);transform:scale(1) translateY(0)}
+  from{opacity:0;transform:scale(0.92) translateY(18px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
 }
 @media(prefers-reduced-motion:reduce){.p-card,.p-card.sort-in,.trending-item{animation:none!important}}
 .p-skel{min-height:250px;border-radius:18px;border:1px solid var(--border,rgba(10,22,40,.07));background:linear-gradient(90deg,var(--surface,#fff) 25%,var(--surface2,#F8FAFD) 50%,var(--surface,#fff) 75%);background-size:200% 100%;animation:pSkel 1.2s linear infinite}
